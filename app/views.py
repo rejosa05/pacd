@@ -3,10 +3,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import ClientDetails
-from .forms import LoginForm
+from .forms import ClientDetailsForm
 
 def home(request):
-    return render(request, 'app/main.html')
+    print('hello world')
+    return render(request, 'app/base.html')
 
 def login_view(request):
     return render(request, 'app/login.html')
@@ -20,3 +21,16 @@ def dashboard(request):
         'client_details': client_details
     }
     return render(request, 'app/dashboard.html', context=context)
+
+def success(request):
+    return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
+
+def client_details(request):
+    if request.method == 'POST':
+        form = ClientDetailsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_page')
+    else:
+         form = ClientDetailsForm()
+    return render(request, 'app/client.html', {'form': form})

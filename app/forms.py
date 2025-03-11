@@ -1,5 +1,6 @@
 from django import forms
-from .models import PacdUser, ClientDetails
+from .models import ClientDetails
+from django.utils import timezone
 
 class ClientDetailsForm(forms.ModelForm):
     TRANSACTION_TYPE_CHOICES = (
@@ -17,13 +18,17 @@ class ClientDetailsForm(forms.ModelForm):
     client_fullname = forms.CharField(max_length=100, required=True)
     client_transaction_type = forms.ChoiceField(choices=TRANSACTION_TYPE_CHOICES)
     client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
-    client_status = "Waiting"
 
     class Meta:
         model = ClientDetails
-        fields = [
-            'client_id', 'client_queue_no', 'client_lane_type', 'client_transaction_type', 'client_status', 'created_date'
-        ]
+        fields = ['client_fullname', 'client_transaction_type', 'client_lane_type']
+    
+    def safe (self, commit=True):
+        instance = super().safe(commit=False)
+        instance.timestamp = timezone.now()
+        if commit:
+            isinstance.save()
+        return instance
 
 
 class LoginForm(forms.ModelForm):
