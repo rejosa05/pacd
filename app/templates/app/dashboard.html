@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Details List</title>
+</head>
+<body>
+    <h1>Client Details List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Client ID</th>
+                <th>Full Name</th>
+                <th>Queue No</th>
+                <th>Lane Type</th>
+                <th>Transaction Type</th>
+                <th>Status</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in client_details %}
+            <tr>
+                <td>{{ client.client_id }}</td>
+                <td>{{ client.client_fullname }}</td>
+                <td>{{ client.client_queue_no }}</td>
+                <td>{{ client.client_lane_type }}</td>
+                <td>{{ client.client_transaction_type }}</td>
+                <td>{{ client.client_status }}</td>
+                <td>{{ client.created_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
