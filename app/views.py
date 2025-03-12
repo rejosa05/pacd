@@ -36,3 +36,6 @@ def client_details(request):
     else:
          form = ClientDetailsForm()
     return render(request, 'app/client.html', {'form': form})
+
+def account_user(request):
+    return render(request, 'app/account.html')
