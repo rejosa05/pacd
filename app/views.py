@@ -13,18 +13,20 @@ def login_view(request):
     return render(request, 'app/login.html')
 
 def display(request):
-    return render(request, 'app/display.html')
-
-def dashboard(request):
-    client_details = ClientDetails.objects.all()
+    client_details = ClientDetails.objects.all()[:10]
     context = {
         'client_details': client_details
     }
-    return render(request, 'app/dashboard.html', context=context)
+    return render(request, 'app/display.html', context = context)
+
+def dashboard(request):
+    print('dashboard')
+    return render(request, 'app/dashboard.html',)
 
 def success(request):
     return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
 
+# Client paghtag ug detayle -- fixed/need comment
 def client_details(request):
     if request.method == 'POST':
         form = ClientDetailsForm(request.POST)

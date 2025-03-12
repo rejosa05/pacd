@@ -1,11 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>Display Page!</p>
-</body>
-</html>
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %}Dash Board Display{% endblock %}
+
+{% block content %} 
+<h1>Client Details List</h1>
+<table>
+    <thead>
+        
+        <tr>
+            <th>Client ID</th>
+            <th>Full Name</th>
+            <th>Queue No</th>
+            <th>Lane Type</th>
+            <th>Transaction Type</th>
+            <th>Status</th>
+            <th>Created Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in client_details %}
+        <tr>
+            <td>{{ client.client_id }}</td>
+            <td>{{ client.client_fullname }}</td>
+            <td>{{ client.client_queue_no }}</td>
+            <td>{{ client.client_lane_type }}</td>
+            <td>{{ client.client_transaction_type }}</td>
+            <td>{{ client.client_status }}</td>
+            <td>{{ client.created_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
