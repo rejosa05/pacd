@@ -5,17 +5,37 @@
 {% block title %} Client Transaction Form {% endblock %}
 
 {% block content %}
-    <div class="form-section">
-        <form method="post">
-            <div class="form-group">
-                <h2>Client Transactions Details</h2>
-                {% csrf_token %}
-                {{ form.as_p }}
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+    <div class="container">
+        <div class="form-section">
+            <form method="post">
+                <div class="form-group">
+                    <h2>Client Transactions Details</h2>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="logo-section">
+            <img src="" alt="Logo">
+        </div>
     </div>
-    <div class="logo-section">
-        <img src="" alt="Logo">
-    </div>
+    <script>
+        document.getElementById('client-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("{% url 'client_details' %}", {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+                fetchLaneData(); // Fetch updated lane data
+            });
+        });
+    </script>
 {% endblock %}

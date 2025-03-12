@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import JsonResponse
 from .models import ClientDetails
 from .forms import ClientDetailsForm
+from django.utils import timezone
 
 def home(request):
     print('hello world')
@@ -12,16 +13,34 @@ def home(request):
 def login_view(request):
     return render(request, 'app/login.html')
 
+# Pag display sa number on the screen -- fixed/need comment
 def display(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest': 
+        today = timezone.now().date()
+        regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
+        priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first()
+        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)   
+        data = {
+            'regular_lane': {
+                'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"
+            },
+            'priority_lane': {
+                'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"
+            }, 
+            'waiting_clients': list(waiting_clients)
+        }
+        return JsonResponse(data)
+    else:
+        today = timezone.now().date()
+        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
+        return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
+
+def dashboard(request):
     client_details = ClientDetails.objects.all()[:10]
     context = {
         'client_details': client_details
     }
-    return render(request, 'app/display.html', context = context)
-
-def dashboard(request):
-    print('dashboard')
-    return render(request, 'app/dashboard.html',)
+    return render(request, 'app/dashboard.html', context = context)
 
 def success(request):
     return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
@@ -32,7 +51,9 @@ def client_details(request):
         form = ClientDetailsForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('success_page')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'message': 'Data saved successfully!'})
+            return redirect('display_page')
     else:
          form = ClientDetailsForm()
     return render(request, 'app/client.html', {'form': form})

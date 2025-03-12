@@ -1,35 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Client Details List</title>
-</head>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title%} PACD TRANSACTION DASHBOARD {% endblock %}
+
+{% block content %}
 <body>
-    <h1>Client Details List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Client ID</th>
-                <th>Full Name</th>
-                <th>Queue No</th>
-                <th>Lane Type</th>
-                <th>Transaction Type</th>
-                <th>Status</th>
-                <th>Created Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for client in client_details %}
-            <tr>
-                <td>{{ client.client_id }}</td>
-                <td>{{ client.client_fullname }}</td>
-                <td>{{ client.client_queue_no }}</td>
-                <td>{{ client.client_lane_type }}</td>
-                <td>{{ client.client_transaction_type }}</td>
-                <td>{{ client.client_status }}</td>
-                <td>{{ client.created_date }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="https://placehold.co/200x60/1a73e8/ffffff?text=Logo" alt="Logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="active">Dashboard</a>
+                <a href="index.html">Form</a>
+                <a href="display.html">Display Board</a>
+                <a href="#reports">Reports</a>
+                <a href="#settings">Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Dashboard</h1>
+                <div class="user-menu">
+                    <span class="user-name">Admin User</span>
+                    <img src="https://placehold.co/40x40/1a73e8/ffffff?text=U" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="card stats-card">
+                    <h3>Regular Lane</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Current Number</span>
+                            <span class="stat-value" id="regularCurrent">A001</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Waiting</span>
+                            <span class="stat-value" id="regularWaiting">0</span>
+                        </div>
+                    </div>
+                    <button class="action-button" id="nextRegular">Next Number</button>
+                </div>
+
+                <div class="card stats-card">
+                    <h3>Fast Lane</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Current Number</span>
+                            <span class="stat-value" id="fastCurrent">B001</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Waiting</span>
+                            <span class="stat-value" id="fastWaiting">0</span>
+                        </div>
+                    </div>
+                    <button class="action-button" id="nextFast">Next Number</button>
+                </div>
+
+                <!--<div class="card recent-submissions">
+                    <h3>Recent Submissions</h3>
+                    <div class="submission-list" id="submissionsList">
+                         Submissions will be populated here 
+                    </div>
+                </div>-->
+
+                <!-- <div class="card queue-actions">
+                    <h3>Queue Actions</h3>
+                    <div class="action-buttons">
+                        <button id="regularLane" class="action-button">Issue Regular Ticket</button>
+                        <button id="fastLane" class="action-button">Issue Fast Ticket</button>
+                    </div>
+                    <div class="current-ticket">
+                        <h4>Last Issued Ticket</h4>
+                        <span id="currentTicket">-</span>
+                    </div>
+                </div> -->
+            </div>
+        </main>
+    </div>
+{% endblock %}

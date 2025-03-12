@@ -1,36 +1,61 @@
 {% extends 'app/base.html' %}
-
 {% load static %}
+{% block title %} Display Board {% endblock %}
+{% block content %}
+    <div class="display-container">
+        <div class="left-section">
+            <div class="top-boxes">
+                <div class="info-box">
+                    <h2>Regular Lane</h2>
+                    <div class="number" id="regular-lane-number">
+                        {% if regular_lane %}
+                            {{ regular_lane.client_queue_no }}
+                        {% else %}
 
-{% block title %}Dash Board Display{% endblock %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h2>Fast Lane</h2>
+                    <div class="number" id="priority-lane-number">
+                        {% if priority_lane %}
+                            {{ priority_lane.client_queue_no }}
+                        {% else %}
+                            00
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="info-box bottom-box">
+                <h2>Waiting Line</h2>
+                <div class="number">
+                    {% for client in waiting_clients %}
+                        {{ client.client_queue_no }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="logo-box">
+                <img src="https://placehold.co/600x600/1a73e8/ffffff?text=Your+Logo" alt="Logo">
+            </div>
+        </div>
+    </div>
+    <script>
+        function fetchLaneData() {
+            fetch("{% url 'display_page' %}", {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('regular-lane-number').innerText = data.regular_lane.client_queue_no;
+                document.getElementById('priority-lane-number').innerText = data.priority_lane.client_queue_no;
+                document.getElementById('waiting-line-numbers').innerText = data.waiting_clients.join(', ');
+            });
+        }
 
-{% block content %} 
-<h1>Client Details List</h1>
-<table>
-    <thead>
-        
-        <tr>
-            <th>Client ID</th>
-            <th>Full Name</th>
-            <th>Queue No</th>
-            <th>Lane Type</th>
-            <th>Transaction Type</th>
-            <th>Status</th>
-            <th>Created Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for client in client_details %}
-        <tr>
-            <td>{{ client.client_id }}</td>
-            <td>{{ client.client_fullname }}</td>
-            <td>{{ client.client_queue_no }}</td>
-            <td>{{ client.client_lane_type }}</td>
-            <td>{{ client.client_transaction_type }}</td>
-            <td>{{ client.client_status }}</td>
-            <td>{{ client.created_date }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        setInterval(fetchLaneData, 1000); // Fetch data every 5 seconds
+    </script>
 {% endblock %}
