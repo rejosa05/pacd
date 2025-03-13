@@ -60,3 +60,12 @@ def dashboard(request):
         'client_details': client_details
     }
     return render(request, 'app/dashboard.html', context = context)
+
+def update_client_status(request, client_queue_no):
+    try:
+        client = ClientDetails.objects.get(client_queue_no=client_queue_no)
+        client.client_status = 'Served'
+        client.save()
+        return redirect('dashboard_page')
+    except ClientDetails.DoesNotExist:
+        return JsonResponse({'message': 'Client not found!'}, status=404)
