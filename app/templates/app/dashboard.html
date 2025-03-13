@@ -2,82 +2,117 @@
 
 {% load static %}
 
-{% block title%} PACD TRANSACTION DASHBOARD {% endblock %}
+{% block title %} PACD TRANSACTION DASHBOARD {% endblock %}
 
 {% block content %}
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="https://placehold.co/200x60/1a73e8/ffffff?text=Logo" alt="Logo">
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="https://placehold.co/200x60/1a73e8/ffffff?text=Logo" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="index.html">Form</a>
+            <a href="display.html">Display Board</a>
+            <a href="#reports">Reports</a>
+            <a href="#settings">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="user-menu">
+                <span class="user-name">Admin User</span>
+                <img src="https://placehold.co/40x40/1a73e8/ffffff?text=U" alt="User" class="user-avatar">
             </div>
-            <nav class="nav-menu">
-                <a href="#" class="active">Dashboard</a>
-                <a href="index.html">Form</a>
-                <a href="display.html">Display Board</a>
-                <a href="#reports">Reports</a>
-                <a href="#settings">Settings</a>
-            </nav>
-        </aside>
+        </header>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <h1>Dashboard</h1>
-                <div class="user-menu">
-                    <span class="user-name">Admin User</span>
-                    <img src="https://placehold.co/40x40/1a73e8/ffffff?text=U" alt="User" class="user-avatar">
+        <div class="dashboard-grid">
+            <div class="card stats-card">
+                <h3>Regular Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="regularCurrent">A001</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Waiting</span>
+                        <span class="stat-value" id="regularWaiting">0</span>
+                    </div>
                 </div>
-            </header>
-
-            <div class="dashboard-grid">
-                <div class="card stats-card">
-                    <h3>Regular Lane</h3>
-                    <div class="stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Current Number</span>
-                            <span class="stat-value" id="regularCurrent">A001</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Waiting</span>
-                            <span class="stat-value" id="regularWaiting">0</span>
-                        </div>
-                    </div>
-                    <button class="action-button" id="nextRegular">Next Number</button>
-                </div>
-
-                <div class="card stats-card">
-                    <h3>Fast Lane</h3>
-                    <div class="stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Current Number</span>
-                            <span class="stat-value" id="fastCurrent">B001</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Waiting</span>
-                            <span class="stat-value" id="fastWaiting">0</span>
-                        </div>
-                    </div>
-                    <button class="action-button" id="nextFast">Next Number</button>
-                </div>
-
-                <!--<div class="card recent-submissions">
-                    <h3>Recent Submissions</h3>
-                    <div class="submission-list" id="submissionsList">
-                         Submissions will be populated here 
-                    </div>
-                </div>-->
-
-                <!-- <div class="card queue-actions">
-                    <h3>Queue Actions</h3>
-                    <div class="action-buttons">
-                        <button id="regularLane" class="action-button">Issue Regular Ticket</button>
-                        <button id="fastLane" class="action-button">Issue Fast Ticket</button>
-                    </div>
-                    <div class="current-ticket">
-                        <h4>Last Issued Ticket</h4>
-                        <span id="currentTicket">-</span>
-                    </div>
-                </div> -->
+                <button class="action-button" id="nextRegular">Next Number</button>
             </div>
-        </main>
-    </div>
+
+            <div class="card stats-card">
+                <h3>Fast Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="fastCurrent">B001</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Waiting</span>
+                        <span class="stat-value" id="fastWaiting">0</span>
+                    </div>
+                </div>
+                <button class="action-button" id="nextFast">Next Number</button>
+            </div>
+        </div>
+
+        <!-- Queue Details Table -->
+        <div class="card queue-details">
+            <h3>Queue Details</h3>
+            <table class="queue-table">
+                <thead>
+                    <tr>
+                        <th>Queue Number</th>
+                        <th>Full Name</th>
+                        <th>Lane Type</th>
+                        <th>Transaction Type</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody id="queueDetailsTable">
+                    <!-- Queue details will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+    function fetchQueueDetails() {
+        fetch("{% url 'display_page' %}", {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no;
+            document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no;
+            document.getElementById('regularWaiting').innerText = data.waiting_clients.length;
+            document.getElementById('fastWaiting').innerText = data.waiting_clients.length;
+
+            const queueDetailsTable = document.getElementById('queueDetailsTable');
+            queueDetailsTable.innerHTML = '';
+            data.waiting_clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.client_queue_no}</td>
+                    <td>${client.client_fullname}</td>
+                    <td>${client.client_lane_type}</td>
+                    <td>${client.client_transaction_type}</td>
+                    <td>${client.client_status}</td>
+                    <td>${client.client_created_date}</td>
+                `;
+                queueDetailsTable.appendChild(row);
+            });
+        });
+    }
+
+    setInterval(fetchQueueDetails, 3000); // Fetch data every 3 seconds
+</script>
 {% endblock %}
