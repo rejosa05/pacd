@@ -28,7 +28,7 @@
             </div>
             <div class="info-box bottom-box">
                 <h2>Waiting Line</h2>
-                <div class="number">
+                <div class="number" id="waiting-line-numbers">
                     {% for client in waiting_clients %}
                         {{ client.client_queue_no }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}

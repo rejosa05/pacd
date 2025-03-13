@@ -35,13 +35,6 @@ def display(request):
         waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
         return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
 
-def dashboard(request):
-    client_details = ClientDetails.objects.all()[:10]
-    context = {
-        'client_details': client_details
-    }
-    return render(request, 'app/dashboard.html', context = context)
-
 def success(request):
     return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
 
@@ -60,3 +53,10 @@ def client_details(request):
 
 def account_user(request):
     return render(request, 'app/account.html')
+
+def dashboard(request):
+    client_details = ClientDetails.objects.all()[:10]
+    context = {
+        'client_details': client_details
+    }
+    return render(request, 'app/dashboard.html', context = context)
