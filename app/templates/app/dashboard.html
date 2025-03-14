@@ -34,7 +34,13 @@
                 <div class="stats">
                     <div class="stat-item">
                         <span class="stat-label">Current Number</span>
-                        <span class="stat-value" id="regularCurrent">A001</span>
+                        <span class="stat-value" id="regularCurrent">
+                        {% if regular_lane %}
+                                {{ regular_lane.client_queue_no }}
+                        {% else %}
+                            00
+                        {% endif %}
+                        </span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Waiting</span>
@@ -49,7 +55,13 @@
                 <div class="stats">
                     <div class="stat-item">
                         <span class="stat-label">Current Number</span>
-                        <span class="stat-value" id="fastCurrent">B001</span>
+                        <span class="stat-value" id="fastCurrent">
+                            {% if priority_lane %}
+                                {{ priority_lane.client_queue_no }}
+                            {% else %}
+                                00
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Waiting</span>
@@ -75,15 +87,23 @@
                     </tr>
                 </thead>
                 <tbody id="queueDetailsTable">
-                    <!-- Queue details will be populated here -->
+                    {% for client in client_details %}
+                    <tr>
+                        <td>{{ client.client_queue_no }}</td>
+                        <td>{{ client.client_fullname }}</td>
+                        <td>{{ client.client_lane_type }}</td>
+                        <td>{{ client.client_transaction_type }}</td>
+                        <td>{{ client.client_status }}</td>
+                        <td>{{ client.client_created_date }}</td>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </main>
 </div>
 
-<script>
-    function fetchQueueDetails() {
+ <!-- <script>
+   < function fetchQueueDetails() {
         fetch("{% url 'display_page' %}", {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -108,11 +128,11 @@
                     <td>${client.client_status}</td>
                     <td>${client.client_created_date}</td>
                 `;
-                queueDetailsTable.appendChild(row);
+                queueDetailsTable.appendChild(  );
             });
         });
     }
 
     setInterval(fetchQueueDetails, 3000); // Fetch data every 3 seconds
-</script>
+</script>-->
 {% endblock %}

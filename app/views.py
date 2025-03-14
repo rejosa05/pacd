@@ -55,9 +55,15 @@ def account_user(request):
     return render(request, 'app/account.html')
 
 def dashboard(request):
-    client_details = ClientDetails.objects.all()[:10]
+    today = timezone.now().date()
+    regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
+    priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first() 
+    client_details = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).all()[:10]
+    print(client_details)
     context = {
-        'client_details': client_details
+        'client_details': client_details,
+        'regular_lane': regular_lane,
+        'priority_lane': priority_lane
     }
     return render(request, 'app/dashboard.html', context = context)
 
