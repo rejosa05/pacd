@@ -156,6 +156,56 @@ body {
     background-color: #1557b0;
 }
 
+.button-column {
+    display: flex;
+    flex-direction: column; /* Arrange buttons in a column */
+    align-items: center; /* Center buttons horizontally */
+    gap: 10px; /* Add spacing between buttons */
+    margin-top: 15px; /* Add spacing above the button column */
+}
+
+/* Served Button Styles */
+.served-button {
+    background-color: #28a745; /* Green background for served */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.served-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.served-button:active {
+    background-color: #1e7e34; /* Even darker green when clicked */
+    transform: translateY(0); /* Reset lift on click */
+}
+
+/* Skipped Button Styles */
+.skipped-button {
+    background-color: #dc3545; /* Red background for skipped */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.skipped-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.skipped-button:active {
+    background-color: #bd2130; /* Even darker red when clicked */
+    transform: translateY(0); /* Reset lift on click */
+}
+
 .recent-submissions {
     grid-column: span 2;
 }

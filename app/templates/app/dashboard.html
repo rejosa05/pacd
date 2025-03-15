@@ -47,7 +47,10 @@
                         <span class="stat-value" id="regularWaiting">0</span>
                     </div>
                 </div>
-                <button class="action-button" id="nextRegular">Next Number</button>
+                <div class="button-column">
+                    <button class="action-button served-button" id="nextFast">Served</button>
+                    <button class="action-button skipped-button" id="nextFast">Skipped</button>
+                </div> 
             </div>
 
             <div class="card stats-card">
@@ -68,7 +71,10 @@
                         <span class="stat-value" id="fastWaiting">0</span>
                     </div>
                 </div>
-                <button class="action-button" id="nextFast">Next Number</button>
+                <div class="button-column">
+                    <button class="action-button served-button" id="nextFast">Served</button>
+                    <button class="action-button skipped-button" id="nextFast">Skipped</button>
+                </div> 
             </div>
         </div>
 
@@ -101,7 +107,7 @@
         </div>
     </main>
 </div>
-
+    <script src="{% static 'js/script.js' %}"></script>
  <!-- <script>
    < function fetchQueueDetails() {
         fetch("{% url 'display_page' %}", {

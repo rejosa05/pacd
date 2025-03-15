@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -12,6 +12,10 @@ def home(request):
 
 def login_view(request):
     return render(request, 'app/login.html')
+
+
+def account_user(request):
+    return render(request, 'app/account.html')
 
 # Pag display sa number on the screen -- fixed/need comment
 def display(request):
@@ -43,23 +47,23 @@ def client_details(request):
     if request.method == 'POST':
         form = ClientDetailsForm(request.POST)
         if form.is_valid():
-            form.save()
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'message': 'Data saved successfully!'})
-            return redirect('display_page')
+            client = form.save()
+            return redirect('client_ticket', client_id=client.id)
     else:
          form = ClientDetailsForm()
     return render(request, 'app/client.html', {'form': form})
 
-def account_user(request):
-    return render(request, 'app/account.html')
+# Client pg display sa ticket to verify his/her number -- fixed/need comment
+def client_ticket(request, client_id):
+    client = get_object_or_404(ClientDetails, id=client_id)
+    return render(request, 'app/queue.html', {'client': client})
 
 def dashboard(request):
     today = timezone.now().date()
     regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
     priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first() 
     client_details = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).all()[:10]
-    print(client_details)
+    
     context = {
         'client_details': client_details,
         'regular_lane': regular_lane,
