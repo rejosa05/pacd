@@ -17,7 +17,7 @@
                 <p>Status: {{ client.client_status }}</p>
                 <p>Date/Time: {{ client.client_created_date|date:"F d, Y - H:i" }}</p>
                 <p class="text-muted">Please keep this number and wait for it to be called.</p>
-                <a href="{% url 'client_page' %}" class="btn btn-primary mt-3">View Queue Status</a>
+                <a href="{% url 'client_page' %}" class="btn btn-primary mt-3">Click for NEW Queue</a>
                 <button class="btn btn-secondary mt-3" onclick="window.print()">Print Ticket</button>
             </div>
         </div>

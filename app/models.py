@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils import timezone
@@ -25,6 +25,11 @@ class ClientDetails(models.Model):
     def __str__(self):
         return self.client_fullname
     
+    def save(self, *args, **kwargs):
+        if self.client_fullname:
+            self.client_fullname = self.client_fullname.capitalize()
+        super(ClientDetails, self).save(*args, **kwargs)
+    
     @staticmethod
     def get_queue_no():
         today = timezone.now().date()
@@ -39,3 +44,33 @@ class ClientDetails(models.Model):
 def set_queue_no(sender, instance, **kwargs):
     if not instance.client_queue_no or instance.client_queue_no == 1:
         instance.client_queue_no = ClientDetails.get_queue_no()
+        
+class HislotyLog(models.Model):
+    action = models.CharField(max_length=100)
+    client = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='history_logs')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    ClientDetails = models.TextField()
+
+    def __str__(self):
+        return f"{self.client.client_fullname} - {self.action} at {self.timestamp}"
+    
+
+@receiver(post_save, sender=ClientDetails)
+def log_client_save(sender, instance, created, **kwargs):
+    if created:
+        action = 'created'
+    else:
+        action = 'updated'
+    HislotyLog.objects.create(
+        client=instance,
+        action=action,
+        timestamp=timezone.now()
+    )
+
+@receiver(post_delete, sender=ClientDetails)
+def log_client_delete(sender, instance, **kwargs):
+    HislotyLog.objects.create(
+        client=instance,
+        action='deleted',
+        date=timezone.now()
+    )
