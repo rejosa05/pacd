@@ -35,11 +35,6 @@
                     <div class="stat-item">
                         <span class="stat-label">Current Number</span>
                         <span class="stat-value" id="regularCurrent">
-                        {% if regular_lane %}
-                                {{ regular_lane.client_queue_no }}
-                        {% else %}
-                            00
-                        {% endif %}
                         </span>
                     </div>
                     <div class="stat-item">
@@ -48,8 +43,8 @@
                     </div>
                 </div>
                 <div class="button-column">
-                    <button class="action-button served-button" id="nextFast">Served</button>
-                    <button class="action-button skipped-button" id="nextFast">Skipped</button>
+                    <button class="action-button served-button" id="regularServed">Served</button>
+                    <button class="action-button skipped-button" id="regularSkipped">Skipped</button>
                 </div> 
             </div>
 
@@ -59,11 +54,6 @@
                     <div class="stat-item">
                         <span class="stat-label">Current Number</span>
                         <span class="stat-value" id="fastCurrent">
-                            {% if priority_lane %}
-                                {{ priority_lane.client_queue_no }}
-                            {% else %}
-                                00
-                            {% endif %}
                         </span>
                     </div>
                     <div class="stat-item">
@@ -72,8 +62,8 @@
                     </div>
                 </div>
                 <div class="button-column">
-                    <button class="action-button served-button" id="nextFast">Served</button>
-                    <button class="action-button skipped-button" id="nextFast">Skipped</button>
+                    <button class="action-button served-button" id="fastServed">Served</button>
+                    <button class="action-button skipped-button" id="fastSkipped">Skipped</button>
                 </div> 
             </div>
         </div>
@@ -93,52 +83,87 @@
                     </tr>
                 </thead>
                 <tbody id="queueDetailsTable">
-                    {% for client in client_details %}
-                    <tr>
-                        <td>{{ client.client_queue_no }}</td>
-                        <td>{{ client.client_fullname }}</td>
-                        <td>{{ client.client_lane_type }}</td>
-                        <td>{{ client.client_transaction_type }}</td>
-                        <td>{{ client.client_status }}</td>
-                        <td>{{ client.client_created_date }}</td>
-                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </main>
 </div>
-    <script src="{% static 'js/script.js' %}"></script>
- <!-- <script>
-   < function fetchQueueDetails() {
-        fetch("{% url 'display_page' %}", {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no;
-            document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no;
-            document.getElementById('regularWaiting').innerText = data.waiting_clients.length;
-            document.getElementById('fastWaiting').innerText = data.waiting_clients.length;
 
-            const queueDetailsTable = document.getElementById('queueDetailsTable');
-            queueDetailsTable.innerHTML = '';
-            data.waiting_clients.forEach(client => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${client.client_queue_no}</td>
-                    <td>${client.client_fullname}</td>
-                    <td>${client.client_lane_type}</td>
-                    <td>${client.client_transaction_type}</td>
-                    <td>${client.client_status}</td>
-                    <td>${client.client_created_date}</td>
-                `;
-                queueDetailsTable.appendChild(  );
-            });
+<script>
+function fetchTodayData() {
+    fetch("{% url 'dashboard' %}", {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update Regular Lane
+        document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no || "00";
+        document.getElementById('regularWaiting').innerText = data.regular_lane.waiting_count || "0";
+
+        // Update Priority Lane
+        document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
+        document.getElementById('fastWaiting').innerText = data.priority_lane.waiting_count || "0";
+
+        // Update Queue Details Table
+        const queueDetailsTable = document.getElementById('queueDetailsTable');
+        queueDetailsTable.innerHTML = ''; // Clear the table body
+
+        data.client_details.forEach(client => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${client.client_queue_no}</td>
+                <td>${client.client_fullname}</td>
+                <td>${client.client_lane_type}</td>
+                <td>${client.client_transaction_type}</td>
+                <td>${client.client_status}</td>
+                <td>${new Date(client.client_created_date).toLocaleString()}</td>
+            `;
+            queueDetailsTable.appendChild(row);
         });
-    }
+    })
+    .catch(error => console.error('Error fetching today\'s data:', error));
+}
 
-    setInterval(fetchQueueDetails, 3000); // Fetch data every 3 seconds
-</script>-->
+// Automatically fetch today's data every 5 seconds
+setInterval(fetchTodayData, 5000);
+
+// Fetch data immediately on page load
+fetchTodayData();
+
+function updateClientStatus(laneType, action) {
+    fetch("{% url 'update_client_status' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+        },
+        body: `lane_type=${laneType}&action=${action}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        fetchTodayData();
+    })
+    .catch(error => console.error('Error updating client status:', error));
+}
+
+document.getElementById('regularServed').addEventListener('click', () => updateClientStatus('Regular', 'served'));
+document.getElementById('regularSkipped').addEventListener('click', () => updateClientStatus('Regular', 'skipped'));
+document.getElementById('fastServed').addEventListener('click', () => updateClientStatus('Priority', 'served'));
+document.getElementById('fastSkipped').addEventListener('click', () => updateClientStatus('Priority', 'skipped'));
+</script>
+
 {% endblock %}

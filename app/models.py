@@ -21,7 +21,7 @@ class ClientDetails(models.Model):
     client_transaction_type = models.CharField(max_length=100)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
-
+    
     def __str__(self):
         return self.client_fullname
     
@@ -66,6 +66,7 @@ def log_client_save(sender, instance, created, **kwargs):
         action=action,
         timestamp=timezone.now()
     )
+    print(HislotyLog.objects.all())
 
 @receiver(post_delete, sender=ClientDetails)
 def log_client_delete(sender, instance, **kwargs):
@@ -74,3 +75,4 @@ def log_client_delete(sender, instance, **kwargs):
         action='deleted',
         date=timezone.now()
     )
+

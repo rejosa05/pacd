@@ -58,18 +58,7 @@ def client_ticket(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
     return render(request, 'app/queue.html', {'client': client})
 
-def dashboard(request):
-    today = timezone.now().date()
-    regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
-    priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first() 
-    client_details = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).all()[:10]
-    
-    context = {
-        'client_details': client_details,
-        'regular_lane': regular_lane,
-        'priority_lane': priority_lane
-    }
-    return render(request, 'app/dashboard.html', context = context)
+
 
 def update_client_status(request, client_queue_no):
     try:
@@ -79,3 +68,76 @@ def update_client_status(request, client_queue_no):
         return redirect('dashboard_page')
     except ClientDetails.DoesNotExist:
         return JsonResponse({'message': 'Client not found!'}, status=404)
+    
+
+def dashboard(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Check if it's an AJAX request
+        today = timezone.now().date()
+
+        regular_lane = ClientDetails.objects.filter(
+            client_lane_type='Regular',
+            client_status='Pending',
+            client_created_date__date=today
+        ).order_by('client_queue_no').first()
+
+        priority_lane = ClientDetails.objects.filter(
+            client_lane_type='Priority',
+            client_status='Pending',
+            client_created_date__date=today
+        ).order_by('client_queue_no').first()
+
+        client_details = ClientDetails.objects.filter(client_created_date__date=today, client_status='Pending').values(
+            'client_queue_no',
+            'client_fullname',
+            'client_lane_type',
+            'client_transaction_type',
+            'client_status',
+            'client_created_date'
+        )
+
+        return JsonResponse({
+            'regular_lane': {
+                'client_queue_no': regular_lane.client_queue_no if regular_lane else "00",
+                'waiting_count': ClientDetails.objects.filter(
+                    client_lane_type='Regular',
+                    client_status='Pending',
+                    client_created_date__date=today
+                ).count()
+            },
+            'priority_lane': {
+                'client_queue_no': priority_lane.client_queue_no if priority_lane else "00",
+                'waiting_count': ClientDetails.objects.filter(
+                    client_lane_type='Priority',
+                    client_status='Pending',
+                    client_created_date__date=today
+                ).count()
+            },
+            'client_details': list(client_details)
+        })
+
+    return render(request, 'app/dashboard.html')
+
+def update_client_status(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        lane_type = request.POST.get('lane_type')
+        action = request.POST.get('action')
+        today = timezone.now().date()
+
+        client = ClientDetails.objects.filter(
+            client_lane_type = lane_type.capitalize(),
+            client_status = 'Pending',
+            client_created_date__date = today
+        ).order_by('client_queue_no').first()
+
+        if client:
+            if action == 'served':
+                client.client_status = 'Served'
+            elif action == 'skipped':
+                client.client_status = 'Skipped'
+            client.save()
+
+            return JsonResponse({'message': 'Success', 'client_queue_no' : client.client_queue_no})
+        else:
+            return JsonResponse({'message': 'NO pending client in this lane'}, status = 404)
+    else:
+        return JsonResponse({'message': 'success', 'client_queue_no': client.client_queue_no})
