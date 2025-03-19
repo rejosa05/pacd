@@ -1,18 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_save, post_save, post_delete
-from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils import timezone
-
-class PacdUser(models.Model):
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    created_date = models.DateField()
-
-    def __str__(self):
-        return self.username
     
 class ClientDetails(models.Model):
     client_fullname = models.CharField(max_length=100)

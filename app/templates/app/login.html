@@ -12,8 +12,11 @@
     </div>
     <div class="login-box">
         <h2>Login</h2>
-        <form method="post" action="{% url 'login_page' %}">
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>

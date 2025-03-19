@@ -1,6 +1,7 @@
 from django import forms
 from .models import ClientDetails
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class ClientDetailsForm(forms.ModelForm):
     TRANSACTION_TYPE_CHOICES = (
@@ -34,3 +35,16 @@ class ClientDetailsForm(forms.ModelForm):
 class LoginForm(forms.ModelForm):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
+
+
+class AuthorizedPersonnelForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'first_name', 'last_name']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }

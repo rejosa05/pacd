@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import ClientDetails
-from .forms import ClientDetailsForm
+from .forms import ClientDetailsForm, AuthorizedPersonnelForm
 from django.utils import timezone
 
 def home(request):
@@ -11,11 +11,20 @@ def home(request):
     return render(request, 'app/base.html')
 
 def login_view(request):
+    if request.method  == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username = username, password = password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'app/login.html', {'error': 'Invalid Credentials'})
     return render(request, 'app/login.html')
 
-
-def account_user(request):
-    return render(request, 'app/account.html')
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 # Pag display sa number on the screen -- fixed/need comment
 def display(request):
@@ -66,7 +75,8 @@ def update_client_status(request, client_queue_no):
         return redirect('dashboard_page')
     except ClientDetails.DoesNotExist:
         return JsonResponse({'message': 'Client not found!'}, status=404)
-    
+
+@login_required
 def dashboard(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Check if it's an AJAX request
         today = timezone.now().date()
@@ -138,3 +148,17 @@ def update_client_status(request):
             return JsonResponse({'message': 'NO pending client in this lane'}, status = 404)
     else:
         return JsonResponse({'message': 'success', 'client_queue_no': client.client_queue_no})
+    
+
+def create_authorized_personnel(request):
+    if request.method == 'POST':
+        form = AuthorizedPersonnelForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.is_staff = True  # Mark the user as staff
+            user.save()
+            return redirect('dashboard')  # Redirect to the dashboard after creation
+    else:
+        form = AuthorizedPersonnelForm()
+    return render(request, 'app/account.html', {'form': form})
