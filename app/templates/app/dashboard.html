@@ -8,7 +8,7 @@
 <div class="dashboard-container">
     <aside class="sidebar">
         <div class="logo">
-            <img src="https://placehold.co/200x60/1a73e8/ffffff?text=Logo" alt="Logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
         </div>
         <nav class="nav-menu">
             <a href="#" class="active">Dashboard</a>
@@ -104,18 +104,22 @@ function fetchTodayData() {
     })
     .then(data => {
         // Update Regular Lane
+        const regularCurrent = data.regular_lane.client_queue_no || "00";
         document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no || "00";
         document.getElementById('regularWaiting').innerText = data.regular_lane.waiting_count || "0";
 
         // Update Priority Lane
+        const fastCurrent = data.regular_lane.client_queue_no || "00";
         document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
         document.getElementById('fastWaiting').innerText = data.priority_lane.waiting_count || "0";
 
-        // Update Queue Details Table
+        
         const queueDetailsTable = document.getElementById('queueDetailsTable');
         queueDetailsTable.innerHTML = ''; // Clear the table body
 
-        data.client_details.forEach(client => {
+        data.client_details
+        .filter(client => client.client_queue_no !== regularCurrent && client.client_queue_no !== fastCurrent)
+        .forEach(client => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${client.client_queue_no}</td>
@@ -131,10 +135,7 @@ function fetchTodayData() {
     .catch(error => console.error('Error fetching today\'s data:', error));
 }
 
-// Automatically fetch today's data every 5 seconds
 setInterval(fetchTodayData, 5000);
-
-// Fetch data immediately on page load
 fetchTodayData();
 
 function updateClientStatus(laneType, action) {

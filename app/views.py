@@ -23,7 +23,7 @@ def display(request):
         today = timezone.now().date()
         regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
         priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first()
-        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)   
+        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)
         data = {
             'regular_lane': {
                 'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"
@@ -36,7 +36,7 @@ def display(request):
         return JsonResponse(data)
     else:
         today = timezone.now().date()
-        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
+        waiting_clients = ClientDetails.objects.filter(client_status='P nding', client_created_date__date=today)
         return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
 
 def success(request):
@@ -58,8 +58,6 @@ def client_ticket(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
     return render(request, 'app/queue.html', {'client': client})
 
-
-
 def update_client_status(request, client_queue_no):
     try:
         client = ClientDetails.objects.get(client_queue_no=client_queue_no)
@@ -69,7 +67,6 @@ def update_client_status(request, client_queue_no):
     except ClientDetails.DoesNotExist:
         return JsonResponse({'message': 'Client not found!'}, status=404)
     
-
 def dashboard(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Check if it's an AJAX request
         today = timezone.now().date()
