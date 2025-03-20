@@ -110,7 +110,7 @@ function fetchTodayData() {
         document.getElementById('regularWaiting').innerText = data.regular_lane.waiting_count || "0";
 
         // Update Priority Lane
-        const fastCurrent = data.regular_lane.client_queue_no || "00";
+        const fastCurrent = data.priority_lane.client_queue_no || "00";
         document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
         document.getElementById('fastWaiting').innerText = data.priority_lane.waiting_count || "0";
 

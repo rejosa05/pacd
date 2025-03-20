@@ -42,7 +42,7 @@
         </div>
     </div>
     <script>
-        function fetchLaneData() {
+        function fetchDisplayData() {
             fetch("{% url 'display_page' %}", {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -50,12 +50,20 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('regular-lane-number').innerText = data.regular_lane.client_queue_no;
-                document.getElementById('priority-lane-number').innerText = data.priority_lane.client_queue_no;
-                document.getElementById('waiting-line-numbers').innerText = data.waiting_clients.join(', ');
-            });
+                // Update Regular Lane
+                document.getElementById('regular-lane-number').innerText = data.regular_lane.client_queue_no || "00";
+    
+                // Update Priority Lane
+                document.getElementById('priority-lane-number').innerText = data.priority_lane.client_queue_no || "00";
+    
+                // Update Waiting Line
+                const waitingLine = document.getElementById('waiting-line-numbers');
+                waitingLine.innerText = data.waiting_clients.join(', ') || "No clients waiting";
+            })
+            .catch(error => console.error('Error fetching display data:', error));
         }
-
-        setInterval(fetchLaneData, 1000); // Fetch data every 5 seconds
+    
+        setInterval(fetchDisplayData, 2000);
+        fetchDisplayData();
     </script>
 {% endblock %}
