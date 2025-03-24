@@ -10,7 +10,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;    
-    background-image: url("{% static 'images/background.jpg' %}");
+    background: url("{% static 'images/background.jpg' %}") no-repeat ;
 }
 
 .container {
@@ -112,7 +112,7 @@ body {
 
 .logo img {
     width: 100px;
-    height: auto;
+    height: 200px;
     margin-bottom: 20px;
 }
 
