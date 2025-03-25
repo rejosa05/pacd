@@ -16,9 +16,17 @@ class ClientDetailsForm(forms.ModelForm):
         ('Priority', 'Priority'),
     )
 
+    DIVISION_TYPE_CHOICES = (
+        ('MSD', 'MSD'),
+        ('RLED', 'RLED'),
+        ('RD/ARD', 'RD/ARD'),
+        ('LHSD','LHSD')
+    )
+
     client_fullname = forms.CharField(max_length=100, required=True)
     client_transaction_type = forms.ChoiceField(choices=TRANSACTION_TYPE_CHOICES)
     client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
+    client_division_type = forms.ChoiceField(choices=DIVISION_TYPE_CHOICES,widget=forms.Select(attrs={'class': 'category-choice'}))
 
     class Meta:
         model = ClientDetails
