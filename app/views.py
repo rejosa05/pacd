@@ -46,21 +46,7 @@ def display(request):
         waiting_clients = ClientDetails.objects.filter(
             client_status='Pending',
             client_created_date__date=today
-        ).exclude(
-            client_queue_no=regular_lane.client_queue_no if regular_lane else None
-        ).exclude(
-            client_queue_no=priority_lane.client_queue_no if priority_lane else None
-        ).order_by('client_queue_no')
-        
-        data = {
-            'regular_lane': {
-                'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"
-            },
-            'priority_lane': {
-                'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"
-            }, 
-            'waiting_clients': list(waiting_clients)
-        }
+        ).values('client_queue_no', 'client_transaction_type')
         
         return JsonResponse({
             'regular_lane': {
@@ -69,7 +55,7 @@ def display(request):
             'priority_lane': {
                 'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"
             },
-            'waiting_clients': list(waiting_clients.values_list('client_queue_no', flat=True))
+            'waiting_clients': list(waiting_clients)
         })
     return render(request, 'app/display.html')
 def success(request):

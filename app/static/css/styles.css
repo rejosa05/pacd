@@ -112,7 +112,7 @@ body {
 
 .logo img {
     width: 100px;
-    height: 200px;
+    height: auto;
     margin-bottom: 20px;
 }
 
@@ -504,6 +504,31 @@ button:hover {
 }
 
 .queue-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.waiting-line-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.waiting-line-table th, .waiting-line-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.waiting-line-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.waiting-line-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.waiting-line-table tr:hover {
     background-color: #f1f1f1;
 }
 
