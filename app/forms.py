@@ -39,6 +39,9 @@ class LoginForm(forms.ModelForm):
 
 class AuthorizedPersonnelForm(forms.ModelForm):
     class Meta:
+        username = forms.CharField(max_length=100, required=True)
+        password = forms.CharField(widget=forms.PasswordInput, required=True)
+
         model = User
         fields = ['username', 'email', 'password', 'first_name', 'last_name']
         widgets = {

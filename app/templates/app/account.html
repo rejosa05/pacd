@@ -1,10 +1,36 @@
 {% extends 'app/base.html' %}
 
-{% block title %}Create Authorized Personnel{% endblock %}
+{% load static %}
+
+{% block title %} PACD TRANSACTION DASHBOARD {% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h1>Create Authorized Personnel</h1>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'account' %}">Accounts</a>
+            <a href="display.html">Display Board</a>
+            <a href="#reports">Reports</a>
+            <a href="#settings">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="user-menu">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name}}</span>
+                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.username|slice:":1"|upper }}" alt="User" class="user-avatar">
+                <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+            </div>
+        </header>
+        <!-- Queue Details Table -->
+        <div class="card queue-details">
+            <h1>Create Authorized Personnel</h1>
     <form method="post">
         <div class="form-group">
             {% csrf_token %}
@@ -12,5 +38,7 @@
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
+        </div>
+    </main>
 </div>
 {% endblock %}
