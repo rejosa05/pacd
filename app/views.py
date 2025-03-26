@@ -30,24 +30,34 @@ def logout_view(request):
 def display(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest': 
         today = timezone.now().date()
-        regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
-        priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first()
-        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)
-        data = {
+
+        regular_lane = ClientDetails.objects.filter(
+            client_lane_type='Regular', 
+            client_status='Pending', 
+            client_created_date__date=today
+            ).first()
+        
+        priority_lane = ClientDetails.objects.filter(
+            client_lane_type='Priority', 
+            client_status='Pending', 
+            client_created_date__date=today
+            ).first()
+        
+        waiting_clients = ClientDetails.objects.filter(
+            client_status='Pending',
+            client_created_date__date=today
+        ).values('client_queue_no', 'client_transaction_type')
+        
+        return JsonResponse({
             'regular_lane': {
                 'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"
             },
             'priority_lane': {
                 'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"
-            }, 
+            },
             'waiting_clients': list(waiting_clients)
-        }
-        return JsonResponse(data)
-    else:
-        today = timezone.now().date()
-        waiting_clients = ClientDetails.objects.filter(client_status='P nding', client_created_date__date=today)
-        return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
-
+        })
+    return render(request, 'app/display.html')
 def success(request):
     return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
 

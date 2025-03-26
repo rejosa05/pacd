@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="info-box">
-                    <h2>Fast Lane</h2>
+                    <h2>Priority Lane</h2>
                     <div class="number" id="priority-lane-number">
                         {% if priority_lane %}
                             {{ priority_lane.client_queue_no }}
@@ -27,22 +27,28 @@
                 </div>
             </div>
             <div class="info-box bottom-box">
-                <h2>Waiting Line</h2>
-                <div class="number" id="waiting-line-numbers">
-                    {% for client in waiting_clients %}
-                        {{ client.client_queue_no }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </div>
+                <h2> WAITING </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Queue Number</th>
+                            <th>Transaction Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="waiting-line-table">
+
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="right-section">
             <div class="logo-box">
-                <img src="https://placehold.co/600x600/1a73e8/ffffff?text=Your+Logo" alt="Logo">
+                <img src="{% static 'images/image1.jpg' %}" alt="Logo">
             </div>
         </div>
     </div>
     <script>
-        function fetchLaneData() {
+        function fetchDisplayData() {
             fetch("{% url 'display_page' %}", {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -50,12 +56,32 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('regular-lane-number').innerText = data.regular_lane.client_queue_no;
-                document.getElementById('priority-lane-number').innerText = data.priority_lane.client_queue_no;
-                document.getElementById('waiting-line-numbers').innerText = data.waiting_clients.join(', ');
-            });
-        }
+                // Update Regular Lane
+                const regularLaneNumber = data.regular_lane.client_queue_no || '00';
+                document.getElementById('regular-lane-number').innerText = regularLaneNumber;
+    
+                // Update Priority Lane
+                const priorityLaneNumber = data.priority_lane.client_queue_no || '00';
+                document.getElementById('priority-lane-number').innerText = priorityLaneNumber;
+    
+                const waitingLineTable = document.getElementById('waiting-line-table');
+                waitingLineTable.innerHTML = ''; // Clear the table body
 
-        setInterval(fetchLaneData, 1000); // Fetch data every 5 seconds
+                data.waiting_clients
+                .filter(client => client.client_queue_no !== regularLaneNumber && client.client_queue_no !== priorityLaneNumber)
+                .forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.client_queue_no}</td>
+                    <td>${client.client_transaction_type}</td>
+                `;
+                waitingLineTable.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching display data:', error));
+        }
+    
+        setInterval(fetchDisplayData, 2000);
+        fetchDisplayData();
     </script>
 {% endblock %}
