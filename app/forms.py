@@ -46,16 +46,21 @@ class LoginForm(forms.ModelForm):
 
 
 class AuthorizedPersonnelForm(forms.ModelForm):
-    class Meta:
-        username = forms.CharField(max_length=100, required=True)
-        password = forms.CharField(widget=forms.PasswordInput, required=True)
+    DIVISION_CHOICES = (
+        ('MSD', 'MSD'),
+        ('RLED', 'RLED'),
+        ('RD/ARD', 'RD/ARD'),
+        ('LHSD', 'LHSD'),
+    )
 
+    username = forms.CharField(max_length=100, required=True)
+    password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
+    first_name = forms.CharField(max_length=100, required=True)
+    lastname = forms.CharField(max_length=100, required=True)
+    position = forms.CharField(max_length=100, required=True)
+    division = forms.ChoiceField(choices=DIVISION_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control', 'id': 'division-select'}))
+    unit = forms.ChoiceField(required=False, widget=forms.Select(attrs={'class': 'form-control', 'id': 'unit-select'}))
+
+    class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = ['username', 'password', 'first_name', 'last_name', 'division', 'unit', 'position']

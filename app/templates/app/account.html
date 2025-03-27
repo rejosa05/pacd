@@ -30,14 +30,37 @@
         </header>
         <!-- Queue Details Table -->
         <div class="card queue-details">
-            <h1>Create Authorized Personnel</h1>
-    <form method="post">
-        <div class="form-group">
-            {% csrf_token %}
-            {{ form.as_p }}
-        </div>
-        <button type="submit" class="btn btn-primary">Create</button>
-    </form>
+            <h2>Create Account</h2>
+            <form method="POST" action="{% url 'account' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    {{ form.username }}
+                    <label for="password">Password</label>
+                    {{ form.password }}
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="form-group">
+                    <label for="division">Division</label>
+                    {{ form.division }}
+                </div>
+                <div class="form-group">
+                    <label for="unit">Unit</label>
+                    {{ form.unit }}
+                </div>
+                <div class="form-group">
+                    <label for="unit">Position</label>
+                    {{ form.position }}
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
         </div>
     </main>
 </div>
