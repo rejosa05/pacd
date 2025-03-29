@@ -2,7 +2,30 @@ from django.db import models
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
+
+class AccountDetails(models.Model):
+    username = models.CharField(max_length=100,unique=True)
+    password = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    divisions = models.CharField(max_length=100)
+    unit = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username} ({self.first_name} {self.last_name})"
     
+    def set_password(self,raw_password):
+        self.password = make_password(raw_password)
+
+    def save(self, *args, **kwargs):
+        # Ensure the password is hashed when creating a new user or updating the password
+        if not self.pk or AccountDetails.objects.filter(pk=self.pk).exists() and \
+                AccountDetails.objects.get(pk=self.pk).password != self.password:
+            self.password = make_password(self.password)
+        super(AccountDetails, self).save(*args, **kwargs)
 class ClientDetails(models.Model):
     client_fullname = models.CharField(max_length=100)
     client_queue_no = models.PositiveIntegerField(default=1)
@@ -34,7 +57,7 @@ def set_queue_no(sender, instance, **kwargs):
     if not instance.client_queue_no or instance.client_queue_no == 1:
         instance.client_queue_no = ClientDetails.get_queue_no()
         
-class HislotyLog(models.Model):
+class HisloryLog(models.Model):
     action = models.CharField(max_length=100)
     client = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='history_logs')
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -50,16 +73,15 @@ def log_client_save(sender, instance, created, **kwargs):
         action = 'created'
     else:
         action = 'updated'
-    HislotyLog.objects.create(
+    HisloryLog.objects.create(
         client=instance,
         action=action,
         timestamp=timezone.now()
     )
-    print(HislotyLog.objects.all())
 
 @receiver(post_delete, sender=ClientDetails)
 def log_client_delete(sender, instance, **kwargs):
-    HislotyLog.objects.create(
+    HisloryLog.objects.create(
         client=instance,
         action='deleted',
         date=timezone.now()

@@ -1,8 +1,6 @@
 from django import forms
-from .models import ClientDetails
+from .models import ClientDetails, AccountDetails
 from django.utils import timezone
-from django.contrib.auth.models import User
-
 class ClientDetailsForm(forms.ModelForm):
     TRANSACTION_TYPE_CHOICES = (
         ('Inquiry', 'Inquiry'),
@@ -46,21 +44,12 @@ class LoginForm(forms.ModelForm):
 
 
 class AuthorizedPersonnelForm(forms.ModelForm):
-    DIVISION_CHOICES = (
-        ('MSD', 'MSD'),
-        ('RLED', 'RLED'),
-        ('RD/ARD', 'RD/ARD'),
-        ('LHSD', 'LHSD'),
-    )
-
-    username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
-    first_name = forms.CharField(max_length=100, required=True)
-    lastname = forms.CharField(max_length=100, required=True)
-    position = forms.CharField(max_length=100, required=True)
-    division = forms.ChoiceField(choices=DIVISION_CHOICES, required=True, widget=forms.Select(attrs={'class': 'form-control', 'id': 'division-select'}))
-    unit = forms.ChoiceField(required=False, widget=forms.Select(attrs={'class': 'form-control', 'id': 'unit-select'}))
-
     class Meta:
-        model = User
-        fields = ['username', 'password', 'first_name', 'last_name', 'division', 'unit', 'position']
+        model = AccountDetails
+        fields = ['username', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position']
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if AccountDetails.objects.filter(username=username).exists():
+            raise forms.ValidationError("Username already exists.")
+        return username

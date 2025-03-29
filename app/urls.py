@@ -2,7 +2,7 @@ from django.urls import path
 from .views import home, display, dashboard, login_view, logout_view, client_details, create_authorized_personnel , update_client_status, client_ticket
 
 urlpatterns = [
-    path('', home, name="hellow_world"),
+    path('', login_view, name="hogins"),
     path('home/', home,name="home"),
     path('display-all/', display, name="display_page"),
     path('dashboard/', dashboard, name="dashboard"),
