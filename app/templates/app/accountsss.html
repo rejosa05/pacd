@@ -1,0 +1,85 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+{% block title %} PACD TRANSACTION DASHBOARD {% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'account' %}">Accounts</a>
+            <a href="display.html">Display Board</a>
+            <a href="#reports">Reports</a>
+            <a href="#settings">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>Dashboard</h1>
+            <div class="user-menu">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name}}</span>
+                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.username|slice:":1"|upper }}" alt="User" class="user-avatar">
+                <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        {% if messages %}
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                {% for message in messages %}
+                    alert("{{ message }}");  // Show alert for each flashed message
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+  
+        
+        <div class="card queue-details">
+            <h2>Create Account</h2>
+            <form method="POST" action="{% url 'account' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="user">Username</label>
+                    {{ form.user }}
+                    <label for="password">Password</label>
+                    {{ form.password }}
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="form-group">
+                    <label for="division">Division</label>
+                    <select name="divisions" id="division-select">
+                        <option value="">Select Division</option>
+                        <option value="MSD">MSD</option>
+                        <option value="LHSD">LHSD</option>
+                        <option value="RD/ARD">RD/ARD</option>
+                        <option value="RLED">RLED</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="unit">Unit</label>
+                    <select name="unit" id="unit-select">
+                        <option value="">Select Unit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="unit">Position</label>
+                    {{ form.position }}
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

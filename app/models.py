@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 
 class AccountDetails(models.Model):
-    username = models.CharField(max_length=100,unique=True)
+    user = models.CharField(max_length=100, null=True, unique=True)
     password = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -15,7 +15,7 @@ class AccountDetails(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.username} ({self.first_name} {self.last_name})"
+        return f"{self.user} ({self.first_name} {self.last_name})"
     
     def set_password(self,raw_password):
         self.password = make_password(raw_password)
@@ -26,6 +26,18 @@ class AccountDetails(models.Model):
                 AccountDetails.objects.get(pk=self.pk).password != self.password:
             self.password = make_password(self.password)
         super(AccountDetails, self).save(*args, **kwargs)
+
+        self.create_django_user()
+    
+    def create_django_user(self):
+    # Create or get a Django User based on the 'user' field
+        user, created = AccountDetails.objects.get_or_create(user=self.user)
+        if created:
+            # Set the password for the Django User using the hashed password
+            user.set_password(self.password)
+            user.first_name = self.first_name
+            user.last_name = self.last_name
+            user.save()
 class ClientDetails(models.Model):
     client_fullname = models.CharField(max_length=100)
     client_queue_no = models.PositiveIntegerField(default=1)
@@ -86,4 +98,3 @@ def log_client_delete(sender, instance, **kwargs):
         action='deleted',
         date=timezone.now()
     )
-

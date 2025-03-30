@@ -1,6 +1,7 @@
 from django import forms
 from .models import ClientDetails, AccountDetails
 from django.utils import timezone
+from django.contrib.auth.hashers import check_password, is_password_usable
 class ClientDetailsForm(forms.ModelForm):
     TRANSACTION_TYPE_CHOICES = (
         ('Inquiry', 'Inquiry'),
@@ -36,20 +37,34 @@ class ClientDetailsForm(forms.ModelForm):
         if commit:
             isinstance.save()
         return instance
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100, required=True, label="Username")
+    password = forms.CharField(widget=forms.PasswordInput, required=True, label="Password")
 
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("user")
+        password = cleaned_data.get("password")
 
-class LoginForm(forms.ModelForm):
-    username = forms.CharField(max_length=100, required=True)
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
-
+        if username and password:
+            try:
+                user = AccountDetails.objects.get(user=username)
+                
+                # Ensure the password is hashed
+                if not is_password_usable(user.password) or not check_password(password, user.password):
+                    raise forms.ValidationError("Invalid username or password.")
+            except AccountDetails.DoesNotExist:
+                raise forms.ValidationError("Invalid username or password.")
+        
+        return cleaned_data
 
 class AuthorizedPersonnelForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
     class Meta:
         model = AccountDetails
-        fields = ['username', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position']
+        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position']
     def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if AccountDetails.objects.filter(username=username).exists():
+        user = self.cleaned_data.get('user')
+        if AccountDetails.objects.filter(user=user).exists():
             raise forms.ValidationError("Username already exists.")
-        return username
+        return user

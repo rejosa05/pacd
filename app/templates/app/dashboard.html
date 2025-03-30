@@ -21,10 +21,10 @@
 
     <main class="main-content">
         <header class="top-bar">
-            <h1>Dashboard</h1>
+            <h1>Dashboard {{user.divisions}} {{user.unit}}</h1>
             <div class="user-menu">
-                <span class="user-name">{{ user.first_name }} {{ user.last_name}}</span>
-                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.username|slice:":1"|upper }}" alt="User" class="user-avatar">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name}} {{user.position}}</span>
+                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.user|slice:":1"|upper }}" alt="User" class="user-avatar">
                 <a href="{% url 'logout' %}" class="logout-button">Logout</a>
             </div>
         </header>
