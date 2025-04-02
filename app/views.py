@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import check_password
 def home(request):
     print('hello world')
     return render(request, 'app/base.html')
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -20,7 +21,7 @@ def login_view(request):
             user = AccountDetails.objects.filter(user=username).first()
             if user:
                 request.session['username'] = user.user
-                return redirect("dashboard")  # Redirect to home page or dashboard
+                return redirect("dashboard")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
         else:
@@ -29,18 +30,6 @@ def login_view(request):
         form = LoginForm()
     
     return render(request, "app/login.html", {"form": form})
-        
-#def login_view(request):
-    #if request.method  == 'POST':
-       # username = request.POST.get('username')
-       # password = request.POST.get('password')
-       # user = authenticate(request, username = username, password = password)
-       # if user is not None:
-       #     login(request, user)
-       #     return redirect('dashboard')
-       # else:
-       #     return render(request, 'app/login.html', {'error': 'Invalid Credentials'})
-    #return render(request, 'app/login.html')
 
 def logout_view(request):
     logout(request)
@@ -87,17 +76,8 @@ def client_ticket(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
     return render(request, 'app/queue.html', {'client': client})
 
-def update_client_status(request, client_queue_no):
-    try:
-        client = ClientDetails.objects.get(client_queue_no=client_queue_no)
-        client.client_status = 'Served'
-        client.save()
-        return redirect('dashboard_page')
-    except ClientDetails.DoesNotExist:
-        return JsonResponse({'message': 'Client not found!'}, status=404)
-
 def dashboard(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Check if it's an AJAX request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
 
         regular_lane = ClientDetails.objects.filter(
@@ -178,22 +158,27 @@ def create_authorized_personnel(request):
     if request.method == 'POST':
         form = AuthorizedPersonnelForm(request.POST)
         
-        # Check if form is valid before accessing cleaned_data
         if form.is_valid():
-            username = form.cleaned_data.get("user")  # Access cleaned_data after this check
+            username = form.cleaned_data.get("user")
             
-            # Check if the user already exists
             if AccountDetails.objects.filter(user=username).exists():
                 messages.error(request, "User already exists!")
             else:
                 account = form.save(commit=False)
-                account.set_password(form.cleaned_data["password"])  # Save hashed password
+                account.set_password(form.cleaned_data["password"]) 
                 account.save()
                 messages.success(request, "Account created successfully!")
-                return redirect("account")  # Redirect to avoid duplicate POST on refresh
+                return redirect("account")
         else:
             print(form.errors)
             messages.error(request, "User already exists!")
     else:
         form = AuthorizedPersonnelForm()
-    return render(request, 'app/account.html', {'form': form})
+    
+    username = request.session.get('username')
+    
+    if not username:
+        return redirect("login")
+    user = AccountDetails.objects.filter(user=username).first()
+    
+    return render(request, 'app/account.html', {'form': form, 'user': user})

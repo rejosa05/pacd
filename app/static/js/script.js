@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
         'MSD': ['HRMDU', 'Cashier', 'Finance'],
         'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy'],
         'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
-        'RLED': ['Unit 1', 'Unit 2', 'Unit 3']
+        'RLED': ['RLED'],
+        'SUPER': ['Super Admin'],
     };
 
     divisionSelect.addEventListener("change", function () {

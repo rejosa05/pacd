@@ -15,11 +15,10 @@
         {% if messages %}
         <ul>
             {% for message in messages %}
-                <li>{{ message }}</li>
+                <p style="color: red"> {{ message }} </p>
             {% endfor %}
         </ul>
         {% endif %}
-
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
