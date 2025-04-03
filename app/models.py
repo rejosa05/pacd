@@ -21,7 +21,6 @@ class AccountDetails(models.Model):
         self.password = make_password(raw_password)
 
     def save(self, *args, **kwargs):
-        # Ensure the password is hashed when creating a new user or updating the password
         if not self.pk or AccountDetails.objects.filter(pk=self.pk).exists() and \
                 AccountDetails.objects.get(pk=self.pk).password != self.password:
             self.password = make_password(self.password)
@@ -30,19 +29,19 @@ class AccountDetails(models.Model):
         self.create_django_user()
     
     def create_django_user(self):
-    # Create or get a Django User based on the 'user' field
         user, created = AccountDetails.objects.get_or_create(user=self.user)
         if created:
-            # Set the password for the Django User using the hashed password
             user.set_password(self.password)
             user.first_name = self.first_name
             user.last_name = self.last_name
             user.save()
+    
 class ClientDetails(models.Model):
     client_fullname = models.CharField(max_length=100)
     client_queue_no = models.PositiveIntegerField(default=1)
     client_lane_type = models.CharField(max_length=100)
     client_transaction_type = models.CharField(max_length=100)
+    client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
     
@@ -68,24 +67,34 @@ class ClientDetails(models.Model):
 def set_queue_no(sender, instance, **kwargs):
     if not instance.client_queue_no or instance.client_queue_no == 1:
         instance.client_queue_no = ClientDetails.get_queue_no()
+
+class DivisionLog(models.Model):
+    client_id = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='pacd_actions')
+    division = models.CharField(max_length=100)
+    transaction_details = models.TextField()
+    unit = models.CharField(max_length=100)
+    action_type = models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.action
         
-class HisloryLog(models.Model):
+class HistoryLog(models.Model):
     action = models.CharField(max_length=100)
     client = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='history_logs')
     timestamp = models.DateTimeField(auto_now_add=True)
-    ClientDetails = models.TextField()
 
     def __str__(self):
         return f"{self.client.client_fullname} - {self.action} at {self.timestamp}"
     
-
 @receiver(post_save, sender=ClientDetails)
 def log_client_save(sender, instance, created, **kwargs):
     if created:
         action = 'created'
     else:
         action = 'updated'
-    HisloryLog.objects.create(
+    HistoryLog.objects.create(
         client=instance,
         action=action,
         timestamp=timezone.now()
@@ -93,7 +102,7 @@ def log_client_save(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=ClientDetails)
 def log_client_delete(sender, instance, **kwargs):
-    HisloryLog.objects.create(
+    HistoryLog.objects.create(
         client=instance,
         action='deleted',
         date=timezone.now()

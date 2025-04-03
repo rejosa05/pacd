@@ -1,13 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout, login as django_login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import ClientDetails, AccountDetails
+from .models import ClientDetails, AccountDetails, DivisionLog
 from .forms import ClientDetailsForm, AuthorizedPersonnelForm, LoginForm
 from django.utils import timezone
-from django.contrib.auth.hashers import check_password
 
 def home(request):
     print('hello world')
@@ -95,6 +92,7 @@ def dashboard(request):
         client_details = ClientDetails.objects.filter(client_created_date__date=today, client_status='Pending').values(
             'client_queue_no',
             'client_fullname',
+            'client_gender',
             'client_lane_type',
             'client_transaction_type',
             'client_status',
@@ -104,6 +102,9 @@ def dashboard(request):
         return JsonResponse({
             'regular_lane': {
                 'client_queue_no': regular_lane.client_queue_no if regular_lane else "00",
+                'client_fullname': regular_lane.client_fullname if regular_lane else "No client",
+                'client_transaction_type': regular_lane.client_transaction_type if regular_lane else "No client",
+                'client_created_date': regular_lane.client_created_date.isoformat() if regular_lane else "No client",
                 'waiting_count': ClientDetails.objects.filter(
                     client_lane_type='Regular',
                     client_status='Pending',
@@ -131,28 +132,45 @@ def dashboard(request):
 
 def update_client_status(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        username = request.session.get('username')
         lane_type = request.POST.get('lane_type')
         action = request.POST.get('action')
+        division = request.POST.get('division')  # Division from the frontend
+        unit = request.POST.get('unit')  # Unit from the frontend
+        transaction_details = request.POST.get('remarks', '')  # Optional remarks
         today = timezone.now().date()
 
+        # Get the current client in the specified lane
         client = ClientDetails.objects.filter(
-            client_lane_type = lane_type.capitalize(),
-            client_status = 'Pending',
-            client_created_date__date = today
+            client_lane_type=lane_type.capitalize(),
+            client_status='Pending',
+            client_created_date__date=today
         ).order_by('client_queue_no').first()
 
-        if client:
-            if action == 'served':
-                client.client_status = 'Served'
-            elif action == 'skipped':
-                client.client_status = 'Skipped'
-            client.save()
 
-            return JsonResponse({'message': 'Success', 'client_queue_no' : client.client_queue_no})
+        if client:
+            if action == 'forwarded':
+                client.client_status = 'Forwarded'
+            elif action == 'Served':
+                client.client_status = 'Served'
+            elif action == 'Skipped':
+                client.client_status = 'Skipped'
+            # Save to DivisionLog
+            client.save()
+            DivisionLog.objects.create(
+                client_id = client,
+                division = division,
+                unit = unit,
+                transaction_details = transaction_details,
+                action_type = action,
+                user = username
+            )
+
+            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
         else:
-            return JsonResponse({'message': 'NO pending client in this lane'}, status = 404)
+            return JsonResponse({'message': 'No pending client in this lane'}, status=404)
     else:
-        return JsonResponse({'message': 'success', 'client_queue_no': client.client_queue_no})
+        return JsonResponse({'message': 'Invalid request'}, status=400)
     
 def create_authorized_personnel(request):
     if request.method == 'POST':

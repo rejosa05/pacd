@@ -2,6 +2,7 @@ from django import forms
 from .models import ClientDetails, AccountDetails
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password, is_password_usable
+
 class ClientDetailsForm(forms.ModelForm):
     TRANSACTION_TYPE_CHOICES = (
         ('Inquiry', 'Inquiry'),
@@ -15,21 +16,18 @@ class ClientDetailsForm(forms.ModelForm):
         ('Priority', 'Priority'),
     )
 
-    DIVISION_TYPE_CHOICES = (
-        ('MSD', 'MSD'),
-        ('RLED', 'RLED'),
-        ('RD/ARD', 'RD/ARD'),
-        ('LHSD','LHSD')
+    GENDER_CHOICES = (
+        ('Male','Male'),
+        ('Female','Female'),
     )
 
-    client_fullname = forms.CharField(max_length=100, required=True)
+    client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
     client_transaction_type = forms.ChoiceField(choices=TRANSACTION_TYPE_CHOICES)
     client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
-    client_division_type = forms.ChoiceField(choices=DIVISION_TYPE_CHOICES,widget=forms.Select(attrs={'class': 'category-choice'}))
 
     class Meta:
         model = ClientDetails
-        fields = ['client_fullname', 'client_transaction_type', 'client_lane_type']
+        fields = ['client_fullname', 'client_gender', 'client_transaction_type', 'client_lane_type']
     
     def safe (self, commit=True):
         instance = super().safe(commit=False)
@@ -37,9 +35,10 @@ class ClientDetailsForm(forms.ModelForm):
         if commit:
             isinstance.save()
         return instance
+    
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100, required=True, label="Username")
-    password = forms.CharField(widget=forms.PasswordInput, required=True, label="Password")
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username'}), required=True, label="Username")
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}), required=True, label="Password")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -50,7 +49,6 @@ class LoginForm(forms.Form):
             try:
                 user = AccountDetails.objects.get(user=username)
                 
-                # Ensure the password is hashed
                 if not is_password_usable(user.password) or not check_password(password, user.password):
                     raise forms.ValidationError("Invalid username or password.")
             except AccountDetails.DoesNotExist:
