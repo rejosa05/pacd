@@ -1,0 +1,159 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Unit Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'account' %}">Accounts</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>{{ user.unit }} Dashboard</h1>
+            <div class="user-menu">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+                <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card stats-card">
+                <h3>Regular Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="regularCurrent"></span>
+                        <div class="queue-details">
+                            <h4>Queue Details</h4>
+                            <p><strong>Full Name:</strong> <span id="regularFullName"></span></p>
+                            <p><strong>Transaction Details:</strong> <span id="regularTransactionDetails">N/A</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="regularServed">Served</button>
+                    <button class="action-button skipped-button" id="regularSkipped">Skipped</button>
+                </div>
+            </div>
+
+            <div class="card stats-card">
+                <h3>Fast Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="fastCurrent">
+                        </span>
+                    </div>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="fastServed">Served</button>
+                    <button class="action-button skipped-button" id="fastSkipped">Skipped</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Queue Details Table -->
+        <div class="card queue-details">
+            <h3>Queue Details</h3>
+            <table class="queue-table">
+                <thead>
+                    <tr>
+                        <th>Queue Number</th>
+                        <th>Full Name</th>
+                        <th>Transaction Details</th>
+                    </tr>
+                </thead>
+                <tbody id="queueDetailsTable">
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+function fetchTodayData() {
+    fetch("{% url 'dashboard' %}", {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update Regular Lane
+        const regularCurrent = data.regular_lane.client_queue_no || "00";
+        document.getElementById('regularCurrent').innerText = regularCurrent;
+
+        if (data.regular_lane.client_queue_no) {
+            document.getElementById('regularFullName').innerText = data.regular_lane.client_fullname || "N/A";
+            document.getElementById('regularTransactionDetails').innerText = data.regular_lane.transaction_details || "N/A";
+        } else {
+            document.getElementById('regularFullName').innerText = "N/A";
+            document.getElementById('regularTransactionDetails').innerText = "N/A";
+        }
+
+        // Update Priority Lane
+        const fastCurrent = data.priority_lane.client_queue_no || "00";
+        document.getElementById('fastCurrent').innerText = fastCurrent;
+
+        const queueDetailsTable = document.getElementById('queueDetailsTable');
+        queueDetailsTable.innerHTML = ''; // Clear the table body
+
+        data.client_details.forEach(client => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${client.client_id__client_queue_no}</td>
+                <td>${client.client_id__client_fullname}</td>
+                <td>${client.transaction_details}</td>
+            `;
+            queueDetailsTable.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching today\'s data:', error));
+}
+
+setInterval(fetchTodayData, 5000);
+fetchTodayData();
+
+function updateClientStatus(laneType, action) {
+    fetch("{% url 'update_client_status' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+        },
+        body: `lane_type=${laneType}&action=${action}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        fetchTodayData();
+    })
+    .catch(error => console.error('Error updating client status:', error));
+}
+
+document.getElementById('regularServed').addEventListener('click', () => updateClientStatus('Regular', 'served'));
+document.getElementById('regularSkipped').addEventListener('click', () => updateClientStatus('Regular', 'skipped'));
+document.getElementById('fastServed').addEventListener('click', () => updateClientStatus('Priority', 'served'));
+document.getElementById('fastSkipped').addEventListener('click', () => updateClientStatus('Priority', 'skipped'));
+</script>
+
+{% endblock %}

@@ -1,8 +1,7 @@
 {% extends 'app/base.html' %}
-
 {% load static %}
 
-{% block title %} PACD TRANSACTION DASHBOARD {% endblock %}
+{% block title %}PACD Dashboard{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
@@ -13,18 +12,14 @@
         <nav class="nav-menu">
             <a href="#" class="active">Dashboard</a>
             <a href="{% url 'account' %}">Accounts</a>
-            <a href="display.html">Display Board</a>
-            <a href="#reports">Reports</a>
-            <a href="#settings">Settings</a>
         </nav>
     </aside>
 
     <main class="main-content">
         <header class="top-bar">
-            <h1>Dashboard {{user.divisions}} {{user.unit}}</h1>
+            <h1>PACD Dashboard</h1>
             <div class="user-menu">
-                <span class="user-name">{{ user.first_name }} {{ user.last_name}} {{user.position}}</span>
-                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.user|slice:":1"|upper }}" alt="User" class="user-avatar">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
                 <a href="{% url 'logout' %}" class="logout-button">Logout</a>
             </div>
         </header>
@@ -41,11 +36,10 @@
                             <p><strong>Full Name:</strong> <span id="regularFullName"></span></p>
                             <p><strong>Transaction Type:</strong> <span id="regularTransactionType">N/A</span></p>
                             <p><strong>Date:</strong> <span id="regularDate">N/A</span></p>
-                        </div>             
+                        </div>
                     </div>
                     <form id="startQueueForm">
                         <div class="form-group">
-                            <input type="hidden" id="queueNumber" class="form-control" placeholder="Enter Queue Number" required>
                             <label for="division">Division</label>
                             <select name="divisions" id="division-select">
                                 <option value="">Select Division</option>
@@ -71,7 +65,7 @@
                     <button class="action-button served-button" id="regularServed">Served</button>
                     <button class="action-button forwarded-button" id="regularForwarded">Forwarded</button>
                     <button class="action-button skipped-button" id="regularSkipped">Skipped</button>
-                </div> 
+                </div>
             </div>
 
             <div class="card stats-card">
@@ -91,7 +85,7 @@
                     <button class="action-button served-button" id="fastServed">Served</button>
                     <button class="action-button forwarded-button" id="fastForwarded">Forwarded</button>
                     <button class="action-button skipped-button" id="fastSkipped">Skipped</button>
-                </div> 
+                </div>
             </div>
         </div>
 
@@ -117,6 +111,7 @@
     </main>
 </div>
 
+<script src="{% static 'js/script.js' %}"></script>
 <script>
 function fetchTodayData() {
     fetch("{% url 'dashboard' %}", {

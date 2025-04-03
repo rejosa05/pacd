@@ -44,6 +44,7 @@ class ClientDetails(models.Model):
     client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
+    unit = models.CharField(max_length=100, default='PACD')
     
     def __str__(self):
         return self.client_fullname

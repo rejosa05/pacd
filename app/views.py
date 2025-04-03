@@ -74,6 +74,19 @@ def client_ticket(request, client_id):
     return render(request, 'app/queue.html', {'client': client})
 
 def dashboard(request):
+    username = request.session.get('username')
+
+    if not username:
+        return redirect("login")
+    
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if user.unit == 'PACD':
+        return pacd_dashboard(request, user)
+    else:
+        return unit_dashboard(request, user)
+
+def pacd_dashboard(request, user):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
 
@@ -122,14 +135,50 @@ def dashboard(request):
             'client_details': list(client_details)
         })
 
-    username = request.session.get('username')
-    
-    if not username:
-        return redirect("login")
-    user = AccountDetails.objects.filter(user=username).first()
+    return render(request,'app/pacd_dashboard.html', {'user': user})
 
-    return render(request, 'app/dashboard.html', {'user': user})
+def unit_dashboard(request, user):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        today = timezone.now().date()
 
+        regular_lane = DivisionLog.objects.filter(
+            unit=user.unit,
+            client_id__client_lane_type='Regular',
+            action_type='forwarded',
+            client_id__client_created_date__date=today
+        ).order_by('client_id__client_queue_no').first()
+
+        priority_lane = DivisionLog.objects.filter(
+            unit=user.unit,
+            client_id__client_lane_type='Priority',
+            action_type='forwarded',
+            client_id__client_created_date__date=today
+        ).order_by('client_id__client_queue_no').first()
+
+        client_details = DivisionLog.objects.filter(
+            unit=user.unit,
+            client_id__client_created_date__date=today,
+            action_type='forwarded'
+        ).values(
+            'transaction_details',
+            'client_id__client_queue_no',
+            'client_id__client_fullname',
+        )
+
+        return JsonResponse({
+            'regular_lane': {
+                'client_queue_no': regular_lane.client_id.client_queue_no if regular_lane else "00",
+                'client_fullname': regular_lane.client_id.client_fullname if regular_lane else "No client",
+                'transaction_details': regular_lane.transaction_details if regular_lane else "No transaction details",
+            },
+            'priority_lane': {
+                'client_queue_no': priority_lane.client_id.client_queue_no if priority_lane else "00",
+                'transaction_details': priority_lane.transaction_details if priority_lane else "No transaction details",
+            },
+            'client_details': list(client_details)
+        })
+
+    return render(request,'app/unit_dashboard.html', {'user': user})
 def update_client_status(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         username = request.session.get('username')
