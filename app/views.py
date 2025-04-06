@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import ClientDetails, AccountDetails, DivisionLog
 from .forms import ClientDetailsForm, AuthorizedPersonnelForm, LoginForm
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     print('hello world')
@@ -163,6 +164,8 @@ def unit_dashboard(request, user):
             'transaction_details',
             'client_id__client_queue_no',
             'client_id__client_fullname',
+            'client_id__client_lane_type',
+            'client_id__client_gender',
         )
 
         return JsonResponse({
@@ -249,3 +252,31 @@ def create_authorized_personnel(request):
     user = AccountDetails.objects.filter(user=username).first()
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
+
+
+@csrf_exempt  # Add this decorator
+def update_division_log(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        client_id = request.POST.get('client_id')
+        remarks = request.POST.get('remarks')
+        csm = request.POST.get('csm') == 'true'  # Convert to boolean
+        css = request.POST.get('css') == 'true'  # Convert to boolean
+
+        try:
+            division_log = DivisionLog.objects.filter(client_id=client_id).first() # Assuming client_id is unique
+            if division_log:
+                division_log.action_type = 'resolved'  # Update action_type
+                division_log.remarks = remarks  # Save remarks
+                division_log.csm = csm  # Save CSM checkbox value
+                division_log.css = css  # Save CSS checkbox value
+                division_log.save()
+                return JsonResponse({'message': 'DivisionLog updated successfully'})
+            else:
+                return JsonResponse({'message': 'DivisionLog not found'}, status=404)
+
+        except DivisionLog.DoesNotExist:
+            return JsonResponse({'message': 'DivisionLog not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)

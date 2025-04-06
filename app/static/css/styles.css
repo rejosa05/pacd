@@ -35,12 +35,7 @@ body {
     min-height: 950px;
 }
 
-.sidebar {
-    width: 250px;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
+
 
 .logo {
     margin-bottom: 30px;
@@ -108,12 +103,6 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 30px;
-}
-
-.logo img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 20px;
 }
 
 .login-box {

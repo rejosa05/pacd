@@ -41,6 +41,7 @@ class ClientDetails(models.Model):
     client_queue_no = models.PositiveIntegerField(default=1)
     client_lane_type = models.CharField(max_length=100)
     client_transaction_type = models.CharField(max_length=100)
+    client_contact = models.CharField(max_length=10, null=True)
     client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
@@ -77,6 +78,12 @@ class DivisionLog(models.Model):
     action_type = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
+    unit_user = models.CharField(max_length=100, null=True)
+    date_resolved = models.DateTimeField(null=True, blank=True)
+    remarks = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=100, null=True)
+    form = models.CharField(max_length=100, null=True)
+
 
     def __str__(self):
         return self.action

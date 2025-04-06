@@ -1,0 +1,213 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Unit Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'account' %}">Accounts</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>{{ user.unit }} Dashboard</h1>
+            <div class="user-menu">
+                <img src="{% static 'images/user.png' %}" alt="User" class="user-icon"
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+                <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        <!-- <div class="dashboard-grid">
+            <div class="card stats-card">
+                <h3>Regular Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="regularCurrent"></span>
+                        <div class="queue-details">
+                            <h4>Queue Details</h4>
+                            <p><strong>Full Name:</strong> <span id="regularFullName"></span></p>
+                            <p><strong>Transaction Details:</strong> <span id="regularTransactionDetails">N/A</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="regularServed">Served</button>
+                    <button class="action-button skipped-button" id="regularSkipped">Skipped</button>
+                </div>
+            </div>
+
+            <div class="card stats-card">
+                <h3>Fast Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="fastCurrent">
+                        </span>
+                    </div>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="fastServed">Served</button>
+                    <button class="action-button skipped-button" id="fastSkipped">Skipped</button>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Queue Details Table -->
+        <div class="card queue-details">
+            <h3>Queue Details</h3>
+            <table class="queue-table" id="queueTable">
+                <thead>
+                    <tr>
+                        <th>Queue Number</th>
+                        <th>Full Name</th>
+                        <th>Lane Type</th>
+                        <th>Transaction Details</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="queueDetailsTable">
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div id="detailsModal" class="modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 1000;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Client Details</h5>
+            <button type="button" class="close-button" onclick="closeModal()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Queue Number:</strong> <span id="modalQueueNumber"></span></p>
+            <p><strong>Full Name:</strong> <span id="modalFullName"></span></p>
+            <p><strong>Transaction Details:</strong> <span id="modalTransactionDetails"></span></p>
+            <!-- Add more details here as needed -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="close-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalBackdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
+<script>
+function fetchTodayData() {
+    fetch("{% url 'dashboard' %}", {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const queueDetailsTable = document.getElementById('queueDetailsTable');
+        queueDetailsTable.innerHTML = ''; // Clear the table body
+
+        data.client_details.forEach(client => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="queue-number">${client.client_id__client_queue_no}</td>
+                <td class="full-name">${client.client_id__client_fullname}</td>
+                <td class="lane-type">${client.client_id__client_lane_type}</td>
+                <td class="transaction-details">${client.transaction_details}</td>
+                <td><button class="view-details-button">View Details</button></td>
+            `;
+            queueDetailsTable.appendChild(row);
+
+            row.querySelector('.view-details-button').addEventListener('click', function() {
+                document.getElementById('modalQueueNumber').innerText = client.client_id__client_queue_no;
+                document.getElementById('modalFullName').innerText = client.client_id__client_fullname;
+                document.getElementById('modalTransactionDetails').innerText = client.transaction_details;
+                openModal();
+            });
+        });
+    })
+    .catch(error => console.error('Error fetching today\'s data:', error));
+}
+
+function openModal() {
+    document.getElementById('detailsModal').style.display = 'block';
+    document.getElementById('modalBackdrop').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('detailsModal').style.display = 'none';
+    document.getElementById('modalBackdrop').style.display = 'none';
+}
+
+setInterval(fetchTodayData, 5000);
+fetchTodayData();
+
+function updateClientStatus(laneType, action) {
+    fetch("{% url 'update_client_status' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+        },
+        body: `lane_type=${laneType}&action=${action}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        fetchTodayData();
+    })
+    .catch(error => console.error('Error updating client status:', error));
+}
+
+document.getElementById('regularServed').addEventListener('click', () => updateClientStatus('Regular', 'served'));
+document.getElementById('regularSkipped').addEventListener('click', () => updateClientStatus('Regular', 'skipped'));
+document.getElementById('fastServed').addEventListener('click', () => updateClientStatus('Priority', 'served'));
+document.getElementById('fastSkipped').addEventListener('click', () => updateClientStatus('Priority', 'skipped'));
+</script>
+
+<style>
+.view-details-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+</style>
+
+{% endblock %}
