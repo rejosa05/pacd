@@ -6,8 +6,17 @@
     <title>{% block title %} {% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    
     <script src="{% static 'js/script.js'%}"></script>
+    <script>
+        window.dashboardConfig = {
+          dashboardUrl: "{% url 'dashboard' %}",
+          resolvedClientsUrl: "{% url 'resolved_clients' %}",
+          updateDivisionLogUrl: "{% url 'update_division_log' %}",
+          csrfToken: "{{ csrf_token }}"
+        };
+    </script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
 </head>
 <body>
     {% block content %}

@@ -166,6 +166,7 @@ def unit_dashboard(request, user):
             'client_id__client_fullname',
             'client_id__client_lane_type',
             'client_id__client_gender',
+            'client_id__id',
         )
 
         return JsonResponse({
@@ -178,10 +179,36 @@ def unit_dashboard(request, user):
                 'client_queue_no': priority_lane.client_id.client_queue_no if priority_lane else "00",
                 'transaction_details': priority_lane.transaction_details if priority_lane else "No transaction details",
             },
-            'client_details': list(client_details)
+            'client_details': list(client_details),
         })
 
     return render(request,'app/unit_dashboard.html', {'user': user})
+
+def resolved_clients(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        today = timezone.now().date()
+        username = request.session.get('username')
+        user = AccountDetails.objects.filter(user=username).first()
+        unit = user.unit
+        resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
+        print(unit)
+        
+        serialized_clients = []
+        for client in resolved_clients:
+            serialized_clients.append({
+                'client_id__client_queue_no': client.client_id.client_queue_no,
+                'client_id__client_fullname': client.client_id.client_fullname,
+                'client_id__client_gender': client.client_id.client_gender,
+                'client_id__client_lane_type': client.client_id.client_lane_type,
+                'remarks': client.remarks,
+                'form': client.form,
+                'unit_user': client.unit_user,
+                'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
+            })
+        
+        return JsonResponse({'resolved_clients': serialized_clients})
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)
 def update_client_status(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         username = request.session.get('username')
@@ -254,29 +281,36 @@ def create_authorized_personnel(request):
     return render(request, 'app/account.html', {'form': form, 'user': user})
 
 
-@csrf_exempt  # Add this decorator
+@csrf_exempt
 def update_division_log(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
         remarks = request.POST.get('remarks')
-        csm = request.POST.get('csm') == 'true'  # Convert to boolean
-        css = request.POST.get('css') == 'true'  # Convert to boolean
+        csm_checked = request.POST.get('csm')
+        css_checked = request.POST.get('css')
+        form = 'None'
 
+        if csm_checked:
+            form = 'CSM'
+        elif css_checked:
+            form = 'CSS'
+            
         try:
-            division_log = DivisionLog.objects.filter(client_id=client_id).first() # Assuming client_id is unique
-            if division_log:
-                division_log.action_type = 'resolved'  # Update action_type
-                division_log.remarks = remarks  # Save remarks
-                division_log.csm = csm  # Save CSM checkbox value
-                division_log.css = css  # Save CSS checkbox value
-                division_log.save()
-                return JsonResponse({'message': 'DivisionLog updated successfully'})
-            else:
-                return JsonResponse({'message': 'DivisionLog not found'}, status=404)
+            division_log = DivisionLog.objects.get(client_id=client_id)
+            division_log.action_type = 'resolved'
+            division_log.status = 'Done'
+            division_log.remarks = remarks
+            division_log.form = form
+            division_log.unit_user = request.session.get('username')
+            division_log.date_resolved = timezone.now()
+            division_log.save()
+            return JsonResponse({'message': 'DivisionLog updated successfully'})
 
         except DivisionLog.DoesNotExist:
+            print("DivisionLog not found for client_id:", client_id)
             return JsonResponse({'message': 'DivisionLog not found'}, status=404)
         except Exception as e:
+            print("Unexpected error:", str(e))
             return JsonResponse({'message': str(e)}, status=500)
-    else:
-        return JsonResponse({'message': 'Invalid request'}, status=400)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)

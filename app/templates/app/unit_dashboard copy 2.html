@@ -78,21 +78,18 @@
         <div class="content">
           <div class="header">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list header-icon"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
-                <h1 class="header-title">Client Transactions Catereds Today</h1>
+                <h1 class="header-title">Client Transactions Resolved Today</h1>
           </div>
           <div class="card">            
-            <div class="table-container1">
-              <table class="table" id="resolvedQueueTable">
+            <div class="table-container">
+              <table class="table" id="queueTable">
                 <thead>
                   <tr>
-                    <th>Queue No.</th>
+                    <th>Queue No. </th>
                     <th>Full Name</th>
                     <th>Gender</th>
                     <th>Type</th>
-                    <th>Remarks</th>
-                    <th>CSS/CSM</th>
-                    <th>Resolved By</th>
-                    <th>Date Resolved</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -122,7 +119,7 @@
               <textarea id="modal-remarks" class="form-input" rows="3"></textarea>
             </div>
             <div class="form-group1">
-              <label class="form-label">CSS/CSM:</label>
+              <label class="form-label">Resolution:</label>
               <div class="checkbox-group">
                 <label>
                   <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
@@ -158,12 +155,12 @@
             console.error("Client data not found for index:", index);
             return;
         }
-        selectedClient = client;
+        selectedClient = client; // Store the selected client for later use
         document.getElementById('modal-fullname').innerText = client.client_id__client_fullname;
         document.getElementById('modal-transaction').innerText = client.transaction_details;
         document.getElementById('modal-queue-no').innerText = client.client_id__client_queue_no;
-        document.getElementById('modal-remarks').value = '';
-        document.getElementById('csm-checkbox').checked = false;
+        document.getElementById('modal-remarks').value = ''; // Clear previous remarks
+        document.getElementById('csm-checkbox').checked = false; // Clear checkbox
         document.getElementById('css-checkbox').checked = false;
         document.getElementById('modalOverlay').style.display = 'flex';
     }
@@ -173,7 +170,7 @@
         selectedClient = null;
     }
 
-function saveModal() {
+    function saveModal() {
     if (!selectedClient) return;
       console.log(selectedClient.client_id__id); // Log the client ID for debugging
     const remarks = document.getElementById('modal-remarks').value;
@@ -197,19 +194,14 @@ function saveModal() {
 })
 .then(data => {
     console.log(data.message);
-    fetchResolvedData();
     fetchTodayData(); // Refresh the dashboard data
-
-    
 })
 .catch(error => console.error('Error updating DivisionLog:', error));
 
     closeModal();
 }
 
-
-
-function fetchTodayData() {
+    function fetchTodayData() {
         fetch("{% url 'dashboard' %}", {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -227,25 +219,12 @@ function fetchTodayData() {
             const tableBody = document.querySelector('#queueTable tbody');
             tableBody.innerHTML = ''; // Clear existing rows
 
-            const priorityClients = clientData.filter(client => client.client_id__client_lane_type === 'Priority');
-        const regularClients = clientData.filter(client => client.client_id__client_lane_type !== 'Priority');
-
-            if (clientData.length === 0) {
-                const emptyRow = document.createElement('tr');
-                const emptyCell = document.createElement('td');
-                emptyCell.colSpan = 5; // Adjust colspan based on your table structure
-                emptyCell.textContent = 'No data available';
-                emptyRow.appendChild(emptyCell);
-                tableBody.appendChild(emptyRow);
-                return;
-            }
-
             clientData.forEach((client, index) => {
                 const row = document.createElement('tr');
 
                 const queueNoCell = document.createElement('td');
                 queueNoCell.class = 'queue-no-cell'; 
-                queueNoCell.textContent = client.client_id__client_queue_no; // Use empty string if undefined
+                queueNoCell.textContent = client.client_id__client_queue_no;
                 row.appendChild(queueNoCell);
 
                 const nameCell = document.createElement('td');
@@ -291,69 +270,5 @@ function fetchTodayData() {
 
     setInterval(fetchTodayData, 5000);
     fetchTodayData();
-
-function fetchResolvedData() {
-    fetch("{% url 'resolved_clients' %}", { // Replace 'resolved_clients' with your actual URL
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        const resolvedTableBody = document.querySelector('#resolvedQueueTable tbody');
-        resolvedTableBody.innerHTML = ''; // Clear existing rows
-
-        data.resolved_clients.forEach(client => {
-            const row = document.createElement('tr');
-
-            const queueNoCell = document.createElement('td');
-            queueNoCell.textContent = client.client_id__client_queue_no;
-            row.appendChild(queueNoCell);
-
-            const nameCell = document.createElement('td');
-            nameCell.textContent = client.client_id__client_fullname;
-            row.appendChild(nameCell);
-
-            const genderCell = document.createElement('td');
-            genderCell.textContent = client.client_id__client_gender;
-            row.appendChild(genderCell);
-
-            const typeCell = document.createElement('td');
-            typeCell.textContent = client.client_id__client_lane_type;
-            row.appendChild(typeCell);
-
-            const remarksCell = document.createElement('td');
-            remarksCell.textContent = client.remarks;
-            row.appendChild(remarksCell);
-
-            const formCell = document.createElement('td');
-            formCell.textContent = client.form;
-            row.appendChild(formCell);
-
-            const resolvedByCell = document.createElement('td');
-            resolvedByCell.textContent = client.unit_user;
-            row.appendChild(resolvedByCell);
-
-            const dateResolvedCell = document.createElement('td');
-            // Format the date as needed
-            const date = new Date(client.date_resolved);
-            const formattedDate = date.toLocaleDateString(); // Example: "MM/DD/YYYY"
-            dateResolvedCell.textContent = formattedDate;
-            row.appendChild(dateResolvedCell);
-
-            resolvedTableBody.appendChild(row);
-        });
-    })
-    .catch(error => console.error('Error fetching resolved clients:', error));
-}
-fetchTodayData();
-fetchResolvedData();
-setInterval(fetchTodayData, 5000);
-setInterval(fetchResolvedData, 5000);
     </script>
 {% endblock %}
