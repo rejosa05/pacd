@@ -69,7 +69,6 @@ def client_details(request):
          form = ClientDetailsForm()
     return render(request, 'app/client.html', {'form': form})
 
-# Client pg display sa ticket to verify his/her number -- fixed/need comment
 def client_ticket(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
     return render(request, 'app/queue.html', {'client': client})
@@ -141,21 +140,7 @@ def pacd_dashboard(request, user):
 def unit_dashboard(request, user):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
-
-        regular_lane = DivisionLog.objects.filter(
-            unit=user.unit,
-            client_id__client_lane_type='Regular',
-            action_type='forwarded',
-            client_id__client_created_date__date=today
-        ).order_by('client_id__client_queue_no').first()
-
-        priority_lane = DivisionLog.objects.filter(
-            unit=user.unit,
-            client_id__client_lane_type='Priority',
-            action_type='forwarded',
-            client_id__client_created_date__date=today
-        ).order_by('client_id__client_queue_no').first()
-
+        
         client_details = DivisionLog.objects.filter(
             unit=user.unit,
             client_id__client_created_date__date=today,
@@ -170,15 +155,6 @@ def unit_dashboard(request, user):
         )
 
         return JsonResponse({
-            'regular_lane': {
-                'client_queue_no': regular_lane.client_id.client_queue_no if regular_lane else "00",
-                'client_fullname': regular_lane.client_id.client_fullname if regular_lane else "No client",
-                'transaction_details': regular_lane.transaction_details if regular_lane else "No transaction details",
-            },
-            'priority_lane': {
-                'client_queue_no': priority_lane.client_id.client_queue_no if priority_lane else "00",
-                'transaction_details': priority_lane.transaction_details if priority_lane else "No transaction details",
-            },
             'client_details': list(client_details),
         })
 
@@ -190,8 +166,10 @@ def resolved_clients(request):
         username = request.session.get('username')
         user = AccountDetails.objects.filter(user=username).first()
         unit = user.unit
+        units = user.position
         resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
         print(unit)
+        print(units)
         
         serialized_clients = []
         for client in resolved_clients:
@@ -286,8 +264,8 @@ def update_division_log(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
         remarks = request.POST.get('remarks')
-        csm_checked = request.POST.get('csm')
-        css_checked = request.POST.get('css')
+        csm_checked = request.POST.get('csm-checked')
+        css_checked = request.POST.get('css-checked')
         form = 'None'
 
         if csm_checked:

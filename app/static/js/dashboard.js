@@ -26,40 +26,35 @@ function closeModal() {
 }
 
 function saveModal() {
-if (!selectedClient) return;
-  console.log(selectedClient.client_id__id); // Log the client ID for debugging
-const remarks = document.getElementById('modal-remarks').value;
-const csmChecked = document.getElementById('csm-checkbox').checked;
-const cssChecked = document.getElementById('css-checkbox').checked;
+    if (!selectedClient) return;
+    const remarks = document.getElementById('modal-remarks').value;
+    const csmChecked = document.getElementById('csm-checkbox').checked;
+    const cssChecked = document.getElementById('css-checkbox').checked;
 
 fetch(updateDivisionLogUrl, {
-method: 'POST',
-headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'X-CSRFToken': csrfToken,
-},
-body: `client_id=${selectedClient.client_id__id}&remarks=${remarks}&csm=${csmChecked}&css=${cssChecked}`
-})
-.then(response => {
-if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    method: 'POST',
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrfToken,
+    },
+        body: `client_id=${selectedClient.client_id__id}&remarks=${remarks}&csm=${csmChecked}&css=${cssChecked}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    return response.json();
+    })
+    .then(data => {
+    console.log(data.message);
+    fetchResolvedData();
+    fetchTodayData(); // Refresh the dashboard data
+    })
+    .catch(error => console.error('Error updating DivisionLog:', error));
+
+    closeModal();
 }
-return response.json();
-})
-.then(data => {
-console.log(data.message);
-fetchResolvedData();
-fetchTodayData(); // Refresh the dashboard data
-
-
-})
-.catch(error => console.error('Error updating DivisionLog:', error));
-
-closeModal();
-}
-
-
 
 function fetchTodayData() {
     fetch(dashboardUrl, {
@@ -110,9 +105,9 @@ function fetchTodayData() {
             const gender = client.client_id__client_gender; // Access gender from client object
             let genderIcon = '';
             if (gender === 'Male') {
-                genderIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale male-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>';
+                genderIcon = '<i class="male-icon fa fa-mars"></i>';
             } else if (gender === 'Female') {
-                genderIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale female-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>';
+                genderIcon = '<i class="female-icon fa fa-venus"> </i>';
             }
             genderCell.innerHTML = `
                 ${genderIcon}
@@ -129,7 +124,7 @@ function fetchTodayData() {
             actionsCell.innerHTML = `
                 <div class="actions-container">
                   <button class="action-button1 update-button" title="Update" onclick="openModal(${index})">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit"><path d="M11 4h2a1 1 0 0 1 1 1v2"></path><path d="M4 20h16"></path><path d="M4 16h16"></path><path d="M4 12h16"></path></svg>
+                    <i class="fa fa-edit"></i>
                     </button>
                 </div>
             `;
@@ -191,6 +186,7 @@ fetch(resolvedClientsUrl, { // Replace 'resolved_clients' with your actual URL
 
         const resolvedByCell = document.createElement('td');
         resolvedByCell.textContent = client.unit_user;
+        resolvedByCell.innerHTML = '<i class="fa fa-user"></i>  ' + client.unit_user;
         row.appendChild(resolvedByCell);
 
         const dateResolvedCell = document.createElement('td');
@@ -199,6 +195,17 @@ fetch(resolvedClientsUrl, { // Replace 'resolved_clients' with your actual URL
         const formattedDate = date.toLocaleDateString(); // Example: "MM/DD/YYYY"
         dateResolvedCell.textContent = formattedDate;
         row.appendChild(dateResolvedCell);
+
+        const actionsCell = document.createElement('td');
+            actionsCell.className = 'actions-cell';
+            actionsCell.innerHTML = `
+                <div class="actions-container">
+                  <button class="action-button1 update-button" title="Update" onclick="">
+                    <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            `;
+        row.appendChild(actionsCell); 
 
         resolvedTableBody.appendChild(row);
     });

@@ -1,0 +1,247 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %} PACD TRANSACTION DASHBOARD {% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'account' %}">Accounts</a>
+            <a href="display.html">Display Board</a>
+            <a href="#reports">Reports</a>
+            <a href="#settings">Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>Dashboard {{user.divisions}} {{user.unit}}</h1>
+            <div class="user-menu">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name}} {{user.position}}</span>
+                <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.user|slice:":1"|upper }}" alt="User" class="user-avatar">
+                <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card stats-card">
+                <h3>Regular Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="regularCurrent"></span>
+                        <div class="queue-details">
+                            <h4>Queue Details</h4>
+                            <p><strong>Full Name:</strong> <span id="regularFullName"></span></p>
+                            <p><strong>Transaction Type:</strong> <span id="regularTransactionType">N/A</span></p>
+                            <p><strong>Date:</strong> <span id="regularDate">N/A</span></p>
+                        </div>             
+                    </div>
+                    <form id="startQueueForm">
+                        <div class="form-group">
+                            <input type="hidden" id="queueNumber" class="form-control" placeholder="Enter Queue Number" required>
+                            <label for="division">Division</label>
+                            <select name="divisions" id="division-select">
+                                <option value="">Select Division</option>
+                                <option value="MSD">MSD</option>
+                                <option value="LHSD">LHSD</option>
+                                <option value="RD/ARD">RD/ARD</option>
+                                <option value="RLED">RLED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="unit">Unit</label>
+                            <select name="unit" id="unit-select">
+                                <option value="">Select Unit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="queueRemarks">Remarks/Description</label>
+                            <input type="text" id="queueRemarks" class="form-control" placeholder="Enter remarks or description" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="regularServed">Served</button>
+                    <button class="action-button forwarded-button" id="regularForwarded">Forwarded</button>
+                    <button class="action-button skipped-button" id="regularSkipped">Skipped</button>
+                </div> 
+            </div>
+
+            <div class="card stats-card">
+                <h3>Fast Lane</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Current Number</span>
+                        <span class="stat-value" id="fastCurrent">
+                        </span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Waiting</span>
+                        <span class="stat-value" id="fastWaiting">0</span>
+                    </div>
+                </div>
+                <div class="button-column">
+                    <button class="action-button served-button" id="fastServed">Served</button>
+                    <button class="action-button forwarded-button" id="fastForwarded">Forwarded</button>
+                    <button class="action-button skipped-button" id="fastSkipped">Skipped</button>
+                </div> 
+            </div>
+        </div>
+
+        <!-- Queue Details Table -->
+        <div class="card queue-details">
+            <h3>Queue Details</h3>
+            <table class="queue-table">
+                <thead>
+                    <tr>
+                        <th>Queue Number</th>
+                        <th>Full Name</th>
+                        <th>Gender</th>
+                        <th>Lane Type</th>
+                        <th>Transaction Type</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody id="queueDetailsTable">
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+function fetchTodayData() {
+    fetch("{% url 'dashboard' %}", {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update Regular Lane
+        const regularCurrent = data.regular_lane.client_queue_no || "00";
+        document.getElementById('regularCurrent').innerText = regularCurrent;
+        document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no || "00";
+        
+        if (data.regular_lane.client_queue_no) {
+            document.getElementById('regularFullName').innerText = data.regular_lane.client_fullname || "N/A";
+            document.getElementById('regularTransactionType').innerText = data.regular_lane.client_transaction_type || "N/A";
+            if (data.regular_lane.client_created_date) {
+                const createdDate = new Date(data.regular_lane.client_created_date);
+                const formattedDate = createdDate.toLocaleString();
+                document.getElementById('regularDate').innerText = formattedDate;
+            } else {
+                document.getElementById('regularDate').innerText = "N/A";
+            }
+        } else {
+            document.getElementById('regularFullName').innerText = "N/A";
+            document.getElementById('regularTransactionType').innerText = "N/A";
+            document.getElementById('regularRemarks').innerText = "N/A";
+        }
+
+        // Update Priority Lane
+        const fastCurrent = data.priority_lane.client_queue_no || "00";
+        document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
+        
+        const queueDetailsTable = document.getElementById('queueDetailsTable');
+        queueDetailsTable.innerHTML = ''; // Clear the table body
+
+        data.client_details
+        .filter(client => client.client_queue_no !== regularCurrent && client.client_queue_no !== fastCurrent)
+        .forEach(client => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${client.client_queue_no}</td>
+                <td>${client.client_fullname}</td>
+                <td>${client.client_gender}</td>
+                <td>${client.client_lane_type}</td>
+                <td>${client.client_transaction_type}</td>
+                <td>${client.client_status}</td>
+                <td>${new Date(client.client_created_date).toLocaleString()}</td>
+            `;
+            queueDetailsTable.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching today\'s data:', error));
+}
+
+setInterval(fetchTodayData, 5000);
+fetchTodayData();
+
+function updateClientStatus(laneType, action) {
+    fetch("{% url 'update_client_status' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+        },
+        body: `lane_type=${laneType}&action=${action}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        fetchTodayData();
+    })
+    .catch(error => console.error('Error updating client status:', error));
+}
+
+function forwardClient(laneType) {
+    const division = document.getElementById('division-select').value;
+    const unit = document.getElementById('unit-select').value;
+    const remarks = document.getElementById('queueRemarks').value;
+
+    if (!division || !unit) {
+        alert('Please select a division and unit before forwarding.');
+        return;
+    }
+
+    fetch("{% url 'update_client_status' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+        },
+        body: `lane_type=${laneType}&action=forwarded&division=${division}&unit=${unit}&remarks=${remarks}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        fetchTodayData(); // Refresh the dashboard data
+    })
+    .catch(error => console.error('Error forwarding client:', error));
+}
+
+document.getElementById('regularForwarded').addEventListener('click', () => forwardClient('Regular'));
+document.getElementById('fastForwarded').addEventListener('click', () => forwardClient('Priority'));
+document.getElementById('regularServed').addEventListener('click', () => updateClientStatus('Regular', 'served'));
+document.getElementById('regularSkipped').addEventListener('click', () => updateClientStatus('Regular', 'skipped'));
+document.getElementById('fastServed').addEventListener('click', () => updateClientStatus('Priority', 'served'));
+document.getElementById('fastSkipped').addEventListener('click', () => updateClientStatus('Priority', 'skipped'));
+</script>
+
+{% endblock %}
