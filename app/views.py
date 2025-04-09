@@ -73,6 +73,7 @@ def client_ticket(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
     return render(request, 'app/queue.html', {'client': client})
 
+# condition of dashboard to PACD or Unit -- fixed
 def dashboard(request):
     username = request.session.get('username')
 
@@ -84,8 +85,9 @@ def dashboard(request):
     if user.unit == 'PACD':
         return pacd_dashboard(request, user)
     else:
-        return unit_dashboard(request, user)
+        return unit_dashboard1(request, user)
 
+# return number display on PACD dashboard only - fixed
 def pacd_dashboard(request, user):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
@@ -102,63 +104,44 @@ def pacd_dashboard(request, user):
             client_created_date__date=today
         ).order_by('client_queue_no').first()
 
-        client_details = ClientDetails.objects.filter(client_created_date__date=today, client_status='Pending').values(
-            'client_queue_no',
-            'client_fullname',
-            'client_gender',
-            'client_lane_type',
-            'client_transaction_type',
-            'client_status',
-            'client_created_date'
-        )
-
         return JsonResponse({
             'regular_lane': {
                 'client_queue_no': regular_lane.client_queue_no if regular_lane else "00",
-                'client_fullname': regular_lane.client_fullname if regular_lane else "No client",
-                'client_transaction_type': regular_lane.client_transaction_type if regular_lane else "No client",
-                'client_created_date': regular_lane.client_created_date.isoformat() if regular_lane else "No client",
-                'waiting_count': ClientDetails.objects.filter(
-                    client_lane_type='Regular',
-                    client_status='Pending',
-                    client_created_date__date=today
-                ).count()
             },
             'priority_lane': {
                 'client_queue_no': priority_lane.client_queue_no if priority_lane else "00",
-                'waiting_count': ClientDetails.objects.filter(
-                    client_lane_type='Priority',
-                    client_status='Pending',
-                    client_created_date__date=today
-                ).count()
             },
-            'client_details': list(client_details)
         })
 
     return render(request,'app/pacd_dashboard.html', {'user': user})
 
-def unit_dashboard(request, user):
+def unit_dashboard1 (request,user):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'message': 'Invalid request'}, status=400)
+    return render(request, 'app/unit_dashboard.html', {'user': user})
+
+def unit_dashboard(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
-        
-        client_details = DivisionLog.objects.filter(
-            unit=user.unit,
-            client_id__client_created_date__date=today,
-            action_type='forwarded'
-        ).values(
-            'transaction_details',
-            'client_id__client_queue_no',
-            'client_id__client_fullname',
-            'client_id__client_lane_type',
-            'client_id__client_gender',
-            'client_id__id',
-        )
+        username = request.session.get('username')
+        users = AccountDetails.objects.filter(user=username).first()
+        unit = users.unit
+        forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date=today, unit=unit)
 
-        return JsonResponse({
-            'client_details': list(client_details),
-        })
+        forwarded_client_count = []
+        for f_client in forwarded_clients:
+            forwarded_client_count.append({
+                'transaction_details': f_client.transaction_details,
+                'client_fullname': f_client.client_id.client_fullname,
+                'client_gender': f_client.client_id.client_gender,
+                'client_lane_type': f_client.client_id.client_lane_type,
+                'client_queue_no': f_client.client_id.client_queue_no,
+                'client_transaction_type': f_client.client_id.client_transaction_type,
+                'client_id': f_client.client_id.id,
+                'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
+            })
+        return JsonResponse({'forwarded_clients': forwarded_client_count})
 
-    return render(request,'app/unit_dashboard.html', {'user': user})
 
 def resolved_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -168,8 +151,6 @@ def resolved_clients(request):
         unit = user.unit
         units = user.position
         resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
-        print(unit)
-        print(units)
         
         serialized_clients = []
         for client in resolved_clients:
@@ -187,48 +168,30 @@ def resolved_clients(request):
         return JsonResponse({'resolved_clients': serialized_clients})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
-def update_client_status(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        username = request.session.get('username')
-        lane_type = request.POST.get('lane_type')
-        action = request.POST.get('action')
-        division = request.POST.get('division')  # Division from the frontend
-        unit = request.POST.get('unit')  # Unit from the frontend
-        transaction_details = request.POST.get('remarks', '')  # Optional remarks
+# pacd_dashboard - pending clients fixed PACD dashboard only
+def pending_clients(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
+        username = request.session.get('username')
+        user = AccountDetails.objects.filter(user=username).first()
+        pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)[:3]
+        pending_clients_count = []
+        for client in pending_clients:
+            pending_clients_count.append({
+                'client_id': client.id,
+                'client_queue_no': client.client_queue_no,
+                'client_fullname': client.client_fullname,
+                'client_lane_type': client.client_lane_type,
+                'client_transaction_type': client.client_transaction_type,
+                'client_status': client.client_status,
+                'client_contact': client.client_contact,
+                'client_gender': client.client_gender,
+                'client_created_date': client.client_created_date.isoformat() if client.client_created_date else None,
+            })
 
-        # Get the current client in the specified lane
-        client = ClientDetails.objects.filter(
-            client_lane_type=lane_type.capitalize(),
-            client_status='Pending',
-            client_created_date__date=today
-        ).order_by('client_queue_no').first()
-
-
-        if client:
-            if action == 'forwarded':
-                client.client_status = 'Forwarded'
-            elif action == 'Served':
-                client.client_status = 'Served'
-            elif action == 'Skipped':
-                client.client_status = 'Skipped'
-            # Save to DivisionLog
-            client.save()
-            DivisionLog.objects.create(
-                client_id = client,
-                division = division,
-                unit = unit,
-                transaction_details = transaction_details,
-                action_type = action,
-                user = username
-            )
-
-            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
-        else:
-            return JsonResponse({'message': 'No pending client in this lane'}, status=404)
+        return JsonResponse({'pending_clients': pending_clients_count})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
-    
 def create_authorized_personnel(request):
     if request.method == 'POST':
         form = AuthorizedPersonnelForm(request.POST)
@@ -257,12 +220,12 @@ def create_authorized_personnel(request):
     user = AccountDetails.objects.filter(user=username).first()
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
-
-
 @csrf_exempt
 def update_division_log(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
+        client_status = request.POST.get('client_status')
+        details = request.POST.get('modal-transaction-details')
         remarks = request.POST.get('remarks')
         csm_checked = request.POST.get('csm-checked')
         css_checked = request.POST.get('css-checked')
@@ -275,6 +238,8 @@ def update_division_log(request):
             
         try:
             division_log = DivisionLog.objects.get(client_id=client_id)
+            division_log.action_type = client_status
+            division_log.transaction_details = details
             division_log.action_type = 'resolved'
             division_log.status = 'Done'
             division_log.remarks = remarks
@@ -290,5 +255,61 @@ def update_division_log(request):
         except Exception as e:
             print("Unexpected error:", str(e))
             return JsonResponse({'message': str(e)}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+@csrf_exempt
+def update_client_status_served(request):
+        if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            client_id = request.POST.get('client_id')
+            client_status = request.POST.get('client_status')
+
+            try:
+                client = ClientDetails.objects.get(pk=client_id)
+                client.client_status = client_status
+                client.save()
+                return JsonResponse({'message': 'Client status updated to Served'})
+
+            except ClientDetails.DoesNotExist:
+                return JsonResponse({'message': 'Client not found'}, status=404)
+            except Exception as e:
+                print(f"Error in update_client_status_served: {e}")  # Log the error
+                return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+        else:
+            return JsonResponse({'message': 'Invalid request'}, status=400)
+# forwarded client to the unit - fixed
+def update_client_status_forwarded(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            print('test')
+            client_id = request.POST.get('client_id')
+            division = request.POST.get('division')
+            action_type = request.POST.get('action_type')
+            unit = request.POST.get('unit')
+            transaction_details = request.POST.get('transaction_details')
+            username = request.session.get('username')
+            today = timezone.now().date()
+
+            client = ClientDetails.objects.get(id=client_id)
+            client.client_status = 'Forwarded'
+            client.save()
+
+            DivisionLog.objects.create(
+                client_id_id=client_id,
+                action_type = action_type,
+                division=division,
+                unit=unit,
+                transaction_details=transaction_details,
+                user=username,
+                date=today
+            )
+
+            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
+
+        except ClientDetails.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_forwarded: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)

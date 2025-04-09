@@ -1,17 +1,19 @@
 from django.urls import path
-from .views import home, display, resolved_clients, dashboard,update_division_log, login_view, logout_view, client_details, create_authorized_personnel , update_client_status, client_ticket
+from . import views
 
 urlpatterns = [
-    path('', login_view, name="hogins"),
-    path('home/', home,name="home"),
-    path('display-all/', display, name="display_page"),
-    path('dashboard/', dashboard, name="dashboard"),
-    path('login/', login_view, name="login"),
-    path('logout/', logout_view, name ="logout"),
-    path('client-details/', client_details, name="client_page"),
-    path('account/', create_authorized_personnel, name="account"),
-    path('update_client_status/', update_client_status, name = "update_client_status"),
-    path('ticket/<int:client_id>/', client_ticket, name="client_ticket"),
-    path('update_division_log/', update_division_log, name='update_division_log'),
-    path('resolved_clients/', resolved_clients, name='resolved_clients')
+    path('', views.login_view, name="logins"),
+    path('display-all/', views.display, name="display_page"),
+    path('dashboard/', views.dashboard, name="dashboard"),
+    path('login/', views.login_view, name="login"),
+    path('logout/', views.logout_view, name ="logout"),
+    path('client-details/', views.client_details, name="client_page"),
+    path('account/', views.create_authorized_personnel, name="account"),
+    path('ticket/<int:client_id>/', views.client_ticket, name="client_ticket"),
+    path('update_division_log/', views.update_division_log, name='update_division_log'),
+    path('resolved_clients/', views.resolved_clients, name='resolved_clients'),
+    path('pending_clients/', views.pending_clients, name='pending_clients'),
+    path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
+    path('update_client_status_forwarded/', views.update_client_status_forwarded, name='update_client_status_forwarded'),
+    path('unit_dashboard', views.unit_dashboard, name="unit_dashboard"),
 ]

@@ -73,7 +73,7 @@ def set_queue_no(sender, instance, **kwargs):
 class DivisionLog(models.Model):
     client_id = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='pacd_actions')
     division = models.CharField(max_length=100)
-    transaction_details = models.TextField()
+    transaction_details = models.TextField(null=True)
     unit = models.CharField(max_length=100)
     action_type = models.CharField(max_length=100)
     user = models.CharField(max_length=100)
