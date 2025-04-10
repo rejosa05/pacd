@@ -61,6 +61,7 @@
               <table class="table" id="forwardedClient">
                 <thead>
                   <tr>
+                    <th style="width: 100px;">Client ID</th>
                     <th>Queue No. </th>
                     <th>Full Name</th>
                     <th>Gender</th>
@@ -103,19 +104,21 @@
         </div>
       </main>
 
-      <div class="modal-overlay" id="modalOverlay" style="display: none;">
+      <div class="modal-overlay" id="openModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
             <h2 class="modal-title">Client Queue No. <span id="modal-queue-no"></span></h2>
           </div>
           <div class="modal-body">
             <div class="form-group1">
-              <label class="form-label">Full Name:</label>
-              <span id="modal-fullname"></span>
+              <input type="hidden" id="client-id" class="form-control" placeholder="Enter Queue Number" required>
+              <label class="form-label">Full Name: <span id="modal-fullname"></span></label>
             </div>
             <div class="form-group1">
-              <label class="form-label">Transactions Details:</label>
-              <span id="modal-transaction"></span>
+              <label class="form-label">Type of Transactions: <span id="modal-transaction-type"></span> </label>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Transactions Details: <span id="modal-transaction-details"></span> </label>
             </div>
             <div class="form-group1">
               <label class="form-label">Remarks:</label>
@@ -139,7 +142,7 @@
             <button class="modal-button cancel-button" onclick="closeModal()">
               Cancel
             </button>
-            <button class="modal-button save-button" onclick="saveModal()">
+            <button class="modal-button save-button" onclick="saveActionResolved()">
               Resolved
             </button>
           </div>

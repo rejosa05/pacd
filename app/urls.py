@@ -4,7 +4,10 @@ from . import views
 urlpatterns = [
     path('', views.login_view, name="logins"),
     path('display-all/', views.display, name="display_page"),
-    path('dashboard/', views.dashboard, name="dashboard"),
+    path('unit_dashboards/', views.unit_dashboard1, name="unit_dashboards"),
+    path('pacd_dashboard/', views.pacd_dashboard1, name="pacd_dashboard"),
+    path('dashboard/', views.pacd_dashboard, name="dashboard"),
+    path('dashboards/', views.dashboard, name="dashboards"),
     path('login/', views.login_view, name="login"),
     path('logout/', views.logout_view, name ="logout"),
     path('client-details/', views.client_details, name="client_page"),
@@ -16,4 +19,5 @@ urlpatterns = [
     path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
     path('update_client_status_forwarded/', views.update_client_status_forwarded, name='update_client_status_forwarded'),
     path('unit_dashboard', views.unit_dashboard, name="unit_dashboard"),
+    path('pacd_unit_dashboard', views.pacd_unit_dashboard, name="pacd_unit_dashboard")
 ]

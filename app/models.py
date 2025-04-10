@@ -52,7 +52,7 @@ class ClientDetails(models.Model):
     
     def save(self, *args, **kwargs):
         if self.client_fullname:
-            self.client_fullname = self.client_fullname.capitalize()
+            self.client_fullname = self.client_fullname.title()
         super(ClientDetails, self).save(*args, **kwargs)
     
     @staticmethod

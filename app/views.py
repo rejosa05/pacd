@@ -19,7 +19,7 @@ def login_view(request):
             user = AccountDetails.objects.filter(user=username).first()
             if user:
                 request.session['username'] = user.user
-                return redirect("dashboard")
+                return redirect("dashboards")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
         else:
@@ -83,12 +83,21 @@ def dashboard(request):
     user = AccountDetails.objects.filter(user=username).first()
 
     if user.unit == 'PACD':
-        return pacd_dashboard(request, user)
+        return redirect('pacd_dashboard')
     else:
-        return unit_dashboard1(request, user)
+        return redirect('unit_dashboards')
 
 # return number display on PACD dashboard only - fixed
-def pacd_dashboard(request, user):
+def pacd_dashboard1(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not username:
+        return redirect("login")
+    
+    return render(request, 'app/pacd_dashboard.html', {'user': user})
+
+def pacd_dashboard(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
 
@@ -113,20 +122,11 @@ def pacd_dashboard(request, user):
             },
         })
 
-    return render(request,'app/pacd_dashboard.html', {'user': user})
-
-def unit_dashboard1 (request,user):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({'message': 'Invalid request'}, status=400)
-    return render(request, 'app/unit_dashboard.html', {'user': user})
-
-def unit_dashboard(request):
+# ---- Fectch forwarded unit -- FIXED ----
+def pacd_unit_dashboard(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
-        username = request.session.get('username')
-        users = AccountDetails.objects.filter(user=username).first()
-        unit = users.unit
-        forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date=today, unit=unit)
+        forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date__date=today)
 
         forwarded_client_count = []
         for f_client in forwarded_clients:
@@ -137,7 +137,42 @@ def unit_dashboard(request):
                 'client_lane_type': f_client.client_id.client_lane_type,
                 'client_queue_no': f_client.client_id.client_queue_no,
                 'client_transaction_type': f_client.client_id.client_transaction_type,
+                'client_division':f_client.division,
+                'client_a_type': f_client.action_type,
+                'client_unit':f_client.unit,
                 'client_id': f_client.client_id.id,
+                'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
+            })
+        return JsonResponse({'forwarded_clients': forwarded_client_count})
+
+# ----- FIXED AREA -----
+def unit_dashboard1(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not username:
+        return redirect("login")
+    
+    return render(request, 'app/unit_dashboard.html', {'user': user})
+
+def unit_dashboard(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        today = timezone.now().date()
+        username = request.session.get('username')
+        users = AccountDetails.objects.filter(user=username).first()
+        unit = users.unit
+        forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date__date=today, unit=unit)
+
+        forwarded_client_count = []
+        for f_client in forwarded_clients:
+            forwarded_client_count.append({
+                'client_id': f_client.client_id.id,
+                'client_queue_no': f_client.client_id.client_queue_no,
+                'client_fullname': f_client.client_id.client_fullname,
+                'client_lane_type': f_client.client_id.client_lane_type,
+                'transaction_details': f_client.transaction_details,
+                'client_gender': f_client.client_id.client_gender,
+                'client_transaction_type': f_client.client_id.client_transaction_type,
                 'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
             })
         return JsonResponse({'forwarded_clients': forwarded_client_count})
