@@ -2,7 +2,7 @@ const {
     dashboardUrl, resolvedClientsUrl, updateDivisionLogUrl,
     pendingClientsUrl, updateClientStatusServedUrl,
     updateClientStatusForwardedUrl, unitDashboadUrl,
-    forwardedPendingClientUrl, unitDashboard, pacdDashboard, csrfToken
+    forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
 
 const path = window.location.pathname;
@@ -77,14 +77,18 @@ function fetchPendingClients() {
                 ? '<i class="male-icon fa fa-mars"></i>'
                 : '<i class="female-icon fa fa-venus"></i>';
 
+            const laneTypeIcon = client.client_lane_type === 'Regular'
+                ? '<i class="regular fa fa-angle-double-down"></i>'
+                : '<i class="priority fa fa-angle-double-up"></i>';
+
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>${client.client_id}</td>
-                <td>${client.client_queue_no}</td>
-                <td>${client.client_fullname}</td>
-                <td class="gender-cell">${genderIcon}<span class="gender-text"> ${client.client_gender}</span></td>
-                <td>${client.client_lane_type}</td>
+                <td><i class='badge fa fa-id-badge'></i> ${client.client_id}</td>
+                <td> ${client.client_queue_no}</td>
+                <td><i class='person fa fa-user'></i> ${client.client_fullname}</td>
+                <td class="gender-cell">${genderIcon} &nbsp; <span class="gender-text"> ${client.client_gender}</span></td>
+                <td>${laneTypeIcon} &nbsp; <span>${client.client_lane_type}</span></td>
                 <td class="actions-cell">
                     <div class="actions-container">
                         <button class="action-button1 update-button" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
@@ -108,19 +112,49 @@ function fetchPendingClients() {
     .catch(error => console.error('Error fetching pending clients:', error));
 }
 
+function fetchAllResolvedClient() {
+    fetch(fetchResolvedDataUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const tableBody = document.querySelector('#cateredTransactions tbody');
+        tableBody.innerHTML = '';
+
+        let priorityClients = data.resolved_clients.filter(client => client.client_lane_type === 'Priority');
+        let regularClients = data.resolved_clients.filter(client => client.client_lane_type !== 'Priority');
+
+        console.log(regularClients);
+
+        function addClientRow(client, color) {
+            
+            
+            const row = document.createElement('tr');
+            row.style.backgroundColor = color;
+            row.innerHTML = `
+                <td>${client.client_id}</td>
+                <td>${client.client_queue_no}</td>
+                <td>${client.client_fullname}</td>
+                <td>${client.client_lane_types}</td>
+                <td>${client.action_type}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
+        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+    })
+    .catch(error => console.error('Error fetching resolved clients', error));
+}
+
 // ---------- Fetch Forwarded Clients Display on PACD -- FIXED ---------
 function fetchForwardedClientPACD() {
-    fetch (forwardedPendingClientUrl, {
+    fetch(forwardedPendingClientUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
         const tableBody = document.querySelector('#forwardedTransactions tbody');
         tableBody.innerHTML = '';
-        if (!tableBody) {
-            console.warn('Resolved table body not found in DOM.');
-            return;
-        }
 
         let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
@@ -330,7 +364,9 @@ function saveActionResolved() {
 if (path.includes(pacdDashboard)) {
     fetchForwardedClientPACD();
     fetchPendingClients();
+    fetchAllResolvedClient();
     fetchQuePacdDashboard();
+    setInterval(fetchAllResolvedClient, 5000);
     setInterval(fetchForwardedClientPACD, 5000);
     setInterval(fetchPendingClients, 5000);
     setInterval(fetchQuePacdDashboard, 5000);

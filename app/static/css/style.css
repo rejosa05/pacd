@@ -1,5 +1,5 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column; /* Changed to column */
@@ -211,11 +211,23 @@ body {
     margin: 0;
 }
 
-.priority-number {
+.person {
+    margin-left: 1rem;
+    float: left;
+    color:#b9ad00;
+}
+
+.badge {
+    float: inherit;
+    margin-right: 1rem;
+    color: rgb(0, 86, 2);
+}
+
+.priority {
     color: #dc2626;
 }
 
-.regular-number {
+.regular {
     color: #213b71;
 }
 
@@ -252,6 +264,8 @@ body {
 }
 
 .table td {
+    font-size: small;
+    font-weight: lighter;
     padding: 0.5rem 0.5rem;
     text-align: center;
 }

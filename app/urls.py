@@ -19,5 +19,6 @@ urlpatterns = [
     path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
     path('update_client_status_forwarded/', views.update_client_status_forwarded, name='update_client_status_forwarded'),
     path('unit_dashboard', views.unit_dashboard, name="unit_dashboard"),
-    path('pacd_unit_dashboard', views.pacd_unit_dashboard, name="pacd_unit_dashboard")
+    path('pacd_unit_dashboard', views.pacd_unit_dashboard, name="pacd_unit_dashboard"),
+    path('fetch_all_resolved_client/', views.fetch_all_resolved_client, name="fetch_all_resolved_client")
 ]
