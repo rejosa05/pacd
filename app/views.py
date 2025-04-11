@@ -203,6 +203,7 @@ def resolved_clients(request):
         return JsonResponse({'resolved_clients': serialized_clients})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
+    
 # pacd_dashboard - pending clients fixed PACD dashboard only
 def pending_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -255,32 +256,24 @@ def create_authorized_personnel(request):
     user = AccountDetails.objects.filter(user=username).first()
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
+
+# ----- FIXED AREA -----
 @csrf_exempt
 def update_division_log(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
-        client_status = request.POST.get('client_status')
-        details = request.POST.get('modal-transaction-details')
         remarks = request.POST.get('remarks')
-        csm_checked = request.POST.get('csm-checked')
-        css_checked = request.POST.get('css-checked')
-        form = 'None'
+        resolution = request.POST.get('resolution')
+        today = timezone.now()
 
-        if csm_checked:
-            form = 'CSM'
-        elif css_checked:
-            form = 'CSS'
-            
         try:
             division_log = DivisionLog.objects.get(client_id=client_id)
-            division_log.action_type = client_status
-            division_log.transaction_details = details
             division_log.action_type = 'resolved'
             division_log.status = 'Done'
             division_log.remarks = remarks
-            division_log.form = form
+            division_log.form = resolution
             division_log.unit_user = request.session.get('username')
-            division_log.date_resolved = timezone.now()
+            division_log.date_resolved = today
             division_log.save()
             return JsonResponse({'message': 'DivisionLog updated successfully'})
 
@@ -292,6 +285,8 @@ def update_division_log(request):
             return JsonResponse({'message': str(e)}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+# ----- FIXED AREA -----
 @csrf_exempt
 def update_client_status_served(request):
         if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -312,6 +307,7 @@ def update_client_status_served(request):
 
         else:
             return JsonResponse({'message': 'Invalid request'}, status=400)
+        
 # forwarded client to the unit - fixed
 def update_client_status_forwarded(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':

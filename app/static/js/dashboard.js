@@ -101,7 +101,7 @@ function fetchPendingClients() {
             `;
             tableBody.appendChild(row);
         }
-
+        divisionUnitSelect();
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
@@ -199,7 +199,7 @@ function saveApprovedClient() {
     closedApprovedModal();
 }
 
-// ---------- Forwarded Modal ----------
+// ---------- Forwarded Modal (Fixed) ----------
 function forwardedModal(client, type, que, id) {
     selectedClient = id;
     document.getElementById('client-id').innerText = selectedClient;
@@ -207,6 +207,7 @@ function forwardedModal(client, type, que, id) {
     document.getElementById('modal-transaction-type').innerText = type;
     document.getElementById('modal-queue-no').innerText = que;
     document.getElementById('openModal').style.display = 'flex';
+    console.log(que);
 }
 
 function closeModal() {
@@ -233,7 +234,8 @@ function saveForwardedClient() {
     })
     .catch(error => console.error('Error forwarding client:', error));
 
-    closedForwardedModal();
+    closeModal();
+    alert('forwarded the client!!')
 }
 
 // ---------- UNIT DASHBOARD ACTION ------------
@@ -297,11 +299,35 @@ function openModalAction(client, details, que, id, type) {
 }
 
 function saveActionResolved() {
-    alert('thanks you')
+    const remarks = document.getElementById('modal-remarks').value;
+    const csmChecked = document.getElementById('csm-checkbox');
+    const cssChecked = document.getElementById('css-checkbox');
+
+    resolutions = '';
+
+    if (csmChecked.checked)
+        resolutions.value;
+    else if (cssChecked.checked)
+        resolutions.value;
+    else
+        resolution = 'None'
+
+    fetch(updateDivisionLogUrl, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `client_id=${selectedClient}&remarks=${remarks}&resolution=${resolutions}`
+    })
+    .catch(error => console.error('Error saving approved client:', error));
+
+    console.log(selectedClient)
+    closeModal();
 }
 
 if (path.includes(pacdDashboard)) {
-    divisionUnitSelect();
     fetchForwardedClientPACD();
     fetchPendingClients();
     fetchQuePacdDashboard();
