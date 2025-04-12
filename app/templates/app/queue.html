@@ -3,24 +3,26 @@
 {% block title %}Your Queue Ticket - Queue Management System{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0">Your Queue Ticket</h4>
+<div class="ticket-wrapper">
+    <div class="ticket-card">
+        <div class="ticket-header">
+            <h4>Your Queue Ticket</h4>
+        </div>
+        <div class="ticket-body">
+            <h2 class="ticket-number">{{ client.client_queue_no }}</h2>
+            <p><strong>Transaction:</strong> {{ client.client_transaction_type }}</p>
+            <p><strong>Full Name:</strong> {{ client.client_fullname }}</p>
+            <p><strong>Lane Type:</strong> {{ client.client_lane_type }}</p>
+            <p><strong>Status:</strong> {{ client.client_status }}</p>
+            <p><strong>Date/Time:</strong> {{ client.client_created_date|date:"F d, Y - H:i" }}</p>
+            <p class="note">Please keep this number and wait for it to be display the number in the screen and called. Thank you !!!</p>
+            <div class="ticket-actions">
+                <a href="{% url 'client_page' %}" class="new-ticket-btn">New Queue</a>
+                <button onclick="window.print()" class="print-btn">Print Ticket</button>
             </div>
-            <div class="card-body text-center">
-                <h2 class="display-4 mb-3">{{ client.client_queue_no }}</h2>
-                <p class="lead">Transaction: {{ client.client_transaction_type }}</p>
-                <p>Full Name: {{ client.client_fullname }}</p>
-                <p>Lane Type: {{ client.client_lane_type }}</p>
-                <p>Status: {{ client.client_status }}</p>
-                <p>Date/Time: {{ client.client_created_date|date:"F d, Y - H:i" }}</p>
-                <p class="text-muted">Please keep this number and wait for it to be called.</p>
-                <a href="{% url 'client_page' %}" class="btn btn-primary mt-3">Click for NEW Queue</a>
-                <button class="btn btn-secondary mt-3" onclick="window.print()">Print Ticket</button>
-            </div>
+            <p class="note"> DOH QUEUING SYSTEM </p>
         </div>
     </div>
 </div>
+
 {% endblock %}

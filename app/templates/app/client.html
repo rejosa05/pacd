@@ -5,20 +5,18 @@
 {% block title %} Client Transaction Form {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="form-section">
+    <div class="main-wrapper">
+        <div class="form-container">
             <form method="post">
+                {% csrf_token %}
+                <h2>Client Transaction Details</h2>
                 {{ message }}
-                <div class="form-group">
-                    <h2>Client Transactions Details</h2>
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                </div>
+                {{ form.as_p }}
                 <button type="submit">Submit</button>
             </form>
         </div>
-        <div class="logo-section">
-            <img src="" alt="Logo">
+        <div class="image-container">
+            <img src="{% static 'images/image1.jpg' %}" alt="Logo">
         </div>
     </div>
     <script>

@@ -24,7 +24,7 @@ class ClientDetailsForm(forms.ModelForm):
     client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
     client_transaction_type = forms.ChoiceField(choices=TRANSACTION_TYPE_CHOICES)
     client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
-    client_contact = forms.CharField(max_length=11, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
+    client_contact = forms.CharField(max_length=12, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
 
     class Meta:
         model = ClientDetails

@@ -1,12 +1,24 @@
 body {
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column; /* Changed to column */
-    align-items: stretch; /* Stretch items to fill the body width */
-    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f8f0ff 100%);
-    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0; /* Remove body margins */
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;
+    height: 100%;
+    background-image:  url('../images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+body:before {
+    opacity: 0.5;
+}
+
+html {
+    height: 100%;
 }
 
 .app-container {
@@ -264,7 +276,7 @@ body {
 }
 
 .table td {
-    font-size: small;
+    font-size: medium;
     font-weight: lighter;
     padding: 0.5rem 0.5rem;
     text-align: center;
@@ -512,6 +524,175 @@ font-size: 0.875rem;
 
 .save-button:hover {
   background-color: #1665d8;
+}
+
+
+/* --- form in the client --- */
+.main-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 50px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.form-container {
+    flex: 1;
+    padding: 50px;
+    background-color: #ffffff;
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #0f8f47;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 200px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.image-container {
+    flex: 1;
+    min-width: 500px;
+    background-color: #e0fde5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-wrapper {
+        flex-direction: column;
+    }
+
+    .image-container {
+        order: -1;
+        padding: 20px 0;
+    }
+}
+/* --- QUE DESIGN ---- */
+.ticket-wrapper {
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.ticket-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    background-image: url('../images/logo1.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.ticket-header h4 {
+    margin: 0 0 20px;
+    color: #007bff;
+    font-size: 22px;
+}
+
+.ticket-number {
+    font-size: 48px;
+    color: #222;
+    margin: 10px 0;
+}
+
+.ticket-body p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.ticket-body .note {
+    margin-top: 20px;
+    font-style: italic;
+    color: #666;
+}
+
+.ticket-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.print-btn, .new-ticket-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.print-btn {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.print-btn:hover {
+    background-color: #218838;
+}
+
+.new-ticket-btn {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.new-ticket-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .ticket-card {
+        padding: 20px;
+    }
+
+    .ticket-number {
+        font-size: 36px;
+    }
 }
 
 /* Optional animation */
