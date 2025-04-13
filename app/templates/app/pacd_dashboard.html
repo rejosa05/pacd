@@ -233,4 +233,52 @@
         </div>
       </div>
 </div>
+<audio id="queue-audio" preload="auto">
+  <source src="{% static 'audio/ding.mp3' %}" type="audio/mpeg">
+</audio>
+
+<script>
+  let audioUnlocked = false;
+
+  document.addEventListener("click", () => {
+    if (!audioUnlocked) {
+      const audio = document.getElementById("queue-audio");
+      audio.play().then(() => {
+        audio.pause(); // pause right after to avoid sound
+        audioUnlocked = true;
+      }).catch((err) => console.warn("Audio not unlocked yet", err));
+    }
+  });
+
+  function callQueue(queueNumber) {
+    if (!audioUnlocked) return;
+
+    const audio = document.getElementById("queue-audio");
+    audio.play();
+
+    const synth = window.speechSynthesis;
+    const message = new SpeechSynthesisUtterance("Now serving queue number " + queueNumber);
+    synth.speak(message);
+  }
+
+  function observeQueueChange(queueId) {
+    const target = document.getElementById(queueId);
+    let lastValue = target.textContent;
+
+    const observer = new MutationObserver(() => {
+      const currentValue = target.textContent.trim();
+      if (currentValue && currentValue !== lastValue) {
+        callQueue(currentValue);
+        lastValue = currentValue;
+      }
+    });
+
+    observer.observe(target, { childList: true, subtree: true });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    observeQueueChange("regularCurrent");
+    observeQueueChange("fastCurrent");
+  });
+</script>
 {% endblock %}
