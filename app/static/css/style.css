@@ -21,6 +21,71 @@ html {
     height: 100%;
 }
 
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 300px;
+    background: rgb(225, 225, 225);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    opacity: .9;
+}
+
+.logo {
+    padding: 5px;
+}
+
+.login-box {
+    width: 80%;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0px 6px;
+    background-color: #fff;
+}
+
+.input-wrapper input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    padding-left: 10px;
+    background: none;
+}
+
+.login-button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 20px 20px;
+}
+
+.login-button:hover {
+    background-color: #1557b0;
+}
+
 .app-container {
     display: flex;
     width: 100%; /* Take up the full width */
@@ -169,7 +234,6 @@ html {
 }
 
 .header-title {
-    
     font-weight: bold;
     background: #00483b;
     -webkit-background-clip: text;
@@ -532,34 +596,39 @@ font-size: 0.875rem;
     display: flex;
     flex-wrap: wrap;
     max-width: 1200px;
-    margin: 50px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin: 30px auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
     padding: 10px;
-}
-
-.form-container {
+    background-color: #ffffff;
+  }
+  
+  .form-container {
     flex: 1;
     padding: 50px;
-    background-color: #ffffff;
-}
-
-.form-container h2 {
+    min-width: 300px;
+    box-sizing: border-box;
+  }
+  
+  .form-container h2 {
     margin-bottom: 20px;
     color: #333;
-}
-
-form input, form select, form textarea {
+    font-size: 24px;
+  }
+  
+  form input,
+  form select,
+  form textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
     margin-top: 5px;
     box-sizing: border-box;
-}
-
-button[type="submit"] {
+  }
+  
+  button[type="submit"] {
     margin-top: 20px;
     padding: 12px;
     background-color: #0f8f47;
@@ -569,41 +638,57 @@ button[type="submit"] {
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s;
-    width: 200px;
-}
-
-button[type="submit"]:hover {
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  button[type="submit"]:hover {
     background-color: #0056b3;
-}
-
-.image-container {
-    flex: 1;
-    min-width: 500px;
-    background-color: #e0fde5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.image-container img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-
-/* Responsive */
-@media (max-width: 768px) {
+  }
+  
+  /* --- Responsive Layout --- */
+  @media (max-width: 768px) {
     .main-wrapper {
-        flex-direction: column;
+      flex-direction: column;
+      margin: 10px;
+      padding: 10px;
     }
-
+  
+    .form-container,
     .image-container {
-        order: -1;
-        padding: 20px 0;
+      padding: 20px;
     }
-}
+  
+    .form-container h2 {
+      font-size: 20px;
+    }
+  
+    button[type="submit"] {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .form-container,
+    .image-container {
+      padding: 15px;
+    }
+  
+    form input,
+    form select,
+    form textarea {
+      padding: 10px;
+    }
+  
+    .form-container h2 {
+      font-size: 18px;
+    }
+  
+    button[type="submit"] {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
 /* --- QUE DESIGN ---- */
 .ticket-wrapper {
     justify-content: center;
@@ -707,3 +792,167 @@ button[type="submit"]:hover {
   }
 }
 
+
+/* --- display section ---- */
+.display-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Left Section */
+.left-section {
+    flex: 2;
+    padding: 10px;
+    background-color: #f7f9fc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Right Section */
+.right-section {
+    flex: 1;
+    background-color: #e6f0fd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.logo-box img {
+    width: 100%;
+    height: 900px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Top Info Boxes */
+.top-boxes {
+    display: flex;
+    gap: 10px 0;
+    margin-bottom: 40px;
+}
+
+.info-box {
+    flex: 1;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    text-align: center;
+}
+
+.info-box h2 {
+    font-size: 40px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.number {
+    font-size: 150px;
+    font-weight: bold;
+}
+
+/* Bottom Table */
+.bottom-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.dual-tables {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.table-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.table-section h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.table-section table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.table-section td {
+    padding: 10px;
+    border-bottom: 1px solid #0f8f47;
+    font-size: 20px;
+}
+
+.table-section th {
+    background-color: #0f8f47;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px;
+}
+
+/* --- SLIDE SHOW --- */
+.image-container {
+    flex: 1;
+    min-width: 300px;
+    background-color: #e0fde5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {opacity: 0.4}
+    to {opacity: 1}
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .display-container {
+        flex-direction: column;
+    }
+
+    .top-boxes {
+        flex-direction: column;
+    }
+
+    .right-section {
+        order: -1;
+        height: 200px;
+        padding: 20px;
+    }
+
+    .logo-box img {
+        max-width: 80%;
+    }
+
+    .left-section {
+        padding: 20px;
+    }
+    .dual-tables {
+        flex-direction: column;
+    }
+}

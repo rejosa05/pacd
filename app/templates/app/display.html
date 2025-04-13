@@ -7,81 +7,75 @@
             <div class="top-boxes">
                 <div class="info-box">
                     <h2>Regular Lane</h2>
-                    <div class="number" id="regular-lane-number">
-                        {% if regular_lane %}
-                            {{ regular_lane.client_queue_no }}
-                        {% else %}
-                            00
-                        {% endif %}
+                    <div class="regular number" id="regularCurrent">
                     </div>
                 </div>
                 <div class="info-box">
                     <h2>Priority Lane</h2>
-                    <div class="number" id="priority-lane-number">
-                        {% if priority_lane %}
-                            {{ priority_lane.client_queue_no }}
-                        {% else %}
-                            00
-                        {% endif %}
+                    <div class="priority number" id="fastCurrent">
                     </div>
                 </div>
             </div>
             <div class="info-box bottom-box">
-                <h2> WAITING </h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Queue Number</th>
-                            <th>Transaction Type</th>
-                        </tr>
-                    </thead>
-                    <tbody id="waiting-line-table">
-
-                    </tbody>
-                </table>
+                <div class="dual-tables">
+                    <div class="table-section">
+                        <h2>WAITING</h2>
+                        <table id="pendingClientQueueTable">
+                            <thead>
+                                <tr>
+                                    <th>QUEUE NO</th>
+                                    <th>LANE TYPE</th>
+                                    <th>TRANSACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <!-- Waiting data here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-section">
+                        <h2>NOW SERVING</h2>
+                        <table id="forwardedTransactions">
+                            <thead>
+                                <tr>
+                                    <th>QUE NO.</th>
+                                    <th>DIVISION</th>
+                                    <th>UNIT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Catered data here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="right-section">
-            <div class="logo-box">
+            <div class="logo-box fade">
                 <img src="{% static 'images/image1.jpg' %}" alt="Logo">
+            </div>
+            <div class="logo-box fade">
+                <img src="{% static 'images/image2.jpg' %}" alt="Logo">
             </div>
         </div>
     </div>
     <script>
-        function fetchDisplayData() {
-            fetch("{% url 'display_page' %}", {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Update Regular Lane
-                const regularLaneNumber = data.regular_lane.client_queue_no || '00';
-                document.getElementById('regular-lane-number').innerText = regularLaneNumber;
-    
-                // Update Priority Lane
-                const priorityLaneNumber = data.priority_lane.client_queue_no || '00';
-                document.getElementById('priority-lane-number').innerText = priorityLaneNumber;
-    
-                const waitingLineTable = document.getElementById('waiting-line-table');
-                waitingLineTable.innerHTML = ''; // Clear the table body
-
-                data.waiting_clients
-                .filter(client => client.client_queue_no !== regularLaneNumber && client.client_queue_no !== priorityLaneNumber)
-                .forEach(client => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${client.client_queue_no}</td>
-                    <td>${client.client_transaction_type}</td>
-                `;
-                waitingLineTable.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error fetching display data:', error));
+        let slideIndex = 0;
+        showSlides();
+        
+        function showSlides() {
+            let slides = document.getElementsByClassName("logo-box");
+        
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+        
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+        
+            slides[slideIndex - 1].style.display = "block";
+            setTimeout(showSlides, 5000); // Change image every 3 seconds
         }
-    
-        setInterval(fetchDisplayData, 2000);
-        fetchDisplayData();
-    </script>
+        </script>
 {% endblock %}

@@ -7,7 +7,7 @@
     <title>{% block title %} {% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-    
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <script>
         window.dashboardConfig = {
             unitDashboard: "{% url 'unit_dashboards' %}",
@@ -20,7 +20,8 @@
             updateClientStatusServedUrl: "{% url 'update_client_status_served' %}",
             updateClientStatusForwardedUrl: "{% url 'update_client_status_forwarded' %}",
             forwardedPendingClientUrl: "{% url 'pacd_unit_dashboard' %}",
-            fetchResolvedDataUrl: "{% url 'fetch_all_resolved_client' %}", // fetch data all resolved client
+            fetchResolvedDataUrl: "{% url 'fetch_all_resolved_client' %}",  // fetch data all resolved client
+            displayQueUrl: "{% url 'display_page' %}",
             csrfToken: "{{ csrf_token }}"
         };
     </script>

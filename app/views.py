@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import ClientDetails, AccountDetails, DivisionLog
 from .forms import ClientDetailsForm, AuthorizedPersonnelForm, LoginForm
 from django.utils import timezone
+from django.utils.dateformat import format
 from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
@@ -36,7 +37,7 @@ def logout_view(request):
 # Pag display sa number on the screen -- fixed/need comment
 def display(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest': 
-        today = timezone.now().date()
+        today = timezone.now()
         regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
         priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first()
         waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)
@@ -51,12 +52,9 @@ def display(request):
         }
         return JsonResponse(data)
     else:
-        today = timezone.now().date()
+        today = timezone.now()
         waiting_clients = ClientDetails.objects.filter(client_status='P nding', client_created_date__date=today)
         return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
-
-def success(request):
-    return render(request, 'app/display.html', {'message': 'Data saved successfully!'})
 
 # Client paghtag ug detayle -- fixed/need comment
 def client_details(request):
@@ -87,7 +85,6 @@ def dashboard(request):
     else:
         return redirect('unit_dashboards')
 
-# return number display on PACD dashboard only - fixed
 def pacd_dashboard1(request):
     username = request.session.get('username')
     user = AccountDetails.objects.filter(user=username).first()
@@ -97,9 +94,10 @@ def pacd_dashboard1(request):
     
     return render(request, 'app/pacd_dashboard.html', {'user': user})
 
+# return number display on PACD dashboard only - fixed
 def pacd_dashboard(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now().date()
+        today = timezone.now()
 
         regular_lane = ClientDetails.objects.filter(
             client_lane_type='Regular',
@@ -125,7 +123,7 @@ def pacd_dashboard(request):
 # ---- Fectch forwarded unit -- FIXED ----
 def pacd_unit_dashboard(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now().date()
+        today = timezone.now()
         forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date__date=today)
 
         forwarded_client_count = []
@@ -154,10 +152,9 @@ def unit_dashboard1(request):
         return redirect("login")
     
     return render(request, 'app/unit_dashboard.html', {'user': user})
-
 def unit_dashboard(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now().date()
+        today = timezone.now()
         username = request.session.get('username')
         users = AccountDetails.objects.filter(user=username).first()
         unit = users.unit
@@ -176,11 +173,10 @@ def unit_dashboard(request):
                 'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
             })
         return JsonResponse({'forwarded_clients': forwarded_client_count})
-
-
+    
 def resolved_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now().date()
+        today = timezone.now()
         username = request.session.get('username')
         user = AccountDetails.objects.filter(user=username).first()
         unit = user.unit
@@ -207,7 +203,7 @@ def resolved_clients(request):
 # pacd_dashboard - pending clients fixed PACD dashboard only
 def pending_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now().date()
+        today = timezone.now()
         username = request.session.get('username')
         user = AccountDetails.objects.filter(user=username).first()
         pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)[:3]
@@ -258,7 +254,6 @@ def create_authorized_personnel(request):
     return render(request, 'app/account.html', {'form': form, 'user': user})
 
 # ----- FIXED AREA -----
-@csrf_exempt
 def update_division_log(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
@@ -285,44 +280,22 @@ def update_division_log(request):
             return JsonResponse({'message': str(e)}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
-
-# resolved client from unit - fixed
-@csrf_exempt
-def update_client_status_served(request):
-        if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            client_id = request.POST.get('client_id')
-            client_status = request.POST.get('client_status')
-
-            try:
-                client = ClientDetails.objects.get(pk=client_id)
-                client.client_status = client_status
-                client.save()
-                return JsonResponse({'message': 'Client status updated to Served'})
-
-            except ClientDetails.DoesNotExist:
-                return JsonResponse({'message': 'Client not found'}, status=404)
-            except Exception as e:
-                print(f"Error in update_client_status_served: {e}")  # Log the error
-                return JsonResponse({'message': 'Internal Server Error'}, status=500)
-
-        else:
-            return JsonResponse({'message': 'Invalid request'}, status=400)
         
 # forwarded client to the unit - fixed
 def update_client_status_forwarded(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
-            print('test')
             client_id = request.POST.get('client_id')
             division = request.POST.get('division')
             action_type = request.POST.get('action_type')
             unit = request.POST.get('unit')
             transaction_details = request.POST.get('transaction_details')
             username = request.session.get('username')
-            today = timezone.now().date()
+            today = timezone.now()
 
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = 'Forwarded'
+            client.user = username
             client.save()
 
             DivisionLog.objects.create(
@@ -357,15 +330,54 @@ def fetch_all_resolved_client(request):
                 'client_id': client.client_id.id,
                 'client_queue_no': client.client_id.client_queue_no,
                 'client_fullname': client.client_id.client_fullname,
-                'clien_gender': client.client_id.client_gender,
+                'client_gender': client.client_id.client_gender,
                 'client_lane_type': client.client_id.client_lane_type,
                 'remarks': client.remarks,
                 'form': client.form,
                 'unit_user': client.unit_user,
                 'action_type': client.action_type,
+                'status': client.status,
                 'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
             })
-        
         return JsonResponse({'resolved_clients': resolved_client_all})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
+    
+
+def update_client_status_served(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            today = timezone.now()
+            user = request.session.get('username')
+            users = AccountDetails.objects.filter(user=user).first()
+            client_id = request.POST.get('client_id')
+            transaction_details = request.POST.get('transaction_details')
+            remarks = request.POST.get('remarks')
+            resolutions = request.POST.get('resolutions')
+            action_type = 'resolved'
+            
+            client = ClientDetails.objects.get(client_id)
+            client.client_status = action_type
+            client.user = user
+            client.save()
+            
+            DivisionLog.objects.create(
+            client_id_id=client_id,
+            action_type = action_type,
+            division=users.divisions,
+            unit=users.unit,
+            transaction_details=transaction_details,
+            remarks = remarks,
+            form = resolutions,
+            unit_user = user,
+            user=user,
+            date_resolved = today,
+            date=today
+            )
+
+        except ClientDetails.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_served: {e}")  # Log the error
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+    return JsonResponse({'message': 'Invalid request'}, status=400)

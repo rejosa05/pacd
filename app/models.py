@@ -45,6 +45,7 @@ class ClientDetails(models.Model):
     client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
+    user = models.CharField(max_length=100, null=True)
     unit = models.CharField(max_length=100, default='PACD')
     
     def __str__(self):
@@ -57,7 +58,7 @@ class ClientDetails(models.Model):
     
     @staticmethod
     def get_queue_no():
-        today = timezone.now().date()
+        today = timezone.now()
         start_queue = 1
         last_queue = ClientDetails.objects.filter(client_created_date__date=today).order_by('client_queue_no').last()
         if last_queue:

@@ -1,13 +1,26 @@
 const {
     dashboardUrl, resolvedClientsUrl, updateDivisionLogUrl,
     pendingClientsUrl, updateClientStatusServedUrl,
-    updateClientStatusForwardedUrl, unitDashboadUrl,
+    updateClientStatusForwardedUrl, unitDashboadUrl, displayQueUrl,
     forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
 
 const path = window.location.pathname;
 
 let selectedClient = null;
+
+function formatDateTime(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
 
 function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
     const divisionSelect = document.getElementById(divisionId);
@@ -124,19 +137,15 @@ function fetchAllResolvedClient() {
         let priorityClients = data.resolved_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.resolved_clients.filter(client => client.client_lane_type !== 'Priority');
 
-        console.log(regularClients);
-
         function addClientRow(client, color) {
-            
-            
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
                 <td>${client.client_id}</td>
                 <td>${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
-                <td>${client.client_lane_types}</td>
-                <td>${client.action_type}</td>
+                <td>${client.client_lane_type}</td>
+                <td>${client.status}</td>
             `;
             tableBody.appendChild(row);
         }
@@ -185,23 +194,33 @@ function fetchForwardedClientPACD() {
 // ---------- Approve Modal ----------
 function approveModal(client, details, ques) {
     selectedClient = client;
-    document.getElementById('modal-fullname').innerText = client;
+    document.getElementById('modal-fullname-approved').innerText = client;
     document.getElementById('modal-transaction').innerText = details;
-    document.getElementById('modal-queue-no').innerText = ques;
+    document.getElementById('modal-queue-no-a').innerText = ques;
     document.getElementById('modal-remarks').value = '';
     document.getElementById('csm-checkbox').checked = false;
     document.getElementById('css-checkbox').checked = false;
-    document.getElementById('openModal').style.display = 'flex';
+    document.getElementById('approvedModal').style.display = 'flex';
 }
 function closedApprovedModal() {
     document.getElementById('approvedModal').style.display = 'none';
     selectedClient = null;
 }
-function saveApprovedClient() {
+
+function saveApprovedClientByPACD() {
+    const transaction_details = document.getElementById('modal-transaction-details').value;
     const remarks = document.getElementById('modal-remarks').value;
-    const details = document.getElementById('modal-transaction-details').value;
-    const csmChecked = document.getElementById('csm-checkbox').checked;
-    const cssChecked = document.getElementById('css-checkbox').checked;
+    const csmChecked = document.getElementById('csm-checkbox');
+    const cssChecked = document.getElementById('css-checkbox');
+
+    let resolutions = '';
+
+    if (csmChecked.checked) {
+        resolutions = csmChecked.value;
+    }
+    else if (cssChecked.checked) {
+        resolutions = cssChecked.value;
+    }
 
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
@@ -210,28 +229,20 @@ function saveApprovedClient() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient.client_id}`
-    })
-    .then(response => response.json())
-    .then(() => {
-        return fetch(updateDivisionLogUrl, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken,
-            },
-            body: `client_id=${selectedClient.client_id}&transaction_details=${details}&remarks=${remarks}&csm=${csmChecked}&css=${cssChecked}&action_type=approved`
-        });
+        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&remarks=${remarks}&resolutions=${resolutions}`
     })
     .then(response => response.json())
     .then(() => {
         fetchPendingClients();
     })
-    .catch(error => console.error('Error saving approved client:', error));
+    .catch(error => console.error('Error resolved client:', error));
 
+    alert('succefully catered!!!')
     closedApprovedModal();
 }
+
+// ----------- RESOLVED PACD CLIENT only ----------- 
+
 
 // ---------- Forwarded Modal (Fixed) ----------
 function forwardedModal(client, type, que, id) {
@@ -282,10 +293,6 @@ function fetchForwardedClient() {
     .then(data => {
         const tableBody = document.querySelector('#forwardedClient tbody');
         tableBody.innerHTML = '';
-        if (!tableBody) {
-            console.warn('Resolved table body not found in DOM.');
-            return;
-        }
 
         let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
@@ -322,6 +329,34 @@ function fetchForwardedClient() {
     .catch(error => console.error('Error fetching pending clients:', error));
 }
 
+function fetchForwardedClientPACDDisplay() {
+    fetch(forwardedPendingClientUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const tableBody = document.querySelector('#forwardedTransactions tbody');
+        tableBody.innerHTML = '';
+
+        let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
+        let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
+
+        function addClientRow(client, color) {
+            const row = document.createElement('tr');
+            row.style.backgroundColor = color;
+            row.innerHTML = `
+                <td>${client.client_queue_no}</td>
+                <td>${client.client_division}</td>
+                <td>${client.client_unit}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
+        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+    })
+    .catch(error => console.error('Error fetching pending clients:', error));
+}
+
 function openModalAction(client, details, que, id, type) {
     selectedClient = id;
     document.getElementById('client-id').innerText = selectedClient;
@@ -337,15 +372,15 @@ function saveActionResolved() {
     const csmChecked = document.getElementById('csm-checkbox');
     const cssChecked = document.getElementById('css-checkbox');
 
-    resolutions = '';
+    let resolutions = '';
 
-    if (csmChecked.checked)
-        resolutions.value;
-    else if (cssChecked.checked)
-        resolutions.value;
-    else
-        resolution = 'None'
-
+    if (csmChecked.checked) {
+        resolutions = csmChecked.value;
+    }
+    else if (cssChecked.checked) {
+        resolutions = cssChecked.value;
+    }
+        
     fetch(updateDivisionLogUrl, {
         method: 'POST',
         headers: {
@@ -357,8 +392,76 @@ function saveActionResolved() {
     })
     .catch(error => console.error('Error saving approved client:', error));
 
-    console.log(selectedClient)
     closeModal();
+}
+
+function fetchAllResolvedClientUnit() {
+    fetch(fetchResolvedDataUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const tableBody = document.querySelector('#cateredTransactions tbody');
+        tableBody.innerHTML = '';
+
+        let priorityClients = data.resolved_clients.filter(client => client.client_lane_type === 'Priority');
+        let regularClients = data.resolved_clients.filter(client => client.client_lane_type !== 'Priority');
+        
+        function addClientRow(client, color) {
+            const row = document.createElement('tr');
+            row.style.backgroundColor = color;
+            row.innerHTML = `
+                <td>${client.client_id}</td>
+                <td>${client.client_queue_no}</td>
+                <td>${client.client_fullname}</td>
+                <td>${client.client_gender}</td>
+                <td>${client.client_lane_type}</td>
+                <td>${client.status}</td>
+                <td>${client.form}</td>
+                <td>${client.unit_user}</td>
+                <td>${formatDateTime(client.date_resolved)}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
+        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+    })
+    .catch(error => console.error('Error fetching resolved clients', error));
+}
+
+// -------- DISPLAY PAGE ---------
+
+function fetchPendingClientsDisplay() {
+    fetch(pendingClientsUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const tableBody = document.querySelector('#pendingClientQueueTable tbody');
+        tableBody.innerHTML = ''; // Clear old rows
+
+        let priorityClients = data.pending_clients.filter(client => client.client_lane_type === 'Priority');
+        let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');
+
+        function addClientRow(client, color) {
+            const laneTypeIcon = client.client_lane_type === 'Regular'
+                ? '<i class="regular fa fa-angle-double-down"></i>'
+                : '<i class="priority fa fa-angle-double-up"></i>';
+
+            const row = document.createElement('tr');
+            row.style.backgroundColor = color;
+            row.innerHTML = `
+                <td> ${client.client_queue_no}</td>
+                <td>${laneTypeIcon} &nbsp; <span>${client.client_lane_type}</span></td>
+                <td>${client.client_transaction_type}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+        
+        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
+        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+    })
+    .catch(error => console.error('Error fetching pending clients:', error));
 }
 
 if (path.includes(pacdDashboard)) {
@@ -374,5 +477,16 @@ if (path.includes(pacdDashboard)) {
 
 if (path.includes(unitDashboard)) {
     fetchForwardedClient();
-    setInterval(fetchForwardedClient, 5000);
+    fetchAllResolvedClientUnit();
+    setInterval(fetchForwardedClient, 3000);
+    setInterval(fetchAllResolvedClientUnit, 3000)
+}
+
+if (path.includes(displayQueUrl)) {
+    fetchQuePacdDashboard()
+    fetchPendingClientsDisplay()
+    fetchForwardedClientPACDDisplay()
+    setInterval(fetchForwardedClientPACDDisplay, 3000);
+    setInterval(fetchPendingClientsDisplay, 3000);
+    setInterval(fetchQuePacdDashboard, 3000);
 }

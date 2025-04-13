@@ -40,7 +40,7 @@
             <BarChart class="nav-icon" />
             Reports
         </a>
-        <a href="#" class="nav-item">
+        <!-- <a href="#" class="nav-item">
           <Settings class="nav-icon" />
           Settings
         </a>
@@ -48,6 +48,7 @@
           <HelpCircle class="nav-icon" />
           Help
         </a>
+      </div> -->
       </div>
     </nav>
     <main class="main-content">
@@ -121,7 +122,7 @@
                 <h2 class="header-title">Catered Transactions</h2>
           </div>
           <div class="card">            
-            <div class="table-container1" style="height: 200px;">
+            <div class="table-container1" style="height: 280px"">
               <table class="table" id="cateredTransactions">
                 <thead>
                   <tr>
@@ -145,20 +146,22 @@
       <div class="modal-overlay" id="approvedModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
-            <h2 class="modal-title">Client Queue No. <span id=""></span></h2>
+            <h2 class="modal-title">Client Queue No. <span id="modal-queue-no-a"></span></h2>
           </div>
           <div class="modal-body">
             <div class="form-group1">
-              <label class="form-label">Full Name:</label>
-              <span id=""></span>
+              <label class="form-label">Full Name: <span id="modal-fullname-approved"></span></label>
             </div>
             <div class="form-group1">
-              <label class="form-label">Transactions Details:</label>
-              <span id="modal-transaction"></span>
+              <label class="form-label">Transactions Type: <span id="modal-transaction"></span></label>
             </div>
             <div class="form-group1">
-              <label class="form-label">Transactions Details:</label>
+              <label class="form-label">Transaction Details:</label>
               <textarea id="modal-transaction-details" class="form-input" rows="3" required=True></textarea>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Remarks:</label>
+              <textarea id="modal-remarks" class="form-input" rows="3" required></textarea>
             </div>
             <div class="form-group1">
               <label class="form-label">CSS/CSM:</label>
@@ -173,16 +176,12 @@
                 </label>
               </div>
             </div>
-            <div class="form-group1">
-              <label class="form-label">Remarks:</label>
-              <textarea id="modal-remarks" class="form-input" rows="3" required></textarea>
-            </div>
           </div>
           <div class="modal-footer">
             <button class="modal-button cancel-button" onclick="closedApprovedModal()">
               Cancel
             </button>
-                <button class="modal-button save-button" onclick="saveApprovedClient()">
+                <button class="modal-button save-button" onclick="saveApprovedClientByPACD()">
                 Resolved
                 </button>
           </div>
