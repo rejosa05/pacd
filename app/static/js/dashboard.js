@@ -107,7 +107,7 @@ function fetchPendingClients() {
                         <button class="action-button1 update-button" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
                             <i class="fa fa-arrow-right"></i>
                         </button>
-                        <button class="action-button1 approved-button" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}")'>
+                        <button class="action-button1 approved-button" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}")'>
                             <i class="fa fa-check-circle"></i>
                         </button>
                         <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_fullname}', '${client.client_transaction_type}')">
@@ -192,8 +192,8 @@ function fetchForwardedClientPACD() {
 }
 
 // ---------- Approve Modal ----------
-function approveModal(client, details, ques) {
-    selectedClient = client;
+function approveModal(client, details, ques, id) {
+    selectedClient = id;
     document.getElementById('modal-fullname-approved').innerText = client;
     document.getElementById('modal-transaction').innerText = details;
     document.getElementById('modal-queue-no-a').innerText = ques;
@@ -221,7 +221,7 @@ function saveApprovedClientByPACD() {
     else if (cssChecked.checked) {
         resolutions = cssChecked.value;
     }
-
+    console.log(updateClientStatusServedUrl)
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
         headers: {

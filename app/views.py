@@ -355,8 +355,9 @@ def update_client_status_served(request):
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
             action_type = 'resolved'
+            status = 'Done'
             
-            client = ClientDetails.objects.get(client_id)
+            client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
             client.user = user
             client.save()
@@ -372,9 +373,11 @@ def update_client_status_served(request):
             unit_user = user,
             user=user,
             date_resolved = today,
+            status = status,
             date=today
             )
 
+            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
         except ClientDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:

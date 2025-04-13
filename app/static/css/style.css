@@ -898,6 +898,7 @@ font-size: 0.875rem;
     color: #ffffff;
     font-size: 20px;
     padding: 10px;
+    position:  sticky;
 }
 
 /* --- SLIDE SHOW --- */
