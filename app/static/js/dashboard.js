@@ -202,6 +202,7 @@ function approveModal(client, details, ques, id) {
     document.getElementById('css-checkbox').checked = false;
     document.getElementById('approvedModal').style.display = 'flex';
 }
+
 function closedApprovedModal() {
     document.getElementById('approvedModal').style.display = 'none';
     selectedClient = null;
@@ -257,6 +258,7 @@ function forwardedModal(client, type, que, id) {
 
 function closeModal() {
     document.getElementById('openModal').style.display = 'none';
+    document.getElementById('modal-forwarded-transactions-details').value = '';
     selectedClient = null;
 }
 function saveForwardedClient() {
@@ -276,11 +278,10 @@ function saveForwardedClient() {
     .then(response => response.json())
     .then(() => {
         fetchPendingClients();
+        alert('forwarded the client!!');
+        closeModal();   
     })
     .catch(error => console.error('Error forwarding client:', error));
-
-    closeModal();
-    alert('forwarded the client!!')
 }
 
 // ---------- UNIT DASHBOARD ACTION ------------

@@ -10,6 +10,7 @@
         </div>
         <div class="ticket-body">
             <h2 class="ticket-number">{{ client.client_queue_no }}</h2>
+            <p><strong>Client ID:</strong> {{ client.id }}</p>
             <p><strong>Transaction:</strong> {{ client.client_transaction_type }}</p>
             <p><strong>Full Name:</strong> {{ client.client_fullname }}</p>
             <p><strong>Lane Type:</strong> {{ client.client_lane_type }}</p>
