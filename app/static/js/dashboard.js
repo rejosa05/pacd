@@ -1,7 +1,7 @@
 const {
     dashboardUrl, resolvedClientsUrl, updateDivisionLogUrl,
-    pendingClientsUrl, updateClientStatusServedUrl,
-    updateClientStatusForwardedUrl, unitDashboadUrl, displayQueUrl,
+    pendingClientsUrl, updateClientStatusServedUrl, pacdReports, fetchCateredTransactionsUrl,
+    updateClientStatusForwardedUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
 
@@ -14,7 +14,7 @@ function formatDateTime(dateString) {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
         year: 'numeric',
-        month: 'long',
+        month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
@@ -155,6 +155,33 @@ function fetchAllResolvedClient() {
     .catch(error => console.error('Error fetching resolved clients', error));
 }
 
+function fetchCateredTransactions() {
+    fetch(fetchCateredTransactionsUrl, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const tableBody = document.querySelector('#cateredTransactions');
+      tableBody.innerHTML = '';
+  
+      data.resolved_clients.forEach(client => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${client.client_id}</td>
+          <td>${client.client_queue_no}</td>
+          <td>${client.client_fullname}</td>
+          <td>${client.divisions}</td>
+          <td>${client.unit}</td>
+          <td>${client.status}</td>
+          <td>${formatDateTime(client.date_resolved)}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(error => console.error('Error fetching catered transactions:', error));
+  }
+  
+
 // ---------- Fetch Forwarded Clients Display on PACD -- FIXED ---------
 function fetchForwardedClientPACD() {
     fetch(forwardedPendingClientUrl, {
@@ -243,8 +270,6 @@ function saveApprovedClientByPACD() {
 }
 
 // ----------- RESOLVED PACD CLIENT only ----------- 
-
-
 // ---------- Forwarded Modal (Fixed) ----------
 function forwardedModal(client, type, que, id) {
     selectedClient = id;
@@ -397,7 +422,7 @@ function saveActionResolved() {
 }
 
 function fetchAllResolvedClientUnit() {
-    fetch(fetchResolvedDataUrl, {
+    fetch(fetchResolvedDataUnitUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -490,4 +515,9 @@ if (path.includes(displayQueUrl)) {
     setInterval(fetchForwardedClientPACDDisplay, 3000);
     setInterval(fetchPendingClientsDisplay, 3000);
     setInterval(fetchQuePacdDashboard, 3000);
+}
+
+if (path.includes(pacdReports)) {
+    fetchCateredTransactions();
+    setInterval(fetchCateredTransactions, 3000); 
 }

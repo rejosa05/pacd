@@ -901,6 +901,68 @@ font-size: 0.875rem;
     position:  sticky;
 }
 
+/* -- REPORTS --- */
+
+.dashboard-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .summary-card {
+    flex: 1 1 18%;
+    padding: 16px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+  }
+  
+  .bg-blue { background-color: #3b82f6; }
+  .bg-green { background-color: #10b981; }
+  .bg-yellow { background-color: #facc15; color: #000; }
+  .bg-red { background-color: #ef4444; }
+  .bg-dark { background-color: #1f2937; }
+
+  .cards {
+    background-color: #cccccc;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .table-container2 {
+    overflow-x: auto;
+  }
+  
+  .table__ {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  .table__ th, .table__ td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .table-container2 {
+    overflow-x: auto;
+  }
+  .table__ {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  .table__ th, .table__ td {
+    border: 1px solid #e5e7eb;
+    padding: 8px 12px;
+    text-align: left;
+  }
+
+  .dashboard-bottom {
+    height: 500px;
+  }
+
 /* --- SLIDE SHOW --- */
 .image-container {
     flex: 1;

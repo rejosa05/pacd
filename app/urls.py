@@ -20,5 +20,8 @@ urlpatterns = [
     path('update_client_status_forwarded/', views.update_client_status_forwarded, name='update_client_status_forwarded'),
     path('unit_dashboard', views.unit_dashboard, name="unit_dashboard"),
     path('pacd_unit_dashboard', views.pacd_unit_dashboard, name="pacd_unit_dashboard"),
-    path('fetch_all_resolved_client/', views.fetch_all_resolved_client, name="fetch_all_resolved_client")
+    path('fetch_all_resolved_client/', views.fetch_all_resolved_client, name="fetch_all_resolved_client"),
+    path('fetch_all_resolved_client_unit', views.fetch_all_resolved_client_unit, name="fetch_all_resolved_client_unit"),
+    path('reports_pacd', views.reports_pacd, name='reports_pacd'),
+    path('transactionsTotal', views.transactionsTotal, name="transactionsTotal")
 ]

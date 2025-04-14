@@ -21,8 +21,11 @@
             updateClientStatusForwardedUrl: "{% url 'update_client_status_forwarded' %}",
             forwardedPendingClientUrl: "{% url 'pacd_unit_dashboard' %}",
             fetchResolvedDataUrl: "{% url 'fetch_all_resolved_client' %}",  // fetch data all resolved client
+            fetchResolvedDataUnitUrl: "{% url 'fetch_all_resolved_client_unit' %}",
             displayQueUrl: "{% url 'display_page' %}",
             accountUrl: "{% url 'account' %}",
+            pacdReports: "{% url 'reports_pacd' %}",
+            fetchCateredTransactionsUrl: "{% url 'transactionsTotal' %}",
             csrfToken: "{{ csrf_token }}"
         };
     </script>

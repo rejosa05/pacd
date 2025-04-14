@@ -318,7 +318,7 @@ def update_client_status_forwarded(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
-# fetch all data of resolved client
+# fetch all data of resolved client --
 def fetch_all_resolved_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
@@ -337,6 +337,36 @@ def fetch_all_resolved_client(request):
                 'unit_user': client.unit_user,
                 'action_type': client.action_type,
                 'status': client.status,
+                'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
+            })
+        return JsonResponse({'resolved_clients': resolved_client_all})
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)
+    
+# fetch all data of resolved client -- per unit
+def fetch_all_resolved_client_unit(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        user = request.session.get('username')
+        users = AccountDetails.objects.filter(user=user).first()
+        today = timezone.now()
+        unit = users.unit
+        print(unit)
+        resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
+        
+        resolved_client_all = []
+        for client in resolved_clients:
+            resolved_client_all.append({
+                'client_id': client.client_id.id,
+                'client_queue_no': client.client_id.client_queue_no,
+                'client_fullname': client.client_id.client_fullname,
+                'client_gender': client.client_id.client_gender,
+                'client_lane_type': client.client_id.client_lane_type,
+                'remarks': client.remarks,
+                'form': client.form,
+                'unit_user': client.unit_user,
+                'action_type': client.action_type,
+                'status': client.status,
+                'unit': unit,
                 'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
             })
         return JsonResponse({'resolved_clients': resolved_client_all})
@@ -384,3 +414,70 @@ def update_client_status_served(request):
             print(f"Error in update_client_status_served: {e}")  # Log the error
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+def reports(request):
+    username = request.session.get('username')
+
+    if not username:
+        return redirect("login")
+    
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if user.unit == 'PACD':
+        return redirect('pacd_dashboard')
+    else:
+        return redirect('unit_dashboards')
+
+def reports_pacd(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not username:
+        return redirect("login")
+    
+    today = timezone.now()
+
+    # Fetch the division count data (you may adjust the model and field names)
+    division_counts = {
+        'MSD': DivisionLog.objects.filter(division='MSD').count(),
+        'ARD': DivisionLog.objects.filter(division='ARD').count(),
+        'RLED': DivisionLog.objects.filter(division='RLED').count(),
+        'LHSD': DivisionLog.objects.filter(division='LHSD').count(),
+    }
+
+    # Total number of resolved transactions
+    #total_transactions = DivisionLog.objects.filter(date_resolved__date=today).count()
+
+    return render(request, 'app/reports.html', {
+        'division_counts': division_counts,
+        #'total_transactions': total_transactions,
+        'user': user
+    })
+
+
+def transactionsTotal(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        resolved_clients = DivisionLog.objects.filter().order_by('-date_resolved')  # Optional: order by latest
+
+        resolved_client_all = [
+            {
+                'client_id': client.client_id.id,
+                'client_queue_no': client.client_id.client_queue_no,
+                'client_fullname': client.client_id.client_fullname,
+                'client_gender': client.client_id.client_gender,
+                'client_lane_type': client.client_id.client_lane_type,
+                'divisions': client.division,
+                'unit': client.unit,
+                'remarks': client.remarks,
+                'form': client.form,
+                'unit_user': str(client.unit_user),
+                'action_type': client.action_type,
+                'status': client.status,
+                'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
+            }
+            for client in resolved_clients
+        ]
+        return JsonResponse({'resolved_clients': resolved_client_all})
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)
