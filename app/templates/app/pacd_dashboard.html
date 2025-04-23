@@ -122,7 +122,7 @@
                 <h2 class="header-title">Catered Transactions</h2>
           </div>
           <div class="card">            
-            <div class="table-container1" style="height: 280px"">
+            <div class="table-container1" style="height: 280px">
               <table class="table" id="cateredTransactions">
                 <thead>
                   <tr>
@@ -254,11 +254,20 @@
     if (!audioUnlocked) return;
 
     const audio = document.getElementById("queue-audio");
-    audio.play();
-
     const synth = window.speechSynthesis;
+
+    if (queueNumber === "00") {
+      const emptyQueueAudio = document.getElementById("no-queue-audio");
+      if (emptyQueueAudio) {
+        emptyQueueAudio.play();
+      } 
+      return;
+    }
+
+    audio.play();
     const message = new SpeechSynthesisUtterance("Now serving queue number " + queueNumber);
     synth.speak(message);
+       
   }
 
   function observeQueueChange(queueId) {

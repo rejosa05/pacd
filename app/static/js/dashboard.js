@@ -236,20 +236,26 @@ function closedApprovedModal() {
 }
 
 function saveApprovedClientByPACD() {
-    const transaction_details = document.getElementById('modal-transaction-details').value;
-    const remarks = document.getElementById('modal-remarks').value;
+    const transaction_details = document.getElementById('modal-transaction-details');
+    const remarks = document.getElementById('modal-remarks');
     const csmChecked = document.getElementById('csm-checkbox');
     const cssChecked = document.getElementById('css-checkbox');
 
-    let resolutions = '';
+    if(!transaction_details.value || !remarks.value) { 
+        alert('please provide transaction details or remarks !!!');
+        return;
+    }
+    
+    const isCSM = csmChecked.checked;
+    const isCSS = cssChecked.checked;
 
-    if (csmChecked.checked) {
-        resolutions = csmChecked.value;
+    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
+        alert('Please select only one satisfaction form (CSM or CSS)!');
+        return;
     }
-    else if (cssChecked.checked) {
-        resolutions = cssChecked.value;
-    }
-    console.log(updateClientStatusServedUrl)
+
+    const resolutions = isCSM ? 'CSM' : 'CSS';
+
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
         headers: {
@@ -257,7 +263,7 @@ function saveApprovedClientByPACD() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&remarks=${remarks}&resolutions=${resolutions}`
+        body: `client_id=${selectedClient}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
     })
     .then(response => response.json())
     .then(() => {
@@ -418,6 +424,7 @@ function saveActionResolved() {
     })
     .catch(error => console.error('Error saving approved client:', error));
 
+    alert('done !!!')
     closeModal();
 }
 

@@ -62,13 +62,12 @@ class ClientDetails(models.Model):
         start_queue = 1
         last_queue = ClientDetails.objects.filter(client_created_date__date=today).order_by('client_queue_no').last()
         if last_queue:
-            print(last_queue)
             return last_queue.client_queue_no + start_queue
         return start_queue
 
 @receiver(pre_save, sender=ClientDetails)
 def set_queue_no(sender, instance, **kwargs):
-    if not instance.client_queue_no or instance.client_queue_no == 1:
+    if instance._state.adding and (not instance.client_queue_no or instance.client_queue_no == 1):
         instance.client_queue_no = ClientDetails.get_queue_no()
 
 class DivisionLog(models.Model):
