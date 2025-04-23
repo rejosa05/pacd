@@ -241,7 +241,7 @@ function saveApprovedClientByPACD() {
     const csmChecked = document.getElementById('csm-checkbox');
     const cssChecked = document.getElementById('css-checkbox');
 
-    if(!transaction_details.value || !remarks.value) { 
+    if (!transaction_details.value || !remarks.value) { 
         alert('please provide transaction details or remarks !!!');
         return;
     }
