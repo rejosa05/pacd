@@ -241,15 +241,21 @@ function saveApprovedClientByPACD() {
     const csmChecked = document.getElementById('csm-checkbox');
     const cssChecked = document.getElementById('css-checkbox');
 
-    let resolutions = '';
+    if (!transaction_details.value || !remarks.value) { 
+        alert('please provide transaction details or remarks !!!');
+        return;
+    }
+    
+    const isCSM = csmChecked.checked;
+    const isCSS = cssChecked.checked;
 
-    if (csmChecked.checked) {
-        resolutions = csmChecked.value;
+    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
+        alert('Please select only one satisfaction form (CSM or CSS)!');
+        return;
     }
-    else if (cssChecked.checked) {
-        resolutions = cssChecked.value;
-    }
-    console.log(updateClientStatusServedUrl)
+
+    const resolutions = isCSM ? 'CSM' : 'CSS';
+    
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
         headers: {
