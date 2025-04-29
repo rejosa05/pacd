@@ -180,7 +180,6 @@ def resolved_clients(request):
         username = request.session.get('username')
         user = AccountDetails.objects.filter(user=username).first()
         unit = user.unit
-        units = user.position
         resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
         
         serialized_clients = []
@@ -204,8 +203,6 @@ def resolved_clients(request):
 def pending_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
-        username = request.session.get('username')
-        user = AccountDetails.objects.filter(user=username).first()
         pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)[:3]
         pending_clients_count = []
         for client in pending_clients:
@@ -446,12 +443,8 @@ def reports_pacd(request):
         'LHSD': DivisionLog.objects.filter(division='LHSD').count(),
     }
 
-    # Total number of resolved transactions
-    #total_transactions = DivisionLog.objects.filter(date_resolved__date=today).count()
-
     return render(request, 'app/reports.html', {
         'division_counts': division_counts,
-        #'total_transactions': total_transactions,
         'user': user
     })
 
