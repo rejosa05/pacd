@@ -196,6 +196,8 @@ function fetchForwardedClientPACD() {
         let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
 
         function addClientRow(client, color) {
+            const name = String(client.client_fullname || '').trim();
+            const initial = name.charAt(0).toUpperCase();
             const genderIcon = client.client_gender === 'Male'
                 ? '<i class="male-icon fa fa-mars"></i>'
                 : '<i class="female-icon fa fa-venus"></i>';
@@ -203,9 +205,14 @@ function fetchForwardedClientPACD() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>${client.client_id}</td>
+                
+                <td>
+                    <div class="client-info">
+                        <div class="initial-circle">${initial}</div>    
+                        <span>${client.client_fullname}</span>
+                    </div>
+                </td>
                 <td>${client.client_queue_no}</td>
-                <td>${client.client_fullname}</td>
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
                 <td><i class="fa fa-forwarded"></i>${client.client_a_type}</td>
@@ -268,11 +275,10 @@ function saveApprovedClientByPACD() {
     .then(response => response.json())
     .then(() => {
         fetchPendingClients();
+        alert('succefully catered!!!')
+        closedApprovedModal();
     })
     .catch(error => console.error('Error resolved client:', error));
-
-    alert('succefully catered!!!')
-    closedApprovedModal();
 }
 
 // ----------- RESOLVED PACD CLIENT only ----------- 

@@ -333,35 +333,37 @@ html {
 }
 
 .table th {
-    padding: 1rem 1rem;
+    padding: 0.5rem .05rem;
     text-align: center;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.10rem;
 }
 
 .table td {
     font-size: medium;
-    font-weight: lighter;
+    font-weight: 400;
     padding: 0.5rem 0.5rem;
     text-align: center;
 }
 
-.table tbody tr:nth-child(even) {
-    background-color: #ffffff;
+.client-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.table tbody tr:hover {
-    background-color: #b6ffd8;
+.initial-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #006946;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
 }
-
-.priority-row {
-    background-color: #fef3c7 !important;
-}
-
-.priority-row:hover {
-    background-color: #fde68a !important;
-}
-
 /* Cell content styles */
 .name-cell {
     font-weight: 500;
