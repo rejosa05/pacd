@@ -205,7 +205,7 @@ function fetchForwardedClientPACD() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                
+                <td>${client.client_id}</td>
                 <td>
                     <div class="client-info">
                         <div class="initial-circle">${initial}</div>    
@@ -215,7 +215,9 @@ function fetchForwardedClientPACD() {
                 <td>${client.client_queue_no}</td>
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
-                <td><i class="fa fa-forwarded"></i>${client.client_a_type}</td>
+                <td>
+                    <button class="action-button1 delete-button" title="Edit"><i class="fa fa-edit"></i></button>
+                </td>
             `;
             tableBody.appendChild(row);
         }
