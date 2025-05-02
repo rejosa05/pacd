@@ -1,14 +1,10 @@
 const {
-    dashboardUrl, resolvedClientsUrl, updateDivisionLogUrl,
-    pendingClientsUrl, updateClientStatusServedUrl, pacdReports, fetchCateredTransactionsUrl,
-    updateClientStatusForwardedUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
+    dashboardUrl, resolvedClientsUrl,
+    pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
 
 const path = window.location.pathname;
-
-let selectedClient = null;
-
 function formatDateTime(dateString) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -226,103 +222,6 @@ function fetchForwardedClientPACD() {
     })
     .catch(error => console.error('Error fetching pending clients:', error));
 }
-
-// ---------- Approve Modal ----------
-function approveModal(client, details, ques, id) {
-    selectedClient = id;
-    document.getElementById('modal-fullname-approved').innerText = client;
-    document.getElementById('modal-transaction').innerText = details;
-    document.getElementById('modal-queue-no-a').innerText = ques;
-    document.getElementById('modal-remarks').value = '';
-    document.getElementById('csm-checkbox').checked = false;
-    document.getElementById('css-checkbox').checked = false;
-    document.getElementById('approvedModal').style.display = 'flex';
-}
-
-function closedApprovedModal() {
-    document.getElementById('approvedModal').style.display = 'none';
-    selectedClient = null;
-}
-
-function saveApprovedClientByPACD() {
-    const transaction_details = document.getElementById('modal-transaction-details');
-    const remarks = document.getElementById('modal-remarks');
-    const csmChecked = document.getElementById('csm-checkbox');
-    const cssChecked = document.getElementById('css-checkbox');
-
-    if (!transaction_details.value || !remarks.value) { 
-        alert('please provide transaction details or remarks !!!');
-        return;
-    }
-    
-    const isCSM = csmChecked.checked;
-    const isCSS = cssChecked.checked;
-
-    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
-        alert('Please select only one satisfaction form (CSM or CSS)!');
-        return;
-    }
-
-    const resolutions = isCSM ? 'CSM' : 'CSS';
-
-    fetch(updateClientStatusServedUrl, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
-    })
-    .then(response => response.json())
-    .then(() => {
-        fetchPendingClients();
-        alert('succefully catered!!!')
-        closedApprovedModal();
-    })
-    .catch(error => console.error('Error resolved client:', error));
-}
-
-// ----------- RESOLVED PACD CLIENT only ----------- 
-// ---------- Forwarded Modal (Fixed) ----------
-function forwardedModal(client, type, que, id) {
-    selectedClient = id;
-    document.getElementById('client-id').innerText = selectedClient;
-    document.getElementById('modal-fullname').innerText = client;
-    document.getElementById('modal-transaction-type').innerText = type;
-    document.getElementById('modal-queue-no').innerText = que;
-    document.getElementById('openModal').style.display = 'flex';
-    console.log(que);
-}
-
-function closeModal() {
-    document.getElementById('openModal').style.display = 'none';
-    document.getElementById('modal-forwarded-transactions-details').value = '';
-    selectedClient = null;
-}
-function saveForwardedClient() {
-    const transaction_details = document.getElementById('modal-forwarded-transactions-details').value;
-    const division = document.getElementById('division-select').value;
-    const unit = document.getElementById('unit-select').value;
-
-    fetch(updateClientStatusForwardedUrl, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
-    })
-    .then(response => response.json())
-    .then(() => {
-        fetchPendingClients();
-        alert('forwarded the client!!');
-        closeModal();   
-    })
-    .catch(error => console.error('Error forwarding client:', error));
-}
-
 // ---------- UNIT DASHBOARD ACTION ------------
 // ---------- Unit Dashboard ---------
 function fetchForwardedClient() {
@@ -396,46 +295,6 @@ function fetchForwardedClientPACDDisplay() {
     })
     .catch(error => console.error('Error fetching pending clients:', error));
 }
-
-function openModalAction(client, details, que, id, type) {
-    selectedClient = id;
-    document.getElementById('client-id').innerText = selectedClient;
-    document.getElementById('modal-fullname').innerText = client;
-    document.getElementById('modal-transaction-type').innerText = type;
-    document.getElementById('modal-transaction-details').innerText = details || 'N/A';
-    document.getElementById('modal-queue-no').innerText = que;
-    document.getElementById('openModal').style.display = 'flex';
-}
-
-function saveActionResolved() {
-    const remarks = document.getElementById('modal-remarks').value;
-    const csmChecked = document.getElementById('csm-checkbox');
-    const cssChecked = document.getElementById('css-checkbox');
-
-    let resolutions = '';
-
-    if (csmChecked.checked) {
-        resolutions = csmChecked.value;
-    }
-    else if (cssChecked.checked) {
-        resolutions = cssChecked.value;
-    }
-        
-    fetch(updateDivisionLogUrl, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&remarks=${remarks}&resolution=${resolutions}`
-    })
-    .catch(error => console.error('Error saving approved client:', error));
-
-    alert('done !!!')
-    closeModal();
-}
-
 function fetchAllResolvedClientUnit() {
     fetch(fetchResolvedDataUnitUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -510,10 +369,10 @@ if (path.includes(pacdDashboard)) {
     fetchPendingClients();
     fetchAllResolvedClient();
     fetchQuePacdDashboard();
-    setInterval(fetchAllResolvedClient, 5000);
-    setInterval(fetchForwardedClientPACD, 5000);
-    setInterval(fetchPendingClients, 5000);
-    setInterval(fetchQuePacdDashboard, 5000);
+    setInterval(fetchAllResolvedClient, 3000);
+    setInterval(fetchForwardedClientPACD, 3000);
+    setInterval(fetchPendingClients, 3000);
+    setInterval(fetchQuePacdDashboard, 3000);
 }
 
 if (path.includes(unitDashboard)) {
