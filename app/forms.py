@@ -62,7 +62,7 @@ class AuthorizedPersonnelForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
     class Meta:
         model = AccountDetails
-        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position']
+        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position', 'email', 'contact']
     def clean_username(self):
         user = self.cleaned_data.get('user')
         if AccountDetails.objects.filter(user=user).exists():

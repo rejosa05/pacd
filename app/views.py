@@ -221,7 +221,7 @@ def pending_clients(request):
         return JsonResponse({'pending_clients': pending_clients_count})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
-def create_authorized_personnel(request):
+def add_account(request):
     if request.method == 'POST':
         form = AuthorizedPersonnelForm(request.POST)
         
@@ -412,6 +412,29 @@ def update_client_status_served(request):
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+def accountList(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        account = AccountDetails.objects.filter().order_by('-date_created')  # Optional: order by latest
+
+        accountList = [
+            {
+                'id': accounts.id,
+                'first_name': accounts.first_name,
+                'last_name': accounts.last_name,
+                'position': accounts.position,
+                'divisions': accounts.divisions,
+                'unit': accounts.unit,
+                'email': accounts.email,
+                'contact': accounts.contact,
+                'user': accounts.user,
+                'password': accounts.password,
+                'date_created': accounts.date_created.isoformat() if accounts.date_created else None,
+            }
+            for accounts in account
+        ]
+        return JsonResponse({'accountList': accountList})
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def reports(request):
     username = request.session.get('username')
@@ -447,8 +470,6 @@ def reports_pacd(request):
         'division_counts': division_counts,
         'user': user
     })
-
-
 def transactionsTotal(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         resolved_clients = DivisionLog.objects.filter().order_by('-date_resolved')  # Optional: order by latest

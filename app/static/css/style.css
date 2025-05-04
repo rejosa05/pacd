@@ -98,7 +98,7 @@ html {
 }
 
 .sidebar {
-    width: 300px;
+    width: 15%;
     background: white;
     border-right: 1px solid #e2e8f0;
     display: flex;
@@ -1021,3 +1021,71 @@ font-size: 0.875rem;
         flex-direction: column;
     }
 }
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+
+  .form3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form3 label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    flex: 1;
+    margin-right: 10px;
+  }
+
+  .inline-group {
+    display: flex;
+    gap: 20px;
+    grid-column: span 2;
+  }
+
+  .form3 input,
+  .form3 select {
+    margin-top: 6px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .form3 input:focus,
+  .form3 select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  .form3 button {
+    grid-column: span 2;
+    padding: 12px;
+    background-color: #02753c;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .form3 button:hover {
+    background-color: #0056b3;
+  }
+
+

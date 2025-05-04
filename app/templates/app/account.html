@@ -50,51 +50,91 @@
         </a>
       </div> -->
     </nav>
-    <main class="main-content">
-      <div class="card queue-details">
-        <h2>Create Account</h2>
-        {{ message }}
-        <form method="POST" action="{% url 'account' %}">
+      <div class="container">
+        <div class="item">
+          <h2>Create New Account</h2>
+          <form class="form3" method="POST" action="{% url 'account' %}">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username</label>
-                {{ form.user }}
-                <label for="password">Password</label>
-                {{ form.password }}
-            </div>
-            <div class="form-group">
-                <label for="first_name">First Name</label>
-                {{ form.first_name }}
-            </div>
-            <div class="form-group">
-                <label for="last_name">Last Name</label>
-                {{ form.last_name }}
-            </div>
-            <div class="form-group">
-              <labe for="division">Division: </label>
-              <select name="divisions" id="division-select">
-                  <option value="">Select Division</option>
-                  <option value="MSD">MSD</option>
-                  <option value="LHSD">LHSD</option>
-                  <option value="RD/ARD">RD/ARD</option>
-                  <option value="RLED">RLED</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="unit">Unit:</label>
-              <select name="unit" id="unit-select" required>
-                  <option value="">Select Unit</option>
-              </select>
-            </div>
-            <div class="form-group">
-                <label for="unit">Position</label>
+          
+            <label>
+              First Name
+              {{ form.first_name }}
+            </label>
+            <label>
+              Last Name
+              {{ form.last_name }}
+            </label>
+          
+            <!-- Inline group: Position, Email, Contact -->
+            <div class="inline-group">
+              <label>
+                Position
                 {{ form.position }}
+              </label>
+              <label>
+                Email
+                {{ form.email }}
+              </label>
+              <label>
+                Contact Number
+                {{ form.contact }}
+              </label>
             </div>
-            <button type="submit" class="btn btn-primary">Create Account</button>
-        </form>
-    </div>
-      </main>
+          
+            <label>
+              Division
+              <select name="divisions" id="division-select" required>
+                <option value="">Select Division</option>
+                <option value="MSD">MSD</option>
+                <option value="LHSD">LHSD</option>
+                <option value="RD/ARD">RD/ARD</option>
+                <option value="RLED">RLED</option>
+              </select>
+            </label>
+            <label>
+              Unit
+              <select name="unit" id="unit-select" required>
+                <option value="">Select Unit</option>
+              </select>
+            </label>
+            <div class="inline-group">
+              <label>
+                Username
+                {{ form.user }}
+              </label>
+              <label>
+                Password
+                {{ form.password }}
+              </label>
+            </div>
+          
+            <button type="submit">Create Account</button>
+          </form>
+        </div>          
+        <div class="item">
+          <h2 class="header-title"> <i class="fa fa-list-ul"></i> Account List</h2>
+          <div class="table-container" style="height: 250px;">
+            <table class="table" id="accountList">
+              <thead>
+                <tr>
+                  <th style="width: 5%;">ID</th>
+                  <th>Employee Full Name</th>
+                  <th>Position</th>
+                  <th>Division</th>
+                  <th style="width: 10%;">Unit</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th style="width: 2%;"></th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 </div>
+
 <script>
   function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
     const divisionSelect = document.getElementById(divisionId);

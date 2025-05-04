@@ -1,5 +1,5 @@
 const {
-    dashboardUrl, resolvedClientsUrl,
+    dashboardUrl, resolvedClientsUrl, accountListUrl, accountUrl,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
@@ -66,6 +66,45 @@ function fetchQuePacdDashboard() {
         document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
     })
     .catch(error => console.error('Error fetching dashboard queue:', error));
+}
+
+// ----- ACCOUNTS -----
+function fetchAccountList() {
+    fetch(accountListUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest'}
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const tableBody = document.querySelector('#accountList tbody');
+        tableBody.innerHTML = '';
+
+        data.accountList.forEach(account => {
+            const f_ = String(account.first_name || '').trim();
+            const l_ = String(account.last_name || '').trim();
+            const fInitial = f_.charAt(0).toUpperCase();
+            const lInitial = l_.charAt(0).toUpperCase();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${account.id}</td>
+            <td>
+                <div class="client-info">
+                    <div class="initial-circle">${fInitial}${lInitial}</div>    
+                    <span>${account.first_name} ${account.last_name}</span>
+                </div>
+            </td>
+            <td>${account.position}</td>
+            <td>${account.divisions}</td>
+            <td>${account.unit}</td>
+            <td>${account.user}</td>
+            <td>${account.email}</td>
+            <td>
+                <button class="action-button1" title="Edit"><i class="fa fa-edit"></i></button>
+            </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching catered transactions:', error));
 }
 
 // ---------- Fetch and Display Pending Clients ----------
@@ -394,4 +433,9 @@ if (path.includes(displayQueUrl)) {
 if (path.includes(pacdReports)) {
     fetchCateredTransactions();
     setInterval(fetchCateredTransactions, 3000); 
+}
+
+if (path.includes(accountUrl)) {
+    fetchAccountList();
+    setInterval(fetchAccountList, 3000);
 }

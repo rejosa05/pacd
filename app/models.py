@@ -12,22 +12,28 @@ class AccountDetails(models.Model):
     divisions = models.CharField(max_length=100)
     unit = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, null=True)
+    contact = models.CharField(max_length=100, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} ({self.first_name} {self.last_name})"
-    
-    def set_password(self,raw_password):
+
+    def set_password(self, raw_password):
         self.password = make_password(raw_password)
 
     def save(self, *args, **kwargs):
-        if not self.pk or AccountDetails.objects.filter(pk=self.pk).exists() and \
-                AccountDetails.objects.get(pk=self.pk).password != self.password:
+        self.first_name = self.first_name.title()
+        self.last_name = self.last_name.title()
+
+        if not self.pk or (AccountDetails.objects.filter(pk=self.pk).exists() and
+                AccountDetails.objects.get(pk=self.pk).password != self.password):
             self.password = make_password(self.password)
+
         super(AccountDetails, self).save(*args, **kwargs)
 
         self.create_django_user()
-    
+
     def create_django_user(self):
         user, created = AccountDetails.objects.get_or_create(user=self.user)
         if created:

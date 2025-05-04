@@ -133,3 +133,7 @@ function saveActionResolved() {
     alert('done !!!')
     closeModal();
 }
+
+function addAccount() {
+
+ }
