@@ -211,7 +211,7 @@ html {
 .main-content {
     margin-left: 0; /* Removed fixed margin */
     flex: 1;
-    padding: 1rem;
+    padding: 50px;
     background: linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f8f0ff 100%);
 }
 
@@ -248,7 +248,6 @@ html {
 /* Card styles */
 .card {
     background: white;
-    border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid #f1f5f9;
     overflow: hidden;
@@ -1028,50 +1027,50 @@ font-size: 0.875rem;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
-  }
+}
 
-  .item {
+.item {
     border: 1px solid #ddd;
     padding: 20px;
     background-color: #f9f9f9;
-  }
+}
 
-  .form3 {
+.form3 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-  }
+}
 
-  .form3 label {
+.form3 label {
     display: flex;
     flex-direction: column;
     font-weight: 500;
     flex: 1;
     margin-right: 10px;
-  }
+}
 
-  .inline-group {
+.inline-group {
     display: flex;
     gap: 20px;
     grid-column: span 2;
-  }
+}
 
-  .form3 input,
-  .form3 select {
+.form3 input,
+.form3 select {
     margin-top: 6px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
-  }
+}
 
-  .form3 input:focus,
-  .form3 select:focus {
+.form3 input:focus,
+.form3 select:focus {
     outline: none;
     border-color: #007bff;
-  }
+}
 
-  .form3 button {
+.form3 button {
     grid-column: span 2;
     padding: 12px;
     background-color: #02753c;
@@ -1082,10 +1081,8 @@ font-size: 0.875rem;
     border-radius: 8px;
     cursor: pointer;
     margin-top: 10px;
-  }
+}
 
-  .form3 button:hover {
+.form3 button:hover {
     background-color: #0056b3;
-  }
-
-
+}

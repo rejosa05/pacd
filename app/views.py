@@ -237,7 +237,6 @@ def add_account(request):
                 messages.success(request, "Account created successfully!")
                 return redirect("account")
         else:
-            print(form.errors)
             messages.error(request, "User already exists!")
     else:
         form = AuthorizedPersonnelForm()
@@ -347,7 +346,6 @@ def fetch_all_resolved_client_unit(request):
         users = AccountDetails.objects.filter(user=user).first()
         today = timezone.now()
         unit = users.unit
-        print(unit)
         resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
         
         resolved_client_all = []

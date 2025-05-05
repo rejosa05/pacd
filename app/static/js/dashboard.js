@@ -104,7 +104,6 @@ function fetchAccountList() {
             tableBody.appendChild(row);
         });
     })
-    .catch(error => console.error('Error fetching catered transactions:', error));
 }
 
 // ---------- Fetch and Display Pending Clients ----------
@@ -157,7 +156,6 @@ function fetchPendingClients() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching pending clients:', error));
 }
 
 function fetchAllResolvedClient() {
@@ -187,7 +185,6 @@ function fetchAllResolvedClient() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching resolved clients', error));
 }
 
 function fetchCateredTransactions() {
@@ -213,7 +210,6 @@ function fetchCateredTransactions() {
         tableBody.appendChild(row);
       });
     })
-    .catch(error => console.error('Error fetching catered transactions:', error));
   }
   
 
@@ -259,7 +255,6 @@ function fetchForwardedClientPACD() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching pending clients:', error));
 }
 // ---------- UNIT DASHBOARD ACTION ------------
 // ---------- Unit Dashboard ---------
@@ -304,7 +299,6 @@ function fetchForwardedClient() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching pending clients:', error));
 }
 
 function fetchForwardedClientPACDDisplay() {
@@ -332,7 +326,6 @@ function fetchForwardedClientPACDDisplay() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching pending clients:', error));
 }
 function fetchAllResolvedClientUnit() {
     fetch(fetchResolvedDataUnitUrl, {
@@ -365,7 +358,6 @@ function fetchAllResolvedClientUnit() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching resolved clients', error));
 }
 
 // -------- DISPLAY PAGE ---------
@@ -400,7 +392,6 @@ function fetchPendingClientsDisplay() {
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
-    .catch(error => console.error('Error fetching pending clients:', error));
 }
 
 if (path.includes(pacdDashboard)) {
