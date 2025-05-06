@@ -516,6 +516,7 @@ font-size: 0.875rem;
 
 #modal-fullname,
 #modal-queue-no,
+#mode-queue-no-a,
 #modal-transaction {
   font-size: 16px;
   font-weight: 500;

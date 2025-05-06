@@ -11,6 +11,7 @@ function closedApprovedModal() {
 
 function approveModal(client, details, ques, id) {
     selectedClient = id;
+    document.getElementById('modal-client-id').innerText = id;
     document.getElementById('modal-fullname-approved').innerText = client;
     document.getElementById('modal-transaction').innerText = details;
     document.getElementById('modal-queue-no-a').innerText = ques;
@@ -65,7 +66,6 @@ function forwardedModal(client, type, que, id) {
     document.getElementById('modal-transaction-type').innerText = type;
     document.getElementById('modal-queue-no').innerText = que;
     document.getElementById('openModal').style.display = 'flex';
-    console.log(que);
 }
 
 function closeModal() {
@@ -100,7 +100,7 @@ function openModalAction(client, details, que, id, type) {
     document.getElementById('client-id').innerText = selectedClient;
     document.getElementById('modal-fullname').innerText = client;
     document.getElementById('modal-transaction-type').innerText = type;
-    document.getElementById('modal-transaction-details').innerText = details || 'N/A';
+    document.getElementById('modal-transaction-details').innerText = details;
     document.getElementById('modal-queue-no').innerText = que;
     document.getElementById('openModal').style.display = 'flex';
 }
@@ -134,6 +134,17 @@ function saveActionResolved() {
     closeModal();
 }
 
-function addAccount() {
+function ForwardedEditModal(id, fullname, division, unit, que) {
+    selectedClient = id;
+    document.getElementById('f_edit-client-id').innerText = selectedClient;
+    document.getElementById('f-edit-fullname').innerText = fullname;
+    document.getElementById('f-division-value').innerText = division;
+    document.getElementById('f-unit-value').innerText = unit;
+    document.getElementById('f_edit-queue-no').innerText = que;
+    document.getElementById('f_editModal').style.display = 'flex';
+}
 
- }
+function closeEditModal() {
+    document.getElementById('f_editModal').style.display = 'none';
+    selectedClient = null;
+}

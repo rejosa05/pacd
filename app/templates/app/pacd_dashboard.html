@@ -77,7 +77,7 @@
             <table class="table"  id="pendingClientQueueTable">
               <thead>
                 <tr>
-                  <th style="width: 100px;">Client ID </th>
+                  <th style="width: 100px;"> ID </th>
                   <th style="width: 100px;">Queue No. </th>
                   <th>Full Name</th>
                   <th style="width: 100px;">Gender</th>
@@ -146,7 +146,8 @@
       <div class="modal-overlay" id="approvedModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
-            <h2 class="modal-title">Client Queue No. <span id="modal-queue-no-a"></span></h2>
+            <h2 class="modal-title"> Que No. <span id="modal-queue-no-a"></span></h2>
+            <h2 class="modal-title"> Client ID:  <i class="fa fa-user"> </i> <span style="color: green;" id="modal-client-id"> </h2>
           </div>
           <div class="modal-body">
             <div class="form-group1">
@@ -191,11 +192,11 @@
       <div class="modal-overlay" id="openModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
-            <h2 class="modal-title">Client Queue No.  <span style="font-size: 30px;" id="modal-queue-no"></span></h2>
+            <h2 class="modal-title"> Que No. <span id="modal-queue-no"></span></h2>
+            <h2 class="modal-title"> Client ID:  <i class="fa fa-user"> </i> <span style="color: green;" id="client-id"> </h2>
           </div>
           <div class="modal-body">
             <div class="form-group1">
-              <input type="hidden" id="client-id" class="form-control" placeholder="Enter Queue Number" required> 
               <label class="form-label">Full Name: <span id="modal-fullname"></span></label>
             </div>
             <div class="form-group1">
@@ -203,7 +204,7 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="division">Division: </label>
-              <select class="form-option" name="divisions" id="division-select">
+              <select class="form-option" name="divisions" id="f-division-select">
                   <option value="">Select Division</option>
                   <option value="MSD">MSD</option>
                   <option value="LHSD">LHSD</option>
@@ -213,7 +214,7 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="unit">Unit:</label>
-              <select class="form-option" name="unit" id="unit-select" required>
+              <select class="form-option" name="unit" id="f-unit-select" required>
                   <option value="">Select Unit</option>
               </select>
             </div>
@@ -227,6 +228,52 @@
                 Cancel
               </button>
               <button class="modal-button save-button" onclick="saveForwardedClient()">
+              Forwarded
+              </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit open modal -->
+      <div class="modal-overlay" id="f_editModal" style="display: none;">
+        <div class="modal">
+          <div class="modal-header">
+            <h2 class="modal-title"> Que No. <span id="f_edit-queue-no"></span></h2>
+            <h2 class="modal-title"> Client ID:  <i class="fa fa-user"> </i> <span style="color: green;" id="f_edit-client-id"> </h2>
+          </div>
+          <div class="modal-body">
+            <div class="form-group1">
+              <label class="form-label">Full Name: <span id="f-edit-fullname"></span></label>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Transactions Type: <span id="f_edit-transaction-type"></span></label>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="division">Division: </label>
+              <select class="form-option" name="divisions" id="e-division-select">
+                  <option value="" id="f-division-value"></option>
+                  <option value="MSD">MSD</option>
+                  <option value="LHSD">LHSD</option>
+                  <option value="RD/ARD">RD/ARD</option>
+                  <option value="RLED">RLED</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="unit">Unit:</label>
+              <select class="form-option" name="unit" id="e-unit-select" required>
+                <option value="" id="f-unit-value"></option>
+            </select>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Transactions Details:</label>
+              <textarea id="modal-forwarded-transactions-details" class="form-input" rows="3" placeholder="Please input transactions details here ....."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button class="modal-button cancel-button" onclick="closeEditModal()">
+                Cancel
+              </button>
+              <button class="modal-button save-button" onclick="">
               Forwarded
               </button>
           </div>

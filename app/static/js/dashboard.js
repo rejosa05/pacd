@@ -18,9 +18,9 @@ function formatDateTime(dateString) {
     });
 }
 
-function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
-    const divisionSelect = document.getElementById(divisionId);
-    const unitSelect = document.getElementById(unitId);
+function divisionUnitSelect(divisionID, unitID) {
+    const divisionSelect = document.getElementById(divisionID);
+    const unitSelect = document.getElementById(unitID);
 
     const unitOptions = {
         'MSD': ['HRMDU', 'Cashier', 'Finance'],
@@ -103,7 +103,7 @@ function fetchAccountList() {
             `;
             tableBody.appendChild(row);
         });
-    })
+    });
 }
 
 // ---------- Fetch and Display Pending Clients ----------
@@ -152,7 +152,7 @@ function fetchPendingClients() {
             `;
             tableBody.appendChild(row);
         }
-        divisionUnitSelect();
+        divisionUnitSelect('f-division-select', 'f-unit-select');
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
@@ -229,9 +229,6 @@ function fetchForwardedClientPACD() {
         function addClientRow(client, color) {
             const name = String(client.client_fullname || '').trim();
             const initial = name.charAt(0).toUpperCase();
-            const genderIcon = client.client_gender === 'Male'
-                ? '<i class="male-icon fa fa-mars"></i>'
-                : '<i class="female-icon fa fa-venus"></i>';
 
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
@@ -247,11 +244,12 @@ function fetchForwardedClientPACD() {
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
                 <td>
-                    <button class="action-button1 delete-button" title="Edit"><i class="fa fa-edit"></i></button>
+                    <button class="action-button1 delete-button" title="Edit" onclick="ForwardedEditModal(${client.client_id}, '${client.client_fullname}' , '${client.client_division}', '${client.client_unit}',${client.client_queue_no})"><i class="fa fa-edit"></i></button>
                 </td>
             `;
             tableBody.appendChild(row);
         }
+        divisionUnitSelect('e-division-select', 'e-unit-select');
         priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
