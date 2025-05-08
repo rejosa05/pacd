@@ -75,8 +75,8 @@ function closeModal() {
 }
 function saveForwardedClient() {
     const transaction_details = document.getElementById('modal-forwarded-transactions-details').value;
-    const division = document.getElementById('division-select').value;
-    const unit = document.getElementById('unit-select').value;
+    const division = document.getElementById('f-division-select').value;
+    const unit = document.getElementById('f-unit-select').value;
 
     fetch(updateClientStatusForwardedUrl, {
         method: 'POST',
@@ -134,17 +134,19 @@ function saveActionResolved() {
     closeModal();
 }
 
-function ForwardedEditModal(id, fullname, division, unit, que) {
+function forwardedEditModal(id, fullname, division, unit, que, type, details) {
     selectedClient = id;
     document.getElementById('f_edit-client-id').innerText = selectedClient;
     document.getElementById('f-edit-fullname').innerText = fullname;
-    document.getElementById('f-division-value').innerText = division;
-    document.getElementById('f-unit-value').innerText = unit;
-    document.getElementById('f_edit-queue-no').innerText = que;
-    document.getElementById('f_editModal').style.display = 'flex';
+    document.getElementById('e-division-value').innerText = division;
+    document.getElementById('e-unit-value').innerText = unit;
+    document.getElementById('f-edit-queue-no').innerText = que;
+    document.getElementById('f-edit-transaction-type').innerText = type;
+    document.getElementById('edit-transactions-details').innerText = details;
+    document.getElementById('f-editModal').style.display = 'flex';
 }
 
 function closeEditModal() {
-    document.getElementById('f_editModal').style.display = 'none';
+    document.getElementById('f-editModal').style.display = 'none';
     selectedClient = null;
 }

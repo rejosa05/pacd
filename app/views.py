@@ -129,7 +129,7 @@ def pacd_unit_dashboard(request):
         forwarded_client_count = []
         for f_client in forwarded_clients:
             forwarded_client_count.append({
-                'transaction_details': f_client.transaction_details,
+                'client_transaction_details': f_client.transaction_details,
                 'client_fullname': f_client.client_id.client_fullname,
                 'client_gender': f_client.client_id.client_gender,
                 'client_lane_type': f_client.client_id.client_lane_type,
@@ -380,7 +380,7 @@ def update_client_status_served(request):
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
             action_type = 'resolved'
-            status = 'Done'
+            status = 'Completed'
             
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
@@ -493,3 +493,7 @@ def transactionsTotal(request):
         return JsonResponse({'resolved_clients': resolved_client_all})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
+    
+# edit functions update the forwarded unit
+# skipped function if the client not be around
+# edit functions for the unit  

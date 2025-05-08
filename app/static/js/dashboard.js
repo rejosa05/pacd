@@ -175,10 +175,10 @@ function fetchAllResolvedClient() {
             row.style.backgroundColor = color;
             row.innerHTML = `
                 <td>${client.client_id}</td>
-                <td>${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
                 <td>${client.client_lane_type}</td>
                 <td>${client.status}</td>
+                <td><button></button></td>
             `;
             tableBody.appendChild(row);
         }
@@ -244,7 +244,16 @@ function fetchForwardedClientPACD() {
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
                 <td>
-                    <button class="action-button1 delete-button" title="Edit" onclick="ForwardedEditModal(${client.client_id}, '${client.client_fullname}' , '${client.client_division}', '${client.client_unit}',${client.client_queue_no})"><i class="fa fa-edit"></i></button>
+                    <button class="action-button1 delete-button" 
+                    title="Edit" onclick="forwardedEditModal(
+                    '${client.client_id}', 
+                    '${client.client_fullname}', 
+                    '${client.client_division}',
+                    '${client.client_unit}',
+                    '${client.client_queue_no}',
+                    '${client.client_transaction_type}',
+                    '${client.client_transaction_details}')">
+                    <i class="fa fa-edit"></i></button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -342,7 +351,7 @@ function fetchAllResolvedClientUnit() {
             row.style.backgroundColor = color;
             row.innerHTML = `
                 <td>${client.client_id}</td>
-                <td>${client.client_queue_no}</td>
+
                 <td>${client.client_fullname}</td>
                 <td>${client.client_gender}</td>
                 <td>${client.client_lane_type}</td>
