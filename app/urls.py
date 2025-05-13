@@ -24,5 +24,6 @@ urlpatterns = [
     path('fetch_all_resolved_client_unit', views.fetch_all_resolved_client_unit, name="fetch_all_resolved_client_unit"),
     path('reports_pacd', views.reports_pacd, name='reports_pacd'),
     path('transactionsTotal', views.transactionsTotal, name="transactionsTotal"),
-    path('accountList', views.accountList, name="accountList")
+    path('accountList', views.accountList, name="accountList"),
+    path('save_update_forwarded_client', views.save_update_forwarded_client, name="save_update_forwarded_client"),
 ]

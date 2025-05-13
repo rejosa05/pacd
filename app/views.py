@@ -6,8 +6,13 @@ from .models import ClientDetails, AccountDetails, DivisionLog
 from .forms import ClientDetailsForm, AuthorizedPersonnelForm, LoginForm
 from django.utils import timezone
 from django.utils.dateformat import format
+import re
 from django.views.decorators.csrf import csrf_exempt
 
+def clean_text(text):
+    if not text:
+        return ''
+    return re.sub(r"[\'\"\n\r\\]", ' ', text).strip()
 def home(request):
     print('hello world')
     return render(request, 'app/base.html')
@@ -129,7 +134,7 @@ def pacd_unit_dashboard(request):
         forwarded_client_count = []
         for f_client in forwarded_clients:
             forwarded_client_count.append({
-                'client_transaction_details': f_client.transaction_details,
+                'client_transaction_details': clean_text(f_client.transaction_details),
                 'client_fullname': f_client.client_id.client_fullname,
                 'client_gender': f_client.client_id.client_gender,
                 'client_lane_type': f_client.client_id.client_lane_type,
@@ -495,5 +500,32 @@ def transactionsTotal(request):
         return JsonResponse({'message': 'Invalid request'}, status=400)
     
 # edit functions update the forwarded unit
+def  save_update_forwarded_client(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            client_id = request.POST.get('client_id')
+            division = request.POST.get('division')
+            unit = request.POST.get('unit')
+            transaction_details = request.POST.get('transaction_details')
+            today = timezone.now()
+
+            client = DivisionLog.objects.get(client_id_id=client_id)
+            client.division = division
+            client.unit = unit
+            client.transaction_details = transaction_details
+            client.date = today
+            client.save()
+
+            print(client.client_id_id)
+            return JsonResponse({'message': 'UPDATE successfully!'})
+
+        except DivisionLog.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_forwarded: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
 # skipped function if the client not be around
 # edit functions for the unit  

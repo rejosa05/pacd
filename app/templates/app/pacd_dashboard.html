@@ -5,52 +5,52 @@
 
 {% block content %}
 <div class="app-container">
-    <nav class="sidebar">
-      <div class="logo-container">
-        <div class="logo">
-          <img src="{% static 'images/logo.png' %}" alt="Logo">
-        </div>
-        <span class="logo-text">{{ user.divisions }}</span>
+  <nav class="sidebar">
+    <div class="logo-container">
+      <div class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="Logo">
       </div>
+      <span class="logo-text">{{ user.divisions }}</span>
+    </div>
 
-      <div class="user-profile">
-        <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{user.first_name|slice:":1"|upper}}" alt="User" class="user-avatar">
-        <div class="user-info">
-          <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
-          <p class="user-role">{{user.position }}</p>
-        </div>
-        <a href="{% url 'logout' %}" class="logout-button" title="Logout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
-        </a>
+    <div class="user-profile">
+      <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{user.first_name|slice:":1"|upper}}" alt="User" class="user-avatar">
+      <div class="user-info">
+        <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
+        <p class="user-role">{{user.position }}</p>
       </div>
+      <a href="{% url 'logout' %}" class="logout-button" title="Logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+      </a>
+    </div>
 
-      <div class="nav-list">
-        <a href="" class="nav-item active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <Home class="nav-icon" />
-            Dashboard
-        </a>
-        <a href="{% url 'account'%}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            <Users class="nav-icon" />
-            Users
-        </a>
-        <a href="{% url 'reports_pacd' %}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
-            <BarChart class="nav-icon" />
-            Reports
-        </a>
-        <!-- <a href="#" class="nav-item">
-          <Settings class="nav-icon" />
-          Settings
-        </a>
-        <a href="#" class="nav-item">
-          <HelpCircle class="nav-icon" />
-          Help
-        </a>
-      </div> -->
-      </div>
-    </nav>
+    <div class="nav-list">
+      <a href="" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <Home class="nav-icon" />
+          Dashboard
+      </a>
+      <a href="{% url 'account'%}" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <Users class="nav-icon" />
+          Users
+      </a>
+      <a href="{% url 'reports_pacd' %}" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
+          <BarChart class="nav-icon" />
+          Reports
+      </a>
+      <!-- <a href="#" class="nav-item">
+        <Settings class="nav-icon" />
+        Settings
+      </a>
+      <a href="#" class="nav-item">
+        <HelpCircle class="nav-icon" />
+        Help
+      </a>
+    </div> -->
+    </div>
+  </nav>
     <main class="main-content">
       <div class="content">
         <div class="card">
@@ -139,7 +139,6 @@
             </div>
           </div>
         </div>
-      </div>
       </div>
     </main>
 
@@ -273,68 +272,11 @@
               <button class="modal-button cancel-button" onclick="closeEditModal()">
                 Cancel
               </button>
-              <button class="modal-button save-button" onclick="">
+              <button class="modal-button save-button" onclick="saveUpdateForwardedClient()">
               Forwarded
               </button>
           </div>
         </div>
       </div>
 </div>
-<audio id="queue-audio" preload="auto">
-  <source src="{% static 'audio/ding.mp3' %}" type="audio/mpeg">
-</audio>
-
-<script>
-  let audioUnlocked = false;
-
-  document.addEventListener("click", () => {
-    if (!audioUnlocked) {
-      const audio = document.getElementById("queue-audio");
-      audio.play().then(() => {
-        audio.pause(); // pause right after to avoid sound
-        audioUnlocked = true;
-      }).catch((err) => console.warn("Audio not unlocked yet", err));
-    }
-  });
-
-  function callQueue(queueNumber) {
-    if (!audioUnlocked) return;
-
-    const audio = document.getElementById("queue-audio");
-    const synth = window.speechSynthesis;
-
-    if (queueNumber === "00") {
-      const emptyQueueAudio = document.getElementById("no-queue-audio");
-      if (emptyQueueAudio) {
-        emptyQueueAudio.play();
-      } 
-      return;
-    }
-
-    audio.play();
-    const message = new SpeechSynthesisUtterance("Now serving queue number " + queueNumber);
-    synth.speak(message);
-       
-  }
-  
-  function observeQueueChange(queueId) {
-    const target = document.getElementById(queueId);
-    let lastValue = target.textContent;
-
-    const observer = new MutationObserver(() => {
-      const currentValue = target.textContent.trim();
-      if (currentValue && currentValue !== lastValue) {
-        callQueue(currentValue);
-        lastValue = currentValue;
-      }
-    });
-
-    observer.observe(target, { childList: true, subtree: true });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    observeQueueChange("regularCurrent");
-    observeQueueChange("fastCurrent");
-  });
-</script>
 {% endblock %}

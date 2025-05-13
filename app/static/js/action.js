@@ -1,5 +1,6 @@
 const {
-    updateClientStatusServedUrl, updateClientStatusForwardedUrl, updateDivisionLogUrl
+    updateClientStatusServedUrl, updateClientStatusForwardedUrl, updateDivisionLogUrl,
+    saveUpdateForwardedClientUrl,
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -92,7 +93,6 @@ function saveForwardedClient() {
         alert('forwarded the client!!');
         closeModal();   
     })
-    .catch(error => console.error('Error forwarding client:', error));
 }
 
 function openModalAction(client, details, que, id, type) {
@@ -136,17 +136,49 @@ function saveActionResolved() {
 
 function forwardedEditModal(id, fullname, division, unit, que, type, details) {
     selectedClient = id;
-    document.getElementById('f_edit-client-id').innerText = selectedClient;
-    document.getElementById('f-edit-fullname').innerText = fullname;
-    document.getElementById('e-division-value').innerText = division;
-    document.getElementById('e-unit-value').innerText = unit;
-    document.getElementById('f-edit-queue-no').innerText = que;
-    document.getElementById('f-edit-transaction-type').innerText = type;
-    document.getElementById('edit-transactions-details').innerText = details;
-    document.getElementById('f-editModal').style.display = 'flex';
+    const f_editClientId = document.getElementById('f_edit-client-id');
+    const fEditFullname = document.getElementById('f-edit-fullname');
+    const eDivisionValue = document.getElementById('e-division-value');
+    const eUnitValue = document.getElementById('e-unit-value');
+    const fEditQueueNo = document.getElementById('f-edit-queue-no');
+    const fEditTransactionType = document.getElementById('f-edit-transaction-type');
+    const editTransactionsDetails = document.getElementById('edit-transactions-details');
+    const fEditModal = document.getElementById('f-editModal');
+
+    if (f_editClientId) f_editClientId.innerText = selectedClient;
+    if (fEditFullname) fEditFullname.innerText = fullname;
+    if (eDivisionValue) eDivisionValue.innerText = division;
+    if (eUnitValue) eUnitValue.innerText = unit;
+    if (fEditQueueNo) fEditQueueNo.innerText = que;
+    if (fEditTransactionType) fEditTransactionType.innerText = type;
+    if (editTransactionsDetails) editTransactionsDetails.innerText = details;
+    if (fEditModal) fEditModal.style.display = 'flex';
 }
 
 function closeEditModal() {
     document.getElementById('f-editModal').style.display = 'none';
     selectedClient = null;
+}
+
+// edit functions update the forwarded unit
+function saveUpdateForwardedClient() {
+    const transaction_details = document.getElementById('edit-transactions-details').value;
+    const division = document.getElementById('e-division-select').value;
+    const unit = document.getElementById('e-unit-select').value;
+
+    fetch(saveUpdateForwardedClientUrl, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('update complete !!!');
+        fetchForwardedClientPACD();
+        closeEditModal();   
+    })
 }

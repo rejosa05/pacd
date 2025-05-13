@@ -229,7 +229,7 @@ function fetchForwardedClientPACD() {
         function addClientRow(client, color) {
             const name = String(client.client_fullname || '').trim();
             const initial = name.charAt(0).toUpperCase();
-
+            
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
@@ -244,14 +244,14 @@ function fetchForwardedClientPACD() {
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
                 <td>
-                    <button class="action-button1 delete-button" 
-                    title="Edit" onclick="forwardedEditModal(
-                    '${client.client_id}', 
+                    <button class="action-button1 delete-button" title="Edit" 
+                    onclick="forwardedEditModal(
+                    ${client.client_id}, 
                     '${client.client_fullname}', 
-                    '${client.client_division}',
-                    '${client.client_unit}',
-                    '${client.client_queue_no}',
-                    '${client.client_transaction_type}',
+                    '${client.client_division}', 
+                    '${client.client_unit}', 
+                    ${client.client_queue_no}, 
+                    '${client.client_transaction_type}', 
                     '${client.client_transaction_details}')">
                     <i class="fa fa-edit"></i></button>
                 </td>
@@ -263,6 +263,8 @@ function fetchForwardedClientPACD() {
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
 }
+
+
 // ---------- UNIT DASHBOARD ACTION ------------
 // ---------- Unit Dashboard ---------
 function fetchForwardedClient() {
