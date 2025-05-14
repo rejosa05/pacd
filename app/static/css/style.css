@@ -1087,3 +1087,33 @@ font-size: 0.875rem;
 .form3 button:hover {
     background-color: #0056b3;
 }
+
+.user-notification-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  float: right;
+  margin-right: 5rem;
+}
+
+.user-icon i,
+.notification-icon i {
+  font-size: 24px;
+  color: #333;
+}
+
+.notification-icon,
+.user-icon {
+  position: relative;
+}
+
+.n-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}

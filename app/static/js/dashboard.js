@@ -178,7 +178,13 @@ function fetchAllResolvedClient() {
                 <td>${client.client_fullname}</td>
                 <td>${client.client_lane_type}</td>
                 <td>${client.status}</td>
-                <td><button></button></td>
+                <td><button class="action-button1 delete-button" title="View" onclick="viewClientCatered()">
+                    <i class="fa fa-list"></i>
+                    </button>
+                    <button class="action-button1 delete-button" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
+                    <i class="fa fa-repeat"></i>
+                    </button>
+                </td>
             `;
             tableBody.appendChild(row);
         }
@@ -407,11 +413,9 @@ if (path.includes(pacdDashboard)) {
     fetchForwardedClientPACD();
     fetchPendingClients();
     fetchAllResolvedClient();
-    fetchQuePacdDashboard();
     setInterval(fetchAllResolvedClient, 3000);
     setInterval(fetchForwardedClientPACD, 3000);
     setInterval(fetchPendingClients, 3000);
-    setInterval(fetchQuePacdDashboard, 3000);
 }
 
 if (path.includes(unitDashboard)) {

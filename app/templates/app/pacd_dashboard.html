@@ -53,19 +53,14 @@
   </nav>
     <main class="main-content">
       <div class="content">
-        <div class="card">
-          <!-- Add this section for Regular and Priority lanes -->
-          <div class="lane-boxes">
-            <div class="lane-box">
-              <h2> REGULAR LANE </h2>
-              <h1 class="regular" id="regularCurrent"></h1>
-              <!-- You can add dynamic stats or counts here if needed -->
-            </div>
-            <div class="lane-box">
-              <h2> PRIORITY LANE </h2>
-              <h1 class="priority" id="fastCurrent"></h1>
-              <!-- You can add dynamic stats or counts here if needed -->
-            </div>
+        <div class="user-notification-container">
+          <div class="user-icon">
+            <i class="fas fa-user-circle"></i>
+            <span class="n-badge">2</span>
+          </div>
+          <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+            <span class="n-badge">3</span>
           </div>
         </div>
         <div class="header">
@@ -73,7 +68,7 @@
               <h2 class="header-title">Client Transactions</h2>
         </div>
         <div class="card">            
-          <div class="table-container" style="height: 200px;">
+          <div class="table-container" style="height: 300px;">
             <table class="table"  id="pendingClientQueueTable">
               <thead>
                 <tr>
@@ -98,7 +93,7 @@
                 <h2 class="header-title">Forwaded Clients</h2>
           </div>
           <div class="card">            
-            <div class="table-container1" style="height: 280px">
+            <div class="table-container1" style="height: 150rem">
               <table class="table" id="forwardedTransactions">
                 <thead>
                   <tr>
@@ -122,7 +117,7 @@
                 <h2 class="header-title">Completed Transactions</h2>
           </div>
           <div class="card">            
-            <div class="table-container1" style="height: 280px">
+            <div class="table-container1" style="height: 150rem">
               <table class="table" id="cateredTransactions">
                 <thead>
                   <tr>
@@ -130,7 +125,7 @@
                     <th>Client Name</th>
                     <th>Type</th>
                     <th>STATUS</th>
-                    <th style="width: 50px;"> '' </th>
+                    <th style="width: 100px;"> '' </th>
                   </tr>
                 </thead>
                 <tbody>

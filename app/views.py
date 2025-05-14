@@ -333,6 +333,7 @@ def fetch_all_resolved_client(request):
                 'client_fullname': client.client_id.client_fullname,
                 'client_gender': client.client_id.client_gender,
                 'client_lane_type': client.client_id.client_lane_type,
+                'client_transaction_type': client.client_id.client_transaction_type,
                 'remarks': client.remarks,
                 'form': client.form,
                 'unit_user': client.unit_user,
@@ -529,3 +530,5 @@ def  save_update_forwarded_client(request):
 
 # skipped function if the client not be around
 # edit functions for the unit  
+# count the pending clients per days and user online to put on nitification bell and user
+# 
