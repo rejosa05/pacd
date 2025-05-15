@@ -1,18 +1,22 @@
 from django.urls import path
 from . import views
+from .view.author_view import login_view, logout_view
+from .view.display_view import display_view, ticket_view, client_details
+from .view.dashboard_view import dashboard
 
 urlpatterns = [
-    path('', views.login_view, name="logins"),
-    path('display-all/', views.display, name="display_page"),
+    path('', login_view, name="logins"),
+    path('display-all/', display_view, name="display_page"),
+    path('ticket/<int:client_id>/', ticket_view, name="client_ticket"),
+    path('client-details/', client_details, name="client_page"),
     path('unit_dashboards/', views.unit_dashboard1, name="unit_dashboards"),
     path('pacd_dashboard/', views.pacd_dashboard1, name="pacd_dashboard"),
-    path('dashboard/', views.pacd_dashboard, name="dashboard"),
-    path('dashboards/', views.dashboard, name="dashboards"),
-    path('login/', views.login_view, name="login"),
-    path('logout/', views.logout_view, name ="logout"),
-    path('client-details/', views.client_details, name="client_page"),
+
+    path('dashboards/', dashboard, name="dashboards"),
+    path('login/', login_view, name="login"),
+    path('logout/', logout_view, name ="logout"),
+    
     path('account/', views.add_account, name="account"),
-    path('ticket/<int:client_id>/', views.client_ticket, name="client_ticket"),
     path('update_division_log/', views.update_division_log, name='update_division_log'),
     path('resolved_clients/', views.resolved_clients, name='resolved_clients'),
     path('pending_clients/', views.pending_clients, name='pending_clients'),

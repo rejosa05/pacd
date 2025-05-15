@@ -1,94 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import ClientDetails, AccountDetails, DivisionLog
-from .forms import ClientDetailsForm, AuthorizedPersonnelForm, LoginForm
+from .forms import ClientDetailsForm, AuthorizedPersonnelForm
 from django.utils import timezone
-from django.utils.dateformat import format
-import re
-from django.views.decorators.csrf import csrf_exempt
-
-def clean_text(text):
-    if not text:
-        return ''
-    return re.sub(r"[\'\"\n\r\\]", ' ', text).strip()
-def home(request):
-    print('hello world')
-    return render(request, 'app/base.html')
-
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            user = AccountDetails.objects.filter(user=username).first()
-            if user:
-                request.session['username'] = user.user
-                return redirect("dashboards")
-            else:
-                messages.error(request, "Invalid credentials. Please try again.")
-        else:
-            messages.error(request, "Invalid credentials. Please try again.")
-    else:
-        form = LoginForm()
-    
-    return render(request, "app/login.html", {"form": form})
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')
-
-# Pag display sa number on the screen -- fixed/need comment
-def display(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest': 
-        today = timezone.now()
-        regular_lane = ClientDetails.objects.filter(client_lane_type='Regular', client_status='Pending', client_created_date__date=today).first()
-        priority_lane = ClientDetails.objects.filter(client_lane_type='Priority', client_status='Pending', client_created_date__date=today).first()
-        waiting_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).values_list('client_queue_no', flat=True)
-        data = {
-            'regular_lane': {
-                'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"
-            },
-            'priority_lane': {
-                'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"
-            }, 
-            'waiting_clients': list(waiting_clients)
-        }
-        return JsonResponse(data)
-    else:
-        today = timezone.now()
-        waiting_clients = ClientDetails.objects.filter(client_status='P nding', client_created_date__date=today)
-        return render(request, 'app/display.html', {'waiting_clients': waiting_clients})
-
-# Client paghtag ug detayle -- fixed/need comment
-def client_details(request):
-    if request.method == 'POST':
-        form = ClientDetailsForm(request.POST)
-        if form.is_valid():
-            client = form.save()
-            return redirect('client_ticket', client_id=client.id)
-    else:
-         form = ClientDetailsForm()
-    return render(request, 'app/client.html', {'form': form})
-
-def client_ticket(request, client_id):
-    client = get_object_or_404(ClientDetails, id=client_id)
-    return render(request, 'app/queue.html', {'client': client})
-
-# condition of dashboard to PACD or Unit -- fixed
-def dashboard(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if user.unit == 'PACD':
-        return redirect('pacd_dashboard')
-    else:
-        return redirect('unit_dashboards')
 
 def pacd_dashboard1(request):
     username = request.session.get('username')
@@ -98,32 +13,6 @@ def pacd_dashboard1(request):
         return redirect("login")
     
     return render(request, 'app/pacd_dashboard.html', {'user': user})
-
-# return number display on PACD dashboard only - fixed
-def pacd_dashboard(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now()
-
-        regular_lane = ClientDetails.objects.filter(
-            client_lane_type='Regular',
-            client_status='Pending',
-            client_created_date__date=today
-        ).order_by('client_queue_no').first()
-
-        priority_lane = ClientDetails.objects.filter(
-            client_lane_type='Priority',
-            client_status='Pending',
-            client_created_date__date=today
-        ).order_by('client_queue_no').first()
-
-        return JsonResponse({
-            'regular_lane': {
-                'client_queue_no': regular_lane.client_queue_no if regular_lane else "00",
-            },
-            'priority_lane': {
-                'client_queue_no': priority_lane.client_queue_no if priority_lane else "00",
-            },
-        })
 
 # ---- Fectch forwarded unit -- FIXED ----
 def pacd_unit_dashboard(request):
@@ -474,6 +363,7 @@ def reports_pacd(request):
         'division_counts': division_counts,
         'user': user
     })
+
 def transactionsTotal(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         resolved_clients = DivisionLog.objects.filter().order_by('-date_resolved')  # Optional: order by latest
