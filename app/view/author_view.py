@@ -12,7 +12,7 @@ def login_view(request):
             user = AccountDetails.objects.filter(user=username).first()
             if user:
                 request.session['username'] = user.user
-                return redirect("dashboards")
+                return redirect("user-type")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
         else:

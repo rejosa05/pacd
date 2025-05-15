@@ -12,6 +12,8 @@
         window.dashboardConfig = {
             unitDashboard: "{% url 'unit_dashboards' %}",
             pacdDashboard: "{% url 'pacd_dashboard' %}",
+            queViewUrl: "{% url 'que-view' %}",
+            displayQueUrl: "{% url 'display-page' %}",
             resolvedClientsUrl: "{% url 'resolved_clients' %}",
             updateDivisionLogUrl: "{% url 'update_division_log' %}",
             pendingClientsUrl: "{% url 'pending_clients' %}",
@@ -21,7 +23,7 @@
             forwardedPendingClientUrl: "{% url 'pacd_unit_dashboard' %}",
             fetchResolvedDataUrl: "{% url 'fetch_all_resolved_client' %}",  // fetch data all resolved client
             fetchResolvedDataUnitUrl: "{% url 'fetch_all_resolved_client_unit' %}",
-            displayQueUrl: "{% url 'display_page' %}",
+            
             accountUrl: "{% url 'account' %}",
             accountListUrl: "{% url 'accountList' %}",
             pacdReports: "{% url 'reports_pacd' %}",

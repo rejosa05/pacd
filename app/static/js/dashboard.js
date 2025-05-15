@@ -1,5 +1,5 @@
 const {
-    dashboardUrl, resolvedClientsUrl, accountListUrl, accountUrl,
+    queViewUrl, resolvedClientsUrl, accountListUrl, accountUrl,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
@@ -57,7 +57,7 @@ function divisionUnitSelect(divisionID, unitID) {
 
 // ---------- Queue Display (PACD Dashboard) -- FIXED ----------
 function fetchQuePacdDashboard() {
-    fetch(dashboardUrl, {
+    fetch(queViewUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
