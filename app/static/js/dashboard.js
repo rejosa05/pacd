@@ -1,7 +1,7 @@
 const {
-    queViewUrl, resolvedClientsUrl, accountListUrl, accountUrl,
+    queViewUrl, accountListUrl, addAccountUrl, pacdDashboard,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
-    forwardedPendingClientUrl, unitDashboard, pacdDashboard, fetchResolvedDataUrl, csrfToken
+    forwardedClientUrl, unitDashboard, fetchResolvedDataUrl, csrfToken
 } = window.dashboardConfig;
 
 const path = window.location.pathname;
@@ -53,19 +53,6 @@ function divisionUnitSelect(divisionID, unitID) {
             unitSelect.appendChild(option);
         });
     });
-}
-
-// ---------- Queue Display (PACD Dashboard) -- FIXED ----------
-function fetchQuePacdDashboard() {
-    fetch(queViewUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        document.getElementById('regularCurrent').innerText = data.regular_lane.client_queue_no || "00";
-        document.getElementById('fastCurrent').innerText = data.priority_lane.client_queue_no || "00";
-    })
-    .catch(error => console.error('Error fetching dashboard queue:', error));
 }
 
 // ----- ACCOUNTS -----
@@ -221,7 +208,7 @@ function fetchCateredTransactions() {
 
 // ---------- Fetch Forwarded Clients Display on PACD -- FIXED ---------
 function fetchForwardedClientPACD() {
-    fetch(forwardedPendingClientUrl, {
+    fetch(forwardedClientUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -439,7 +426,7 @@ if (path.includes(pacdReports)) {
     setInterval(fetchCateredTransactions, 3000); 
 }
 
-if (path.includes(accountUrl)) {
+if (path.includes(addAccountUrl)) {
     fetchAccountList();
     setInterval(fetchAccountList, 3000);
 }
