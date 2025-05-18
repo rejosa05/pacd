@@ -37,7 +37,7 @@
         document.getElementById('client-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            fetch("{% url 'client_page' %}", {
+            fetch("{% url 'client-page' %}", {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'

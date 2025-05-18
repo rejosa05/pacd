@@ -31,9 +31,9 @@ def user_type(request):
     user = AccountDetails.objects.filter(user=username).first()
 
     if user.unit == 'PACD':
-        return redirect('pacd_dashboard')
+        return redirect('pacd-dashboard')
     else:
-        return redirect('unit_dashboard')
+        return redirect('unit-dashboard')
     
 def pacd_dashboard(request):
     username = request.session.get('username')

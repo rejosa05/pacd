@@ -5,123 +5,17 @@ from .models import ClientDetails, AccountDetails, DivisionLog
 from .forms import ClientDetailsForm, AuthorizedPersonnelForm
 from django.utils import timezone
 
-def unit_dashboard(request):
-    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now()
-        username = request.session.get('username')
-        users = AccountDetails.objects.filter(user=username).first()
-        unit = users.unit
-        forwarded_clients = DivisionLog.objects.filter(action_type='forwarded', date__date=today, unit=unit)
 
-        forwarded_client_count = []
-        for f_client in forwarded_clients:
-            forwarded_client_count.append({
-                'client_id': f_client.client_id.id,
-                'client_queue_no': f_client.client_id.client_queue_no,
-                'client_fullname': f_client.client_id.client_fullname,
-                'client_lane_type': f_client.client_id.client_lane_type,
-                'transaction_details': f_client.transaction_details,
-                'client_gender': f_client.client_id.client_gender,
-                'client_transaction_type': f_client.client_id.client_transaction_type,
-                'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
-            })
-        return JsonResponse({'forwarded_clients': forwarded_client_count})
     
 
 # ----- FIXED AREA -----
-def update_division_log(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        client_id = request.POST.get('client_id')
-        remarks = request.POST.get('remarks')
-        resolution = request.POST.get('resolution')
-        today = timezone.now()
 
-        try:
-            division_log = DivisionLog.objects.get(client_id=client_id)
-            division_log.action_type = 'resolved'
-            division_log.status = 'Done'
-            division_log.remarks = remarks
-            division_log.form = resolution
-            division_log.unit_user = request.session.get('username')
-            division_log.date_resolved = today
-            division_log.save()
-            return JsonResponse({'message': 'DivisionLog updated successfully'})
-
-        except DivisionLog.DoesNotExist:
-            print("DivisionLog not found for client_id:", client_id)
-            return JsonResponse({'message': 'DivisionLog not found'}, status=404)
-        except Exception as e:
-            print("Unexpected error:", str(e))
-            return JsonResponse({'message': str(e)}, status=500)
-
-    return JsonResponse({'message': 'Invalid request'}, status=400)
         
 # forwarded client to the unit - fixed
-def update_client_status_forwarded(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            client_id = request.POST.get('client_id')
-            division = request.POST.get('division')
-            action_type = request.POST.get('action_type')
-            unit = request.POST.get('unit')
-            transaction_details = request.POST.get('transaction_details')
-            username = request.session.get('username')
-            today = timezone.now()
-
-            client = ClientDetails.objects.get(id=client_id)
-            client.client_status = 'Forwarded'
-            client.user = username
-            client.save()
-
-            DivisionLog.objects.create(
-                client_id_id=client_id,
-                action_type = action_type,
-                division=division,
-                unit=unit,
-                transaction_details=transaction_details,
-                user=username,
-                date=today
-            )
-
-            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
-
-        except ClientDetails.DoesNotExist:
-            return JsonResponse({'message': 'Client not found'}, status=404)
-        except Exception as e:
-            print(f"Error in update_client_status_forwarded: {e}")
-            return JsonResponse({'message': 'Internal Server Error'}, status=500)
-
-    return JsonResponse({'message': 'Invalid request'}, status=400)
 
     
 # fetch all data of resolved client -- per unit
-def fetch_all_resolved_client_unit(request):
-    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        user = request.session.get('username')
-        users = AccountDetails.objects.filter(user=user).first()
-        today = timezone.now()
-        unit = users.unit
-        resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today, unit=unit)
-        
-        resolved_client_all = []
-        for client in resolved_clients:
-            resolved_client_all.append({
-                'client_id': client.client_id.id,
-                'client_queue_no': client.client_id.client_queue_no,
-                'client_fullname': client.client_id.client_fullname,
-                'client_gender': client.client_id.client_gender,
-                'client_lane_type': client.client_id.client_lane_type,
-                'remarks': client.remarks,
-                'form': client.form,
-                'unit_user': client.unit_user,
-                'action_type': client.action_type,
-                'status': client.status,
-                'unit': unit,
-                'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
-            })
-        return JsonResponse({'resolved_clients': resolved_client_all})
-    else:
-        return JsonResponse({'message': 'Invalid request'}, status=400)
+
     
 
 def update_client_status_served(request):

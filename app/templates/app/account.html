@@ -25,7 +25,7 @@
       </div>
 
       <div class="nav-list">
-        <a href="{% url 'pacd_dashboard' %}" class="nav-item">
+        <a href="{% url 'pacd-dashboard' %}" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <Home class="nav-icon" />
             Dashboard
@@ -53,6 +53,11 @@
       <div class="container">
         <div class="item">
           <h2>Create New Account</h2>
+          <ul>
+            {% for message in messages %}
+                <p style="color: red"> {{ message }} </p>
+            {% endfor %}
+          </ul>
           <form class="form3" method="POST" action="{% url 'account' %}">
             {% csrf_token %}
           

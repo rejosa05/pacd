@@ -1,7 +1,7 @@
 const {
-    queViewUrl, accountListUrl, addAccountUrl, pacdDashboard,
-    pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, unitDashboadUrl, displayQueUrl, fetchResolvedDataUnitUrl,
-    forwardedClientUrl, unitDashboard, fetchResolvedDataUrl, csrfToken
+    queViewUrl, accountListUrl, addAccountUrl, pacdDashboard, resolvedClient,
+    pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
+    forwardedClientUrl, csrfToken
 } = window.dashboardConfig;
 
 const path = window.location.pathname;
@@ -146,7 +146,7 @@ function fetchPendingClients() {
 }
 
 function fetchAllResolvedClient() {
-    fetch(fetchResolvedDataUrl, {
+    fetch(resolvedClient, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -258,51 +258,6 @@ function fetchForwardedClientPACD() {
 }
 
 
-// ---------- UNIT DASHBOARD ACTION ------------
-// ---------- Unit Dashboard ---------
-function fetchForwardedClient() {
-    fetch (unitDashboadUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#forwardedClient tbody');
-        tableBody.innerHTML = '';
-
-        let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
-        let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
-
-        function addClientRow(client, color) {
-            const genderIcon = client.client_gender === 'Male'
-                ? '<i class="male-icon fa fa-mars"></i>'
-                : '<i class="female-icon fa fa-venus"></i>';
-
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td>${client.client_id}</td>
-                <td>${client.client_queue_no}</td>
-                <td>${client.client_fullname}</td>
-                <td class="gender-cell">${genderIcon}<span class="gender-text"> ${client.client_gender}</span></td>
-                <td>${client.client_lane_type}</td>
-                <td class="actions-cell">
-                    <div class="actions-container">
-                        <button class="action-button1 approved-button" title="Resolved" onclick='openModalAction("${client.client_fullname}","${client.transaction_details}", "${client.client_queue_no}","${client.client_id}", "${client.client_transaction_type}")'>
-                            <i class="fa fa-check-circle"></i>
-                        </button>
-                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_fullname}', '${client.client_transaction_type}')">
-                            <i class="fa fa-remove"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
-    })
-}
-
 function fetchForwardedClientPACDDisplay() {
     fetch(forwardedPendingClientUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -329,38 +284,8 @@ function fetchForwardedClientPACDDisplay() {
         regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
 }
-function fetchAllResolvedClientUnit() {
-    fetch(fetchResolvedDataUnitUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#cateredTransactions tbody');
-        tableBody.innerHTML = '';
 
-        let priorityClients = data.resolved_clients.filter(client => client.client_lane_type === 'Priority');
-        let regularClients = data.resolved_clients.filter(client => client.client_lane_type !== 'Priority');
-        
-        function addClientRow(client, color) {
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td>${client.client_id}</td>
 
-                <td>${client.client_fullname}</td>
-                <td>${client.client_gender}</td>
-                <td>${client.client_lane_type}</td>
-                <td>${client.status}</td>
-                <td>${client.form}</td>
-                <td>${client.unit_user}</td>
-                <td>${formatDateTime(client.date_resolved)}</td>
-            `;
-            tableBody.appendChild(row);
-        }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
-    })
-}
 
 // -------- DISPLAY PAGE ---------
 
@@ -403,13 +328,6 @@ if (path.includes(pacdDashboard)) {
     setInterval(fetchAllResolvedClient, 3000);
     setInterval(fetchForwardedClientPACD, 3000);
     setInterval(fetchPendingClients, 3000);
-}
-
-if (path.includes(unitDashboard)) {
-    fetchForwardedClient();
-    fetchAllResolvedClientUnit();
-    setInterval(fetchForwardedClient, 3000);
-    setInterval(fetchAllResolvedClientUnit, 3000)
 }
 
 if (path.includes(displayQueUrl)) {

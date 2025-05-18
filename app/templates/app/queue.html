@@ -18,7 +18,7 @@
             <p><strong>Date/Time:</strong> {{ client.client_created_date|date:"F d, Y - H:i" }}</p>
             <p class="note">Please keep this number and wait for it to be display the number in the screen and called. Thank you !!!</p>
             <div class="ticket-actions">
-                <a href="{% url 'client_page' %}" class="new-ticket-btn">New Queue</a>
+                <a href="{% url 'client-page' %}" class="new-ticket-btn">New Queue</a>
                 <button onclick="window.print()" class="print-btn">Print Ticket</button>
             </div>
             <p class="note"> DOH QUEUING SYSTEM </p>

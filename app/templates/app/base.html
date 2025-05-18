@@ -11,20 +11,27 @@
     <script>
         window.dashboardConfig = {
             unitDashboard: "{% url 'unit-dashboard' %}", // unit dashboard page
-            pacdDashboard: "{% url 'pacd_dashboard' %}", // pacd dashboard page
+            unitPendingUrl: "{% url 'unit-pending' %}", // unit pending list
+            unitResolved: "{% url 'unit-resolved' %}", // unit resolved list
+
+            pacdDashboard: "{% url 'pacd-dashboard' %}", // pacd dashboard page
+            pendingClientsUrl: "{% url 'pending_clients' %}", // pending clients
+            forwardedClientUrl: "{% url 'forwarded-client' %}", // forwarded client from pacd to unit
+            resolvedClient: "{% url 'resolved-client' %}",  // resolved client list
+
             queViewUrl: "{% url 'que-view' %}", // que display on screen
             displayQueUrl: "{% url 'display-page' %}", // display page
 
             
-            updateDivisionLogUrl: "{% url 'update_division_log' %}",
-            pendingClientsUrl: "{% url 'pending_clients' %}",
-            forwardedClientUrl: "{% url 'forwarded-client' %}", // forwarded client from pacd to unit
-            unitDashboadUrl: "{% url 'unit_dashboard' %}",
-            updateClientStatusServedUrl: "{% url 'update_client_status_served' %}",
-            updateClientStatusForwardedUrl: "{% url 'update_client_status_forwarded' %}",
+            pacdResolvedClient: "{% url 'pacd-resolved-client' %}", // action resolved client from PACD
+            forwardedClientToUnit: "{% url 'forwarded-client-to-unit' %}", // action forwarded client to unit from PACD
 
-            fetchResolvedDataUrl: "{% url 'resolved-client' %}",  // fetch data all resolved client
-            fetchResolvedDataUnitUrl: "{% url 'fetch_all_resolved_client_unit' %}",
+            notificationPACD: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
+
+            updateClientStatusServedUrl: "{% url 'update_client_status_served' %}",
+            
+
+            
             
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
@@ -36,6 +43,8 @@
     </script>
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/action.js' %}"></script>
+    <script src="{% static 'js/unit.js' %}"></script>
+    <script src="{% static 'js/notifications' %}"></script>
 </head>
 <body>
     {% block content %}

@@ -1,5 +1,5 @@
 const {
-    updateClientStatusServedUrl, updateClientStatusForwardedUrl, updateDivisionLogUrl,
+    updateClientStatusServedUrl, forwardedClientToUnit, pacdResolvedClient,
     saveUpdateForwardedClientUrl,
 } = window.dashboardConfig;
 
@@ -79,7 +79,7 @@ function saveForwardedClient() {
     const division = document.getElementById('f-division-select').value;
     const unit = document.getElementById('f-unit-select').value;
 
-    fetch(updateClientStatusForwardedUrl, {
+    fetch(forwardedClientToUnit, {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -119,7 +119,7 @@ function saveActionResolved() {
         resolutions = cssChecked.value;
     }
         
-    fetch(updateDivisionLogUrl, {
+    fetch(pacdResolvedClient, {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
