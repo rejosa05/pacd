@@ -35,22 +35,14 @@
             <Users class="nav-icon" />
             Users
         </a>
-        <a href="#" class="nav-item">
+        <a href="{% url 'reports' %}" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
             <BarChart class="nav-icon" />
             Reports
         </a>
-        <!-- <a href="#" class="nav-item">
-          <Settings class="nav-icon" />
-          Settings
-        </a>
-        <a href="#" class="nav-item">
-          <HelpCircle class="nav-icon" />
-          Help
-        </a>
-      </div> -->
     </nav>
-      <div class="container">
+    <main class="main-content">
+      <div class="content">
         <div class="item">
           <h2>Create New Account</h2>
           <ul>
@@ -116,7 +108,7 @@
             <button type="submit">Create Account</button>
           </form>
         </div>          
-        <div class="item">
+        <div class="content">
           <h2 class="header-title"> <i class="fa fa-list-ul"></i> Account List</h2>
           <div class="table-container" style="height: 250px;">
             <table class="table" id="accountList">
@@ -138,6 +130,7 @@
           </div>
         </div>
       </div>
+    </main>
 </div>
 
 <script>

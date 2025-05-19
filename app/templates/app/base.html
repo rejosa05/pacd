@@ -27,6 +27,7 @@
             forwardedClientToUnit: "{% url 'forwarded-client-to-unit' %}", // action forwarded client to unit from PACD
 
             notificationPACD: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
+            notificationUNIT: "{% url 'notifications-unit' %}", // notifications for forwrded in unit
 
             updateClientStatusServedUrl: "{% url 'update_client_status_served' %}",
             
@@ -35,7 +36,7 @@
             
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
-            pacdReports: "{% url 'reports_pacd' %}",
+            pacdReports: "{% url 'reports' %}", // display reports in PACD user
             fetchCateredTransactionsUrl: "{% url 'transactionsTotal' %}",
             saveUpdateForwardedClientUrl: "{% url 'save_update_forwarded_client' %}", // edit functions update the forwarded unit
             csrfToken: "{{ csrf_token }}"
@@ -44,7 +45,7 @@
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/action.js' %}"></script>
     <script src="{% static 'js/unit.js' %}"></script>
-    <script src="{% static 'js/notifications' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
 </head>
 <body>
     {% block content %}

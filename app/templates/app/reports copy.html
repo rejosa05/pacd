@@ -1,0 +1,253 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Accounts {% endblock %}
+
+{% block content %}
+<div class="app-container">
+    <nav class="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <span class="logo-text">{{ user.divisions }}</span>
+      </div>
+
+      <div class="user-profile">
+        <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.first_name|slice:":1"|upper }}" alt="User" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
+          <p class="user-role">{{user.position }}</p>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-button" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+        </a>
+      </div>
+
+      <div class="nav-list">
+        <a href="{% url 'pacd-dashboard' %}" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <Home class="nav-icon" />
+            Dashboard
+        </a>
+        <a href="{% url 'account' %}" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <Users class="nav-icon" />
+            Users
+        </a>
+        <a href="#" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
+            <BarChart class="nav-icon" />
+            Reports
+        </a>
+      </div> 
+    </nav>
+    <main class="main-content">
+  <!-- Top Summary Section -->
+  <div class="dashboard-top">
+    <div class="summary-card bg-purple">
+      <h3>Total</h3>
+      <p>10</p>
+    </div>
+    <div class="summary-card bg-blue">
+      <h3>MSD</h3>
+      <p>{{ division_counts.MSD|default:0 }}</p>
+    </div>
+    <div class="summary-card bg-green">
+      <h3>ARD</h3>
+      <p>{{ division_counts.ARD|default:0 }}</p>
+    </div>
+    <div class="summary-card bg-yellow">
+      <h3>RLED</h3>
+      <p>{{ division_counts.RLED|default:0 }}</p>
+    </div>
+    <div class="summary-card bg-red">
+      <h3>LHSD</h3>
+      <p>{{ division_counts.LHSD|default:0 }}</p>
+    </div>
+    <div class="summary-card bg-dark">
+      <h3><i class="fa fa-users"></i> Users</h3>
+      <p>{{ total_users|default:0 }}</p>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search for names or units..." />
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-section">
+    <h2>Real-time Transaction Trends</h2>
+    <canvas id="realtimeLineChart" height="100"></canvas>
+
+    <h2>Monthly Summary</h2>
+    <canvas id="monthlyChart" height="100"></canvas>
+  </div>
+
+  <!-- Catered Transactions Table -->
+  <div class="dashboard-bottom cards">
+    <h2>Catered Transactions</h2>
+    <button onclick="exportToCSV()">Export to CSV</button>
+    <div class="table-container1">
+      <table class="table" id="transactionsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Queue No</th>
+            <th>Full Name</th>
+            <th>Division</th>
+            <th>Unit</th>
+            <th>Remarks</th>
+            <th>Date Resolved</th>
+          </tr>
+        </thead>
+        <tbody id="cateredTransactions">
+          <!-- Dynamic content will be injected here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</div>
+<script>
+  function exportToCSV(filename = 'resolved_clients.csv') {
+    const rows = document.querySelectorAll('#cateredTransactions tr');
+    const csv = [];
+
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td, th');
+        const rowData = Array.from(cols).map(col => `"${col.innerText.replace(/"/g, '""')}"`);
+        csv.push(rowData.join(','));
+    });
+
+    const csvString = csv.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+</script>
+
+
+<script>
+  // Search Table Function
+  function searchTable() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const rows = document.querySelectorAll("#transactionsTable tbody tr");
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      row.style.display = text.includes(input) ? "" : "none";
+    });
+  }
+
+  // Realtime Line Chart Placeholder (You should replace with AJAX/live update logic)
+  const realtimeCtx = document.getElementById('realtimeLineChart').getContext('2d');
+  const realtimeChart = new Chart(realtimeCtx, {
+    type: 'line',
+    data: {
+      labels: [], // dynamically filled
+      datasets: [{
+        label: 'Transactions',
+        data: [],
+        borderColor: 'blue',
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { display: true },
+        y: { display: true }
+      }
+    }
+  });
+
+  // Example: Monthly Chart
+  const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+  const monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Monthly Transactions',
+        data: [20, 30, 25, 40, 50, 60], // Replace with dynamic values
+        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>
+
+<style>
+  .main-content {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .dashboard-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .summary-card {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    min-width: 150px;
+  }
+  .bg-blue { background-color: #3498db; }
+  .bg-green { background-color: #2ecc71; }
+  .bg-yellow { background-color: #f1c40f; }
+  .bg-red { background-color: #e74c3c; }
+  .bg-dark { background-color: #34495e; }
+  .bg-purple { background-color: #9b59b6; }
+
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+  }
+
+  .chart-section {
+    margin-bottom: 30px;
+  }
+
+  .table-container1 {
+    overflow-x: auto;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  .table th, .table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .view.author_view import login_view, logout_view, user_type, add_account, pacd_dashboard, unit_dashboard
+from .view.author_view import *
 from .view.display_view import display_view, ticket_view, client_details, que_view
 from .view.pacd_dashboard_view import forwarded_clients, pending_clients, resolved_client
 from .view.unit_dashboard_view import *
@@ -35,6 +35,7 @@ urlpatterns = [
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
     
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
+    path('notifications-unit/', notifications_unit, name="notifications-unit"),
 
     path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
 
@@ -43,7 +44,7 @@ urlpatterns = [
     
     
 
-    path('reports_pacd', views.reports_pacd, name='reports_pacd'),
+    path('reports', reports_page, name='reports'),
     path('transactionsTotal', views.transactionsTotal, name="transactionsTotal"),
     path('accountList', views.accountList, name="accountList"),
     path('save_update_forwarded_client', views.save_update_forwarded_client, name="save_update_forwarded_client"),

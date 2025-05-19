@@ -82,6 +82,15 @@ def add_account(request):
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
 
+def reports_page(request):
+    username = request.session.get('username')
+
+    if not username:
+        return redirect("login")
+    
+    user = AccountDetails.objects.filter(user=username).first()
+    return render(request, "app/reports.html", {"user": user})
+
 
 def logout_view(request):
     logout(request)

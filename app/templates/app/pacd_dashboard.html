@@ -35,20 +35,11 @@
           <Users class="nav-icon" />
           Users
       </a>
-      <a href="{% url 'reports_pacd' %}" class="nav-item">
+      <a href="{% url 'reports' %}" class="nav-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
           <BarChart class="nav-icon" />
           Reports
       </a>
-      <!-- <a href="#" class="nav-item">
-        <Settings class="nav-icon" />
-        Settings
-      </a>
-      <a href="#" class="nav-item">
-        <HelpCircle class="nav-icon" />
-        Help
-      </a>
-    </div> -->
     </div>
   </nav>
     <main class="main-content">
@@ -59,7 +50,7 @@
             <span class="n-badge">2</span>
           </div>
           <div class="notification-icon">
-            <i class="fas fa-bell"></i>
+            <i class="fas fa-bell" title="notification"></i>
             <span class="n-badge" id="notificationCount" style="display: none;"></span>
           </div>
         </div>

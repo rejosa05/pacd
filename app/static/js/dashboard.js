@@ -325,9 +325,9 @@ if (path.includes(pacdDashboard)) {
     fetchForwardedClientPACD();
     fetchPendingClients();
     fetchAllResolvedClient();
-    setInterval(fetchAllResolvedClient, 3000);
-    setInterval(fetchForwardedClientPACD, 3000);
-    setInterval(fetchPendingClients, 3000);
+    setInterval(fetchAllResolvedClient, 2000);
+    setInterval(fetchForwardedClientPACD, 2000);
+    setInterval(fetchPendingClients, 2000);
 }
 
 if (path.includes(displayQueUrl)) {
