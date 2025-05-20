@@ -6,6 +6,7 @@ from .view.pacd_dashboard_view import forwarded_clients, pending_clients, resolv
 from .view.unit_dashboard_view import *
 from .view.actions import *
 from .view.notifications import *
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', login_view, name="logins"),
@@ -39,10 +40,6 @@ urlpatterns = [
 
     path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
 
-
-    
-    
-    
 
     path('reports', reports_page, name='reports'),
     path('transactionsTotal', views.transactionsTotal, name="transactionsTotal"),

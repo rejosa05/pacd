@@ -3,6 +3,8 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from ..models import AccountDetails
 from ..forms import LoginForm, AuthorizedPersonnelForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 def login_view(request):
     if request.method == "POST":
