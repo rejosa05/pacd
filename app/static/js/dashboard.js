@@ -1,5 +1,5 @@
 const {
-    queViewUrl, accountListUrl, addAccountUrl, pacdDashboard, resolvedClient,
+    accountListUrl, addAccountUrl, pacdDashboard, resolvedClient,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedClientUrl, csrfToken
 } = window.dashboardConfig;
@@ -259,7 +259,7 @@ function fetchForwardedClientPACD() {
 
 
 function fetchForwardedClientPACDDisplay() {
-    fetch(forwardedPendingClientUrl, {
+    fetch(forwardedClientUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -289,37 +289,7 @@ function fetchForwardedClientPACDDisplay() {
 
 // -------- DISPLAY PAGE ---------
 
-function fetchPendingClientsDisplay() {
-    fetch(pendingClientsUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#pendingClientQueueTable tbody');
-        tableBody.innerHTML = ''; // Clear old rows
 
-        let priorityClients = data.pending_clients.filter(client => client.client_lane_type === 'Priority');
-        let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');
-
-        function addClientRow(client, color) {
-            const laneTypeIcon = client.client_lane_type === 'Regular'
-                ? '<i class="regular fa fa-angle-double-down"></i>'
-                : '<i class="priority fa fa-angle-double-up"></i>';
-
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td> ${client.client_queue_no}</td>
-                <td>${laneTypeIcon} &nbsp; <span>${client.client_lane_type}</span></td>
-                <td>${client.client_transaction_type}</td>
-            `;
-            tableBody.appendChild(row);
-        }
-        
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
-    })
-}
 
 if (path.includes(pacdDashboard)) {
     fetchForwardedClientPACD();
@@ -331,14 +301,12 @@ if (path.includes(pacdDashboard)) {
 }
 
 if (path.includes(displayQueUrl)) {
-    fetchQuePacdDashboard()
-    fetchPendingClientsDisplay()
+
+    
     fetchForwardedClientPACDDisplay()
     setInterval(fetchForwardedClientPACDDisplay, 3000);
-    setInterval(fetchPendingClientsDisplay, 3000);
-    setInterval(fetchQuePacdDashboard, 3000);
+    
 }
-
 if (path.includes(pacdReports)) {
     fetchCateredTransactions();
     setInterval(fetchCateredTransactions, 3000); 
