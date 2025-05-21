@@ -11,11 +11,9 @@ function displayQue() {
         const regularNo = data.regular_lane.client_queue_no || "00";
         const priorityNo = data.priority_lane.client_queue_no || "00";
 
-        // Update display
         document.getElementById('regularCurrent').innerText = regularNo;
         document.getElementById('fastCurrent').innerText = priorityNo;
 
-        // Save current displayed queue numbers globally to filter later
         window.currentQueueNumbers = {
             regular: regularNo,
             priority: priorityNo
@@ -31,7 +29,7 @@ function fetchPendingClientsDisplay() {
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
         const tableBody = document.querySelector('#pendingClientQueueTable tbody');
-        tableBody.innerHTML = ''; // Clear old rows
+        tableBody.innerHTML = ''; 
         
         const currentRegular = window.currentQueueNumbers?.regular || null;
         const currentPriority = window.currentQueueNumbers?.priority || null;

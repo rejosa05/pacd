@@ -64,3 +64,25 @@ def forwarded_client_to_unit(request):
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+
+def skipped_client(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            client_id = request.POST.get('client_id')
+            user = request.session.get('username')
+
+            client = ClientDetails.objects.get(id=client_id)
+            client.client_status = 'Skipped'
+            client.user = user
+            client.save()
+
+            return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})
+
+        except ClientDetails.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_skipped: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)

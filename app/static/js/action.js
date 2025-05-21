@@ -1,9 +1,32 @@
 const {
-    updateClientStatusServedUrl, forwardedClientToUnit, pacdResolvedClient,
+    updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
+    pacdResolvedClient,
     saveUpdateForwardedClientUrl,
 } = window.dashboardConfig;
 
 let selectedClient = null;
+
+function skipClient(id) {
+    selectedClient = id;
+    if (confirm('Are you sure you want to skip this client?')) {
+        fetch(skippedClient, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+            },
+            body: `client_id=${selectedClient}`
+        })
+        .then(response => response.json())
+        .then(() => {
+            alert('Client skipped successfully!');
+        })
+        .catch(error => console.error('Error skipping client:', error));
+    } else {
+        return;
+    }
+}
 
 function closedApprovedModal() {
     document.getElementById('approvedModal').style.display = 'none';

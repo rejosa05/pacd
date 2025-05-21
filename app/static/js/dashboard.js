@@ -131,7 +131,7 @@ function fetchPendingClients() {
                         <button class="action-button1 approved-button" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}")'>
                             <i class="fa fa-check-circle"></i>
                         </button>
-                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_fullname}', '${client.client_transaction_type}')">
+                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_id}')">
                             <i class="fa fa-remove"></i>
                         </button>
                     </div>
