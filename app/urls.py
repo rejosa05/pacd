@@ -35,6 +35,7 @@ urlpatterns = [
     path('pacd-resolved-client/', pacd_resolved_client, name='pacd-resolved-client'),
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
     path('skipped-client/', skipped_client, name='skipped-client'),
+    path('skipped-client-unit', skipped_client_unit, name='skipped-client-unit'),
     
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
     path('notifications-unit/', notifications_unit, name="notifications-unit"),

@@ -301,12 +301,10 @@ if (path.includes(pacdDashboard)) {
 }
 
 if (path.includes(displayQueUrl)) {
-
-    
     fetchForwardedClientPACDDisplay()
     setInterval(fetchForwardedClientPACDDisplay, 3000);
-    
 }
+
 if (path.includes(pacdReports)) {
     fetchCateredTransactions();
     setInterval(fetchCateredTransactions, 3000); 

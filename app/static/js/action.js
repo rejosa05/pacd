@@ -1,5 +1,5 @@
 const {
-    updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
+    updateClientStatusServedUrl, forwardedClientToUnit, skippedClient, skippedClientUnit,
     pacdResolvedClient,
     saveUpdateForwardedClientUrl,
 } = window.dashboardConfig;
@@ -10,6 +10,28 @@ function skipClient(id) {
     selectedClient = id;
     if (confirm('Are you sure you want to skip this client?')) {
         fetch(skippedClient, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+            },
+            body: `client_id=${selectedClient}`
+        })
+        .then(response => response.json())
+        .then(() => {
+            alert('Client skipped successfully!');
+        })
+        .catch(error => console.error('Error skipping client:', error));
+    } else {
+        return;
+    }
+}
+
+function skipClientUnit(id) {
+    selectedClient = id;
+    if (confirm('Are you sure you want to skip this client?')) {
+        fetch(skippedClientUnit, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -94,7 +116,6 @@ function forwardedModal(client, type, que, id) {
 
 function closeModal() {
     document.getElementById('openModal').style.display = 'none';
-    document.getElementById('modal-forwarded-transactions-details').value = '';
     selectedClient = null;
 }
 function saveForwardedClient() {

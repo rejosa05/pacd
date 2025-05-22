@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from ..models import ClientDetails, DivisionLog
 from django.utils import timezone
+
 def pacd_resolved_client(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         client_id = request.POST.get('client_id')
@@ -78,6 +79,27 @@ def skipped_client(request):
             client.save()
 
             return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})
+
+        except ClientDetails.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_skipped: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+def skipped_client_unit(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            client_id = request.POST.get('client_id')
+            user = request.session.get('username')
+
+            client = DivisionLog.objects.get(client_id__id=client_id)
+            client.action_type = 'Skipped'
+            client.user = user
+            client.save()
+
+            return JsonResponse({'message': 'Client skipped successfully!'})
 
         except ClientDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)

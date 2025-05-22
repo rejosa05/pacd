@@ -32,7 +32,7 @@ function unitPendingList() {
                         <button class="action-button1 approved-button" title="Resolved" onclick='openModalAction("${client.client_fullname}","${client.transaction_details}", "${client.client_queue_no}","${client.client_id}", "${client.client_transaction_type}")'>
                             <i class="fa fa-check-circle"></i>
                         </button>
-                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_fullname}', '${client.client_transaction_type}')">
+                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
                             <i class="fa fa-remove"></i>
                         </button>
                     </div>
