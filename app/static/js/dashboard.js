@@ -1,5 +1,5 @@
 const {
-    accountListUrl, addAccountUrl, pacdDashboard, resolvedClient,
+    pacdDashboard, resolvedClient, transactionCount,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedClientUrl, csrfToken
 } = window.dashboardConfig;
@@ -55,43 +55,6 @@ function divisionUnitSelect(divisionID, unitID) {
     });
 }
 
-// ----- ACCOUNTS -----
-function fetchAccountList() {
-    fetch(accountListUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest'}
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#accountList tbody');
-        tableBody.innerHTML = '';
-
-        data.accountList.forEach(account => {
-            const f_ = String(account.first_name || '').trim();
-            const l_ = String(account.last_name || '').trim();
-            const fInitial = f_.charAt(0).toUpperCase();
-            const lInitial = l_.charAt(0).toUpperCase();
-            const row = document.createElement('tr');
-            row.innerHTML = `
-            <td>${account.id}</td>
-            <td>
-                <div class="client-info">
-                    <div class="initial-circle">${fInitial}${lInitial}</div>    
-                    <span>${account.first_name} ${account.last_name}</span>
-                </div>
-            </td>
-            <td>${account.position}</td>
-            <td>${account.divisions}</td>
-            <td>${account.unit}</td>
-            <td>${account.user}</td>
-            <td>${account.email}</td>
-            <td>
-                <button class="action-button1" title="Edit"><i class="fa fa-edit"></i></button>
-            </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    });
-}
 
 // ---------- Fetch and Display Pending Clients ----------
 function fetchPendingClients() {
@@ -108,30 +71,25 @@ function fetchPendingClients() {
 
         function addClientRow(client, color) {
             const genderIcon = client.client_gender === 'Male'
-                ? '<i class="male-icon fa fa-mars"></i>'
-                : '<i class="female-icon fa fa-venus"></i>';
-
-            const laneTypeIcon = client.client_lane_type === 'Regular'
-                ? '<i class="regular fa fa-angle-double-down"></i>'
-                : '<i class="priority fa fa-angle-double-up"></i>';
+                ? '<i class="male-icon fa fa-mars" title="Male"></i>'
+                : '<i class="female-icon fa fa-venus" title="Female"></i>';
 
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td><i class='badge fa fa-id-badge'></i> ${client.client_id}</td>
-                <td> ${client.client_queue_no}</td>
-                <td><i class='person fa fa-user'></i> ${client.client_fullname}</td>
-                <td class="gender-cell">${genderIcon} &nbsp; <span class="gender-text"> ${client.client_gender}</span></td>
-                <td>${laneTypeIcon} &nbsp; <span>${client.client_lane_type}</span></td>
-                <td class="actions-cell">
-                    <div class="actions-container">
-                        <button class="action-button1 update-button" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
-                            <i class="fa fa-arrow-right"></i>
-                        </button>
-                        <button class="action-button1 approved-button" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}")'>
-                            <i class="fa fa-check-circle"></i>
-                        </button>
-                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClient('${client.client_id}')">
+                <td>#CT${client.client_id}-${client.client_queue_no}</td>
+                <td> ${client.client_fullname}</td>
+                <td style="align-items: center">${genderIcon}</td>
+                <td> ${client.client_lane_type}</span></td>
+                <td>
+                    <button class="resolve-btn" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}")'>
+                        <i class="fa fa-check-circle"></i>
+                    </button>
+                    <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    
+                        <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
                             <i class="fa fa-remove"></i>
                         </button>
                     </div>
@@ -140,8 +98,8 @@ function fetchPendingClients() {
             tableBody.appendChild(row);
         }
         divisionUnitSelect('f-division-select', 'f-unit-select');
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+        priorityClients.forEach(client => addClientRow(client));
+        regularClients.forEach(client => addClientRow(client));
     })
 }
 
@@ -161,22 +119,24 @@ function fetchAllResolvedClient() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>${client.client_id}</td>
+                <td>#CT${client.client_id}-${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
-                <td>${client.client_lane_type}</td>
+                <td>${client.action_type}</td>
                 <td>${client.status}</td>
-                <td><button class="action-button1 delete-button" title="View" onclick="viewClientCatered()">
-                    <i class="fa fa-list"></i>
-                    </button>
-                    <button class="action-button1 delete-button" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
+                <td>
+                <button class="repeat-btn" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
                     <i class="fa fa-repeat"></i>
                     </button>
+                <button class="view-btn" title="View" onclick="viewClientCatered()">
+                    <i class="fa fa-list"></i>
+                    </button>
+                    
                 </td>
             `;
             tableBody.appendChild(row);
         }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+        priorityClients.forEach(client => addClientRow(client));
+        regularClients.forEach(client => addClientRow(client));
     })
 }
 
@@ -205,7 +165,6 @@ function fetchCateredTransactions() {
     })
   }
   
-
 // ---------- Fetch Forwarded Clients Display on PACD -- FIXED ---------
 function fetchForwardedClientPACD() {
     fetch(forwardedClientUrl, {
@@ -286,18 +245,36 @@ function fetchForwardedClientPACDDisplay() {
 }
 
 
-
-// -------- DISPLAY PAGE ---------
-
+function fetchTransactionCounts() {
+  fetch(transactionCount, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    const counts = data.type_count;
+    document.getElementById('count-inquiry').textContent = counts['Inquiry'] || 0;
+    document.getElementById('count-request').textContent = counts['Request'] || 0;
+    document.getElementById('count-submit').textContent = counts['Submit Documents'] || 0;
+    document.getElementById('count-others').textContent = counts['Others'] || 0;
+  })
+  .catch(error => {
+    console.error('Error fetching transaction counts:', error);
+  });
+}
 
 
 if (path.includes(pacdDashboard)) {
     fetchForwardedClientPACD();
     fetchPendingClients();
     fetchAllResolvedClient();
-    setInterval(fetchAllResolvedClient, 2000);
-    setInterval(fetchForwardedClientPACD, 2000);
-    setInterval(fetchPendingClients, 2000);
+    fetchTransactionCounts();
+    setInterval(fetchTransactionCounts, 2000);
+    // setInterval(fetchAllResolvedClient, 2000);
+    // setInterval(fetchForwardedClientPACD, 2000);
+    // setInterval(fetchPendingClients, 2000);
 }
 
 if (path.includes(displayQueUrl)) {
@@ -310,7 +287,4 @@ if (path.includes(pacdReports)) {
     setInterval(fetchCateredTransactions, 3000); 
 }
 
-if (path.includes(addAccountUrl)) {
-    fetchAccountList();
-    setInterval(fetchAccountList, 3000);
-}
+

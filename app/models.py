@@ -9,12 +9,15 @@ class AccountDetails(models.Model):
     password = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    divisions = models.CharField(max_length=100)
-    unit = models.CharField(max_length=100)
-    position = models.CharField(max_length=100)
+    divisions = models.CharField(max_length=100, null=True, blank=True)
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    position = models.CharField(max_length=100, null=True, blank=True)
     email = models.CharField(max_length=100, null=True)
     contact = models.CharField(max_length=100, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=100, default='Active', null=True)
+    created_by = models.CharField(max_length=100, null=True, blank=True)
+    
 
     def __str__(self):
         return f"{self.user} ({self.first_name} {self.last_name})"
@@ -87,7 +90,7 @@ class DivisionLog(models.Model):
     unit_user = models.CharField(max_length=100, null=True)
     date_resolved = models.DateTimeField(null=True, blank=True)
     remarks = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=100, blank=True)
     form = models.CharField(max_length=100, null=True)
 
 

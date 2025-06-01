@@ -4,7 +4,12 @@
 {% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
-<div class="app-container">
+
+
+
+
+
+<!-- <div class="app-container">
     <nav class="sidebar">
       <div class="logo-container">
         <div class="logo">
@@ -77,13 +82,13 @@
               </tr>
             </thead>
             <tbody id="cateredTransactions">
-              <!-- Dynamic content will be injected here -->
+             Dynamic content will be injected here 
             </tbody>
           </table>
         </div>
       </div>
     </main>
-</div>
+</div> -->
 <script>
   function exportToCSV(filename = 'resolved_clients.csv') {
     const rows = document.querySelectorAll('#cateredTransactions tr');

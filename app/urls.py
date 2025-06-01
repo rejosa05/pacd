@@ -1,12 +1,12 @@
 from django.urls import path
 from . import views
 from .view.author_view import *
-from .view.display_view import display_view, ticket_view, client_details, que_view
-from .view.pacd_dashboard_view import forwarded_clients, pending_clients, resolved_client
+from .view.display_view import *
+from .view.pacd_dashboard_view import *
 from .view.unit_dashboard_view import *
 from .view.actions import *
 from .view.notifications import *
-from django.contrib.auth import views as auth_views
+from .view.viewdata import *
 
 urlpatterns = [
     path('', login_view, name="logins"),
@@ -39,8 +39,13 @@ urlpatterns = [
     
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
     path('notifications-unit/', notifications_unit, name="notifications-unit"),
+    path('count-type-transaction', count_type_transaction, name="count-type-transaction"),
 
-    path('update_client_status_served/', views.update_client_status_served, name='update_client_status_served'),
+    path('update-details', update_user_details, name='update-details'),
+
+    path('account/<int:id>/', get_account, name='get-account'),
+
+    path('update_client_status_served/', update_client_status_served, name='update_client_status_served'),
 
 
     path('reports', reports_page, name='reports'),

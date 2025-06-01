@@ -51,7 +51,7 @@ def forwarded_clients(request):
 def resolved_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
-        resolved_clients = DivisionLog.objects.filter(action_type='resolved', date_resolved__date=today)
+        resolved_clients = DivisionLog.objects.filter(date__date=today)
         
         resolved_client_all = []
         for client in resolved_clients:

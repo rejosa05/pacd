@@ -4,135 +4,148 @@
 {% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
+
+<header>
+  <div class="logo-header">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" /> &nbsp; <!-- Replace with your logo path -->
+    {{ user.divisions }} Dashboard
+  </div>
+  <div class="header-icons">
+    <div class="user-icon">
+      <i class="fas fa-bell" title="notification"></i>
+      <span class="n-badge" id="notificationCount" style="display: none;"></span>
+    </div>
+    <div class="notification-icon">
+    <i class="fas fa-user-circle" title="Online User"></i>
+      <span class="n-badge">2</span>
+    </div>
+    <a class="sign-out" href="{% url 'logout' %}"><i class="fas fa-sign-out" title="Sign Out"></i></a>
+  </div>
+</header>
 <div class="app-container">
-    <nav class="sidebar">
-      <div class="logo-container">
-        <div class="logo">
-          <img src="{% static 'images/logo.png' %}" alt="Logo">
-        </div>
-        <span class="logo-text">{{ user.divisions }}</span>
-      </div>
-
-      <div class="user-profile">
-        <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.first_name|slice:":1"|upper }}" alt="User" class="user-avatar">
-        <div class="user-info">
-          <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
-          <p class="user-role">{{user.position }}</p>
-        </div>
-        <a href="{% url 'logout' %}" class="logout-button" title="Logout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
-        </a>
-      </div>
-
-      <div class="nav-list">
-        <a href="{% url 'pacd-dashboard' %}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <Home class="nav-icon" />
-            Dashboard
-        </a>
-        <a href="#" class="nav-item active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            <Users class="nav-icon" />
-            Users
-        </a>
-        <a href="{% url 'reports' %}" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
-            <BarChart class="nav-icon" />
-            Reports
-        </a>
+  <aside>
+    <nav>
+      <a href="{% url 'pacd-dashboard' %}">Transactions</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Reports</a>
+      <a href="#">Analytics</a>
+      <a href="#" class="active">Add Account</a>
     </nav>
-    <main class="main-content">
-      <div class="content">
-        <div class="item">
-          <h2>Create New Account</h2>
-          <ul>
-            {% for message in messages %}
-                <p style="color: red"> {{ message }} </p>
-            {% endfor %}
-          </ul>
-          <form class="form3" method="POST" action="{% url 'account' %}">
-            {% csrf_token %}
-          
-            <label>
-              First Name
-              {{ form.first_name }}
-            </label>
-            <label>
-              Last Name
-              {{ form.last_name }}
-            </label>
-          
-            <!-- Inline group: Position, Email, Contact -->
-            <div class="inline-group">
-              <label>
-                Position
-                {{ form.position }}
-              </label>
-              <label>
-                Email
-                {{ form.email }}
-              </label>
-              <label>
-                Contact Number
-                {{ form.contact }}
-              </label>
-            </div>
-          
-            <label>
-              Division
-              <select name="divisions" id="division-select" required>
-                <option value="">Select Division</option>
-                <option value="MSD">MSD</option>
-                <option value="LHSD">LHSD</option>
-                <option value="RD/ARD">RD/ARD</option>
-                <option value="RLED">RLED</option>
-              </select>
-            </label>
-            <label>
-              Unit
-              <select name="unit" id="unit-select" required>
-                <option value="">Select Unit</option>
-              </select>
-            </label>
-            <div class="inline-group">
-              <label>
-                Username
-                {{ form.user }}
-              </label>
-              <label>
-                Password
-                {{ form.password }}
-              </label>
-            </div>
-          
-            <button type="submit">Create Account</button>
-          </form>
-        </div>          
-        <div class="content">
-          <h2 class="header-title"> <i class="fa fa-list-ul"></i> Account List</h2>
-          <div class="table-container" style="height: 250px;">
-            <table class="table" id="accountList">
-              <thead>
-                <tr>
-                  <th style="width: 5%;">ID</th>
-                  <th>Employee Full Name</th>
-                  <th>Position</th>
-                  <th>Division</th>
-                  <th style="width: 10%;">Unit</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th style="width: 2%;"></th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
-</div>
+  </aside>
+  <main>
+    <section class="add-user">
+      <h2>Add New User</h2>
+      <form class="add-user" method="post" action="{% url 'account' %}">
+         {% csrf_token %}
+        <label for="first-name">First Name</label>
+        {{ form.first_name }}
+        <label for="last-name">Last Name</label>
+        {{ form.last_name }}
+        <label for="Position">Position</label>
+        <select name="position" id="position" required>
+          <option value="">Select role</option>
+          <option>Administrative Assistant II</option>
+          <option>Administrative Assistant III</option>
+          <option>Administrative Assistant IV</option>
+        </select>
+        <label for="email">Email</label>
+        {{ form.email }}
+        <label for="contact">Contact</label>
+        {{ form.contact }}
+        <label for="division">Division</label>
+          <select name="divisions" id="division-select" required>
+            <option value="">Select Division</option>
+            <option value="MSD">MSD</option>
+            <option value="LHSD">LHSD</option>
+            <option value="RD/ARD">RD/ARD</option>
+            <option value="RLED">RLED</option>
+          </select>
+        <label for="unit">Unit</label>
+          <select name="unit" id="unit-select" required>
+              <option value="">Select Unit</option>
+          </select>
+        <label for="user">Username</label>
+        {{ form.user }}
+        <label for="password">Password</label>
+        {{ form.password }}
+        <button class="add-user-btn" type="submit">Add User</button>
+      </form>
+    </section>
+    <section class="add-user">
+      <h2>User Accounts</h2>
+      <table id="accountList">
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th style="width: 15%;"></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
+  <!-- Edit Account Modal -->
+  <div class="modal-overlay" id="editAccount" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+    <div class="modal-view">    
+      <button class="close-btn" aria-label="Close modal" onclick="closeEditAccount()">&times;</button>
+      <h2>Edit User</h2>
+      <div class="">
+      <div class="edit-form" novalidate>
+        <label for="first-name">First Name</label>
+        <input type="text" id="f-name" required />
+        <label for="last-name">Last Name</label>
+        <input type="text" id="l-name" required />
+        <label for="">Role</label>
+        <select id="e-account-position" required>
+          <option value="" id="edit-position">Select role</option>
+          <option>Administrative Assistant II</option>
+          <option>Administrative Assistant III</option>
+          <option>Administrative Assistant IV</option>
+        </select>
+        <label for="division">Division</label>
+        <select id="e-account-division-select" required>
+          <option value="" id="edit-division">Select role</option>
+          <option value="MSD">MSD</option>
+          <option value="LHSD">LHSD</option>
+          <option value="RD/ARD">RD/ARD</option>
+          <option value="RLED">RLED</option>
+        </select>
+        <label for="unit">Unit</label>
+        <select id="e-account-unit-select" required>
+          <option value="" id="edit-unit">Select role</option>
+        </select>
+        <label for="user">Username</label>
+        <input type="text" id="edit-user" required />
+        <label for="password">Password</label>
+        <input type="password" id="edit-password" required />
+        <label for="email">Email Address</label>
+        <input type="email" id="edit-email" required />
+        <label for="contact">Contact</label>
+        <input type="email" id="edit-contact" required />
+        <label for="status">Status</label>
+        <select id="status" required>
+          <option value="" id="edit-status">Select role</option>
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+        <button type="submit" class="btn-save" onclick="saveUpdateUser()">Save</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for user details -->
+  <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+      <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+      <h2>User Details</h2>
+      <dl id="user-details-list">
+      </dl>
+  </div>
 <script>
   function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
     const divisionSelect = document.getElementById(divisionId);

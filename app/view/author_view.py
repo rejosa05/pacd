@@ -67,7 +67,8 @@ def add_account(request):
                 messages.error(request, "User already exists!")
             else:
                 account = form.save(commit=False)
-                account.set_password(form.cleaned_data["password"]) 
+                account.set_password(form.cleaned_data["password"])
+                account.created_by = request.session.get('username')
                 account.save()
                 messages.success(request, "Account created successfully!")
                 return redirect("account")

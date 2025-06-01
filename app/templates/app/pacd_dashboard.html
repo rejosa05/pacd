@@ -1,82 +1,161 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{user.unit}} Dashboard{% endblock %}
+{% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
+
+<header>
+  <div class="logo-header">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" /> &nbsp; <!-- Replace with your logo path -->
+    {{ user.divisions }} Dashboard
+  </div>
+  <div class="header-icons">
+    <div class="user-icon">
+      <i class="fas fa-bell" title="notification"></i>
+      <span class="n-badge" id="notificationCount" style="display: none;"></span>
+    </div>
+    <div class="notification-icon">
+    <i class="fas fa-user-circle" title="Online User"></i>
+      <span class="n-badge">2</span>
+    </div>
+    <a class="sign-out" href="{% url 'logout' %}"><i class="fas fa-sign-out" title="Sign Out"></i></a>
+  </div>
+</header>
 <div class="app-container">
-  <nav class="sidebar">
-    <div class="logo-container">
-      <div class="logo">
-        <img src="{% static 'images/logo.png' %}" alt="Logo">
+  <aside>
+    <nav>
+      <a href="#" class="active">Transactions</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Reports</a>
+      <a href="#">Analytics</a>
+      <a href="{% url 'account' %}">Add Account</a>
+    </nav>
+  </aside>
+  <main>
+    <section class="pending-transactions" aria-labelledby="pending-transactions-title">
+      <h2 id="pending-transactions-title">Pending Transactions</h2>
+      <table id="pendingClientQueueTable">
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Client Name</th>
+            <th><i class="fa fa-venus-mars" title="Gender"></i></th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+    <section class="right-panel" aria-label="Transactions history and types">
+      <div class="transaction-types" aria-label="Types of Transactions">
+        <h2>Types of Transactions</h2>
+        <div class="transaction-types" style="margin-top: 0.5rem;">
+          <div class="type-badge">Inquire <span class="count" id="count-inquiry"></span></div>
+          <div class="type-badge" style="background:#009688; box-shadow: 0 4px 12px rgba(0, 150, 136, 0.4);">Request <span class="count" id="count-request"></span></div>
+          <div class="type-badge" style="background:#f57c00; box-shadow: 0 4px 12px rgba(245,124,0,0.4);">Submit Documents <span class="count" id="count-submit"></span></div>
+          <div class="type-badge" style="background:#e91e63; box-shadow: 0 4px 12px rgba(233,30,99,0.4);">Others <span class="count" id="count-others"></span></div>
+        </div>
       </div>
-      <span class="logo-text">{{ user.divisions }}</span>
-    </div>
+      <div class="transaction-history" aria-labelledby="transaction-history-title" style="margin-bottom: 2rem;">
+        <h2 id="transaction-history-title">Transactions History</h2>
+        <table id="cateredTransactions">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Full Name</th>
+              <th>Action</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-    <div class="user-profile">
-      <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{user.first_name|slice:":1"|upper}}" alt="User" class="user-avatar">
-      <div class="user-info">
-        <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
-        <p class="user-role">{{user.position }}</p>
+  <!-- Approved Client By PACD -->
+  <div class="modal-overlay" id="approvedClient" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+    <div class="modal-view">    
+      <button class="close-btn" aria-label="Close modal" onclick="closedApproved()">&times;</button>
+      <h2>Approved Client</h2>
+      <div class="">
+        <div class="approved-form" novalidate>
+          <label for="first-name">Client ID</label>
+          <span id="approve-client-id"></span>
+          <label for="first-name">Full Name</label>
+          <span id="approve-client-fullname"></span>
+          <label for="first-name">Transactions Type</label>
+          <span id="approved-client-transactions"></span>
+          <label>Transactions Details</label>
+          <textarea id="approved-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+          <label>Remarks</label>
+          <textarea id="approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+          
+          <label class="form-label">CSS/CSM:</label>
+            <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
+                  CSM
+                </label>
+                <label>
+                  <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
+                  CSS
+                </label>
+              </div>
+            <button type="submit" onclick="saveApprovedClientByPACD()">Save</button>
+        </div>
       </div>
-      <a href="{% url 'logout' %}" class="logout-button" title="Logout">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
-      </a>
     </div>
+  </div>
 
-    <div class="nav-list">
-      <a href="" class="nav-item active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <Home class="nav-icon" />
-          Dashboard
-      </a>
-      <a href="{% url 'account'%}" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          <Users class="nav-icon" />
-          Users
-      </a>
-      <a href="{% url 'reports' %}" class="nav-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
-          <BarChart class="nav-icon" />
-          Reports
-      </a>
-    </div>
-  </nav>
-    <main class="main-content">
-      <div class="content">
-        <div class="user-notification-container">
-          <div class="user-icon">
-            <i class="fas fa-user-circle"></i>
-            <span class="n-badge">2</span>
-          </div>
-          <div class="notification-icon">
-            <i class="fas fa-bell" title="notification"></i>
-            <span class="n-badge" id="notificationCount" style="display: none;"></span>
-          </div>
-        </div>
-        <div class="header">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list header-icon"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
-              <h2 class="header-title">Client Transactions</h2>
-        </div>
-        <div class="card">            
-          <div class="table-container" style="height: 300px;">
-            <table class="table"  id="pendingClientQueueTable">
-              <thead>
-                <tr>
-                  <th style="width: 100px;"> ID </th>
-                  <th style="width: 100px;">Queue No. </th>
-                  <th>Full Name</th>
-                  <th style="width: 100px;">Gender</th>
-                  <th style="width: 200px;">Type Lane</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
+  <!-- Forwarded Client -->
+  <div class="modal-overlay" id="forwardClient" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+    <div class="modal-view">
+        <button class="close-btn" aria-label="Close modal" onclick="closeForward()">&times;</button>
+        <h2> Client Details </h2>
+        <div class="approved-form" novalidate>
+          <label for="first-name">Full Name</label>
+          <span id="forward-fullname"></span>
+          <label for="transaction-type">Transactions Type</label>
+          <span id="forward-transaction-type"></span>
+          <label>Transactions Details</label>
+          <textarea id="forwarded-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+          <label class="form-label" for="division">Division: </label>
+              <select class="form-option" name="divisions" id="f-division-select">
+                  <option value="">Select Division</option>
+                  <option value="MSD">MSD</option>
+                  <option value="LHSD">LHSD</option>
+                  <option value="RD/ARD">RD/ARD</option>
+                  <option value="RLED">RLED</option>
+              </select>
+            
+            
+              <label class="form-label" for="unit">Unit:</label>
+              <select class="form-option" name="unit" id="f-unit-select" required>
+                  <option value="">Select Unit</option>
+              </select>
+            <button type="submit" onclick="saveForwardedClient()">Save</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal for user details -->
+  <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+      <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+      <h2>User Details</h2>
+      <dl id="user-details-list">
+      </dl>
+  </div>
+{% endblock %}
+<!-- <div class="app-container">
+
       <div class="parent">
         <div class="content">
           <div class="header">
@@ -128,52 +207,7 @@
       </div>
     </main>
 
-      <div class="modal-overlay" id="approvedModal" style="display: none;">
-        <div class="modal">
-          <div class="modal-header">
-            <h2 class="modal-title"> Que No. <span id="modal-queue-no-a"></span></h2>
-            <h2 class="modal-title"> Client ID:  <i class="fa fa-user"> </i> <span style="color: green;" id="modal-client-id"> </h2>
-          </div>
-          <div class="modal-body">
-            <div class="form-group1">
-              <label class="form-label">Full Name: <span id="modal-fullname-approved"></span></label>
-            </div>
-            <div class="form-group1">
-              <label class="form-label">Transactions Type: <span id="modal-transaction"></span></label>
-            </div>
-            <div class="form-group1">
-              <label class="form-label">Transaction Details:</label>
-              <textarea id="modal-transaction-details" class="form-input" rows="3" required=True></textarea>
-            </div>
-            <div class="form-group1">
-              <label class="form-label">Remarks:</label>
-              <textarea id="modal-remarks" class="form-input" rows="3" required></textarea>
-            </div>
-            <div class="form-group1">
-              <label class="form-label">CSS/CSM:</label>
-              <div class="checkbox-group">
-                <label>
-                  <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
-                  CSM
-                </label>
-                <label>
-                  <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
-                  CSS
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="modal-button cancel-button" onclick="closedApprovedModal()">
-              Cancel
-            </button>
-                <button class="modal-button save-button" onclick="saveApprovedClientByPACD()">
-                Resolved
-                </button>
-          </div>
-        </div>
-      </div>
-      <!-- for action to forward on unit modal -->
+      for action to forward on unit modal
       <div class="modal-overlay" id="openModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
@@ -219,7 +253,7 @@
         </div>
       </div>
 
-      <!-- Edit open modal -->
+      Edit open modal
       <div class="modal-overlay" id="f-editModal" style="display: none;">
         <div class="modal">
           <div class="modal-header">
@@ -264,5 +298,4 @@
           </div>
         </div>
       </div>
-</div>
-{% endblock %}
+</div> -->

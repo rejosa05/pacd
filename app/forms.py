@@ -39,8 +39,8 @@ class ClientDetailsForm(forms.ModelForm):
         return instance
     
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username'}), required=True, label="Username")
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}), required=True, label="Password")
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username', 'type': 'text'}), required=True, label="Username")
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'type': 'password'}), required=True, label="Password")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -60,9 +60,10 @@ class LoginForm(forms.Form):
 
 class AuthorizedPersonnelForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
+    email = forms.CharField(widget=forms.EmailInput(attrs={'placeholder': 'example@gmail.com'}), required=True)
     class Meta:
         model = AccountDetails
-        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position', 'email', 'contact']
+        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position', 'email', 'contact','created_by']
     def clean_username(self):
         user = self.cleaned_data.get('user')
         if AccountDetails.objects.filter(user=user).exists():

@@ -2,6 +2,7 @@ const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient, skippedClientUnit,
     pacdResolvedClient,
     saveUpdateForwardedClientUrl,
+    updateDetails
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -26,6 +27,7 @@ function skipClient(id) {
     } else {
         return;
     }
+    fetchPendingClients();
 }
 
 function skipClientUnit(id) {
@@ -50,31 +52,29 @@ function skipClientUnit(id) {
     }
 }
 
-function closedApprovedModal() {
-    document.getElementById('approvedModal').style.display = 'none';
-    selectedClient = null;
+function closedApproved() {
+    document.getElementById('approvedClient').style.display = 'none';
 }
 
 function approveModal(client, details, ques, id) {
     selectedClient = id;
-    document.getElementById('modal-client-id').innerText = id;
-    document.getElementById('modal-fullname-approved').innerText = client;
-    document.getElementById('modal-transaction').innerText = details;
-    document.getElementById('modal-queue-no-a').innerText = ques;
-    document.getElementById('modal-remarks').value = '';
+    document.getElementById('approve-client-id').innerText = id;
+    document.getElementById('approve-client-fullname').innerText = client;
+    document.getElementById('approved-client-transactions').innerText = details;
+    document.getElementById('approved-remarks').value = '';
     document.getElementById('csm-checkbox').checked = false;
     document.getElementById('css-checkbox').checked = false;
-    document.getElementById('approvedModal').style.display = 'flex';
+    document.getElementById('approvedClient').style.display = 'flex';
 }
 
 function saveApprovedClientByPACD() {
-    const transaction_details = document.getElementById('modal-transaction-details');
-    const remarks = document.getElementById('modal-remarks');
+    const transaction_details = document.getElementById('approved-transactions-details');
+    const remarks = document.getElementById('approved-remarks');
     const csmChecked = document.getElementById('csm-checkbox');
     const cssChecked = document.getElementById('css-checkbox');
 
     if (!transaction_details.value || !remarks.value) { 
-        alert('please provide transaction details or remarks !!!');
+        alert('please do not leave blanks !!!');
         return;
     }
     
@@ -100,26 +100,24 @@ function saveApprovedClientByPACD() {
     .then(response => response.json())
     .then(() => {
         alert('succefully catered!!!')
-        closedApprovedModal();
+        closedApproved();
     })
     .catch(error => console.error('Error resolved client:', error));
 }
 
 function forwardedModal(client, type, que, id) {
     selectedClient = id;
-    document.getElementById('client-id').innerText = selectedClient;
-    document.getElementById('modal-fullname').innerText = client;
-    document.getElementById('modal-transaction-type').innerText = type;
-    document.getElementById('modal-queue-no').innerText = que;
-    document.getElementById('openModal').style.display = 'flex';
+    document.getElementById('forward-fullname').innerText = client;
+    document.getElementById('forward-transaction-type').innerText = type;
+    document.getElementById('forwardClient').style.display = 'flex';
 }
 
-function closeModal() {
-    document.getElementById('openModal').style.display = 'none';
+function closeForward() {
+    document.getElementById('forwardClient').style.display = 'none';
     selectedClient = null;
 }
 function saveForwardedClient() {
-    const transaction_details = document.getElementById('modal-forwarded-transactions-details').value;
+    const transaction_details = document.getElementById('forwarded-transactions-details').value;
     const division = document.getElementById('f-division-select').value;
     const unit = document.getElementById('f-unit-select').value;
 
@@ -135,7 +133,7 @@ function saveForwardedClient() {
     .then(response => response.json())
     .then(() => {
         alert('forwarded the client!!');
-        closeModal();   
+        closeForward();   
     })
 }
 
@@ -226,3 +224,58 @@ function saveUpdateForwardedClient() {
         closeEditModal();   
     })
 }
+
+function accountEdit(id, fname, lname, position, division, unit, user, password, email, contact, status) {
+    selectedAccount = id;
+    document.getElementById('f-name').value = fname;
+    document.getElementById('l-name').value = lname;
+    document.getElementById('edit-position').innerText = position;
+    document.getElementById('edit-division').innerText = division;
+    document.getElementById('edit-unit').innerText = unit;
+    document.getElementById('edit-user').value = user;
+    document.getElementById('edit-email').value = email;
+    document.getElementById('edit-password').value = password;
+    document.getElementById('edit-contact').value = contact;
+    document.getElementById('edit-status').innerText = status;
+    document.getElementById('editAccount').style.display = 'flex';
+}
+
+function closeEditAccount() {
+    document.getElementById('editAccount').style.display = 'none';
+}
+
+function saveUpdateUser() {
+    first_name = document.getElementById('f-name').value
+    last_name = document.getElementById('l-name').value
+    position = document.getElementById('e-account-position').value
+    division = document.getElementById('e-account-division-select').value
+    unit = document.getElementById('e-account-unit-select').value
+    user = document.getElementById('edit-user').value
+    email = document.getElementById('edit-email').value
+    password = document.getElementById('edit-password').value
+    contact = document.getElementById('edit-contact').value
+    status = document.getElementById('edit-status').value
+    console.log(first_name)
+    fetch(updateDetails, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `account_id=${selectedAccount}&first_name=${first_name}&last_name=${last_name}&position=${position}&division=${division}&unit=${unit}&user=${user}&email=${email}`
+
+    })
+    .then(response => response.json())
+    .then(() => {
+        
+        alert('update complete !!!');
+        fetchAccountList();
+        closeEditAccount();   
+    })
+}
+
+function closeViewDetails () {
+    document.getElementById('view-details-modal').style.display = 'none';
+}
+

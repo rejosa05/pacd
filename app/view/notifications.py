@@ -19,3 +19,14 @@ def notifications_unit(request):
         notifications = DivisionLog.objects.filter(action_type='forwarded', unit=unit, date__date=today).count()
 
         return JsonResponse({'notifications': notifications})
+
+def count_type_transaction(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        type_count = {
+            'Inquiry': ClientDetails.objects.filter(client_transaction_type='Inquiry').count(),
+            'Request': ClientDetails.objects.filter(client_transaction_type='Request').count(),
+            'Submit Documents': ClientDetails.objects.filter(client_transaction_type='Submit Documents').count(),
+            'Others': ClientDetails.objects.filter(client_transaction_type='Others').count()
+        }
+
+        return JsonResponse({'type_count': type_count})

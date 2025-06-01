@@ -16,48 +16,6 @@ from django.utils import timezone
     
 # fetch all data of resolved client -- per unit
 
-    
-
-def update_client_status_served(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            today = timezone.now()
-            user = request.session.get('username')
-            users = AccountDetails.objects.filter(user=user).first()
-            client_id = request.POST.get('client_id')
-            transaction_details = request.POST.get('transaction_details')
-            remarks = request.POST.get('remarks')
-            resolutions = request.POST.get('resolutions')
-            action_type = 'resolved'
-            status = 'Completed'
-            
-            client = ClientDetails.objects.get(id=client_id)
-            client.client_status = action_type
-            client.user = user
-            client.save()
-            
-            DivisionLog.objects.create(
-            client_id_id=client_id,
-            action_type = action_type,
-            division=users.divisions,
-            unit=users.unit,
-            transaction_details=transaction_details,
-            remarks = remarks,
-            form = resolutions,
-            unit_user = user,
-            user=user,
-            date_resolved = today,
-            status = status,
-            date=today
-            )
-
-            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
-        except ClientDetails.DoesNotExist:
-            return JsonResponse({'message': 'Client not found'}, status=404)
-        except Exception as e:
-            print(f"Error in update_client_status_served: {e}")  # Log the error
-            return JsonResponse({'message': 'Internal Server Error'}, status=500)
-    return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def accountList(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -75,6 +33,7 @@ def accountList(request):
                 'contact': accounts.contact,
                 'user': accounts.user,
                 'password': accounts.password,
+                'status': accounts.status,
                 'date_created': accounts.date_created.isoformat() if accounts.date_created else None,
             }
             for accounts in account
