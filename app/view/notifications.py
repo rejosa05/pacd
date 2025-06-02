@@ -22,11 +22,12 @@ def notifications_unit(request):
 
 def count_type_transaction(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        today = timezone.now()
         type_count = {
-            'Inquiry': ClientDetails.objects.filter(client_transaction_type='Inquiry').count(),
-            'Request': ClientDetails.objects.filter(client_transaction_type='Request').count(),
-            'Submit Documents': ClientDetails.objects.filter(client_transaction_type='Submit Documents').count(),
-            'Others': ClientDetails.objects.filter(client_transaction_type='Others').count()
+            'Inquiry': ClientDetails.objects.filter(client_transaction_type='Inquiry', client_created_date__date=today).count(),
+            'Request': ClientDetails.objects.filter(client_transaction_type='Request', client_created_date__date=today).count(),
+            'Submit Documents': ClientDetails.objects.filter(client_transaction_type='Submit Documents', client_created_date=today).count(),
+            'Others': ClientDetails.objects.filter(client_transaction_type='Others', client_created_date=today).count()
         }
-
+        
         return JsonResponse({'type_count': type_count})

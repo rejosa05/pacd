@@ -39,11 +39,12 @@ urlpatterns = [
     
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
     path('notifications-unit/', notifications_unit, name="notifications-unit"),
-    path('count-type-transaction', count_type_transaction, name="count-type-transaction"),
+    path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
 
     path('update-details', update_user_details, name='update-details'),
 
     path('account/<int:id>/', get_account, name='get-account'),
+    path('pacd-dashboard/<int:id>/', get_client, name="get-client"),
 
     path('update_client_status_served/', update_client_status_served, name='update_client_status_served'),
 

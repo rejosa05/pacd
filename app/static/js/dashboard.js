@@ -1,5 +1,5 @@
 const {
-    pacdDashboard, resolvedClient, transactionCount,
+    pacdDashboard, resolvedClient, transactionCount, viewCLient,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedClientUrl, csrfToken
 } = window.dashboardConfig;
@@ -127,7 +127,7 @@ function fetchAllResolvedClient() {
                 <button class="repeat-btn" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
                     <i class="fa fa-repeat"></i>
                     </button>
-                <button class="view-btn" title="View" onclick="viewClientCatered()">
+                <button class="view-btn" title="View" onclick="viewClientDetails('${client.client_id}')">
                     <i class="fa fa-list"></i>
                     </button>
                     
@@ -244,7 +244,6 @@ function fetchForwardedClientPACDDisplay() {
     })
 }
 
-
 function fetchTransactionCounts() {
   fetch(transactionCount, {
     method: 'GET',
@@ -264,6 +263,30 @@ function fetchTransactionCounts() {
     console.error('Error fetching transaction counts:', error);
   });
 }
+
+function viewClientDetails(id) {
+    fetch(`${viewCLient}${id}/`)
+        .then(response => {
+            if (!response.ok) throw new Error('Account not found');
+            return response.json();
+        })
+        
+        .then(client => {
+            const userDetailsList = document.getElementById('client-details-list');
+            const detailsOverlay = document.getElementById('view-details-modal');
+            const modal = detailsOverlay.querySelector('.modal-view');
+
+            userDetailsList.innerHTML = `
+                <dt>Client ID:</dt><dd> #CT${client.client_id}-${client.client_que}</dd>
+                <dt>Full Name:</dt><dd>${client.client_fullname}</dd>
+                <dt>Lane Type:</dt><dd>${client.client_lane_type}</dd>
+                <dt>Transaction Type:</dt><dd>${client.client_transaction_type}</dd>
+            `;
+            detailsOverlay.style.display = 'flex';
+            modal.focus();
+        })
+}
+
 
 
 if (path.includes(pacdDashboard)) {
