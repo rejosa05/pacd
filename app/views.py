@@ -17,30 +17,7 @@ from django.utils import timezone
 # fetch all data of resolved client -- per unit
 
 
-def accountList(request):
-    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        account = AccountDetails.objects.filter().order_by('-date_created')  # Optional: order by latest
 
-        accountList = [
-            {
-                'id': accounts.id,
-                'first_name': accounts.first_name,
-                'last_name': accounts.last_name,
-                'position': accounts.position,
-                'divisions': accounts.divisions,
-                'unit': accounts.unit,
-                'email': accounts.email,
-                'contact': accounts.contact,
-                'user': accounts.user,
-                'password': accounts.password,
-                'status': accounts.status,
-                'date_created': accounts.date_created.isoformat() if accounts.date_created else None,
-            }
-            for accounts in account
-        ]
-        return JsonResponse({'accountList': accountList})
-    else:
-        return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def reports(request):
     username = request.session.get('username')

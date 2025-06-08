@@ -2,34 +2,6 @@ from django.http import JsonResponse
 from ..models import ClientDetails, DivisionLog, AccountDetails
 from django.utils import timezone
 
-def pacd_resolved_client(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        client_id = request.POST.get('client_id')
-        remarks = request.POST.get('remarks')
-        resolution = request.POST.get('resolution')
-        username = request.session.get('username')
-        today = timezone.now()
-
-        try:
-            division_log = DivisionLog.objects.get(client_id=client_id)
-            division_log.action_type = 'Resolved'
-            division_log.status = 'Done'
-            division_log.remarks = remarks
-            division_log.form = resolution
-            division_log.unit_user = username
-            division_log.date_resolved = today
-            division_log.save()
-            return JsonResponse({'message': 'DivisionLog updated successfully'})
-
-        except DivisionLog.DoesNotExist:
-            print("DivisionLog not found for client_id:", client_id)
-            return JsonResponse({'message': 'DivisionLog not found'}, status=404)
-        except Exception as e:
-            print("Unexpected error:", str(e))
-            return JsonResponse({'message': str(e)}, status=500)
-
-    return JsonResponse({'message': 'Invalid request'}, status=400)
-
 def forwarded_client_to_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -51,6 +23,7 @@ def forwarded_client_to_unit(request):
                 division=division,
                 unit=unit,
                 transaction_details=transaction_details,
+                status= 'Pending',
                 user=username,
                 date=today
             )
@@ -165,7 +138,6 @@ def  update_user_details(request):
             contact = request.POST.get('contact')
             status = request.POST.get('status')
 
-            print(account_id)
             account = AccountDetails.objects.get(id=account_id)
             account.first_name = first_name
             account.last_name = last_name
@@ -188,3 +160,32 @@ def  update_user_details(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+def update_client_status_served_unit(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            client_id = request.POST.get('client_id')
+            user = request.session.get('username')
+            users = AccountDetails.objects.filter(user=user).first()
+            unit = users.unit
+            remarks = request.POST.get('remarks')
+            resolutions = request.POST.get('resolutions')
+            today = timezone.now()
+
+            client = DivisionLog.objects.get(client_id__id=client_id, unit=unit)
+            client.action_type = 'Resolved'
+            client.unit_user = user
+            client.form = resolutions
+            client.date_resolved = today
+            client.remarks = remarks
+            client.status = 'Completed'
+            client.save()
+
+            return JsonResponse({'message': 'Client resolved successfully!'})
+
+        except DivisionLog.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_resolved: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)

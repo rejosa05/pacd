@@ -1,5 +1,5 @@
 const {
-    pacdDashboard, resolvedClient, transactionCount, viewCLient,
+    pacdTransactions, transactionHistory, transactionCount, viewCLient,
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedClientUrl, csrfToken
 } = window.dashboardConfig;
@@ -88,7 +88,6 @@ function fetchPendingClients() {
                     <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
                         <i class="fa fa-arrow-right"></i>
                     </button>
-                    
                         <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
                             <i class="fa fa-remove"></i>
                         </button>
@@ -104,7 +103,7 @@ function fetchPendingClients() {
 }
 
 function fetchAllResolvedClient() {
-    fetch(resolvedClient, {
+    fetch(transactionHistory, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -121,13 +120,14 @@ function fetchAllResolvedClient() {
             row.innerHTML = `
                 <td>#CT${client.client_id}-${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
-                <td>${client.action_type}</td>
+                <td>${client.client_division}</td>
+                <td>${client.client_unit}</td>
                 <td>${client.status}</td>
                 <td>
                 <button class="repeat-btn" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
                     <i class="fa fa-repeat"></i>
                     </button>
-                <button class="view-btn" title="View" onclick="viewClientDetails('${client.client_id}')">
+                <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
                     <i class="fa fa-list"></i>
                     </button>
                     
@@ -137,110 +137,6 @@ function fetchAllResolvedClient() {
         }
         priorityClients.forEach(client => addClientRow(client));
         regularClients.forEach(client => addClientRow(client));
-    })
-}
-
-function fetchCateredTransactions() {
-    fetch(fetchCateredTransactionsUrl, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.json())
-    .then(data => {
-      const tableBody = document.querySelector('#cateredTransactions');
-      tableBody.innerHTML = '';
-  
-      data.resolved_clients.forEach(client => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${client.client_id}</td>
-          <td>${client.client_queue_no}</td>
-          <td>${client.client_fullname}</td>
-          <td>${client.divisions}</td>
-          <td>${client.unit}</td>
-          <td>${client.status}</td>
-          <td>${formatDateTime(client.date_resolved)}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    })
-  }
-  
-// ---------- Fetch Forwarded Clients Display on PACD -- FIXED ---------
-function fetchForwardedClientPACD() {
-    fetch(forwardedClientUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#forwardedTransactions tbody');
-        tableBody.innerHTML = '';
-
-        let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
-        let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
-
-        function addClientRow(client, color) {
-            const name = String(client.client_fullname || '').trim();
-            const initial = name.charAt(0).toUpperCase();
-            
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td>${client.client_id}</td>
-                <td>
-                    <div class="client-info">
-                        <div class="initial-circle">${initial}</div>    
-                        <span>${client.client_fullname}</span>
-                    </div>
-                </td>
-                <td>${client.client_queue_no}</td>
-                <td>${client.client_division}</td>
-                <td>${client.client_unit}</td>
-                <td>
-                    <button class="action-button1 delete-button" title="Edit" 
-                    onclick="forwardedEditModal(
-                    ${client.client_id}, 
-                    '${client.client_fullname}', 
-                    '${client.client_division}', 
-                    '${client.client_unit}', 
-                    ${client.client_queue_no}, 
-                    '${client.client_transaction_type}', 
-                    '${client.client_transaction_details}')">
-                    <i class="fa fa-edit"></i></button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        }
-        divisionUnitSelect('e-division-select', 'e-unit-select');
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
-    })
-}
-
-
-function fetchForwardedClientPACDDisplay() {
-    fetch(forwardedClientUrl, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#forwardedTransactions tbody');
-        tableBody.innerHTML = '';
-
-        let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
-        let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
-
-        function addClientRow(client, color) {
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td>${client.client_queue_no}</td>
-                <td>${client.client_division}</td>
-                <td>${client.client_unit}</td>
-            `;
-            tableBody.appendChild(row);
-        }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
     })
 }
 
@@ -258,6 +154,8 @@ function fetchTransactionCounts() {
     document.getElementById('count-request').textContent = counts['Request'] || 0;
     document.getElementById('count-submit').textContent = counts['Submit Documents'] || 0;
     document.getElementById('count-others').textContent = counts['Others'] || 0;
+    document.getElementById('count-pending').textContent = counts['Pending'] || 0;
+    document.getElementById('count-completed').textContent = counts['Completed'] || 0;
   })
   .catch(error => {
     console.error('Error fetching transaction counts:', error);
@@ -279,8 +177,18 @@ function viewClientDetails(id) {
             userDetailsList.innerHTML = `
                 <dt>Client ID:</dt><dd> #CT${client.client_id}-${client.client_que}</dd>
                 <dt>Full Name:</dt><dd>${client.client_fullname}</dd>
+                <dt>Gender:</dt><dd>${client.client_gender}</dd>
                 <dt>Lane Type:</dt><dd>${client.client_lane_type}</dd>
                 <dt>Transaction Type:</dt><dd>${client.client_transaction_type}</dd>
+                <dt>Transaction Details:</dt><dd>${client.client_transaction_details}</dd>
+                <dt>Division:</dt><dd>${client.client_division}</dd>
+                <dt>Unit:</dt><dd>${client.client_unit}</dd>
+                <dt>Status:</dt><dd>${client.client_status}</dd>
+                <dt>Date Created:</dt><dd>${formatDateTime(client.client_created)}</dd>
+                <dt>Date Forwarded:</dt><dd>${formatDateTime(client.client_forwarded)}</dd>
+                <dt>Date Resolved:</dt><dd>${formatDateTime(client.client_resolved)}</dd>
+                <dt>Remarks:</dt><dd>${client.client_remarks}</dd>
+                <dt>Employee Catered:</dt><dd>${client.client_user}</dd>
             `;
             detailsOverlay.style.display = 'flex';
             modal.focus();
@@ -289,8 +197,8 @@ function viewClientDetails(id) {
 
 
 
-if (path.includes(pacdDashboard)) {
-    fetchForwardedClientPACD();
+if (path.includes(pacdTransactions)) {
+    // fetchForwardedClientPACD();
     fetchPendingClients();
     fetchAllResolvedClient();
     fetchTransactionCounts();
@@ -304,10 +212,3 @@ if (path.includes(displayQueUrl)) {
     fetchForwardedClientPACDDisplay()
     setInterval(fetchForwardedClientPACDDisplay, 3000);
 }
-
-if (path.includes(pacdReports)) {
-    fetchCateredTransactions();
-    setInterval(fetchCateredTransactions, 3000); 
-}
-
-

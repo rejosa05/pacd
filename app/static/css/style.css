@@ -635,6 +635,206 @@ font-size: 0.875rem;
   button[type="submit"]:hover {
     background-color: #0056b3;
   }
+
+.display-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.location {
+    font-style: italic;
+  }
+
+  .last-updated {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Status message */
+  .status-message {
+    background-color: #ffe9e9;
+    color: #cc0000;
+    padding: 12px 20px;
+    text-align: center;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 0 12px rgba(204,0,0,0.3);
+  }
+
+  .left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .top-boxes {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .info-box {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    padding: 28px 32px;
+    text-align: center;
+    flex: 1 1 280px;
+    transition: transform 0.3s ease;
+  }
+  .info-box:hover {
+    transform: translateY(-5px);
+  }
+
+  .info-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 18px;
+    font-weight: 700;
+    color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Lane icons */
+  .info-box h2 svg {
+    width: 28px;
+    height: 28px;
+    fill: #666;
+  }
+
+  /* Regular Lane specific */
+  .regular.number {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #3a86ff;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+  }
+
+  /* Priority Lane specific */
+  .priority.number {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #ff3c78;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+  }
+
+  /* Sub info (est wait time etc) */
+  .lane-subinfo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #555;
+  }
+
+  /* Bottom box that holds dual tables */
+  .bottom-box {
+    padding: 20px 30px;
+    background: #fefefe;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  }
+
+  .dual-tables {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .table-section {
+    flex: 1 1 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    padding: 24px 28px;
+  }
+
+  .table-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+    font-weight: 600;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+    color: #444;
+    user-select: none;
+  }
+
+  /* Table */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    color: #444;
+  }
+
+  thead tr {
+    background: #f1f6fa;
+    box-shadow: inset 0 -2px 0 #3a86ff;
+  }
+
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e1e8f0;
+  }
+
+  /* Priority lane highlight in tables */
+  .priority-lane {
+    color: #ff3c78;
+    font-weight: 700;
+  }
+
+  tbody tr:hover {
+    background: #e8f0fe;
+    cursor: default;
+  }
+
+  /* Totals row */
+  .totals-row {
+    font-weight: 700;
+    background: #fafafa;
+    border-top: 2px solid #3a86ff;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 900px) {
+    .top-boxes {
+      justify-content: space-around;
+    }
+    .dual-tables {
+      flex-direction: column;
+    }
+    .table-section {
+      flex: 1 1 100%;
+      margin-bottom: 25px;
+    }
+    .info-box {
+      flex: 1 1 100%;
+    }
+  }
+
+.top-info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.95rem;
+    user-select: none;
+}
   
   /* --- Responsive Layout --- */
   @media (max-width: 768px) {

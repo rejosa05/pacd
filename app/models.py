@@ -89,8 +89,8 @@ class DivisionLog(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     unit_user = models.CharField(max_length=100, null=True)
     date_resolved = models.DateTimeField(null=True, blank=True)
-    remarks = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=100, blank=True)
+    remarks = models.TextField(blank=True)
+    status = models.CharField(max_length=100, null=True, blank=True)
     form = models.CharField(max_length=100, null=True)
 
 
@@ -124,3 +124,12 @@ def log_client_delete(sender, instance, **kwargs):
         action='deleted',
         date=timezone.now()
     )
+
+class SessionHistory(models.Model):
+    user = models.CharField(max_length=100)
+    login_time = models.DateTimeField(default=timezone.now)
+    logout_time = models.DateTimeField(null=True, blank=True)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.login_time}"

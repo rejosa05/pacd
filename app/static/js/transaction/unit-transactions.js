@@ -1,5 +1,5 @@
 const {
-    unitDashboard, unitPendingUrl, unitResolved
+    unitTransactions, unitPendingUrl, unitResolved
 } = window.dashboardConfig;
 
 function unitPendingList() {
@@ -14,38 +14,37 @@ function unitPendingList() {
         let priorityClients = data.forwarded_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.forwarded_clients.filter(client => client.client_lane_type !== 'Priority');
 
-        function addClientRow(client, color) {
+        function addClientRow(client, color) {                
             const genderIcon = client.client_gender === 'Male'
                 ? '<i class="male-icon fa fa-mars"></i>'
                 : '<i class="female-icon fa fa-venus"></i>';
 
+            const laneType = client.client_lane_type === 'Priority' ? 'priority-cell' : 'regular-cell';
+
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>${client.client_id}</td>
-                <td>${client.client_queue_no}</td>
+                <td>#CT${client.client_id}-${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
-                <td class="gender-cell">${genderIcon}<span class="gender-text"> ${client.client_gender}</span></td>
-                <td>${client.client_lane_type}</td>
-                <td class="actions-cell">
-                    <div class="actions-container">
-                        <button class="action-button1 approved-button" title="Resolved" onclick='openModalAction("${client.client_fullname}","${client.transaction_details}", "${client.client_queue_no}","${client.client_id}", "${client.client_transaction_type}")'>
+                <td style="align-items: center">${genderIcon}</td>
+                <td class="${laneType}">${client.client_lane_type}</td>
+                <td>
+                    <button class="resolve-btn" title="Resolved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}", "${client.client_transaction_details}")'>
                             <i class="fa fa-check-circle"></i>
-                        </button>
-                        <button class="action-button1 delete-button" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
-                            <i class="fa fa-remove"></i>
-                        </button>
-                    </div>
+                    </button>                 
+                    <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
+                        <i class="fa fa-remove"></i>
+                    </button>
                 </td>
             `;
             tableBody.appendChild(row);
         }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+        priorityClients.forEach(client => addClientRow(client));
+        regularClients.forEach(client => addClientRow(client));
     })
 }
 
-function unitResolvedList() {
+function fetchAllResolvedClientUnit() {
     fetch(unitResolved, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -56,36 +55,30 @@ function unitResolvedList() {
 
         let priorityClients = data.resolved_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.resolved_clients.filter(client => client.client_lane_type !== 'Priority');
-        
+
         function addClientRow(client, color) {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>${client.client_id}</td>
-
+                <td>#CT${client.client_id}-${client.client_queue_no}</td>
                 <td>${client.client_fullname}</td>
-                <td>${client.client_gender}</td>
-                <td>${client.client_lane_type}</td>
                 <td>${client.status}</td>
-                <td>${client.form}</td>
-                <td>${client.unit_user}</td>
-                <td>${formatDateTime(client.date_resolved)}</td>
                 <td>
-                    <button class="action-button1" title="View"><i class="fa fa-list"></i></button>
-                    <button class="action-button1" title="Edit"><i class="fa fa-edit"></i></button>
-                    
+                <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
+                    <i class="fa fa-list"></i>
+                </button>
                 </td>
             `;
             tableBody.appendChild(row);
         }
-        priorityClients.forEach(client => addClientRow(client, 'rgba(255, 173, 173, 0.3)'));
-        regularClients.forEach(client => addClientRow(client, 'rgba(130, 207, 255, 0.3)'));
+        priorityClients.forEach(client => addClientRow(client));
+        regularClients.forEach(client => addClientRow(client));
     })
 }
 
-if (path.includes(unitDashboard)) {
+if (path.includes(unitTransactions)) {
     unitPendingList();
-    unitResolvedList();
+    fetchAllResolvedClientUnit();
     setInterval(unitPendingList, 3000);
-    setInterval(unitResolvedList, 3000)
+    setInterval(fetchAllResolvedClientUnit, 3000)
 }

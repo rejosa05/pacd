@@ -3,6 +3,77 @@
 {% block title %} Display Board {% endblock %}
 {% block content %}
     <div class="display-container">
+        <div class="top-info-bar" aria-live="polite" aria-atomic="true">
+        <div class="location">Service Location: Downtown Branch</div>
+        <div class="last-updated" id="lastUpdated">Last updated: --:--:--</div>
+    </div>
+    
+    <div class="left-section">
+        <div class="top-boxes">
+            <div class="info-box" aria-label="Regular Lane details">
+            <h2>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8zM11 6h2v6h-2zm0 8h2v2h-2z"/></svg>
+                Regular Lane
+            </h2>
+            <div class="regular" id="regularCurrent" aria-live="polite" aria-atomic="true">&mdash;</div>
+            </div>
+            <div class="info-box" aria-label="Priority Lane details">
+            <h2>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8zM11 7h2v5h-2zm0 7h2v2h-2z"/></svg>
+                Priority Lane
+            </h2>
+            <div class="priority" id="fastCurrent" aria-live="polite" aria-atomic="true">&mdash;</div>
+            </div>
+        </div>
+        <div class="info-box bottom-box" aria-label="Queue information tables">
+            <div class="dual-tables">
+            <div class="table-section" aria-label="Waiting queue">
+                <h2>WAITING</h2>
+                <table id="pendingClientQueueTable" role="grid" aria-describedby="waitingDesc">
+                <thead>
+                    <tr>
+                    <th scope="col">QUEUE NO</th>
+                    <th scope="col">LANE TYPE</th>
+                    <th scope="col">TRANSACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Waiting data here -->
+                </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                    <td colspan="3" id="totalWaiting" aria-live="polite">Total Waiting: 0</td>
+                    </tr>
+                </tfoot>
+                </table>
+            </div>
+            <div class="table-section" aria-label="Now serving queue">
+                <h2>NOW SERVING</h2>
+                <table id="forwardedTransactions" role="grid" aria-describedby="servingDesc">
+                <thead>
+                    <tr>
+                    <th scope="col">QUE NO.</th>
+                    <th scope="col">DIVISION</th>
+                    <th scope="col">UNIT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Catered data here -->
+                </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                    <td colspan="3" id="totalServing" aria-live="polite">Total Serving: 0</td>
+                    </tr>
+                </tfoot>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- <div class="display-container">
         <div class="left-section">
             <div class="top-boxes">
                 <div class="info-box">
@@ -29,7 +100,7 @@
                                 </tr>
                             </thead>
                             <tbody >
-                                <!-- Waiting data here -->
+                                Waiting data here
                             </tbody>
                         </table>
                     </div>
@@ -44,7 +115,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Catered data here -->
+                                Catered data here
                             </tbody>
                         </table>
                     </div>
@@ -59,7 +130,7 @@
                 <img src="{% static 'images/image2.jpg' %}" alt="Logo">
             </div>
         </div>
-    </div>
+    </div> -->
     <script>
         let slideIndex = 0;
         showSlides();

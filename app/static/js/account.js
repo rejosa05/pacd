@@ -47,7 +47,6 @@ function fetchAccountList() {
     });
 }
 
-
 function viewDetails(id) {
     fetch(`${viewAccount}${id}/`)
         .then(response => {
@@ -77,8 +76,7 @@ function viewDetails(id) {
         })
 }
 
-if (path.includes(addAccountUrl)) {
+if (path.includes(accountListUrl)) {
     fetchAccountList();
-    fetchPACDNotifications();
-    setInterval(fetchPACDNotifications, 2000);
 }
+

@@ -10,35 +10,37 @@
     <link rel="icon" href="{% static 'images/logo.png' %}">
     <script>
         window.dashboardConfig = {
-            unitDashboard: "{% url 'unit-dashboard' %}", // unit dashboard page
+            unitTransactions: "{% url 'unit-transactions' %}", // unit transactions page
             unitPendingUrl: "{% url 'unit-pending' %}", // unit pending list
             unitResolved: "{% url 'unit-resolved' %}", // unit resolved list
 
-            pacdDashboard: "{% url 'pacd-dashboard' %}", // pacd dashboard page
+            pacdTransactions: "{% url 'pacd-transactions' %}", // pacd transctions page
             pendingClientsUrl: "{% url 'pending_clients' %}", // pending clients
-            forwardedClientUrl: "{% url 'forwarded-client' %}", // forwarded client from pacd to unit
-            resolvedClient: "{% url 'resolved-client' %}",  // resolved client list
+            transactionHistory: "{% url 'transaction-history' %}",  // resolved client list per day
+
+            pacdDashboard: "{% url 'pacd-dashboard' %}", // pacd dashboard page
+            servedListAll: "{% url 'transaction-history-all' %}", // transaction history all
 
             queViewUrl: "{% url 'que-view' %}", // que display on screen
             displayQueUrl: "{% url 'display-page' %}", // display page
 
             
-            pacdResolvedClient: "{% url 'pacd-resolved-client' %}", // action resolved client from PACD
             forwardedClientToUnit: "{% url 'forwarded-client-to-unit' %}", // action forwarded client to unit from PACD
             skippedClient: "{% url 'skipped-client' %}", // action skipped client from PACD
             skippedClientUnit: "{% url 'skipped-client-unit' %}", // action skipped client from unit
             updateDetails: "{% url 'update-details' %}", // action update the details of user
-
+        
             notificationPACD: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
             notificationUNIT: "{% url 'notifications-unit' %}", // notifications for forwrded in unit
             transactionCount: "{% url 'count-type-transaction' %}", // count per type of transactions
 
-            updateClientStatusServedUrl: "{% url 'update_client_status_served' %}",
+            updateClientStatusServedUrl: "{% url 'update-client-status-served' %}", // served by PACD resolved
+            updateCLientStatusServedUnitUrl: "{% url 'update-client-status-served-unit' %}", // served by UNIT resolved
 
             viewAccount: "{% url 'get-account' 0 %}".replace(/0\/$/, ""),
             viewCLient: "{% url 'get-client' 0 %}".replace(/0\/$/, ""),
             
-
+            dailyDAta: "{% url 'get-daily-data' %}",
             
             
             addAccountUrl: "{% url 'account' %}", // add user account
@@ -49,9 +51,13 @@
             csrfToken: "{{ csrf_token }}"
         };
     </script>
-    <script src="{% static 'js/dashboard.js' %}"></script>
-    <script src="{% static 'js/action.js' %}"></script>
-    <script src="{% static 'js/unit.js' %}"></script>
+    <script src="{% static 'js/transaction/pacd-transactions.js' %}"></script>
+    <script src="{% static 'js/transaction/unit-transactions.js' %}"></script>
+    <script src="{% static 'js/dashboard/pacd-dashboard.js' %}"></script>
+    <script src="{% static 'js/actions/pacd-action.js' %}"></script>
+    <script src="{% static 'js/actions/unit-action.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/graphs.js' %}"></script>
     <script src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/display.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>

@@ -24,14 +24,25 @@ def get_account(request, id):
     
 def get_client(request, id):
     try:
-        client = DivisionLog.objects.get(client_id__id=id)
-        print(client.client_id)
+        client = DivisionLog.objects.get(pk=id)
         data = {
-            'client_id': client.client_id.id,
+            'id': client.id,
+            'client_id': client.client_id_id,
             'client_que': client.client_id.client_queue_no,
             'client_fullname': client.client_id.client_fullname,
+            'client_gender': client.client_id.client_gender,
             'client_lane_type': client.client_id.client_lane_type,
             'client_transaction_type': client.client_id.client_transaction_type,
+            'client_transaction_details': client.transaction_details,
+            'client_division': client.division,
+            'client_unit': client.unit,
+            'client_status': client.status,
+            'client_remarks': client.remarks,
+            'client_created': client.client_id.client_created_date.isoformat() if client.client_id.client_created_date else None,
+            'client_forwarded': client.date.isoformat() if client.client_id.client_created_date else None,
+            'client_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
+            'client_remarks': client.remarks,
+            'client_user': client.unit_user,
         }
         return JsonResponse(data)
     except DivisionLog.DoesNotExist:

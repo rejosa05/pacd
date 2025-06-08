@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
-from ..models import AccountDetails
+from ..models import AccountDetails, SessionHistory
 from ..forms import LoginForm, AuthorizedPersonnelForm
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
+from django.http import JsonResponse
+from django.utils import timezone
 
 def login_view(request):
     if request.method == "POST":
@@ -13,7 +14,14 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             user = AccountDetails.objects.filter(user=username).first()
             if user:
+
+                request.session.flush()
+                request.session.cycle_key()
+                
                 request.session['username'] = user.user
+
+                session_key = request.session.session_key or request.session._get_or_create_session_key()
+                SessionHistory.objects.create(user=user.user, login_time=timezone.now(), session_key=session_key)
                 return redirect("user-type")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
@@ -23,6 +31,18 @@ def login_view(request):
         form = LoginForm()
     
     return render(request, "app/login.html", {"form": form})
+
+def logout_view(request):
+    username = request.session.get('username')
+    session_key = request.session.session_key
+
+    SessionHistory.objects.filter(user=username, session_key=session_key, logout_time__isnull=True).update(
+        logout_time=timezone.now()
+    )
+
+    request.session.flush()
+    logout(request)
+    return redirect('login')
 
 def user_type(request):
     username = request.session.get('username')
@@ -37,6 +57,19 @@ def user_type(request):
     else:
         return redirect('unit-dashboard')
     
+def pacd_transactions(request):
+    username = request.session.get('username')
+
+    if not username:
+        return redirect("login")
+    
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not user or user.unit != "PACD":
+        return HttpResponseForbidden("Access denied. PACD users only.")
+
+    return render(request, "app/pacd_transactions.html", {"user": user})
+
 def pacd_dashboard(request):
     username = request.session.get('username')
 
@@ -44,16 +77,23 @@ def pacd_dashboard(request):
         return redirect("login")
     
     user = AccountDetails.objects.filter(user=username).first()
-    return render(request, "app/pacd_dashboard.html", {"user": user})
 
-def unit_dashboard(request):
+    if not user or user.unit != "PACD":
+        return HttpResponseForbidden("Access denied. PACD users only.")
+
+    return render(request, "app/pacd_dashboard.html", {"user": user})
+def unit_transactions(request):
     username = request.session.get('username')
 
     if not username:
         return redirect("login")
     
     user = AccountDetails.objects.filter(user=username).first()
-    return render(request, "app/unit_dashboard.html", {"user": user})
+
+    if user.unit == "PACD":
+        return redirect("pacd-dashboard")
+    
+    return render(request, "app/unit_transactions.html", {"user": user})
 
     
 def add_account(request):
@@ -81,9 +121,38 @@ def add_account(request):
     
     if not username:
         return redirect("login")
+    
     user = AccountDetails.objects.filter(user=username).first()
+
+    if not user or user.unit != "PACD":
+        return HttpResponseForbidden("Access denied. PACD users only.")
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
+
+def accountList(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        account = AccountDetails.objects.filter().order_by('-date_created')  # Optional: order by latest
+
+        accountList = [
+            {
+                'id': accounts.id,
+                'first_name': accounts.first_name,
+                'last_name': accounts.last_name,
+                'position': accounts.position,
+                'divisions': accounts.divisions,
+                'unit': accounts.unit,
+                'email': accounts.email,
+                'contact': accounts.contact,
+                'user': accounts.user,
+                'password': accounts.password,
+                'status': accounts.status,
+                'date_created': accounts.date_created.isoformat() if accounts.date_created else None,
+            }
+            for accounts in account
+        ]
+        return JsonResponse({'accountList': accountList})
+    else:
+        return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def reports_page(request):
     username = request.session.get('username')
@@ -93,8 +162,3 @@ def reports_page(request):
     
     user = AccountDetails.objects.filter(user=username).first()
     return render(request, "app/reports.html", {"user": user})
-
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')

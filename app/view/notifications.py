@@ -27,7 +27,9 @@ def count_type_transaction(request):
             'Inquiry': ClientDetails.objects.filter(client_transaction_type='Inquiry', client_created_date__date=today).count(),
             'Request': ClientDetails.objects.filter(client_transaction_type='Request', client_created_date__date=today).count(),
             'Submit Documents': ClientDetails.objects.filter(client_transaction_type='Submit Documents', client_created_date=today).count(),
-            'Others': ClientDetails.objects.filter(client_transaction_type='Others', client_created_date=today).count()
+            'Others': ClientDetails.objects.filter(client_transaction_type='Others', client_created_date=today).count(),
+            'Pending': DivisionLog.objects.filter(status='Pending', date__date=today).count(),
+            'Completed': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
         }
-        
+
         return JsonResponse({'type_count': type_count})

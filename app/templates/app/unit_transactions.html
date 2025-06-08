@@ -1,0 +1,216 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Dashboard{% endblock %}
+
+{% block content %}
+<header>
+  <div class="logo-header">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" /> &nbsp; <!-- Replace with your logo path -->
+    {{ user.divisions }} Dashboard
+  </div>
+  <div class="header-icons">
+    <div class="user-icon">
+      <i class="fas fa-bell" title="notification"></i>
+      <span class="n-badge" id="notificationCount" style="display: none;"></span>
+    </div>
+    <div class="notification-icon">
+    <i class="fas fa-user-circle" title="Online User"></i>
+      <span class="n-badge">2</span>
+    </div>
+    <a class="sign-out" href="{% url 'logout' %}"><i class="fas fa-sign-out" title="Sign Out"></i></a>
+  </div>
+</header>
+<div class="app-container">
+  <aside>
+    <nav>
+      <a href="#" class="active">Transactions</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Reports</a>
+      <a href="#">Analytics</a>
+    </nav>
+  </aside>
+  <main>
+    <section class="pending-transactions" aria-labelledby="pending-transactions-title">
+      <h2 id="pending-transactions-title">Transactions</h2>
+      <table id="forwardedClient">
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Client Name</th>
+            <th><i class="fa fa-venus-mars" title="Gender"></i></th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+    <section class="right-panel" aria-label="Transactions history and types">
+      <div class="transaction-types" aria-label="Types of Transactions">
+        <h2>Types of Transactions</h2>
+        <div class="transaction-types" style="margin-top: 0.5rem;">
+          <div class="type-badge">Inquire <span class="count" id="count-inquiry"></span></div>
+          <div class="type-badge" style="background:#009688; box-shadow: 0 4px 12px rgba(0, 150, 136, 0.4);">Request <span class="count" id="count-request"></span></div>
+          <div class="type-badge" style="background:#f57c00; box-shadow: 0 4px 12px rgba(245,124,0,0.4);">Submit Documents <span class="count" id="count-submit"></span></div>
+          <div class="type-badge" style="background:#e91e63; box-shadow: 0 4px 12px rgba(233,30,99,0.4);">Others <span class="count" id="count-others"></span></div>
+        </div>
+        <div class="transaction-types" style="margin-top: 0.5rem;">
+          <div class="type-badge" style="background:#009625; box-shadow: 0 4px 12px #00963966;">Pending <span class="count" id="count-pending"></span></div>
+          <div class="type-badge" style="background:#0025f5; box-shadow: 0 4px 12px rgba(0, 86, 245, 0.365);">Completed <span class="count" id="count-completed"></span></div>
+        </div>
+      </div>
+      <div aria-labelledby="transaction-history-title">
+        <h2 id="transaction-history-title">Transactions History</h2>
+        <div class="table-container">
+          <table id="cateredTransactions">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Client Name</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="approvedClient-unit" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+    <div class="modal-view">    
+      <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
+      <h2>Approved Client</h2>
+      <div class="">
+        <div class="approved-form" novalidate>
+          <label for="id">Client ID</label>
+          <span id="client-id"></span>
+          <label for="full-name">Full Name</label>
+          <span id="client-fullname"></span>
+          <label for="trnsaction-type">Transactions Type</label>
+          <span id="transaction-type"></span>
+          <label>Transactions Details</label>
+          <span id="transactions-details"></span>
+          <label>Remarks</label>
+          <textarea id="approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+          <label class="form-label">CSS/CSM:</label>
+            <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
+                  CSM
+                </label>
+                <label>
+                  <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
+                  CSS
+                </label>
+              </div>
+            <button type="submit" onclick="saveActionResolved()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for user details -->
+  <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+      <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+      <h2>Client Details</h2>
+      <dl id="client-details-list">
+      </dl>
+  </div>
+
+
+<!-- <div class="app-container">
+    <nav class="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <span class="logo-text">{{ user.divisions }}</span>
+      </div>
+
+      <div class="user-profile">
+        <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.first_name|slice:":1"|upper }}" alt="User" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
+          <p class="user-role">{{user.position }}</p>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-button" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+        </a>
+      </div>
+
+      <div class="nav-list">
+        <a href="" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <Home class="nav-icon" />
+            Dashboard
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <Users class="nav-icon" />
+            Users
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
+            <BarChart class="nav-icon" />
+            Reports
+        </a>
+      </div>
+    </nav>
+    <main class="main-content">
+
+      <div class="modal-overlay" id="openModal" style="display: none;">
+        <div class="modal">
+          <div class="modal-header">
+            <h2 class="modal-title">Client Queue No. <span id="modal-queue-no"></span></h2>
+          </div>
+          <div class="modal-body">
+            <div class="form-group1">
+              <input type="hidden" id="client-id" class="form-control" placeholder="Enter Queue Number" required>
+              <label class="form-label">Full Name: <span id="modal-fullname"></span></label>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Type of Transactions: <span id="modal-transaction-type"></span> </label>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Transactions Details: <span id="modal-transaction-details"></span> </label>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Remarks:</label>
+              <textarea id="modal-remarks" class="form-input" rows="3"></textarea>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">CSS/CSM:</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="csm-checkbox" value="CSM">
+                  CSM
+                </label>
+                <label>
+                  <input type="checkbox" id="css-checkbox" value="CSS">
+                  CSS
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-button cancel-button" onclick="closeModal()">
+              Cancel
+            </button>
+            <button class="modal-button save-button" onclick="saveActionResolved()">
+              Resolved
+            </button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<script>
+   
+    </script> -->
+{% endblock %}

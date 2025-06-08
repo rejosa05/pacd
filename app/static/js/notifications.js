@@ -47,12 +47,12 @@ function fetchUNITNotifications() {
 }
 
 
-if (path.includes(pacdDashboard)) {
+if (path.includes(pacdTransactions)) {
     fetchPACDNotifications();
     setInterval(fetchPACDNotifications, 2000);
 }
 
-if (path.includes(unitDashboard)) {
+if (path.includes(unitTransactions)) {
     fetchUNITNotifications();
     setInterval(fetchUNITNotifications, 2000);
 }

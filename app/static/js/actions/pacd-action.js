@@ -1,6 +1,5 @@
 const {
-    updateClientStatusServedUrl, forwardedClientToUnit, skippedClient, skippedClientUnit,
-    pacdResolvedClient,
+    updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
     updateDetails
 } = window.dashboardConfig;
@@ -30,28 +29,7 @@ function skipClient(id) {
     fetchPendingClients();
 }
 
-function skipClientUnit(id) {
-    selectedClient = id;
-    if (confirm('Are you sure you want to skip this client?')) {
-        fetch(skippedClientUnit, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrfToken,
-            },
-            body: `client_id=${selectedClient}`
-        })
-        .then(response => response.json())
-        .then(() => {
-            alert('Client skipped successfully!');
-        })
-        .catch(error => console.error('Error skipping client:', error));
-    } else {
-        return;
-    }
-}
-
+// approved from pacd
 function closedApproved() {
     document.getElementById('approvedClient').style.display = 'none';
 }
@@ -137,65 +115,6 @@ function saveForwardedClient() {
     })
 }
 
-function openModalAction(client, details, que, id, type) {
-    selectedClient = id;
-    document.getElementById('client-id').innerText = selectedClient;
-    document.getElementById('modal-fullname').innerText = client;
-    document.getElementById('modal-transaction-type').innerText = type;
-    document.getElementById('modal-transaction-details').innerText = details;
-    document.getElementById('modal-queue-no').innerText = que;
-    document.getElementById('openModal').style.display = 'flex';
-}
-
-function saveActionResolved() {
-    const remarks = document.getElementById('modal-remarks').value;
-    const csmChecked = document.getElementById('csm-checkbox');
-    const cssChecked = document.getElementById('css-checkbox');
-
-    let resolutions = '';
-
-    if (csmChecked.checked) {
-        resolutions = csmChecked.value;
-    }
-    else if (cssChecked.checked) {
-        resolutions = cssChecked.value;
-    }
-        
-    fetch(pacdResolvedClient, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&remarks=${remarks}&resolution=${resolutions}`
-    })
-    .catch(error => console.error('Error saving approved client:', error));
-
-    alert('done !!!')
-    closeModal();
-}
-
-function forwardedEditModal(id, fullname, division, unit, que, type, details) {
-    selectedClient = id;
-    const f_editClientId = document.getElementById('f_edit-client-id');
-    const fEditFullname = document.getElementById('f-edit-fullname');
-    const eDivisionValue = document.getElementById('e-division-value');
-    const eUnitValue = document.getElementById('e-unit-value');
-    const fEditQueueNo = document.getElementById('f-edit-queue-no');
-    const fEditTransactionType = document.getElementById('f-edit-transaction-type');
-    const editTransactionsDetails = document.getElementById('edit-transactions-details');
-    const fEditModal = document.getElementById('f-editModal');
-
-    if (f_editClientId) f_editClientId.innerText = selectedClient;
-    if (fEditFullname) fEditFullname.innerText = fullname;
-    if (eDivisionValue) eDivisionValue.innerText = division;
-    if (eUnitValue) eUnitValue.innerText = unit;
-    if (fEditQueueNo) fEditQueueNo.innerText = que;
-    if (fEditTransactionType) fEditTransactionType.innerText = type;
-    if (editTransactionsDetails) editTransactionsDetails.innerText = details;
-    if (fEditModal) fEditModal.style.display = 'flex';
-}
 
 function closeEditModal() {
     document.getElementById('f-editModal').style.display = 'none';
