@@ -53,9 +53,9 @@ def user_type(request):
     user = AccountDetails.objects.filter(user=username).first()
 
     if user.unit == 'PACD':
-        return redirect('pacd-dashboard')
+        return redirect('pacd-transactions')
     else:
-        return redirect('unit-dashboard')
+        return redirect('unit-transactions')
     
 def pacd_transactions(request):
     username = request.session.get('username')
@@ -95,6 +95,19 @@ def unit_transactions(request):
     
     return render(request, "app/unit_transactions.html", {"user": user})
 
+def unit_dashboard(request):
+    username = request.session.get('username')
+
+    if not username:
+        return redirect("login")
+    
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if user.unit == "PACD":
+        return HttpResponseForbidden("Access denied. PACD users only.")
+
+    return render(request, "app/unit_dashboard.html", {"user": user})
+
     
 def add_account(request):
     if request.method == 'POST':
@@ -131,8 +144,7 @@ def add_account(request):
 
 def accountList(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        account = AccountDetails.objects.filter().order_by('-date_created')  # Optional: order by latest
-
+        account = AccountDetails.objects.filter().order_by('-date_created')
         accountList = [
             {
                 'id': accounts.id,

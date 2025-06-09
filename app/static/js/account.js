@@ -76,7 +76,8 @@ function viewDetails(id) {
         })
 }
 
-if (path.includes(accountListUrl)) {
+if (path.includes(addAccountUrl)) {
     fetchAccountList();
 }
+
 

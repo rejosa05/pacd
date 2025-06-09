@@ -4,7 +4,8 @@ from .view.author_view import *
 from .view.display_view import *
 from .view.pacd_transactions import *
 from .view.pacd_dashboard import *
-from .view.unit_dashboard_view import *
+from .view.unit_transactions import *
+from .view.unit_dashboard import *
 from .view.actions import *
 from .view.notifications import *
 from .view.viewdata import *
@@ -25,7 +26,9 @@ urlpatterns = [
     
 
     path('unit-transactions', unit_transactions, name="unit-transactions"),
+    path('unit-dashboard', unit_dashboard, name="unit-dashboard"),
     path('unit-pending/', unit_pending, name="unit-pending"),
+    path('transaction-history-unit/', transaction_history_all_unit, name="transaction-history-unit"),
     path('unit-resolved/', unit_resolved_client, name="unit-resolved"),
     
     path('pacd-transactions/', pacd_transactions, name="pacd-transactions"),
@@ -53,6 +56,7 @@ urlpatterns = [
     path('update-client-status-served-unit/', update_client_status_served_unit, name='update-client-status-served-unit'), # // served by unit resolved
 
     path('get-daily-data/', get_daily_data, name='get-daily-data'),
+    path('get-daily-data-unit/', get_daily_data_unit, name='get-daily-data-unit'),
 
 
     path('reports', reports_page, name='reports'),

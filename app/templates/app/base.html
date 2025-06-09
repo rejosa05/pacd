@@ -13,6 +13,8 @@
             unitTransactions: "{% url 'unit-transactions' %}", // unit transactions page
             unitPendingUrl: "{% url 'unit-pending' %}", // unit pending list
             unitResolved: "{% url 'unit-resolved' %}", // unit resolved list
+            unitDashboard: "{% url 'unit-dashboard' %}", // unit dashboard page
+            transactionHistoryUnit: "{% url 'transaction-history-unit' %}", // unit transaction history
 
             pacdTransactions: "{% url 'pacd-transactions' %}", // pacd transctions page
             pendingClientsUrl: "{% url 'pending_clients' %}", // pending clients
@@ -41,6 +43,7 @@
             viewCLient: "{% url 'get-client' 0 %}".replace(/0\/$/, ""),
             
             dailyDAta: "{% url 'get-daily-data' %}",
+            dailyDAtaUnit: "{% url 'get-daily-data-unit' %}", // daily data for unit dashboard
             
             
             addAccountUrl: "{% url 'account' %}", // add user account
@@ -54,6 +57,7 @@
     <script src="{% static 'js/transaction/pacd-transactions.js' %}"></script>
     <script src="{% static 'js/transaction/unit-transactions.js' %}"></script>
     <script src="{% static 'js/dashboard/pacd-dashboard.js' %}"></script>
+    <script src="{% static 'js/dashboard/unit-dashboard.js' %}"></script>
     <script src="{% static 'js/actions/pacd-action.js' %}"></script>
     <script src="{% static 'js/actions/unit-action.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
