@@ -4,32 +4,24 @@ from django.utils import timezone
 from django.contrib.auth.hashers import check_password, is_password_usable
 
 class ClientDetailsForm(forms.ModelForm):
-    TRANSACTION_TYPE_CHOICES = (
-        ('Inquiry', 'Inquiry'),
-        ('Request', 'Request'),
-        ('Submit Documents', 'Submit Documents'),
-        ('Others', 'Others'),
-    )
-
     LANE_TYPE_CHOICES = (
         ('Regular', 'Regular'),
         ('Priority', 'Priority'),
     )
-
     GENDER_CHOICES = (
-        ('Male','Male'),
-        ('Female','Female'),
+        ('Male', 'Male'),
+        ('Female', 'Female'),
     )
-
-    client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
-    client_transaction_type = forms.ChoiceField(choices=TRANSACTION_TYPE_CHOICES)
+        
     client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
-    client_fullname = forms.CharField(required=True, label="Client Full Name", widget=forms.TextInput(attrs={'placeholder': 'Buong Pangalan'}))
+    client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
+    client_firstname = forms.CharField(required=True, label="First Name", widget=forms.TextInput(attrs={'placeholder': 'Pangalan'}))
+    client_lastname = forms.CharField(required=True, label="Last Name", widget=forms.TextInput(attrs={'placeholder': 'Apelyido'}))
     client_contact = forms.CharField(max_length=12, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
 
     class Meta:
         model = ClientDetails
-        fields = ['client_fullname', 'client_contact' , 'client_gender', 'client_transaction_type', 'client_lane_type']
+        fields = ['client_firstname', 'client_lastname', 'client_gender', 'client_contact', 'client_lane_type']
     
     def safe (self, commit=True):
         instance = super().safe(commit=False)

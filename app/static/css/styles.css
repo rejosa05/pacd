@@ -108,6 +108,78 @@ h1, h2 {
     color: #008000;
 }
 
+.client-container {
+    max-width: 720px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 24px rgba(12, 208, 32, 0.05);
+    display: flex;
+    flex-direction: column;
+  }
+
+.client-container h1 {
+    font-weight: 700;
+    font-size: 3rem;
+}
+
+.client-container label, p {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 1rem;
+}
+
+.client-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.client-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.client-container input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #111827;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    resize: vertical;
+}
+
+.client-container input:focus {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    outline: none;
+    border-color: #008000;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+}
+
+.client-container button {
+    background-color: #008000;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding: 0.85rem 2.25rem;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.client-container button:hover, button:focus {
+    background-color: #2563eb;
+}
+
 .container {
     display: flex;
     height: 100vh;
@@ -181,7 +253,7 @@ h1, h2 {
 .login input[type="password"]:focus {
     outline: none;
     border-color: #008000;
-    box-shadow: 0 0 6px rgba(63, 181, 112, 0.4);
+    box-shadow: 0 0 6px #3fb57066;
 }
 
 .login-btn {
@@ -310,7 +382,7 @@ h2 {
 }
 
 .table-container {
-  max-height: 380px;
+  max-height: 350px;
   overflow-y: auto;
 }
 
@@ -604,7 +676,6 @@ tbody tr:nth-child(even):hover {
     gap: 2rem;
 }
 
-
 .transaction-types {
     display: flex;
     flex-wrap: wrap;
@@ -693,7 +764,26 @@ tbody tr:nth-child(even):hover {
   cursor: pointer;
 }
 
+
 .approved-form select.form-option:focus {
+  border-color: #008000;
+  outline: none;
+  box-shadow: 0 0 0 2px #002e00;
+}
+
+.org {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+.org:focus {
   border-color: #008000;
   outline: none;
   box-shadow: 0 0 0 2px #002e00;
@@ -889,7 +979,12 @@ tbody tr:nth-child(even):hover {
 
 .card:nth-child(3) {
     background: #f44336;
-    box-shadow: 0 8px 16px rgb(244 67 54 / 0.4);
+    box-shadow: 0 8px 16px rgba(244, 105, 54, 0.4);
+}
+
+.card:nth-child(4) {
+    background: #008c3a;
+    box-shadow: 0 8px 16px rgba(54, 244, 108, 0.4);
 }
 
 .card:hover {
@@ -916,14 +1011,14 @@ tbody tr:nth-child(even):hover {
     height: 300px;
   }
 
-  @media (max-width: 992px) {
+@media (max-width: 992px) {
     .dual-charts {
-      flex-direction: column;
+        flex-direction: column;
     }
     canvas {
-      height: 280px !important;
+        height: 280px !important;
     }
-  }
+}
   @media (max-width: 768px) {
     .container {
       flex-direction: column;
@@ -998,29 +1093,29 @@ tbody tr:nth-child(even):hover {
 @media (max-width: 900px) {
     .container {
         flex-direction: column;
-    }
+        }
     .image-side {
-    height: 200px;
-    flex: none;
-}
+        height: 200px;
+        flex: none;
+    }
 
-.image-text {
-    font-size: 1.4rem;
-    left: 20px;
-    bottom: 15px;
-    max-width: 90%;
+    .image-text {
+        font-size: 1.4rem;
+        left: 20px;
+        bottom: 15px;
+        max-width: 90%;
     }
 }
 
 @media (max-width: 480px) {
-.form-side {
-    padding: 2rem 2rem;
-}
-.form-side h1 {
-    font-size: 2rem;
-}
-button {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-}
+    .form-side {
+        padding: 2rem 2rem;
+    }
+    .form-side h1 {
+        font-size: 2rem;
+    }
+    button {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
 }

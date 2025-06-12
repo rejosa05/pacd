@@ -18,7 +18,7 @@ function fetchAllServedClientUnit() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>#CT${client.client_id}-${client.client_queue_no}</td>
+                <td>#CT${client.client_id}</td>
                 <td>${client.client_fullname}</td>
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
@@ -26,7 +26,7 @@ function fetchAllServedClientUnit() {
                 <td>${formatDateTime(client.date_served)}</td>
                 <td>
                 <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
-                    <i class="fa fa-list"></i>
+                    <i class="fa fa-eye"></i>
                 </button>
                 </td>
             `;

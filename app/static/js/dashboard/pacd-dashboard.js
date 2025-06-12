@@ -1,5 +1,5 @@
 const {
-    pacdDashboard, servedListAll
+    pacdDashboard, servedListAll, totalCounts
 } = window.dashboardConfig;
 
 function fetchAllServedClient() {
@@ -14,7 +14,7 @@ function fetchAllServedClient() {
         data.resolved_clients.forEach(client => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>#CT${client.client_id}-${client.client_queue_no}</td>
+                <td>#CT${client.client_id}</td>
                 <td>${client.client_fullname}</td>
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
@@ -22,7 +22,7 @@ function fetchAllServedClient() {
                 <td>${formatDateTime(client.date_served)}</td>
                 <td>
                     <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
-                        <i class="fa fa-list"></i>
+                        <i class="fa fa-eye"></i>
                     </button>
                 </td>
             `;
@@ -32,8 +32,28 @@ function fetchAllServedClient() {
     .catch(error => console.error('Error fetching served clients:', error));
 }
 
+function fetchTotalCounts() {
+  fetch(totalCounts, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    const counts = data.total;
+    document.getElementById('total-transactions').textContent = counts['Total'] || 0;
+    document.getElementById('total-completed').textContent = counts['Completed'] || 0;
+    document.getElementById('total-csm').textContent = counts['CSM'] || 0;
+    document.getElementById('total-css').textContent = counts['CSS'] || 0;
+  })
+  .catch(error => {
+    console.error('Error fetching transaction counts:', error);
+  });
+}
+
 
 if (path.includes(pacdDashboard)) {
     fetchAllServedClient();
-    // setInterval(fetchAllServedClient, 3000);
+    fetchTotalCounts();
 }

@@ -46,23 +46,25 @@ class AccountDetails(models.Model):
             user.save()
     
 class ClientDetails(models.Model):
-    client_fullname = models.CharField(max_length=100)
+    client_firstname = models.CharField(max_length=100, blank=True)
+    client_lastname = models.CharField(max_length=100, blank=True)
+    client_org = models.CharField(max_length=100, blank=True)
     client_queue_no = models.PositiveIntegerField(default=1)
     client_lane_type = models.CharField(max_length=100)
-    client_transaction_type = models.CharField(max_length=100)
     client_contact = models.CharField(max_length=10, null=True)
     client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
-    user = models.CharField(max_length=100, null=True)
-    unit = models.CharField(max_length=100, default='PACD')
+    unit = models.CharField(max_length=100, default='System')
     
     def __str__(self):
-        return self.client_fullname
+        return f"({self.client_firstname} {self.client_lastname})"
     
     def save(self, *args, **kwargs):
-        if self.client_fullname:
-            self.client_fullname = self.client_fullname.title()
+        self.client_firstname = self.client_firstname.title()
+        self.client_lastname = self.client_lastname.title()
+        self.client_org = self.client_org.title()
+        
         super(ClientDetails, self).save(*args, **kwargs)
     
     @staticmethod
@@ -81,6 +83,7 @@ def set_queue_no(sender, instance, **kwargs):
 
 class DivisionLog(models.Model):
     client_id = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, related_name='pacd_actions')
+    transaction_type = models.CharField(max_length=100, blank=True)
     division = models.CharField(max_length=100)
     transaction_details = models.TextField(null=True)
     unit = models.CharField(max_length=100)

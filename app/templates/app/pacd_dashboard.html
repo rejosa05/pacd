@@ -33,13 +33,16 @@
   <main class="main-dashboard">
     <div class="cards">
       <div class="card">
-        Total Transactions<br /><strong>1,245</strong>
+        Total Transactions<br /><strong><span id="total-transactions"> </span></strong>
       </div>
       <div class="card">
-        Sales<br /><strong>$23,470</strong>
+        Served <br /><strong><span id="total-completed"> </span></strong>
       </div>
       <div class="card">
-        Feedback<br /><strong>87</strong>
+        CSM<br /><strong>87</strong>
+      </div>
+      <div class="card">
+        CSS<br /><strong>87</strong>
       </div>
     </div>
     <section class="chart-container">
@@ -49,8 +52,8 @@
           <canvas id="dailyOutputChart"></canvas>
         </div>
         <div class="chart-box">
-          <h2>Sales Overview</h2>
-          <canvas id="salesChart"></canvas>
+          <h2>Monthly Output</h2>
+          <canvas id="monthlyOutputChart"></canvas>
         </div>
       </div>
       <h2>Transaction List</h2>

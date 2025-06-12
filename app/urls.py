@@ -1,5 +1,4 @@
 from django.urls import path
-from . import views
 from .view.author_view import *
 from .view.display_view import *
 from .view.pacd_transactions import *
@@ -37,6 +36,7 @@ urlpatterns = [
 
     path('pacd-dashboard/', pacd_dashboard, name="pacd-dashboard"),
     path('transaction-history-all/', transaction_history_all, name="transaction-history-all"),
+    path('total-counts', total_counts, name='total-counts'),
 
 
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
@@ -46,21 +46,22 @@ urlpatterns = [
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
     path('notifications-unit/', notifications_unit, name="notifications-unit"),
     path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
+    path('count-type-transactio-unit/', count_type_transaction_unit, name="count-type-transaction-unit"),
 
     path('update-details', update_user_details, name='update-details'),
 
     path('account/<int:id>/', get_account, name='get-account'),
     path('pacd-dashboard/<int:id>/', get_client, name="get-client"),
+    path('unit-dashboard/<int:id>/', get_client, name="get-client-unit"),
 
     path('update-client-status-served/', update_client_status_served, name='update-client-status-served'), # // served by PACD resolved
     path('update-client-status-served-unit/', update_client_status_served_unit, name='update-client-status-served-unit'), # // served by unit resolved
 
     path('get-daily-data/', get_daily_data, name='get-daily-data'),
+    path('get-monthly-data', get_monthly_data, name='get-monthly-data'),
     path('get-daily-data-unit/', get_daily_data_unit, name='get-daily-data-unit'),
 
 
     path('reports', reports_page, name='reports'),
-    path('transactionsTotal', views.transactionsTotal, name="transactionsTotal"),
     path('accountList', accountList, name="accountList"),
-    path('save_update_forwarded_client', views.save_update_forwarded_client, name="save_update_forwarded_client"),
 ]

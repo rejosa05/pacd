@@ -13,11 +13,9 @@ def pending_clients(request):
             pending_clients_count.append({
                 'client_id': client.id,
                 'client_queue_no': client.client_queue_no,
-                'client_fullname': client.client_fullname,
+                'client_fullname': client.client_firstname + ' ' + client.client_lastname,
                 'client_lane_type': client.client_lane_type,
-                'client_transaction_type': client.client_transaction_type,
                 'client_status': client.client_status,
-                'client_contact': client.client_contact,
                 'client_gender': client.client_gender,
                 'client_created_date': client.client_created_date.isoformat() if client.client_created_date else None,
             })
@@ -37,12 +35,10 @@ def transaction_history(request):
                 'id': client.id,
                 'client_id': client.client_id.id,
                 'client_queue_no': client.client_id.client_queue_no,
-                'client_fullname': client.client_id.client_fullname,
+                'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_division': client.division,
                 'client_unit': client.unit,
                 'action_type': client.action_type,
-                'date_served': client.date_resolved.isoformat() if client.date else None,
-
                 'status': client.status,
             })
 

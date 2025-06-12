@@ -6,6 +6,8 @@ def forwarded_client_to_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             client_id = request.POST.get('client_id')
+            org_name = request.POST.get('org_name')
+            type = request.POST.get('transaction_type')
             division = request.POST.get('division')
             unit = request.POST.get('unit')
             transaction_details = request.POST.get('transaction_details')
@@ -13,8 +15,9 @@ def forwarded_client_to_unit(request):
             today = timezone.now()
 
             client = ClientDetails.objects.get(id=client_id)
-            client.client_status = 'Forwarded'
+            client.client_status = 'Serving'
             client.user = username
+            client.client_org = org_name
             client.save()
 
             DivisionLog.objects.create(
@@ -22,6 +25,7 @@ def forwarded_client_to_unit(request):
                 action_type = 'Forwarded',
                 division=division,
                 unit=unit,
+                transaction_type = type,
                 transaction_details=transaction_details,
                 status= 'Pending',
                 user=username,
@@ -88,6 +92,8 @@ def update_client_status_served(request):
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
             client_id = request.POST.get('client_id')
+            org_name = request.POST.get('org_name')
+            type = request.POST.get('transactions_type')
             transaction_details = request.POST.get('transaction_details')
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
@@ -97,18 +103,20 @@ def update_client_status_served(request):
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
             client.user = user
+            client.client_org = org_name
             client.save()
             
             DivisionLog.objects.create(
             client_id_id=client_id,
             action_type = action_type,
+            transaction_type = type,
             division=users.divisions,
             unit=users.unit,
             transaction_details=transaction_details,
             remarks = remarks,
             form = resolutions,
             unit_user = user,
-            user=user,
+            user=users,
             date_resolved = today,
             status = status,
             date=today

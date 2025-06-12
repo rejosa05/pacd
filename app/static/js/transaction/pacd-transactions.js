@@ -77,15 +77,15 @@ function fetchPendingClients() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>#CT${client.client_id}-${client.client_queue_no}</td>
+                <td>#CT${client.client_id}</td>
                 <td> ${client.client_fullname}</td>
                 <td style="align-items: center">${genderIcon}</td>
                 <td> ${client.client_lane_type}</span></td>
                 <td>
-                    <button class="resolve-btn" title="Resolved" onclick='approveModal("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}")'>
+                    <button class="resolve-btn" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
                         <i class="fa fa-check-circle"></i>
                     </button>
-                    <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
+                    <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
                         <i class="fa fa-arrow-right"></i>
                     </button>
                         <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
@@ -118,17 +118,17 @@ function fetchAllResolvedClient() {
             const row = document.createElement('tr');
             row.style.backgroundColor = color;
             row.innerHTML = `
-                <td>#CT${client.client_id}-${client.client_queue_no}</td>
+                <td>#CT${client.client_id}</td>
                 <td>${client.client_fullname}</td>
                 <td>${client.client_division}</td>
                 <td>${client.client_unit}</td>
                 <td>${client.status}</td>
                 <td>
-                <button class="repeat-btn" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_transaction_type}', '${client.client_queue_no}', '${client.client_id}')">
+                <button class="repeat-btn" title="Repeat" onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
                     <i class="fa fa-repeat"></i>
                     </button>
                 <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
-                    <i class="fa fa-list"></i>
+                    <i class="fa fa-eye"></i>
                     </button>
                     
                 </td>
@@ -165,7 +165,7 @@ function fetchTransactionCounts() {
 function viewClientDetails(id) {
     fetch(`${viewCLient}${id}/`)
         .then(response => {
-            if (!response.ok) throw new Error('Account not found');
+            if (!response.ok) throw new Error('Client not found');
             return response.json();
         })
         
@@ -175,8 +175,9 @@ function viewClientDetails(id) {
             const modal = detailsOverlay.querySelector('.modal-view');
 
             userDetailsList.innerHTML = `
-                <dt>Client ID:</dt><dd> #CT${client.client_id}-${client.client_que}</dd>
+                <dt>Client ID:</dt><dd> #CT${client.client_id}</dd>
                 <dt>Full Name:</dt><dd>${client.client_fullname}</dd>
+                <dt>Company/Org Name:</dt><dd>${client.client_org}</dd>
                 <dt>Gender:</dt><dd>${client.client_gender}</dd>
                 <dt>Lane Type:</dt><dd>${client.client_lane_type}</dd>
                 <dt>Transaction Type:</dt><dd>${client.client_transaction_type}</dd>

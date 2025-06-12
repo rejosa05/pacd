@@ -5,34 +5,26 @@
 {% block title %} Client Transaction Form {% endblock %}
 
 {% block content %}
-    <div class="main-wrapper">
-        <div class="form-container">
-            <form method="post">
+<style>
+    body {
+    font-size: 17px;
+    line-height: 1.6;
+    align-items: center;
+    padding: 1rem 1rem;
+  }
+
+</style>
+    <main class="client-container" aria-labelledby="form-title" role="main">    
+        <form method="post">
+        <h1 id="form-title">Welcome Client</h1>
+        <p class="subtitle">Fill in the client information</p>
                 {% csrf_token %}
-                <h2>Client Transaction Details</h2>
                 {{ message }}
                 {{ form.as_p }}
                 <button type="submit">Submit</button>
             </form>
-        </div>
-        <div class="image-container">
-            <div class="slide fade">
-                <img src="{% static 'images/image1.jpg' %}" alt="Slide 1">
-            </div>
-            <div class="slide fade">
-                <img src="{% static 'images/image2.jpg' %}" alt="Slide 2">
-            </div>
-            <div class="slide fade">
-                <img src="{% static 'images/image3.jpg' %}" alt="Slide 3">
-            </div>
-            <div class="slide fade">
-                <img src="{% static 'images/image4.jpg' %}" alt="Slide 3">
-            </div>
-            <div class="slide fade">
-                <img src="{% static 'images/image5.jpg' %}" alt="Slide 3">
-            </div>
-        </div>
-    </div>
+        </form>
+     </main>
     <script>
         document.getElementById('client-form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -51,23 +43,6 @@
             });
         });
     </script>
-    <script>
-        let slideIndex = 0;
-        showSlides();
-        
-        function showSlides() {
-            let slides = document.getElementsByClassName("slide");
-        
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-        
-            slideIndex++;
-            if (slideIndex > slides.length) { slideIndex = 1 }
-        
-            slides[slideIndex - 1].style.display = "block";
-            setTimeout(showSlides, 5000); // Change image every 3 seconds
-        }
-        </script>
+
         
 {% endblock %}

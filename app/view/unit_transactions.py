@@ -15,11 +15,11 @@ def unit_pending(request):
             forwarded_client_count.append({
                 'client_id': f_client.client_id.id,
                 'client_queue_no': f_client.client_id.client_queue_no,
-                'client_fullname': f_client.client_id.client_fullname,
+                'client_fullname': f_client.client_id.client_firstname + ' ' + f_client.client_id.client_lastname,
                 'client_lane_type': f_client.client_id.client_lane_type,
                 'client_transaction_details': f_client.transaction_details,
                 'client_gender': f_client.client_id.client_gender,
-                'client_transaction_type': f_client.client_id.client_transaction_type,
+                'client_transaction_type': f_client.transaction_type,
                 'date_resolved': f_client.date_resolved.isoformat() if f_client.date_resolved else None,
             })
         return JsonResponse({'forwarded_clients': forwarded_client_count})
@@ -35,9 +35,10 @@ def unit_resolved_client(request):
         resolved_client_all = []
         for client in resolved_clients:
             resolved_client_all.append({
+                'id': client.id,
                 'client_id': client.client_id.id,
                 'client_queue_no': client.client_id.client_queue_no,
-                'client_fullname': client.client_id.client_fullname,
+                'client_fullname': client.client_id.client_firstname + '' + client.client_id.client_lastname,
                 'status': client.status,
             })
         return JsonResponse({'resolved_clients': resolved_client_all})

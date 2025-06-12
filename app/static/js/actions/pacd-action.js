@@ -34,11 +34,11 @@ function closedApproved() {
     document.getElementById('approvedClient').style.display = 'none';
 }
 
-function approveModal(client, details, ques, id) {
+function approveModal(client, que, id) {
     selectedClient = id;
     document.getElementById('approve-client-id').innerText = id;
+    document.getElementById('approve-client-que').innerText = que;
     document.getElementById('approve-client-fullname').innerText = client;
-    document.getElementById('approved-client-transactions').innerText = details;
     document.getElementById('approved-remarks').value = '';
     document.getElementById('csm-checkbox').checked = false;
     document.getElementById('css-checkbox').checked = false;
@@ -46,6 +46,8 @@ function approveModal(client, details, ques, id) {
 }
 
 function saveApprovedClientByPACD() {
+    const org_name = document.getElementById('a-org-name').value;
+    const transaction_type = document.getElementById('a-transaction-type').value;
     const transaction_details = document.getElementById('approved-transactions-details');
     const remarks = document.getElementById('approved-remarks');
     const csmChecked = document.getElementById('csm-checkbox');
@@ -73,20 +75,19 @@ function saveApprovedClientByPACD() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
+        body: `client_id=${selectedClient}&org_name=${org_name}&transactions_type=${transaction_type}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
     })
     .then(response => response.json())
     .then(() => {
         alert('succefully catered!!!')
         closedApproved();
     })
-    .catch(error => console.error('Error resolved client:', error));
 }
 
-function forwardedModal(client, type, que, id) {
+function forwardedModal(client, que, id) {
     selectedClient = id;
     document.getElementById('forward-fullname').innerText = client;
-    document.getElementById('forward-transaction-type').innerText = type;
+    document.getElementById('f-client-que').innerText = que;
     document.getElementById('forwardClient').style.display = 'flex';
 }
 
@@ -95,6 +96,8 @@ function closeForward() {
     selectedClient = null;
 }
 function saveForwardedClient() {
+    const transaction_type = document.getElementById('f-transaction-type').value;
+    const org_name = document.getElementById('f-org-name').value;
     const transaction_details = document.getElementById('forwarded-transactions-details').value;
     const division = document.getElementById('f-division-select').value;
     const unit = document.getElementById('f-unit-select').value;
@@ -106,41 +109,12 @@ function saveForwardedClient() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
+        body: `client_id=${selectedClient}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
     })
     .then(response => response.json())
     .then(() => {
         alert('forwarded the client!!');
         closeForward();   
-    })
-}
-
-
-function closeEditModal() {
-    document.getElementById('f-editModal').style.display = 'none';
-    selectedClient = null;
-}
-
-// edit functions update the forwarded unit
-function saveUpdateForwardedClient() {
-    const transaction_details = document.getElementById('edit-transactions-details').value;
-    const division = document.getElementById('e-division-select').value;
-    const unit = document.getElementById('e-unit-select').value;
-
-    fetch(saveUpdateForwardedClientUrl, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
-    })
-    .then(response => response.json())
-    .then(() => {
-        alert('update complete !!!');
-        fetchForwardedClientPACD();
-        closeEditModal();   
     })
 }
 

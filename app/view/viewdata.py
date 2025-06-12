@@ -29,10 +29,11 @@ def get_client(request, id):
             'id': client.id,
             'client_id': client.client_id_id,
             'client_que': client.client_id.client_queue_no,
-            'client_fullname': client.client_id.client_fullname,
+            'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
+            'client_org': client.client_id.client_org,
             'client_gender': client.client_id.client_gender,
             'client_lane_type': client.client_id.client_lane_type,
-            'client_transaction_type': client.client_id.client_transaction_type,
+            'client_transaction_type': client.transaction_type,
             'client_transaction_details': client.transaction_details,
             'client_division': client.division,
             'client_unit': client.unit,
@@ -47,4 +48,6 @@ def get_client(request, id):
         return JsonResponse(data)
     except DivisionLog.DoesNotExist:
         return JsonResponse({"error": "Client not found"}, status=404)
+    
+
     

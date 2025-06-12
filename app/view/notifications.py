@@ -16,7 +16,7 @@ def notifications_unit(request):
 
         unit = AccountDetails.objects.filter(user=user).first()
         unit = unit.unit
-        notifications = DivisionLog.objects.filter(action_type='forwarded', unit=unit, date__date=today).count()
+        notifications = DivisionLog.objects.filter(action_type='Forwarded', unit=unit, date__date=today).count()
 
         return JsonResponse({'notifications': notifications})
 
@@ -24,12 +24,29 @@ def count_type_transaction(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
         type_count = {
-            'Inquiry': ClientDetails.objects.filter(client_transaction_type='Inquiry', client_created_date__date=today).count(),
-            'Request': ClientDetails.objects.filter(client_transaction_type='Request', client_created_date__date=today).count(),
-            'Submit Documents': ClientDetails.objects.filter(client_transaction_type='Submit Documents', client_created_date=today).count(),
-            'Others': ClientDetails.objects.filter(client_transaction_type='Others', client_created_date=today).count(),
+            'Inquiry': DivisionLog.objects.filter(transaction_type='Inquiry', date__date=today).count(),
+            'Request': DivisionLog.objects.filter(transaction_type='Request', date__date=today).count(),
+            'Submit Documents': DivisionLog.objects.filter(transaction_type='Submit Documents', date__date=today).count(),
+            'Others': DivisionLog.objects.filter(transaction_type='Others', date__date=today).count(),
             'Pending': DivisionLog.objects.filter(status='Pending', date__date=today).count(),
             'Completed': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
+        }
+
+        return JsonResponse({'type_count': type_count})
+    
+def count_type_transaction_unit(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        user = request.session.get('username')
+        today = timezone.now()
+        unit = AccountDetails.objects.filter(user=user).first()
+        unit = unit.unit
+        type_count = {
+            'Inquiry': DivisionLog.objects.filter(transaction_type='Inquiry', date__date=today, unit=unit).count(),
+            'Request': DivisionLog.objects.filter(transaction_type='Request', date__date=today, unit=unit).count(),
+            'Submit Documents': DivisionLog.objects.filter(transaction_type='Submit Documents', date__date=today, unit=unit).count(),
+            'Others': DivisionLog.objects.filter(transaction_type='Others', date__date=today, unit=unit).count(),
+            'Pending': DivisionLog.objects.filter(status='Pending', date__date=today, unit=unit).count(),
+            'Completed': DivisionLog.objects.filter(status='Completed', date__date=today, unit=unit).count(),
         }
 
         return JsonResponse({'type_count': type_count})
