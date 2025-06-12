@@ -4,7 +4,6 @@ from django.utils import timezone
 
 def transaction_history_all(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        today = timezone.now()
         resolved_clients = DivisionLog.objects.filter().order_by('-status', 'date_resolved')
         
         resolved_client_all = []

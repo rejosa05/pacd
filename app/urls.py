@@ -60,6 +60,8 @@ urlpatterns = [
     path('get-daily-data/', get_daily_data, name='get-daily-data'),
     path('get-monthly-data', get_monthly_data, name='get-monthly-data'),
     path('get-daily-data-unit/', get_daily_data_unit, name='get-daily-data-unit'),
+    path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
+    
 
 
     path('reports', reports_page, name='reports'),

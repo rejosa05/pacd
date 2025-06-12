@@ -7,7 +7,7 @@ from .helper import clean_text
 def pending_clients(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
-        pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)[:3]
+        pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
         pending_clients_count = []
         for client in pending_clients:
             pending_clients_count.append({

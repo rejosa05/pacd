@@ -69,10 +69,12 @@ def skipped_client_unit(request):
         try:
             client_id = request.POST.get('client_id')
             user = request.session.get('username')
+            today = timezone.now()
 
             client = DivisionLog.objects.get(client_id__id=client_id)
             client.action_type = 'Skipped'
             client.user = user
+            client.date = today
             client.save()
 
             return JsonResponse({'message': 'Client skipped successfully!'})

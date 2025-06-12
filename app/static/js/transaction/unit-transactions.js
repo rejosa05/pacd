@@ -32,7 +32,7 @@ function unitPendingList() {
                     <button class="resolve-btn" title="Resolved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}", "${client.client_transaction_details}")'>
                             <i class="fa fa-check-circle"></i>
                     </button>                 
-                    <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
+                    <button class="skipped-btn" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
                         <i class="fa fa-remove"></i>
                     </button>
                 </td>

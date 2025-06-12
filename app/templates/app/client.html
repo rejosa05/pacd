@@ -10,14 +10,16 @@
     font-size: 17px;
     line-height: 1.6;
     align-items: center;
-    padding: 1rem 1rem;
+    padding: .5rem 1rem;
   }
 
 </style>
     <main class="client-container" aria-labelledby="form-title" role="main">    
-        <form method="post">
-        <h1 id="form-title">Welcome Client</h1>
+        <h1>Welcome Client</h1>
         <p class="subtitle">Fill in the client information</p>
+        <form method="post">
+        
+        
                 {% csrf_token %}
                 {{ message }}
                 {{ form.as_p }}

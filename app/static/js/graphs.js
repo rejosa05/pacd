@@ -1,5 +1,5 @@
 const {
-    dailyDAta, monthlyData, dailyDAtaUnit
+    dailyDAta, monthlyData, dailyDAtaUnit, monthlyDataUnit
 } = window.dashboardConfig;
 
 function fetchDailyData() {
@@ -77,11 +77,7 @@ function fetchMonthlyData() {
                 }
             });
         })
-        .catch(error => console.error('Error fetching daily data:', error));
 }
-
-
-
 
 function fetchDailyDataUnit() {
     fetch(dailyDAtaUnit) // Replace with your actual endpoint
@@ -122,6 +118,45 @@ function fetchDailyDataUnit() {
         .catch(error => console.error('Error fetching daily data:', error));
 }
 
+function fetchMonthlyDataUnit() {
+    fetch(monthlyDataUnit) // Replace with your actual endpoint
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('monthlyOutputChart').getContext('2d');
+
+            dailyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Clients per Monthly',
+                        data: data.values,
+                        borderColor: '#008000',
+                        backgroundColor: '#008000', // Slightly transparent fill
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+}
+
+
 if (path.includes(pacdDashboard)) {
     fetchDailyData();
     fetchMonthlyData();
@@ -129,6 +164,7 @@ if (path.includes(pacdDashboard)) {
 
 if (path.includes(unitDashboard)) {
     fetchDailyDataUnit();
+    fetchMonthlyDataUnit();
 }
 
 

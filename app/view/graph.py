@@ -62,3 +62,24 @@ def get_daily_data_unit(request):
     values = [entry['count'] for entry in data]
 
     return JsonResponse({'labels': labels, 'values': values})
+
+def get_monthly_data_unit(request):
+    user = request.session.get('username')
+    users = AccountDetails.objects.filter(user=user).first()
+    unit = users.unit
+    today = timezone.now().date()
+    twelve_months_ago = today.replace(day=1) - timedelta(days=365)  # Adjust as needed
+
+    data = (
+        DivisionLog.objects
+        .filter(date__date__gte=twelve_months_ago, unit=unit)
+        .annotate(month=TruncMonth('date'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+
+    labels = [entry['month'].strftime('%Y-%m') for entry in data]
+    values = [entry['count'] for entry in data]
+
+    return JsonResponse({'labels': labels, 'values': values})

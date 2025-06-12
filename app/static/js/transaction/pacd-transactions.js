@@ -196,17 +196,54 @@ function viewClientDetails(id) {
         })
 }
 
+function saveApprovedClientByPACD() {
+    const org_name = document.getElementById('a-org-name').value;
+    const transaction_type = document.getElementById('a-transaction-type').value;
+    const transaction_details = document.getElementById('approved-transactions-details');
+    const remarks = document.getElementById('approved-remarks');
+    const csmChecked = document.getElementById('csm-checkbox');
+    const cssChecked = document.getElementById('css-checkbox');
+
+    if (!transaction_details.value || !remarks.value) { 
+        alert('please do not leave blanks !!!');
+        return;
+    }
+    
+    const isCSM = csmChecked.checked;
+    const isCSS = cssChecked.checked;
+
+    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
+        alert('Please select only one satisfaction form (CSM or CSS)!');
+        return;
+    }
+
+    const resolutions = isCSM ? 'CSM' : 'CSS';
+
+    fetch(updateClientStatusServedUrl, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `client_id=${selectedClient}&org_name=${org_name}&transactions_type=${transaction_type}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('succefully catered!!!')
+        fetchPendingClients();
+        closedApproved();
+    })
+}
 
 
 if (path.includes(pacdTransactions)) {
-    // fetchForwardedClientPACD();
     fetchPendingClients();
     fetchAllResolvedClient();
     fetchTransactionCounts();
     setInterval(fetchTransactionCounts, 2000);
-    // setInterval(fetchAllResolvedClient, 2000);
-    // setInterval(fetchForwardedClientPACD, 2000);
-    // setInterval(fetchPendingClients, 2000);
+    setInterval(fetchAllResolvedClient, 2000);
+    setInterval(fetchPendingClients, 2000);
 }
 
 if (path.includes(displayQueUrl)) {

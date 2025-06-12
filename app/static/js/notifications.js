@@ -46,13 +46,14 @@ function fetchUNITNotifications() {
     });
 }
 
+const keywords = [unitTransactions, unitDashboard];
 
 if (path.includes(pacdTransactions)) {
     fetchPACDNotifications();
     setInterval(fetchPACDNotifications, 2000);
 }
 
-if (path.includes(unitTransactions)) {
+if (keywords.some(keyword => path.includes(keyword))) {
     fetchUNITNotifications();
     setInterval(fetchUNITNotifications, 2000);
 }
