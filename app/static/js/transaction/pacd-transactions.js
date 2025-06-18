@@ -245,8 +245,3 @@ if (path.includes(pacdTransactions)) {
     setInterval(fetchAllResolvedClient, 2000);
     setInterval(fetchPendingClients, 2000);
 }
-
-if (path.includes(displayQueUrl)) {
-    fetchForwardedClientPACDDisplay()
-    setInterval(fetchForwardedClientPACDDisplay, 3000);
-}

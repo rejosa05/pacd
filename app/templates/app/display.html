@@ -3,10 +3,6 @@
 {% block title %} Display Board {% endblock %}
 {% block content %}
     <div class="display-container">
-        <div class="top-info-bar" aria-live="polite" aria-atomic="true">
-        <div class="location">Service Location: Downtown Branch</div>
-        <div class="last-updated" id="lastUpdated">Last updated: --:--:--</div>
-    </div>
     
     <div class="left-section">
         <div class="top-boxes">
@@ -25,129 +21,27 @@
             <div class="priority" id="fastCurrent" aria-live="polite" aria-atomic="true">&mdash;</div>
             </div>
         </div>
-        <div class="info-box bottom-box" aria-label="Queue information tables">
-            <div class="dual-tables">
-            <div class="table-section" aria-label="Waiting queue">
-                <h2>WAITING</h2>
-                <table id="pendingClientQueueTable" role="grid" aria-describedby="waitingDesc">
-                <thead>
-                    <tr>
-                    <th scope="col">QUEUE NO</th>
-                    <th scope="col">LANE TYPE</th>
-                    <th scope="col">TRANSACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Waiting data here -->
-                </tbody>
-                <tfoot>
-                    <tr class="totals-row">
-                    <td colspan="3" id="totalWaiting" aria-live="polite">Total Waiting: 0</td>
-                    </tr>
-                </tfoot>
-                </table>
-            </div>
-            <div class="table-section" aria-label="Now serving queue">
-                <h2>NOW SERVING</h2>
-                <table id="forwardedTransactions" role="grid" aria-describedby="servingDesc">
-                <thead>
-                    <tr>
-                    <th scope="col">QUE NO.</th>
-                    <th scope="col">DIVISION</th>
-                    <th scope="col">UNIT</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Catered data here -->
-                </tbody>
-                <tfoot>
-                    <tr class="totals-row">
-                    <td colspan="3" id="totalServing" aria-live="polite">Total Serving: 0</td>
-                    </tr>
-                </tfoot>
-                </table>
-            </div>
-            </div>
+        <div class="bottom-box" aria-label="Queue information tables">
+                <div class="" aria-label="Now serving queue">
+                    <h2>NOW SERVING</h2>
+                    <table id="servingClients" role="grid" aria-describedby="servingDesc">
+                    <thead>
+                        <tr>
+                        <th scope="col">CLIENT ID</th>
+                        <th scope="col">TICKET NO.</th>
+                        <th scope="col">TRANSACTION TYPE</th>
+                        <th scope="col">DIVISION</th>
+                        <th scope="col">UNIT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    </table>
+                </div>
+            
         </div>
     </div>
 </div>
-
-
-    <!-- <div class="display-container">
-        <div class="left-section">
-            <div class="top-boxes">
-                <div class="info-box">
-                    <h2>Regular Lane</h2>
-                    <div class="regular number" id="regularCurrent">
-                    </div>
-                </div>
-                <div class="info-box">
-                    <h2>Priority Lane</h2>
-                    <div class="priority number" id="fastCurrent">
-                    </div>
-                </div>
-            </div>
-            <div class="info-box bottom-box">
-                <div class="dual-tables">
-                    <div class="table-section">
-                        <h2>WAITING</h2>
-                        <table id="pendingClientQueueTable">
-                            <thead>
-                                <tr>
-                                    <th>QUEUE NO</th>
-                                    <th>LANE TYPE</th>
-                                    <th>TRANSACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody >
-                                Waiting data here
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-section">
-                        <h2>NOW SERVING</h2>
-                        <table id="forwardedTransactions">
-                            <thead>
-                                <tr>
-                                    <th>QUE NO.</th>
-                                    <th>DIVISION</th>
-                                    <th>UNIT</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                Catered data here
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="right-section">
-            <div class="logo-box fade">
-                <img src="{% static 'images/image1.jpg' %}" alt="Logo">
-            </div>
-            <div class="logo-box fade">
-                <img src="{% static 'images/image2.jpg' %}" alt="Logo">
-            </div>
-        </div>
-    </div> -->
-    <script>
-        let slideIndex = 0;
-        showSlides();
-        
-        function showSlides() {
-            let slides = document.getElementsByClassName("logo-box");
-        
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-        
-            slideIndex++;
-            if (slideIndex > slides.length) { slideIndex = 1 }
-        
-            slides[slideIndex - 1].style.display = "block";
-            setTimeout(showSlides, 5000); // Change image every 3 seconds
-        }
         </script>
         <audio id="queue-audio" preload="auto">
             <source src="{% static 'audio/ding.mp3' %}" type="audio/mpeg">
@@ -181,7 +75,7 @@
               }
           
               audio.play();
-              const message = new SpeechSynthesisUtterance("Now serving queue number " + queueNumber);
+              const message = new SpeechSynthesisUtterance("Proceed to front desk for screening number " + queueNumber);
               synth.speak(message);
                  
             }

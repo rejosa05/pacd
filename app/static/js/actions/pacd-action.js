@@ -79,55 +79,55 @@ function saveForwardedClient() {
     })
 }
 
-function accountEdit(id, fname, lname, position, division, unit, user, password, email, contact, status) {
-    selectedAccount = id;
-    document.getElementById('f-name').value = fname;
-    document.getElementById('l-name').value = lname;
-    document.getElementById('edit-position').innerText = position;
-    document.getElementById('edit-division').innerText = division;
-    document.getElementById('edit-unit').innerText = unit;
-    document.getElementById('edit-user').value = user;
-    document.getElementById('edit-email').value = email;
-    document.getElementById('edit-password').value = password;
-    document.getElementById('edit-contact').value = contact;
-    document.getElementById('edit-status').innerText = status;
-    document.getElementById('editAccount').style.display = 'flex';
-}
+// function accountEdit(id, fname, lname, position, division, unit, user, password, email, contact, status) {
+//     selectedAccount = id;
+//     document.getElementById('f-name').value = fname;
+//     document.getElementById('l-name').value = lname;
+//     document.getElementById('edit-position').innerText = position;
+//     document.getElementById('edit-division').innerText = division;
+//     document.getElementById('edit-unit').innerText = unit;
+//     document.getElementById('edit-user').value = user;
+//     document.getElementById('edit-email').value = email;
+//     document.getElementById('edit-password').value = password;
+//     document.getElementById('edit-contact').value = contact;
+//     document.getElementById('edit-status').innerText = status;
+//     document.getElementById('editAccount').style.display = 'flex';
+// }
 
-function closeEditAccount() {
-    document.getElementById('editAccount').style.display = 'none';
-}
+// function closeEditAccount() {
+//     document.getElementById('editAccount').style.display = 'none';
+// }
 
-function saveUpdateUser() {
-    first_name = document.getElementById('f-name').value
-    last_name = document.getElementById('l-name').value
-    position = document.getElementById('e-account-position').value
-    division = document.getElementById('e-account-division-select').value
-    unit = document.getElementById('e-account-unit-select').value
-    user = document.getElementById('edit-user').value
-    email = document.getElementById('edit-email').value
-    password = document.getElementById('edit-password').value
-    contact = document.getElementById('edit-contact').value
-    status = document.getElementById('edit-status').value
-    console.log(first_name)
-    fetch(updateDetails, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `account_id=${selectedAccount}&first_name=${first_name}&last_name=${last_name}&position=${position}&division=${division}&unit=${unit}&user=${user}&email=${email}`
+// function saveUpdateUser() {
+//     first_name = document.getElementById('f-name').value
+//     last_name = document.getElementById('l-name').value
+//     position = document.getElementById('e-account-position').value
+//     division = document.getElementById('e-account-division-select').value
+//     unit = document.getElementById('e-account-unit-select').value
+//     user = document.getElementById('edit-user').value
+//     email = document.getElementById('edit-email').value
+//     password = document.getElementById('edit-password').value
+//     contact = document.getElementById('edit-contact').value
+//     status = document.getElementById('edit-status').value
+//     console.log(first_name)
+//     fetch(updateDetails, {
+//         method: 'POST',
+//         headers: {
+//             'X-Requested-With': 'XMLHttpRequest',
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//             'X-CSRFToken': csrfToken,
+//         },
+//         body: `account_id=${selectedAccount}&first_name=${first_name}&last_name=${last_name}&position=${position}&division=${division}&unit=${unit}&user=${user}&email=${email}`
 
-    })
-    .then(response => response.json())
-    .then(() => {
+//     })
+//     .then(response => response.json())
+//     .then(() => {
         
-        alert('update complete !!!');
-        fetchAccountList();
-        closeEditAccount();   
-    })
-}
+//         alert('update complete !!!');
+//         fetchAccountList();
+//         closeEditAccount();   
+//     })
+// }
 
 function closeViewDetails () {
     document.getElementById('view-details-modal').style.display = 'none';

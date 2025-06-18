@@ -45,3 +45,4 @@ def transaction_history(request):
         return JsonResponse({'resolved_clients': resolved_client_all})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
+    

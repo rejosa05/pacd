@@ -17,7 +17,8 @@ urlpatterns = [
     path('ticket/<int:client_id>/', ticket_view, name="client_ticket"),
     path('clients/', client_details, name="client-page"),
     path('que-view/', que_view, name="que-view"),
-    
+    path('serving-client', serving_client, name="serving-client"),
+
     path('account/', add_account, name="account"),
     path('user-type/', user_type, name="user-type"),
     path('login/', login_view, name="login"),

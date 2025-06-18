@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reports Queue - Filterable Table</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      line-height: 1.5;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 24px;
+      color: #111827;
+    }
+    /* Container to limit table width */
+    .container {
+      max-width: 1024px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    /* Top info: count and download button container */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .results-count {
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 1.125rem;
+    }
+    /* Download Button */
+    .btn-download {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .btn-download:hover,
+    .btn-download:focus {
+      background-color: #1e40af;
+      outline: none;
+    }
+    .btn-download .material-icons {
+      font-size: 20px;
+    }
+    /* Filter section */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.875rem;
+      color: #334155;
+    }
+    input[type="date"], input[type="search"] {
+      padding: 10px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+      width: 200px;
+      max-width: 100%;
+      background-color: white;
+      color: #334155;
+    }
+    input[type="date"]:focus, input[type="search"]:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+    input[type="search"] {
+      flex-grow: 1;
+      min-width: 220px;
+    }
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+    }
+    thead tr {
+      background: transparent;
+    }
+    thead th {
+      text-align: left;
+      padding: 12px 24px 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #334155;
+      border-bottom: 2px solid #e2e8f0;
+      user-select: none;
+    }
+    tbody tr {
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      border-radius: 12px;
+      transition: box-shadow 0.3s ease;
+      cursor: default;
+    }
+    tbody tr:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    tbody td {
+      padding: 16px 24px;
+      vertical-align: middle;
+      font-size: 0.925rem;
+      color: #475569;
+      border-top: none;
+      border-bottom: none;
+    }
+    /* Rounded corners on rows */
+    tbody tr:first-child td:first-child {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+    tbody tr:first-child td:last-child {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    tbody tr:last-child td:first-child {
+      border-bottom-left-radius: 12px;
+    }
+    tbody tr:last-child td:last-child {
+      border-bottom-right-radius: 12px;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 720px) {
+      .filters {
+        flex-direction: column;
+      }
+      input[type="date"], input[type="search"] {
+        width: 100%;
+      }
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        display: none;
+      }
+      tbody tr {
+        margin-bottom: 16px;
+        box-shadow: none;
+        background: transparent;
+        border-radius: 0;
+        padding: 0;
+        border-bottom: 2px solid #e2e8f0;
+      }
+      tbody td {
+        padding-left: 50%;
+        text-align: right;
+        position: relative;
+        border-bottom: none;
+        font-size: 0.9rem;
+      }
+      tbody td::before {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: 600;
+        color: #334155;
+        content: attr(data-label);
+        text-align: left;
+      }
+    }
+    /* Material Icons Styling */
+    .material-icons {
+      vertical-align: middle;
+      color: #2563eb;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    .material-icons:hover {
+      color: #1d4ed8;
+    }
+    /* Status badges */
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 12px;
+      color: white;
+      user-select: none;
+    }
+    .status.pending {
+      background-color: #f59e0b;
+    }
+    .status.in-progress {
+      background-color: #3b82f6;
+    }
+    .status.completed {
+      background-color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Reports Queue</h1>
+    <div class="top-bar">
+      <div class="results-count" aria-live="polite" aria-atomic="true" id="resultsCount">Reports found: 0</div>
+      <button class="btn-download" id="downloadExcel" aria-label="Download filtered reports as Excel file">
+        <span class="material-icons" aria-hidden="true">download</span> Download Excel
+      </button>
+    </div>
+    <section class="filters" aria-label="Filter reports">
+      <div class="filter-group">
+        <label for="filterDateStart">Date Started From</label>
+        <input type="date" id="filterDateStart" name="filterDateStart" aria-describedby="startDateHelp" />
+      </div>
+      <div class="filter-group">
+        <label for="filterDateEnd">Date Ended Before</label>
+        <input type="date" id="filterDateEnd" name="filterDateEnd" aria-describedby="endDateHelp" />
+      </div>
+      <div class="filter-group" style="flex-grow: 1;">
+        <label for="searchBar">Search Reports</label>
+        <input type="search" id="searchBar" name="searchBar" placeholder="Search by title or status" aria-label="Search reports text" />
+      </div>
+    </section>
+
+    <section aria-label="Reports table">
+      <table role="table" aria-describedby="resultsCount" tabindex="0" id="reportsTable">
+        <thead>
+          <tr>
+            <th scope="col" aria-sort="none">Report ID</th>
+            <th scope="col" aria-sort="none">Title</th>
+            <th scope="col" aria-sort="none">Date Started</th>
+            <th scope="col" aria-sort="none">Date Ended</th>
+            <th scope="col" aria-sort="none">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Dynamic rows inserted here -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      // Sample data to simulate reports queue
+      const reportsData = [
+        {id: 1, title: 'Report Alpha', dateStarted: '2024-06-01', dateEnded: '2024-06-05', status: 'Completed'},
+        {id: 2, title: 'Report Beta', dateStarted: '2024-06-02', dateEnded: '2024-06-10', status: 'In Progress'},
+        {id: 3, title: 'Report Gamma', dateStarted: '2024-06-08', dateEnded: '', status: 'Pending'},
+        {id: 4, title: 'Report Delta', dateStarted: '2024-05-30', dateEnded: '2024-06-01', status: 'Completed'},
+        {id: 5, title: 'Report Epsilon', dateStarted: '2024-06-05', dateEnded: '', status: 'In Progress'},
+        {id: 6, title: 'Report Zeta', dateStarted: '2024-05-28', dateEnded: '2024-06-02', status: 'Completed'},
+        {id: 7, title: 'Report Eta', dateStarted: '2024-06-03', dateEnded: '', status: 'Pending'},
+        {id: 8, title: 'Report Theta', dateStarted: '2024-06-07', dateEnded: '2024-06-09', status: 'Completed'},
+        {id: 9, title: 'Report Iota', dateStarted: '2024-06-09', dateEnded: '', status: 'In Progress'}
+      ];
+
+      const tableBody = document.getElementById('tableBody');
+      const resultsCount = document.getElementById('resultsCount');
+      const downloadBtn = document.getElementById('downloadExcel');
+
+      const filterDateStartInput = document.getElementById('filterDateStart');
+      const filterDateEndInput = document.getElementById('filterDateEnd');
+      const searchInput = document.getElementById('searchBar');
+
+      let filteredReports = [];
+
+      // Render reports rows in table
+      function renderReports(reports) {
+        filteredReports = reports; // Keep current filtered data for download
+        tableBody.innerHTML = '';
+        if (reports.length === 0) {
+          const noDataTr = document.createElement('tr');
+          const noDataTd = document.createElement('td');
+          noDataTd.colSpan = 5;
+          noDataTd.style.textAlign = 'center';
+          noDataTd.style.padding = '24px';
+          noDataTd.textContent = 'No reports match the current filters.';
+          noDataTr.appendChild(noDataTd);
+          tableBody.appendChild(noDataTr);
+          resultsCount.textContent = 'Reports found: 0';
+          return;
+        }
+        const fragment = document.createDocumentFragment();
+        reports.forEach(report => {
+          const tr = document.createElement('tr');
+
+          const tdId = document.createElement('td');
+          tdId.textContent = report.id;
+          tdId.setAttribute('data-label', 'Report ID');
+
+          const tdTitle = document.createElement('td');
+          tdTitle.textContent = report.title;
+          tdTitle.setAttribute('data-label', 'Title');
+
+          const tdDateStarted = document.createElement('td');
+          tdDateStarted.textContent = report.dateStarted;
+          tdDateStarted.setAttribute('data-label', 'Date Started');
+
+          const tdDateEnded = document.createElement('td');
+          tdDateEnded.textContent = report.dateEnded || '—';
+          tdDateEnded.setAttribute('data-label', 'Date Ended');
+
+          const tdStatus = document.createElement('td');
+          tdStatus.setAttribute('data-label', 'Status');
+          const spanStatus = document.createElement('span');
+          spanStatus.classList.add('status');
+          spanStatus.textContent = report.status;
+          if (report.status === 'Pending') spanStatus.classList.add('pending');
+          else if (report.status === 'In Progress') spanStatus.classList.add('in-progress');
+          else if (report.status === 'Completed') spanStatus.classList.add('completed');
+          tdStatus.appendChild(spanStatus);
+
+          tr.appendChild(tdId);
+          tr.appendChild(tdTitle);
+          tr.appendChild(tdDateStarted);
+          tr.appendChild(tdDateEnded);
+          tr.appendChild(tdStatus);
+
+          fragment.appendChild(tr);
+        });
+        tableBody.appendChild(fragment);
+        resultsCount.textContent = `Reports found: ${reports.length}`;
+      }
+
+      // Filter function
+      function filterReports() {
+        const dateStartVal = filterDateStartInput.value;
+        const dateEndVal = filterDateEndInput.value;
+        const searchVal = searchInput.value.trim().toLowerCase();
+
+        let filtered = reportsData.filter(report => {
+          // Date started filter: report.dateStarted >= dateStartVal (or no filter)
+          if (dateStartVal) {
+            if (!report.dateStarted || report.dateStarted < dateStartVal) {
+              return false;
+            }
+          }
+          // Date ended filter: report.dateEnded <= dateEndVal (or no filter)
+          if (dateEndVal) {
+            if (!report.dateEnded || report.dateEnded > dateEndVal) {
+              return false;
+            }
+          }
+          // Search filter: check title and status
+          if (searchVal) {
+            const inTitle = report.title.toLowerCase().includes(searchVal);
+            const inStatus = report.status.toLowerCase().includes(searchVal);
+            if (!inTitle && !inStatus) {
+              return false;
+            }
+          }
+          return true;
+        });
+        renderReports(filtered);
+      }
+
+      // Download filtered table data as CSV for Excel
+      function downloadCSV() {
+        if (filteredReports.length === 0) {
+          alert('No reports to download.');
+          return;
+        }
+
+        const headers = ['Report ID', 'Title', 'Date Started', 'Date Ended', 'Status'];
+        const csvRows = [];
+
+        // Add headers row
+        csvRows.push(headers.join(','));
+
+        // Add data rows, escape commas and quotes
+        filteredReports.forEach(report => {
+          const row = [
+            report.id,
+            `"${report.title.replace(/"/g, '""')}"`,
+            report.dateStarted,
+            report.dateEnded || '',
+            report.status
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        const csvString = csvRows.join('\r\n');
+        const blob = new Blob([csvString], {type: 'text/csv'});
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Filename with current date/time
+        const now = new Date();
+        const timestamp = now.toISOString().slice(0,19).replace(/[:T]/g, '-');
+        a.download = `reports_export_${timestamp}.csv`;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // Event listeners
+      filterDateStartInput.addEventListener('input', filterReports);
+      filterDateEndInput.addEventListener('input', filterReports);
+      searchInput.addEventListener('input', filterReports);
+      downloadBtn.addEventListener('click', downloadCSV);
+
+      // Initial render
+      filterReports();
+    })();
+  </script>
+</body>
+</html>
+

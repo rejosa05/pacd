@@ -33,6 +33,9 @@
   <main>
     <section class="add-user">
       <h2>Add New User</h2>
+      {% for message in messages %}
+            <p style="color: red"> {{ message }} </p>
+        {% endfor %}
       <form class="add-user" method="post" action="{% url 'account' %}">
          {% csrf_token %}
         <label for="first-name">First Name</label>
@@ -87,7 +90,7 @@
   </main>
 
   <!-- Edit Account Modal -->
-  <div class="modal-overlay" id="editAccount" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+  <!-- <div class="modal-overlay" id="editAccount" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
     <div class="modal-view">    
       <button class="close-btn" aria-label="Close modal" onclick="closeEditAccount()">&times;</button>
       <h2>Edit User</h2>
@@ -134,7 +137,7 @@
       </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Modal for user details -->
   <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">

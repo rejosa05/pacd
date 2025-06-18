@@ -27,17 +27,6 @@ function fetchAccountList() {
             <td>${account.position}</td>
             <td>${account.status}</td>
             <td>
-                <button class="edit-btn" title="Edit" onclick="accountEdit('${account.id}',
-                '${account.first_name}',
-                '${account.last_name}',
-                '${account.position}',
-                '${account.divisions}',
-                '${account.unit}',
-                '${account.user}',
-                '${account.password}',
-                '${account.email}',
-                '${account.contact}',
-                '${account.status}')"><i class="fa fa-edit"></i></button>
                 <button class="view-btn" title="View" onclick="viewDetails('${account.id}')"><i class="fa fa-list"></i></button>
             </td>
             `;
