@@ -17,7 +17,9 @@ def transaction_history_all(request):
                 'client_division': client.division,
                 'client_unit': client.unit,
                 'remarks': client.remarks,
-                'date_served': client.date.isoformat() if client.date else None,
+                'form': client.form,
+                'date_started': client.date.isoformat() if client.date else None,
+                'date_served': client.date_resolved.isoformat() if client.date_resolved else None,
                 'status': client.status,
             })
 

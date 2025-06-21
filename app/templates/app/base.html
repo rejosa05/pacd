@@ -53,7 +53,7 @@
             
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
-            pacdReports: "{% url 'reports' %}", // display reports in PACD user
+            reports: "{% url 'reports' %}", // display reports in PACD user
 
             csrfToken: "{{ csrf_token }}"
         };
@@ -69,6 +69,7 @@
     <script src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/display.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>
+    <script src="{% static 'js/reports.js' %}"></script>
 </head>
 <body>
     {% block content %}
