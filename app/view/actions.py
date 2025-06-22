@@ -128,7 +128,7 @@ def update_client_status_served(request):
             remarks = remarks,
             form = resolutions,
             unit_user = user,
-            user=users,
+            user=users.user,
             date_resolved = today,
             status = status,
             date=today
