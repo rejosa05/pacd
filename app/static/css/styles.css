@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
+:root {
+    --primary-bg: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
+
+    --title-txt-color: #008d31;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -17,7 +23,7 @@ body, html {
 }
 
 header {
-    background: #008000;
+    background: var(--primary-bg);
     color: rgb(233, 183, 183);
     padding: 1rem 2rem;
     font-weight: 700;
@@ -84,19 +90,19 @@ aside nav a {
     text-decoration: none;
     display: block;
     padding: 0.75rem 1rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.50rem;
     border-radius: 6px;
     font-weight: 500;
     transition: background 0.3s ease;
 }
 
 aside nav a:hover, aside nav a.active {
-    background: #2ec05a;
+    background: #008d31;
 }
 
 aside {
     width: 220px;
-    background: #008000;
+    background: var(--primary-bg);
     border-radius: 12px;
     padding: 1.5rem;
     color: white;
@@ -105,7 +111,7 @@ aside {
 }
 
 h1, h2 {
-    color: #008000;
+    color: var(--title-txt-color);
 }
 
 .client-container {
@@ -130,14 +136,13 @@ h1, h2 {
     font-weight: 600;
     color: #374151;
     margin-bottom: 0.5rem;
-    display: block;
     font-size: 1rem;
 }
 
 .client-container form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .25rem;
 }
 
 .client-container input {
@@ -157,12 +162,12 @@ h1, h2 {
     flex-direction: column;
     gap: 1rem;
     outline: none;
-    border-color: #008000;
+    border-color: var(--primary-bg);
     box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
 }
 
 .client-container button {
-    background-color: #008000;
+    background-color: var(--primary-bg);
     color: white;
     font-weight: 700;
     font-size: 1.125rem;
@@ -249,7 +254,7 @@ h1, h2 {
 .login input[type="text"]:focus,
 .login input[type="password"]:focus {
     outline: none;
-    border-color: #008000;
+    border-color: var(--primary-bg);
     box-shadow: 0 0 6px #3fb57066;
 }
 
@@ -257,7 +262,7 @@ h1, h2 {
     width: 100%;
     max-width: 350px;
     padding: 0.85rem 1rem;
-    background: #008000;background: #002e00;
+    background: var(--primary-bg);
     color: white;
     border: none;
     border-radius: 8px;
@@ -333,7 +338,7 @@ h2 {
     font-weight: 700;
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    border-bottom: 3px solid #008000;
+    border-bottom: 3px solid var(--primary-bg);
     padding-bottom: 0.25rem;
   }
 
@@ -355,7 +360,7 @@ h2 {
 
 .add-user form input:focus, form select:focus {
     outline: none;
-    border-color: #008000;
+    border-color: var(--primary-bg);
     box-shadow: 0 0 6px rgba(63, 181, 112, 0.4);
 }
 
@@ -363,7 +368,7 @@ h2 {
     width: 100%;
     max-width: 200px;
     padding: 0.85rem 1rem;
-    background: #008000;
+    background: var(--primary-bg);
     color: white;
     border: none;
     border-radius: 8px;
@@ -379,15 +384,17 @@ h2 {
 }
 
 .table-container {
-  max-height: 350px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
+#accountList thead th,
+#pendingClientQueueTable thead th,
 #transactionHistoryAll thead th,
 #cateredTransactions thead th {
   position: sticky;
   top: 0;
-  background: #008000;
+  background: var(--primary-bg);
   z-index: 2;
 }
 
@@ -398,7 +405,7 @@ table {
 }
 
 thead {
-    background-color: #008000;
+    background-color: #379100;
     color: white;
 }
 
@@ -733,7 +740,7 @@ tbody tr:nth-child(even):hover {
   width: 100%;
   margin-top: 25px;
   padding: 12px;
-  background: #008000;
+  background: var(--primary-bg);
   color: #fff;
   font-size: 16px;
   border: none;
@@ -758,7 +765,7 @@ tbody tr:nth-child(even):hover {
 }
 
 .approved-form select.form-option:focus {
-  border-color: #008000;
+  border-color: var(--primary-bg);
   outline: none;
   box-shadow: 0 0 0 2px #002e00;
 }
@@ -776,7 +783,7 @@ tbody tr:nth-child(even):hover {
 
 
 .org:focus {
-  border-color: #008000;
+  border-color: var(--primary-bg);
   outline: none;
   box-shadow: 0 0 0 2px #002e00;
 }
@@ -785,7 +792,7 @@ tbody tr:nth-child(even):hover {
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    /* background: #008000; */
+    /* background: var(--primary-bg); */
     padding: 20px 30px;
     display: flex;
     flex-direction: column;
@@ -908,20 +915,40 @@ tbody tr:nth-child(even):hover {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    overflow-y: scroll;
 }
+
+.sub-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.division-card {
+    color: #fff;
+    flex: 1;
+    border-radius: 5px;
+    padding: 1.0rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    transition: background 0.3s ease;
+}
+
 .cards {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
 }
+
 .card {
-    background: #3f51b5;
+    background: var(--primary-bg);
     color: #fff;
     flex: 1;
     border-radius: 12px;
-    padding: 1.25rem 1.75rem;
-    box-shadow: 0 8px 16px rgb(63 81 181 / 0.4);
+    padding: 1.00rem 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -930,20 +957,7 @@ tbody tr:nth-child(even):hover {
     text-align: center;
     transition: background 0.3s ease;
 }
-.card:nth-child(2) {
-    background: #009688;
-    box-shadow: 0 8px 16px rgb(0 150 136 / 0.4);
-}
 
-.card:nth-child(3) {
-    background: #f44336;
-    box-shadow: 0 8px 16px rgba(244, 105, 54, 0.4);
-}
-
-.card:nth-child(4) {
-    background: #008c3a;
-    box-shadow: 0 8px 16px rgba(54, 244, 108, 0.4);
-}
 
 .card:hover {
     filter: brightness(1.1);
@@ -984,26 +998,26 @@ tbody tr:nth-child(even):hover {
       font-size: 1.125rem;
     }
     /* Download Button */
-    .btn-download {
-      background-color: #2563eb;
-      color: white;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    .btn-download:hover,
-    .btn-download:focus {
-      background-color: #1e40af;
-      outline: none;
-    }
+.btn-download {
+    background: var(--primary-bg);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+.btn-download:hover,
+.btn-download:focus {
+    background: #002e00;
+    outline: none;
+}
     .btn-download .material-icons {
       font-size: 20px;
     }

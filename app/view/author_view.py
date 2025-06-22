@@ -167,10 +167,4 @@ def accountList(request):
         return JsonResponse({'message': 'Invalid request'}, status=400)
 
 def reports_page(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-    return render(request, "app/reports.html", {"user": user})
+    return render(request, "app/reports.html")

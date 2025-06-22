@@ -1,9 +1,12 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{user.unit}} Dashboard {% endblock %}
+{% block title %}{{user.unit}} Reports {% endblock %}
 
 {% block content %}
+<style>
+
+</style>
 
 <header>
   <div class="logo-header">
@@ -26,7 +29,9 @@
   <aside>
     <nav>
       <a href="{% url 'pacd-transactions' %}">Transactions</a>
-      <a href="#" class="active">Dashboard</a>
+      <a href="{% url 'pacd-dashboard' %}">Dashboard</a>
+
+      <a href="" class="active"> <i class="fas fa-bell"></i> &nbsp; Reports </a>
       <a href="{% url 'account' %}">Add Account</a>
     </nav>
   </aside>
@@ -43,6 +48,22 @@
       </div>
       <div class="card">
         CSS<br /><strong><span id="total-css"> </span></strong>
+      </div>
+      <div class="card">
+        <div class="sub-cards">
+        <div class="division-card">
+          RD/ARD<br /><strong><span id="total-rd/ard"> </span></strong>
+        </div>
+        <div class="division-card">
+          LHSD<br /><strong><span id="total-lhsd"> </span></strong>
+        </div>
+        <div class="division-card">
+          MSD<br /><strong><span id="total-msd"> </span></strong>
+        </div>
+        <div class="division-card">
+          RLED<br /><strong><span id="total-rled"> </span></strong>
+        </div>
+      </div>
       </div>
     </div>
     <section class="chart-container">

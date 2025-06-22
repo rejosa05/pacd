@@ -93,7 +93,7 @@ function fetchDailyDataUnit() {
                         label: 'Clients per Day',
                         data: data.values,
                         borderColor: '#008000',
-                        backgroundColor: 'rgba(0, 128, 0, 0.1)', // Slightly transparent fill
+                        backgroundColor: '#008d31', // Slightly transparent fill
                         tension: 0.3,
                         pointRadius: 5,
                         pointHoverRadius: 7,
@@ -132,7 +132,7 @@ function fetchMonthlyDataUnit() {
                         label: 'Clients per Monthly',
                         data: data.values,
                         borderColor: '#008000',
-                        backgroundColor: '#008000', // Slightly transparent fill
+                        backgroundColor: '#008d31', // Slightly transparent fill
                         tension: 0.3,
                         pointRadius: 5,
                         pointHoverRadius: 7,

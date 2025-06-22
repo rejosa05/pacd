@@ -17,9 +17,7 @@
     <main class="client-container" aria-labelledby="form-title" role="main">    
         <h1>Welcome Client</h1>
         <p class="subtitle">Fill in the client information</p>
-        <form method="post">
-        
-        
+        <form method="post">        
                 {% csrf_token %}
                 {{ message }}
                 {{ form.as_p }}

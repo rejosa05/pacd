@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const totalTransactions = document.getElementById('total-transactions');
+    const totalCSM = document.getElementById('total-csm');
+    const totalCSS = document.getElementById('total-css');
+    const totalCompleted = document.getElementById('total-completed');
+    const totalRDARD = document.getElementById('total-rd/ard');
+    const totalLHSD = document.getElementById('total-lhsd');
+    const totalMSD = document.getElementById('total-msd');
+    const totalRLED = document.getElementById('total-rled');
     const convertToExcel = document.getElementById('downloadExcel');
     const dateStartInput = document.getElementById('dateStarted');
     const dateEndInput = document.getElementById('dateEnd');
@@ -44,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Served'];
+        const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Started', 'Date Served'];
         const rows = data.map(client => [
             `#CT${client.client_id}`,
             client.client_fullname,
@@ -74,6 +81,23 @@ document.addEventListener('DOMContentLoaded', function () {
         a.click();
         document.body.removeChild(a);
         }
+
+        const completedCount = filteredData.filter(client => client.status === 'Completed').length;
+        const rdardCount = filteredData.filter(client => client.client_division === 'RD/ARD').length;
+        const lhsdCount = filteredData.filter(client => client.client_division === 'LHSD').length;
+        const msdCount = filteredData.filter(client => client.client_division === 'MSD').length;
+        const rledCount = filteredData.filter(client => client.client_division === 'RLED').length;
+        const csmCount = filteredData.filter(client => client.form === 'CSM').length;
+        const cssCount = filteredData.filter(client => client.form === 'CSS').length;
+        
+
+        totalCompleted.textContent = completedCount;
+        totalRDARD.textContent = rdardCount;
+        totalLHSD.textContent = lhsdCount;
+        totalMSD.textContent = msdCount;
+        totalRLED.textContent = rledCount;
+        totalCSM.textContent = csmCount;
+        totalCSS.textContent = cssCount;
         totalTransactions.textContent = filteredData.length;
         convertToExcel.addEventListener('click', function () {
         downloadCSV(filteredData);
@@ -106,7 +130,9 @@ document.addEventListener('DOMContentLoaded', function () {
     dateEndInput.addEventListener('input', fetchAllServedClient);
     searchInput.addEventListener('input', fetchAllServedClient);
 
-    // Initial load
-    fetchAllServedClient();
+    // Initial loadcd PACD
+      fetchAllServedClient();
+        
 });
 
+379100

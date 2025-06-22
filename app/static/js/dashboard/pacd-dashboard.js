@@ -1,37 +1,6 @@
 const {
     pacdDashboard, servedListAll, totalCounts
 } = window.dashboardConfig;
-
-function fetchAllServedClient() {
-    fetch(servedListAll, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const tableBody = document.querySelector('#transactionHistoryAll tbody');
-        tableBody.innerHTML = '';
-
-        data.resolved_clients.forEach(client => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>#CT${client.client_id}</td>
-                <td>${client.client_fullname}</td>
-                <td>${client.client_division}</td>
-                <td>${client.client_unit}</td>
-                <td>${client.status}</td>
-                <td>${formatDateTime(client.date_served)}</td>
-                <td>
-                    <button class="view-btn" title="View" onclick="viewClientDetails('${client.id}')">
-                        <i class="fa fa-eye"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    })
-    .catch(error => console.error('Error fetching served clients:', error));
-}
-
 function fetchTotalCounts() {
   fetch(totalCounts, {
     method: 'GET',
@@ -54,6 +23,5 @@ function fetchTotalCounts() {
 
 
 if (path.includes(pacdDashboard)) {
-    fetchAllServedClient();
     fetchTotalCounts();
 }

@@ -1,10 +1,20 @@
 from django.http import JsonResponse
-from ..models import  DivisionLog
+from ..models import  DivisionLog, AccountDetails
 from django.utils import timezone
 
 def transaction_history_all(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        resolved_clients = DivisionLog.objects.filter().order_by('-status', 'date_resolved')
+
+        user = request.session.get('username')
+        account = AccountDetails.objects.filter(user=user).first()
+
+        if not account:
+            return JsonResponse({'message': 'User not found'}, status=404)
+
+        if account.unit == 'PACD':
+            resolved_clients = DivisionLog.objects.all().order_by('-status', 'date_resolved')
+        else:
+            resolved_clients = DivisionLog.objects.filter(unit=account.unit).order_by('-status', 'date_resolved')
         
         resolved_client_all = []
         for client in resolved_clients:

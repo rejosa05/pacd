@@ -48,18 +48,28 @@ def skipped_client(request):
         try:
             client_id = request.POST.get('client_id')
             user = request.session.get('username')
+            today = timezone.now()
 
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = 'Skipped'
             client.user = user
             client.save()
 
+            DivisionLog.objects.create(
+                client_id_id=client_id,
+                action_type = 'Skipped',
+                transaction_type = type,
+                status= 'Skipped',
+                user=user,
+                date=today
+            )
+
             return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})
 
         except ClientDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:
-            print(f"Error in update_client_status_skipped: {e}")
+        
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)

@@ -125,6 +125,7 @@ function viewClientUnitDetails(id) {
                 <dt>Date Forwarded:</dt><dd>${formatDateTime(client.client_forwarded)}</dd>
                 <dt>Date Resolved:</dt><dd>${formatDateTime(client.client_resolved)}</dd>
                 <dt>Remarks:</dt><dd>${client.client_remarks}</dd>
+                <dt>Forms:</dt><dd>${client.client_form}</dd>
                 <dt>Employee Catered:</dt><dd>${client.client_user}</dd>
             `;
             detailsOverlay.style.display = 'flex';
