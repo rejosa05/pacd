@@ -86,7 +86,7 @@ function fetchPendingClients() {
                         <i class="fa fa-check-circle"></i>
                     </button>
                     <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
-                        <i class="fa fa-arrow-right"></i>
+                        <i class="fa fa-mail-forward"></i>
                     </button>
                         <button class="skipped-btn" title="Skipped" onclick="skipClient('${client.client_id}')">
                             <i class="fa fa-remove"></i>
