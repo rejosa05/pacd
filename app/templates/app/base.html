@@ -10,13 +10,11 @@
     <link rel="icon" href="{% static 'images/logo.png' %}">
     <script>
         window.dashboardConfig = {
-            unitTransactions: "{% url 'unit-transactions' %}", // unit transactions page
             unitPendingUrl: "{% url 'unit-pending' %}", // unit pending list
             unitResolved: "{% url 'unit-resolved' %}", // unit resolved list
             unitDashboard: "{% url 'unit-dashboard' %}", // unit dashboard page
             transactionHistoryUnit: "{% url 'transaction-history-unit' %}", // unit transaction history
 
-            pacdTransactions: "{% url 'pacd-transactions' %}", // pacd transctions page
             pendingClientsUrl: "{% url 'pending_clients' %}", // pending clients
             transactionHistory: "{% url 'transaction-history' %}",  // resolved client list per day
 
@@ -70,6 +68,7 @@
     <script src="{% static 'js/display.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>
     <script src="{% static 'js/reports.js' %}"></script>
+    <script src="{% static 'js/transactions.js' %}"></script>
 </head>
 <body>
     {% block content %}

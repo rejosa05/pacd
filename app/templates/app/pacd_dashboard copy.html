@@ -1,0 +1,81 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Dashboard {% endblock %}
+
+{% block content %}
+
+<header>
+  <div class="logo-header">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" /> &nbsp; <!-- Replace with your logo path -->
+    {{ user.divisions }} Dashboard
+  </div>
+  <div class="header-icons">
+    <div class="user-icon">
+      <i class="fas fa-bell" title="notification"></i>
+      <span class="n-badge" id="notificationCount" style="display: none;"></span>
+    </div>
+    <div class="notification-icon">
+    <i class="fas fa-user-circle" title="Online User"></i>
+      <span class="n-badge">2</span>
+    </div>
+    <a class="sign-out" href="{% url 'logout' %}"><i class="fas fa-sign-out" title="Sign Out"></i></a>
+  </div>
+</header>
+<div class="app-container">
+  <aside>
+    <nav>
+      <a href="{% url 'pacd-transactions' %}">Transactions</a>
+      <a href="#" class="active">Dashboard</a>
+      <a href="{% url 'reports' %}">Reports</a>
+      <a href="{% url 'account' %}">Add Account</a>
+    </nav>
+  </aside>
+  <main class="main-dashboard">
+    <div class="cards">
+      <div class="card">
+        Total Transactions<br /><strong><span id="total-transactions"> </span></strong>
+      </div>
+      <div class="card">
+        Served <br /><strong><span id="total-completed"> </span></strong>
+      </div>
+      <div class="card">
+        CSM<br /><strong><span id="total-csm"> </span></strong>
+      </div>
+      <div class="card">
+        CSS<br /><strong><span id="total-css"> </span></strong>
+      </div>
+    </div>
+    <section class="chart-container">
+      <div class="dual-charts">
+        <div class="chart-box">
+          <h2>Daily Output</h2>
+          <canvas id="dailyOutputChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h2>Monthly Output</h2>
+          <canvas id="monthlyOutputChart"></canvas>
+        </div>
+      </div>
+      <!-- <h2>Transaction List</h2>
+        <div class="table-container">
+          <table id="transactionHistoryAll">
+          <thead>
+            <tr>
+              <th>Transactions ID</th>
+              <th>Client Fullname</th>
+              <th>Division</th>
+              <th>Unit</th>
+              <th>Status</th>
+              <th>Date Served</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        </div > -->
+      
+    </section>
+  </main>
+{% endblock %}

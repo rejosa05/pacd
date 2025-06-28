@@ -22,12 +22,12 @@ def forwarded_client_to_unit(request):
 
             DivisionLog.objects.create(
                 client_id_id=client_id,
-                action_type = 'Forwarded',
+                action_type = 'Processing',
                 division=division,
                 unit=unit,
                 transaction_type = type,
                 transaction_details=transaction_details,
-                status= 'Pending',
+                status= 'Processing',
                 user=username,
                 date=today
             )

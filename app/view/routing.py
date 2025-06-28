@@ -22,7 +22,7 @@ def login_view(request):
 
                 session_key = request.session.session_key or request.session._get_or_create_session_key()
                 SessionHistory.objects.create(user=user.user, login_time=timezone.now(), session_key=session_key)
-                return redirect("user-type")
+                return redirect("transactions")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
         else:
@@ -43,32 +43,7 @@ def logout_view(request):
     request.session.flush()
     logout(request)
     return redirect('login')
-
-def user_type(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
     
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if user.unit == 'PACD':
-        return redirect('pacd-transactions')
-    else:
-        return redirect('unit-transactions')
-    
-def pacd_transactions(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if not user or user.unit != "PACD":
-        return HttpResponseForbidden("Access denied. PACD users only.")
-
-    return render(request, "app/pacd_transactions.html", {"user": user})
 
 def pacd_dashboard(request):
     username = request.session.get('username')
@@ -82,18 +57,6 @@ def pacd_dashboard(request):
         return HttpResponseForbidden("Access denied. PACD users only.")
 
     return render(request, "app/pacd_dashboard.html", {"user": user})
-def unit_transactions(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if user.unit == "PACD":
-        return redirect("pacd-dashboard")
-    
-    return render(request, "app/unit_transactions.html", {"user": user})
 
 def unit_dashboard(request):
     username = request.session.get('username')
@@ -174,3 +137,11 @@ def reports_page(request):
         return redirect("login")
 
     return render(request, "app/reports.html", {'user':user})
+
+def transaction(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not user:
+        return redirect('login')
+    return render(request, 'app/transaction.html', {'user':user})

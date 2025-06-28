@@ -17,7 +17,7 @@ class ClientDetailsForm(forms.ModelForm):
     client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
     client_firstname = forms.CharField(required=True, label="First Name", widget=forms.TextInput(attrs={'placeholder': 'Pangalan'}))
     client_lastname = forms.CharField(required=True, label="Last Name", widget=forms.TextInput(attrs={'placeholder': 'Apelyido'}))
-    client_contact = forms.CharField(min_length=10, max_length=11, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
+    client_contact = forms.CharField(max_length=11, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
 
     class Meta:
         model = ClientDetails
