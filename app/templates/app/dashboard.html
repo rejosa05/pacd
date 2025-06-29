@@ -1,0 +1,126 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Transactions {% endblock %}
+
+{% block content %}
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo"/>
+        </div>
+
+        <div class="menu">
+            <a href="" class="menu-item active">
+                <i class="fas fa-home icon"></i> Dashboard
+            </a>
+            <a href="{% url 'transactions' %}" class="menu-item">
+                <i class="fas fa-exchange-alt icon"></i> Transactions
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users icon"></i> Customers
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-line icon"></i> Analytics
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cog icon"></i> Settings
+            </a>
+        </div>
+
+        <div class="support-box">
+            <h3 class="support-title">Need help?</h3>
+            <p class="support-text">Our support team is just a click away.</p>
+            <button class="support-button">Contact Support</button>
+        </div>
+    </div>
+</div>
+<nav class="navbar">
+    <div class="navbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars icon-gray"></i>
+        </button>
+        <h1 class="navbar-title">{{ user.unit }} Transaction</h1>
+    </div>
+    
+    <div class="navbar-right">
+        <div class="notification-container">
+            <button class="notification-button">
+                <i class="fas fa-bell icon-gray"></i>
+            </button>
+            <span class="notification-badge"></span>
+        </div>
+        
+        <div class="profile">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/52a9964b-98e3-4213-9b7d-f2a9624b66a7.png" 
+                 alt="User profile picture with neutral background" 
+                 class="profile-img" 
+                 onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93cc de5887/image/0968cd8f-5f55-4551-a912-17f1ca55b782.png'">
+            <span class="profile-name">{{ user.first_name }} {{ user.last_name }} ({{ user.position }})</span>
+            <button class="notification-button">
+                <a class="sign-out" href="{% url 'logout' %}"> <i class="fas fa-sign-out icon-red" title="Log out"></i> </a>
+            </button>
+        </div>
+    </div>
+</nav>
+<main class="main">
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3> <i class="fas fa-users icon"></i> Transactions</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-transactions"></span>
+                <div class="badge badge-red"><span id="percent-add"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-check icon"></i> Completed</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-completed"> </span>
+                <div class="badge badge-green"><span id="percent-completed"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-user-md icon"></i> RD/ARD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-rd"> </span>
+                <div class="badge badge-blue"><span id="percent-rd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-gears icon"></i> MSD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-msd"> </span>
+                <div class="badge badge-blue"><span id="percent-msd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-medkit icon"></i> LHSD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-lhsd"> </span>
+                <div class="badge badge-blue"><span id="percent-lhsd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-check icon"></i> RLED</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-rled"> </span>
+                <div class="badge badge-blue"><span id="percent-rled"></span></div>
+            </div>
+        </div>
+    </div>
+
+<div class="transaction-panel">
+    <div class="panel-header">
+        <div class="chart-box">
+          <h2>Daily Output</h2>
+          <canvas id="dailyOutputChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h2>Monthly Output</h2>
+          <canvas id="monthlyOutputChart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

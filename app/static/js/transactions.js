@@ -1,6 +1,5 @@
-
-function fetchPendingClients(page = 1, perPage = 4) {
-    fetch(pendingClientsUrl, {
+function fetchTransactions(page = 1, perPage = 4) {
+    fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
@@ -10,8 +9,12 @@ function fetchPendingClients(page = 1, perPage = 4) {
         clientList.innerHTML = '';
         paginationControls.innerHTML = '';
         const counts = data.total;
+        const userunit = data.account;
 
+        console.log(userunit)
         document.getElementById('total-transactions').textContent = counts['totalTransaction'] || 0;
+        document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;
+        document.getElementById('total-skipped').textContent = counts['totalSkipped'] || 0;
 
         let priorityClients = data.pending_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');
@@ -57,12 +60,16 @@ function fetchPendingClients(page = 1, perPage = 4) {
                             <button class="icon-button text-blue" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
                                 <i class="fa fa-check"></i>
                             </button>
-                            <button class="forward-btn" title="Forward" onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
-                                <i class="fa fa-mail-forward"></i>
-                            </button>
-                            <button class="icon-button text-red" title="Skipped" onclick="skipClient('${client.client_id}')">
-                                <i class="fa fa-times"></i>
-                            </button>
+                           ${userunit === 'PACD' ? `
+                <button class="forward-btn" title="Forward"
+                    onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
+                    <i class="fa fa-mail-forward"></i>
+                </button>
+                <button class="icon-button text-red" title="Skipped"
+                    onclick="skipClient('${client.client_id}')">
+                    <i class="fa fa-times"></i>
+                </button>
+            ` : ''}
                         </div>
                 </div>
             `;
@@ -96,4 +103,8 @@ function fetchPendingClients(page = 1, perPage = 4) {
     });
 }
 
-fetchPendingClients();
+if (path.includes(transaction)) {
+    fetchTransactions();
+}
+
+

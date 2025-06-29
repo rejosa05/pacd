@@ -2,9 +2,7 @@ from .helper import *
 from .routing import *
 from .display_view import *
 from .transactions import *
-from .pacd_dashboard import *
-from .unit_transactions import *
-from .unit_dashboard import *
+from .dashboard import *
 from .notifications import *
 from .viewdata import *
 from .graph import *

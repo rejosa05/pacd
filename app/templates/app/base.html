@@ -10,17 +10,11 @@
     <link rel="icon" href="{% static 'images/logo.png' %}">
     <script>
         window.dashboardConfig = {
-            unitPendingUrl: "{% url 'unit-pending' %}", // unit pending list
-            unitResolved: "{% url 'unit-resolved' %}", // unit resolved list
-            unitDashboard: "{% url 'unit-dashboard' %}", // unit dashboard page
-            transactionHistoryUnit: "{% url 'transaction-history-unit' %}", // unit transaction history
 
-            pendingClientsUrl: "{% url 'pending_clients' %}", // pending clients
+            f_transactions: "{% url 'f_transactions' %}",
+            f_dashboard: "{% url 'f_dashboard' %}",
             transactionHistory: "{% url 'transaction-history' %}",  // resolved client list per day
 
-            pacdDashboard: "{% url 'pacd-dashboard' %}", // pacd dashboard page
-            servedListAll: "{% url 'transaction-history-all' %}", // transaction history all
-            totalCounts: "{% url 'total-counts'%}",
 
             queViewUrl: "{% url 'que-view' %}", // que display on screen
             displayQueUrl: "{% url 'display-page' %}", // display page
@@ -52,14 +46,13 @@
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
             reports: "{% url 'reports' %}", // display reports in PACD user
+            transaction: "{% url 'transactions' %}",
+            dashboard: "{% url 'dashboard' %}",
 
             csrfToken: "{{ csrf_token }}"
         };
     </script>
-    <script src="{% static 'js/transaction/pacd-transactions.js' %}"></script>
-    <script src="{% static 'js/transaction/unit-transactions.js' %}"></script>
-    <script src="{% static 'js/dashboard/pacd-dashboard.js' %}"></script>
-    <script src="{% static 'js/dashboard/unit-dashboard.js' %}"></script>
+    <script src="{% static 'js/helper/helper.js' %}"></script>
     <script src="{% static 'js/actions/pacd-action.js' %}"></script>
     <script src="{% static 'js/actions/unit-action.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -68,6 +61,7 @@
     <script src="{% static 'js/display.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>
     <script src="{% static 'js/reports.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/transactions.js' %}"></script>
 </head>
 <body>

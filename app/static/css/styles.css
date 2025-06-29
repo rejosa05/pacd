@@ -171,6 +171,7 @@ h1, h2, h3 {
     flex-direction: column;
     gap: 12px;
 }
+
 .menu-item {
     display: flex;
     align-items: center;
@@ -180,43 +181,264 @@ h1, h2, h3 {
     text-decoration: none;
     transition: background 0.3s;
 }
+
 .menu-item:hover {
     background-color: var(--secondary-bg)
 }
+
 .menu-item.active {
     background: var(--primary-bg);
     font-weight: 600;
     color: var(--primary-color-text);
 }
+
 .icon {
     margin-right: 12px;
 }
+
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px;
     margin-bottom: 24px;
 }
+
 .card {
     background-color: #ffffff;
     padding: 24px;
     border-radius: 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .card-value-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
 }
+
 .card-value {
     font-size: 28px;
     font-weight: bold;
     color: #1F2937;
 }
+
 .card-subtext {
     font-size: 14px;
     color: #6B7280;
 }
+
+.badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.badge-green {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.badge-blue {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+.badge-red {
+    background-color: #fedbdb;
+    color: #af1e1e;
+}
+
+/* Panel */
+.transaction-panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.button-blue {
+    background-color: #3B82F6;
+    color: white;
+    transition: background 0.3s;
+}
+
+.button-blue:hover {
+    background-color: #2563EB;
+}
+
+.icon-margin-right {
+    margin-right: 8px;
+}
+
+/* Transactions */
+.transaction-list {
+    border-top: 1px solid #E5E7EB;
+}
+
+.transaction-card {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-bottom: 1px solid #a9a9a9;
+}
+
+.transaction-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.transaction-status-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.transaction-id {
+    font-weight: 500;
+    color: #1F2937;
+    margin-right: 12px;
+}
+
+.status {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.status-blue {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.status-yellow {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.status-green {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.status-red {
+    background-color: #f6abab;
+    color: #4E0707;
+}
+
+.status-purple {
+    background-color: #ccbcea; 
+    color: #6f42c1;
+}
+
+.status-cyan {
+    background-color: #b6f5ff; 
+    color: #17a2b8;
+}
+
+.status-gray {
+    background-color: #d0d0d0; 
+    color: #646464;
+}
+
+.text-blue {
+    color: #3B82F6;
+}
+
+.text-red {
+    color: #EF4444;
+}
+
+.transaction-description {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+.transaction-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.timestamp {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+.icon-button {
+    padding: 8px;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.icon-button:hover {
+    background-color: #F3F4F6;
+}
+
+
+/* Footer */
+.panel-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-text {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-button {
+    padding: 4px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    background-color: white;
+    color: #4B5563;
+    cursor: pointer;
+}
+
+.pagination-button:hover {
+    background-color: #F3F4F6;
+}
+
+.pagination-button.active {
+    background-color: #F3F4F6;
+    color: #1F2937;
+}
+
 
 @media (max-width: 768px) {
     .sidebar {
@@ -839,22 +1061,6 @@ tbody tr:nth-child(even):hover {
     fill: #666;
 }
 
-.regular {
-    font-size: 8rem;
-    font-weight: 900;
-    color: #3a86ff;
-    letter-spacing: 6px;
-    margin-bottom: 10px;
-}
-
-.priority {
-    font-size: 8rem;
-    font-weight: 900;
-    color: #ff3c78;
-    letter-spacing: 6px;
-    margin-bottom: 10px;
-}
-
 .bottom-box {
     padding: 20px 30px;
     background: #fefefe;
@@ -1033,75 +1239,3 @@ tbody tr:nth-child(even):hover {
       flex-grow: 1;
       min-width: 220px;
     }
-@media (max-width: 992px) {
-    .dual-charts {
-        flex-direction: column;
-    }
-    canvas {
-        height: 280px !important;
-    }
-}
-
-  /* Responsive adjustments */
-  @media (max-width: 900px) {
-    .top-boxes {
-      justify-content: space-around;
-    }
-    .dual-tables {
-      flex-direction: column;
-    }
-    .table-section {
-      flex: 1 1 100%;
-      margin-bottom: 25px;
-    }
-    .info-box {
-      flex: 1 1 100%;
-    }
-  }
-
-
-@media (max-width: 992px) {
-    main {
-        flex-direction: column;
-    }
-    .pending-transactions {
-        flex: none;
-        width: 100%;
-    }
-    .right-panel {
-        flex: none;
-        width: 100%;
-        gap: 1.5rem;
-    }
-}
-
-
-@media (max-width: 900px) {
-    .container {
-        flex-direction: column;
-        }
-    .image-side {
-        height: 200px;
-        flex: none;
-    }
-
-    .image-text {
-        font-size: 1.4rem;
-        left: 20px;
-        bottom: 15px;
-        max-width: 90%;
-    }
-}
-
-@media (max-width: 480px) {
-    .form-side {
-        padding: 2rem 2rem;
-    }
-    .form-side h1 {
-        font-size: 2rem;
-    }
-    button {
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-    }
-}

@@ -4,221 +4,6 @@
 {% block title %}{{user.unit}} Transactions {% endblock %}
 
 {% block content %}
-<style>
-
-
-/* Main Content */
-
-
-/* Badges */
-.badge {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-
-.badge-green {
-    background-color: #D1FAE5;
-    color: #065F46;
-}
-
-.badge-blue {
-    background-color: #DBEAFE;
-    color: #1E40AF;
-}
-
-/* Panel */
-.transaction-panel {
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
-
-.panel-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid #E5E7EB;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.button {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.button-blue {
-    background-color: #3B82F6;
-    color: white;
-    transition: background 0.3s;
-}
-
-.button-blue:hover {
-    background-color: #2563EB;
-}
-
-.icon-margin-right {
-    margin-right: 8px;
-}
-
-/* Transactions */
-.transaction-list {
-    border-top: 1px solid #E5E7EB;
-}
-
-.transaction-card {
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border-bottom: 1px solid #a9a9a9;
-}
-
-.transaction-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-.transaction-status-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.transaction-id {
-    font-weight: 500;
-    color: #1F2937;
-    margin-right: 12px;
-}
-
-.status {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.status-blue {
-    background-color: #DBEAFE;
-    color: #1D4ED8;
-}
-
-.status-yellow {
-    background-color: #FEF3C7;
-    color: #92400E;
-}
-
-.status-green {
-    background-color: #D1FAE5;
-    color: #065F46;
-}
-
-.status-red {
-    background-color: #f6abab;
-    color: #4E0707;
-}
-
-.status-purple {
-    background-color: #ccbcea; 
-    color: #6f42c1;
-}
-
-.status-cyan {
-    background-color: #b6f5ff; 
-    color: #17a2b8;
-}
-
-.status-gray {
-    background-color: #d0d0d0; 
-    color: #646464;
-}
-
-.transaction-description {
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.transaction-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.timestamp {
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.icon-button {
-    padding: 8px;
-    border: none;
-    background: none;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.icon-button:hover {
-    background-color: #F3F4F6;
-}
-
-.text-blue {
-    color: #3B82F6;
-}
-
-.text-red {
-    color: #EF4444;
-}
-
-/* Footer */
-.panel-footer {
-    padding: 16px 24px;
-    border-top: 1px solid #E5E7EB;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.footer-text {
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.pagination {
-    display: flex;
-    gap: 8px;
-}
-
-.pagination-button {
-    padding: 4px 12px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #D1D5DB;
-    background-color: white;
-    color: #4B5563;
-    cursor: pointer;
-}
-
-.pagination-button:hover {
-    background-color: #F3F4F6;
-}
-
-.pagination-button.active {
-    background-color: #F3F4F6;
-    color: #1F2937;
-}
-
-
-</style>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-inner">
         <div class="logo-container">
@@ -226,10 +11,10 @@
         </div>
 
         <div class="menu">
-            <a href="#" class="menu-item">
+            <a href="{% url 'dashboard' %}" class="menu-item">
                 <i class="fas fa-home icon"></i> Dashboard
             </a>
-            <a href="#" class="menu-item active">
+            <a href="" class="menu-item active">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
             <a href="#" class="menu-item">
@@ -270,7 +55,7 @@
             <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/52a9964b-98e3-4213-9b7d-f2a9624b66a7.png" 
                  alt="User profile picture with neutral background" 
                  class="profile-img" 
-                 onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0968cd8f-5f55-4551-a912-17f1ca55b782.png'">
+                 onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93cc de5887/image/0968cd8f-5f55-4551-a912-17f1ca55b782.png'">
             <span class="profile-name">{{ user.first_name }} {{ user.last_name }} ({{ user.position }})</span>
             <button class="notification-button">
                 <a class="sign-out" href="{% url 'logout' %}"> <i class="fas fa-sign-out icon-red" title="Log out"></i> </a>
@@ -292,7 +77,7 @@
         <div class="card">
             <h3><i class="fas fa-check icon"></i> Total Completed</h3>
             <div class="card-value-row">
-                <span class="card-value">18</span>
+                <span class="card-value" id="total-completed"> </span>
                 <!-- <div class="badge badge-blue">Active</div> -->
             </div>
         </div>
@@ -300,7 +85,7 @@
         <div class="card">
             <h3> <i class="fas fa-exclamation-circle icon"></i> Total Skipped</h3>
             <div class="card-value-row">
-                <span class="card-value">2.3</span>
+                <span class="card-value" id="total-skipped"> </span>
                 <!-- <span class="card-subtext">minutes</span> -->
             </div>
         </div>
@@ -314,22 +99,8 @@
         </button> -->
     </div>
     <div class="transaction-list" id="pendingClientList">
-        <div class="transaction-card"  >
-            <div>
-                <div class="transaction-status-row">
-                    <span class="transaction-id">#TRX-7421</span>
-                    <span class="status status-blue">Processing</span>
-                </div>
-                <p class="transaction-description">Payment from John Smith - $245.00</p>
-            </div>
-            <div class="transaction-actions">
-                <span class="timestamp">5 min ago</span>
-                <button class="icon-button text-blue"><i class="fas fa-check"></i></button>
-                <button class="icon-button text-red"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
+        <!-- data fetch -->
     </div>
-
     <div class="panel-footer">
         <span class="footer-text">Showing 4 out of 18 transactions</span>
         <div class="pagination" id="paginationControls">

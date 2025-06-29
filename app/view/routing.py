@@ -44,33 +44,6 @@ def logout_view(request):
     logout(request)
     return redirect('login')
     
-
-def pacd_dashboard(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if not user or user.unit != "PACD":
-        return HttpResponseForbidden("Access denied. PACD users only.")
-
-    return render(request, "app/pacd_dashboard.html", {"user": user})
-
-def unit_dashboard(request):
-    username = request.session.get('username')
-
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if user.unit == "PACD":
-        return HttpResponseForbidden("Access denied. PACD users only.")
-
-    return render(request, "app/unit_dashboard.html", {"user": user})
-
     
 def add_account(request):
     if request.method == 'POST':
@@ -145,3 +118,12 @@ def transaction(request):
     if not user:
         return redirect('login')
     return render(request, 'app/transaction.html', {'user':user})
+
+def dashboard(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not user:
+        return redirect('login')
+    
+    return render(request, 'app/dashboard.html', {'user':user})

@@ -1,1 +1,0 @@
-default_app_config = 'PACD_Project.apps.YourAppConfig'

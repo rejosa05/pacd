@@ -2,9 +2,7 @@ from django.urls import path
 from .view.routing import *
 from .view.display_view import *
 from .view.transactions import *
-from .view.pacd_dashboard import *
-from .view.unit_transactions import *
-from .view.unit_dashboard import *
+from .view.dashboard import *
 from .view.actions import *
 from .view.notifications import *
 from .view.viewdata import *
@@ -23,18 +21,10 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
     
-
-    path('unit-dashboard', unit_dashboard, name="unit-dashboard"),
-    path('unit-pending/', unit_pending, name="unit-pending"),
-    path('transaction-history-unit/', transaction_history_all_unit, name="transaction-history-unit"),
-    path('unit-resolved/', unit_resolved_client, name="unit-resolved"),
     
-    path('pending_clients/', pending_clients, name='pending_clients'),
+    path('f_transactions/', f_transactions, name='f_transactions'),
+    path('f_dashboard', f_dashboard, name='f_dashboard'),
     path('transaction-history/', transaction_history, name="transaction-history"),
-
-    path('pacd-dashboard/', pacd_dashboard, name="pacd-dashboard"),
-    path('transaction-history-all/', transaction_history_all, name="transaction-history-all"),
-    path('total-counts', total_counts, name='total-counts'),
 
 
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
@@ -63,5 +53,6 @@ urlpatterns = [
 
     path('reports', reports_page, name='reports'),
     path('accountList', accountList, name="accountList"),
-    path('transactions', transaction, name="transactions")
+    path('transactions', transaction, name="transactions"),
+    path('dashboard', dashboard, name="dashboard")
 ]

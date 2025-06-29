@@ -157,15 +157,17 @@ function fetchMonthlyDataUnit() {
 }
 
 
-if (path.includes(pacdDashboard)) {
-    fetchDailyData();
-    fetchMonthlyData();
-}
+fetchDailyData();
+fetchMonthlyData();
+// if (path.includes(pacdDashboard)) {
+//     fetchDailyData();
+//     fetchMonthlyData();
+// }
 
-if (path.includes(unitDashboard)) {
-    fetchDailyDataUnit();
-    fetchMonthlyDataUnit();
-}
+// if (path.includes(unitDashboard)) {
+//     fetchDailyDataUnit();
+//     fetchMonthlyDataUnit();
+// }
 
 
 

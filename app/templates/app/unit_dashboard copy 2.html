@@ -1,0 +1,274 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Dashboard{% endblock %}
+
+{% block content %}
+<div class="app-container">
+    <nav class="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <span class="logo-text">{{ user.divisions }}</span>
+      </div>
+
+      <div class="user-profile">
+        <img src="https://placehold.co/40x40/1a73e8/ffffff?text={{ user.first_name|slice:":1"|upper }}" alt="User" class="user-avatar">
+        <div class="user-info">
+          <p class="user-name">{{ user.first_name }} {{ user.last_name }}</p>
+          <p class="user-role">{{user.position }}</p>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-button" title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out "><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+        </a>
+      </div>
+
+      <div class="nav-list">
+        <a href="" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home nav-icon"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <Home class="nav-icon" />
+            Dashboard
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users nav-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <Users class="nav-icon" />
+            Users
+        </a>
+        <a href="#" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart nav-icon"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
+            <BarChart class="nav-icon" />
+            Reports
+        </a>
+        <a href="#" class="nav-item">
+          <Settings class="nav-icon" />
+          Settings
+        </a>
+        <a href="#" class="nav-item">
+          <HelpCircle class="nav-icon" />
+          Help
+        </a>
+      </div>
+    </nav>
+    <main class="main-content">
+        <div class="content">
+          <div class="header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list header-icon"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
+                <h1 class="header-title">Client Transactions</h1>
+          </div>
+          <div class="card">            
+            <div class="table-container">
+              <table class="table" id="queueTable">
+                <thead>
+                  <tr>
+                    <th>Queue No. </th>
+                    <th>Full Name</th>
+                    <th>Gender</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        &nbsp;
+        <div class="content">
+          <div class="header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list header-icon"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
+                <h1 class="header-title">Client Transactions Resolved Today</h1>
+          </div>
+          <div class="card">            
+            <div class="table-container">
+              <table class="table" id="queueTable">
+                <thead>
+                  <tr>
+                    <th>Queue No. </th>
+                    <th>Full Name</th>
+                    <th>Gender</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal">
+          <div class="modal-header">
+            <h2 class="modal-title">Client Queue No. <span id="modal-queue-no"></span></h2>
+          </div>
+          <div class="modal-body">
+            <div class="form-group1">
+              <label class="form-label">Full Name:</label>
+              <span id="modal-fullname"></span>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Transactions Details:</label>
+              <span id="modal-transaction"></span>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Remarks:</label>
+              <textarea id="modal-remarks" class="form-input" rows="3"></textarea>
+            </div>
+            <div class="form-group1">
+              <label class="form-label">Resolution:</label>
+              <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
+                  CSM
+                </label>
+                <label>
+                  <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
+                  CSS
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-button cancel-button" onclick="closeModal()">
+              Cancel
+            </button>
+            <button class="modal-button save-button" onclick="saveModal()">
+              Resolved
+            </button>
+          </div>
+        </div>
+      </div>
+</div>
+
+<script>
+    let selectedClient = null;
+    let clientData = [];
+    const queueTable = document.getElementById('queueTable');
+
+    function openModal(index) {
+        const client = clientData[index];
+        if (!client) {
+            console.error("Client data not found for index:", index);
+            return;
+        }
+        selectedClient = client; // Store the selected client for later use
+        document.getElementById('modal-fullname').innerText = client.client_id__client_fullname;
+        document.getElementById('modal-transaction').innerText = client.transaction_details;
+        document.getElementById('modal-queue-no').innerText = client.client_id__client_queue_no;
+        document.getElementById('modal-remarks').value = ''; // Clear previous remarks
+        document.getElementById('csm-checkbox').checked = false; // Clear checkbox
+        document.getElementById('css-checkbox').checked = false;
+        document.getElementById('modalOverlay').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').style.display = 'none';
+        selectedClient = null;
+    }
+
+    function saveModal() {
+    if (!selectedClient) return;
+      console.log(selectedClient.client_id__id); // Log the client ID for debugging
+    const remarks = document.getElementById('modal-remarks').value;
+    const csmChecked = document.getElementById('csm-checkbox').checked;
+    const cssChecked = document.getElementById('css-checkbox').checked;
+
+    fetch("{% url 'update_division_log' %}", {
+    method: 'POST',
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: `client_id=${selectedClient.client_id__id}&remarks=${remarks}&csm=${csmChecked}&css=${cssChecked}`
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log(data.message);
+    fetchTodayData(); // Refresh the dashboard data
+})
+.catch(error => console.error('Error updating DivisionLog:', error));
+
+    closeModal();
+}
+
+    function fetchTodayData() {
+        fetch("{% url 'dashboard' %}", {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            clientData = data.client_details;
+
+            const tableBody = document.querySelector('#queueTable tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            clientData.forEach((client, index) => {
+                const row = document.createElement('tr');
+
+                const queueNoCell = document.createElement('td');
+                queueNoCell.class = 'queue-no-cell'; 
+                queueNoCell.textContent = client.client_id__client_queue_no;
+                row.appendChild(queueNoCell);
+
+                const nameCell = document.createElement('td');
+                nameCell.class = 'name-cell';
+                nameCell.textContent = client.client_id__client_fullname;
+                row.appendChild(nameCell);
+
+                const genderCell = document.createElement('td');
+                genderCell.className = 'gender-cell';
+                const gender = client.client_id__client_gender; // Access gender from client object
+                let genderIcon = '';
+                if (gender === 'Male') {
+                    genderIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale male-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>';
+                } else if (gender === 'Female') {
+                    genderIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale female-icon"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>';
+                }
+                genderCell.innerHTML = `
+                    ${genderIcon}
+                    <span class="gender-text">${gender}</span>
+                `;
+                row.appendChild(genderCell);
+
+                const typeCell = document.createElement('td');
+                typeCell.textContent = client.client_id__client_lane_type;
+                row.appendChild(typeCell);
+
+                const actionsCell = document.createElement('td');
+                actionsCell.className = 'actions-cell';
+                actionsCell.innerHTML = `
+                    <div class="actions-container">
+                      <button class="action-button1 update-button" title="Update" onclick="openModal(${index})">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-edit"><path d="M11 4h2a1 1 0 0 1 1 1v2"></path><path d="M4 20h16"></path><path d="M4 16h16"></path><path d="M4 12h16"></path></svg>
+                        </button>
+                    </div>
+                `;
+                row.appendChild(actionsCell); 
+
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching today\'s data:', error));
+    }
+
+    setInterval(fetchTodayData, 5000);
+    fetchTodayData();
+    </script>
+{% endblock %}

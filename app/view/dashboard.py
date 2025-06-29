@@ -1,10 +1,10 @@
-from django.contrib.auth.decorators import login_required
 from ..models import ClientDetails, DivisionLog, AccountDetails
+from ..utils.utils import *
 from django.utils import timezone
 from django.http import JsonResponse
 from .helper import clean_text
 
-def f_transactions(request):
+def f_dashboard(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
         user = request.session.get('username')
@@ -28,11 +28,9 @@ def f_transactions(request):
                     'client_gender': client.client_gender,
                 })
 
-            total = {
-                'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
-                'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
-                'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
-            }
+            total = get_pacd_totals(today)
+            percentage = get_percentage(total)
+
         else:
             pending_clients = DivisionLog.objects.filter(unit=account.unit, status='Processing', date__date=today)
             for client in pending_clients:
@@ -52,7 +50,7 @@ def f_transactions(request):
             }
         
         
-        return JsonResponse({'pending_clients': pending_clients_count, 'total':total, 'account': account.unit})
+        return JsonResponse({'pending_clients': pending_clients_count, 'total':total, 'percentage':percentage})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
 
@@ -77,4 +75,5 @@ def transaction_history(request):
         return JsonResponse({'resolved_clients': resolved_client_all})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
+    
     
