@@ -1,6 +1,20 @@
 from ..models import DivisionLog, ClientDetails
 from django.utils import timezone
 
+def get_clients():
+    clients = DivisionLog.objects.filter().order_by('-client_id')
+    getClients = []
+    for client in clients:
+        getClients.append({
+            'client_id': f"#CTS-{client.client_id.id}",
+            'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
+            'client_division': client.division,
+            'client_unit': client.unit,
+            'client_status': client.status,
+            'date_served': client.date.isoformat() if client.date else None,
+        })
+    return getClients
+
 def get_pacd_clients(date):
     pending_clients = ClientDetails.objects.filter(
         client_status='Pending',

@@ -108,19 +108,41 @@
             </div>
         </div>
     </div>
-
-<div class="transaction-panel">
-    <div class="panel-header">
-        <div class="chart-box">
-          <h2>Daily Output</h2>
-          <canvas id="dailyOutputChart"></canvas>
-        </div>
-        <div class="chart-box">
-          <h2>Monthly Output</h2>
-          <canvas id="monthlyOutputChart"></canvas>
+    <div class="transaction-panel">
+        <div class="panel-header">
+            <div class="chart-box">
+            <h2>Daily Output</h2>
+            <canvas id="dailyOutputChart"></canvas>
+            </div>
+            <div class="chart-box">
+            <h2>Monthly Output</h2>
+            <canvas id="monthlyOutputChart"></canvas>
+            </div>
         </div>
     </div>
-</div>
+    <div class="table-panel">
+        <div class="table-header">
+            <h2>Transactions</h2>
+           <div class="table-container">
+          <table id="clientList">
+          <thead>
+            <tr>
+              <th>Transactions ID</th>
+              <th>Client Fullname</th>
+              <th>Division</th>
+              <th>Unit</th>
+              <th>Status</th>
+              <th>Date Served</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        </div >
+        </div>
+    </div>
+</main>
 
 
 {% endblock %}

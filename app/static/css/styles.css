@@ -249,6 +249,29 @@ h1, h2, h3 {
     color: #af1e1e;
 }
 
+/* Table */
+
+.table-panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.table-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #E5E7EB;
+    height: 500px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 /* Panel */
 .transaction-panel {
     background-color: #ffffff;
@@ -691,11 +714,7 @@ h2 {
     background: #002e00;
 }
 
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
+#clientList th,
 #accountList thead th,
 #pendingClientQueueTable thead th,
 #transactionHistoryAll thead th,
