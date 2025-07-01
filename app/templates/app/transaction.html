@@ -189,6 +189,39 @@
     </div>
 </main>
 
+<div class="modal-overlay" id="approvedClient-unit" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" style="display: none;">
+    <div class="modal-view">    
+      <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
+      <h2>Approved Client</h2>
+      <div class="">
+        <div class="approved-form" novalidate>
+          <label for="id">Client ID</label>
+          <span id="client-id"></span>
+          <label for="full-name">Full Name</label>
+          <span id="client-fullname"></span>
+          <label for="trnsaction-type">Transactions Type</label>
+          <span id="unit-transaction-type"></span>
+          <label>Transactions Details</label>
+          <span id="unit-transactions-details"></span>
+          <label>Remarks</label>
+          <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+          <label class="form-label">CSS/CSM:</label>
+            <div class="checkbox-group">
+                <label>
+                  <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="CSM">
+                  CSM
+                </label>
+                <label>
+                  <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
+                  CSS
+                </label>
+              </div>
+            <button type="submit" onclick="saveActionResolved()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggle');

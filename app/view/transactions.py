@@ -42,6 +42,7 @@ def f_transactions(request):
                     'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                     'client_lane_type': client.client_id.client_lane_type,
                     'client_transaction_type': client.transaction_type,
+                    'client_transaction_details': client.transaction_details,
                     'client_status': client.status
                 })
             
@@ -52,7 +53,11 @@ def f_transactions(request):
             }
         
         
-        return JsonResponse({'pending_clients': pending_clients_count, 'total':total, 'account': account.unit})
+        return JsonResponse({
+            'pending_clients': pending_clients_count,
+            'total':total, 
+            'account': account.unit
+            })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
 

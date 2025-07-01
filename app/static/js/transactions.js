@@ -11,7 +11,6 @@ function fetchTransactions(page = 1, perPage = 4) {
         const counts = data.total;
         const userunit = data.account;
 
-        console.log(userunit)
         document.getElementById('total-transactions').textContent = counts['totalTransaction'] || 0;
         document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;
         document.getElementById('total-skipped').textContent = counts['totalSkipped'] || 0;
@@ -55,22 +54,30 @@ function fetchTransactions(page = 1, perPage = 4) {
                         </div>
                         <p class="transaction-description"> ${client.client_fullname} Que No. ${client.client_queue_no} </p>
                     </div>
-                        <div class="transaction-actions">
-                            <span class="timestamp">5 min ago</span>
-                            <button class="icon-button text-blue" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
-                                <i class="fa fa-check"></i>
-                            </button>
+                        <div class="transaction-actions">   
                            ${userunit === 'PACD' ? `
-                <button class="forward-btn" title="Forward"
-                    onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
-                    <i class="fa fa-mail-forward"></i>
-                </button>
-                <button class="icon-button text-red" title="Skipped"
-                    onclick="skipClient('${client.client_id}')">
-                    <i class="fa fa-times"></i>
-                </button>
-            ` : ''}
-                        </div>
+                                <span class="timestamp">5 min ago</span>
+                                <button class="icon-button text-blue" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
+                                    <i class="fa fa-check"></i>
+                                </button>
+                                <button class="forward-btn" title="Forward"
+                                    onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
+                                    <i class="fa fa-mail-forward"></i>
+                                </button>
+                                <button class="icon-button text-red" title="Skipped"
+                                    onclick="skipClient('${client.client_id}')">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            ` : `
+                                <span class="timestamp">5 min ago</span>
+                                <button class="icon-button text-blue" title="Resolved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_queue_no}", "${client.client_id}", "${client.client_transaction_details}")'>
+                                    <i class="fa fa-check-circle"></i>
+                                </button>                 
+                                <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            `}
+                    </div>
                 </div>
             `;
             clientList.appendChild(card);

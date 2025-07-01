@@ -79,6 +79,8 @@
                 <div class="badge badge-green"><span id="percent-completed"></span></div>
             </div>
         </div>
+
+        {% if user.unit == 'PACD' %}
         <div class="card">
             <h3><i class="fas fa-user-md icon"></i> RD/ARD</h3>
             <div class="card-value-row">
@@ -107,6 +109,23 @@
                 <div class="badge badge-blue"><span id="percent-rled"></span></div>
             </div>
         </div>
+        {% else %}
+        <div class="card">
+            <h3><i class="fas fa-check icon"></i> CSM</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-csm"> </span>
+                <div class="badge badge-blue"><span id="percent-csm"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-check icon"></i> CSS </h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-css"> </span>
+                <div class="badge badge-blue"><span id="percent-css"></span></div>
+            </div>
+        </div>
+        {% endif %}
+        
     </div>
     <div class="transaction-panel">
         <div class="panel-header">
@@ -143,6 +162,15 @@
         </div>
     </div>
 </main>
+
+<div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+        <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+        <h2>Client Details</h2>
+        <dl id="client-details-list">
+        </dl>
+    </div>
+</div>
 
 
 {% endblock %}

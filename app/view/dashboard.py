@@ -12,25 +12,17 @@ def f_dashboard(request):
 
         if not account:
             return JsonResponse({'message':'User not Found'}, status=404)
+        accUnit = account.unit
         
-        pending_clients_count = []
-        
-        if account.unit == 'PACD':
-            getClients = get_clients()
-            total = get_pacd_totals(today)
-            percentage = get_percentage(total)
-        else:            
-            total = {
-                'totalTransaction': DivisionLog.objects.filter(unit=account.unit, date__date=today).count(),
-                'totalCompleted': DivisionLog.objects.filter(unit=account.unit, status='Completed', date__date=today).count(),
-                'totalSkipped': DivisionLog.objects.filter(unit=account.unit, status='Skipped', date__date=today).count()
-            }
-        
+        getClients = get_clients(accUnit)
+        total = get_totals(today, accUnit)
+        percentage = get_percentage(total)
+
         return JsonResponse({
-            'pending_clients': pending_clients_count, 
             'total':total, 
             'percentage':percentage,
-            'getClients': getClients
+            'getClients': getClients,
+            'account': account.unit
             })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)

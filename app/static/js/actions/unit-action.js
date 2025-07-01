@@ -32,15 +32,15 @@ function approvedUnit(name, type, que, id, details) {
     clientId = "#CT"+id+"-"+que;
     document.getElementById('client-id').innerText = clientId;
     document.getElementById('client-fullname').innerText = name;
-    document.getElementById('transaction-type').innerText = type;
-    document.getElementById('transactions-details').innerText = details;
+    document.getElementById('unit-transaction-type').innerText = type;
+    document.getElementById('unit-transactions-details').innerText = details;
     document.getElementById('approvedClient-unit').style.display = 'flex';
 }
 
 function saveActionResolved() {
-    const remarks = document.getElementById('approved-remarks');
-    const csmChecked = document.getElementById('csm-checkbox');
-    const cssChecked = document.getElementById('css-checkbox');
+    const remarks = document.getElementById('unit-approved-remarks');
+    const csmChecked = document.getElementById('unit-csm-checkbox');
+    const cssChecked = document.getElementById('unit-css-checkbox');
 
     if (!remarks.value) { 
         alert('please do not leave blanks !!!');
@@ -71,5 +71,5 @@ function saveActionResolved() {
         alert('succefully catered!!!')
         approvedUnitClose();
     })
-    .catch(error => console.error('Error resolved client:', error));
+    console.log(1)
 }

@@ -120,3 +120,39 @@ function saveApprovedClientByPACD() {
         closedApproved();
     })
 }
+
+
+function viewClientDetails(id) {
+    fetch(`${viewCLient}${id}/`)
+        .then(response => {
+            if (!response.ok) throw new Error('Client not found');
+            return response.json();
+        })
+        
+        .then(client => {
+            const userDetailsList = document.getElementById('client-details-list');
+            const detailsOverlay = document.getElementById('view-details-modal');
+            const modal = detailsOverlay.querySelector('.modal-view');
+
+            userDetailsList.innerHTML = `
+                <dt>Client ID:</dt><dd> #CT${client.client_id}</dd>
+                <dt>Full Name:</dt><dd>${client.client_fullname}</dd>
+                <dt>Company/Org Name:</dt><dd>${client.client_org}</dd>
+                <dt>Gender:</dt><dd>${client.client_gender}</dd>
+                <dt>Lane Type:</dt><dd>${client.client_lane_type}</dd>
+                <dt>Transaction Type:</dt><dd>${client.client_transaction_type}</dd>
+                <dt>Transaction Details:</dt><dd>${client.client_transaction_details}</dd>
+                <dt>Division:</dt><dd>${client.client_division}</dd>
+                <dt>Unit:</dt><dd>${client.client_unit}</dd>
+                <dt>Status:</dt><dd>${client.client_status}</dd>
+                <dt>Date Created:</dt><dd>${formatDateTime(client.client_created)}</dd>
+                <dt>Date Forwarded:</dt><dd>${formatDateTime(client.client_forwarded)}</dd>
+                <dt>Date Resolved:</dt><dd>${formatDateTime(client.client_resolved)}</dd>
+                <dt>Remarks:</dt><dd>${client.client_remarks}</dd>
+                <dt>Forms:</dt><dd>${client.client_form}</dd>
+                <dt>Employee Catered:</dt><dd>${client.client_user}</dd>
+            `;
+            detailsOverlay.style.display = 'flex';
+            modal.focus();
+        })
+}

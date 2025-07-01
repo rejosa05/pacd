@@ -313,6 +313,22 @@ h1, h2, h3 {
     margin-right: 8px;
 }
 
+.regular {
+    font-size: 8rem;
+    font-weight: 900;
+    color: #3a86ff;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+}
+
+.priority {
+    font-size: 8rem;
+    font-weight: 900;
+    color: #ff3c78;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+}
+
 /* Transactions */
 .transaction-list {
     border-top: 1px solid #E5E7EB;
@@ -394,6 +410,11 @@ h1, h2, h3 {
 .text-red {
     color: #EF4444;
 }
+
+.text-green {
+    color: #005e2f;
+}
+
 
 .transaction-description {
     font-size: 14px;
@@ -781,7 +802,6 @@ tbody tr:nth-child(even):hover {
 .female-icon {
     color: #ff00dd;
 }
-
 
 .repeat-btn {
     border: none;

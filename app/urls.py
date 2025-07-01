@@ -39,7 +39,7 @@ urlpatterns = [
     path('update-details', update_user_details, name='update-details'),
 
     path('account/<int:id>/', get_account, name='get-account'),
-    path('pacd-dashboard/<int:id>/', get_client, name="get-client"),
+    path('dashboard/<int:id>/', get_client, name="get-client"),
     path('unit-dashboard/<int:id>/', get_client, name="get-client-unit"),
 
     path('update-client-status-served/', update_client_status_served, name='update-client-status-served'), # // served by PACD resolved
