@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{user.unit}} Transactions {% endblock %}
+{% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
 <div class="sidebar" id="sidebar">
@@ -17,8 +17,8 @@
             <a href="" class="menu-item active">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-users icon"></i> Customers
+            <a href="{% url 'account' %}" class="menu-item">
+                <i class="fas fa-user-plus icon"></i> Accounts
             </a>
             <a href="#" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Analytics
@@ -94,18 +94,12 @@
 <div class="transaction-panel">
     <div class="panel-header">
         <h2> Pending Transactions </h2>
-        <!-- <button class="button button-blue">
-            <i class="fas fa-plus icon-margin-right"></i> New Transaction
-        </button> -->
+        <div class="pagination" id="paginationControls"></div>
     </div>
     <div class="transaction-list" id="pendingClientList">
         <!-- data fetch -->
     </div>
-    <div class="panel-footer">
-        <span class="footer-text">Showing 4 out of 18 transactions</span>
-        <div class="pagination" id="paginationControls">
-        </div>
-    </div>
+
 </div>
 
 <!-- Approved modal from pacd -->

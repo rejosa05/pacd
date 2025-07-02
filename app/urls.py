@@ -7,6 +7,7 @@ from .view.actions import *
 from .view.notifications import *
 from .view.viewdata import *
 from .view.graph import *
+from .view.account import *
 
 urlpatterns = [
     path('', login_view, name="logins"), 
@@ -54,5 +55,6 @@ urlpatterns = [
     path('reports', reports_page, name='reports'),
     path('accountList', accountList, name="accountList"),
     path('transactions', transaction, name="transactions"),
-    path('dashboard', dashboard, name="dashboard")
+    path('dashboard', dashboard, name="dashboard"),
+    path('account', accounts, name="account"),
 ]

@@ -12,7 +12,7 @@ def login_view(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data.get("username")
-            user = AccountDetails.objects.filter(user=username).first()
+            user = AccountDetails.objects.filter(user=username, status='Active').first()
             if user:
 
                 request.session.flush()
@@ -127,3 +127,12 @@ def dashboard(request):
         return redirect('login')
     
     return render(request, 'app/dashboard.html', {'user':user})
+
+def accounts(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not user:
+        return redirect('login')
+    
+    return render(request, 'app/account.html', {'user':user})

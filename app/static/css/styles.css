@@ -183,7 +183,8 @@ h1, h2, h3 {
 }
 
 .menu-item:hover {
-    background-color: var(--secondary-bg)
+    background: var(--secondary-bg);
+    color: var(--primary-color-text);
 }
 
 .menu-item.active {
@@ -332,6 +333,7 @@ h1, h2, h3 {
 /* Transactions */
 .transaction-list {
     border-top: 1px solid #E5E7EB;
+    height: 370px;
 }
 
 .transaction-card {
@@ -401,6 +403,11 @@ h1, h2, h3 {
 .status-gray {
     background-color: #d0d0d0; 
     color: #646464;
+}
+
+.status-orange {
+    background-color: #ffe1b6; 
+    color: #b88d17;
 }
 
 .text-blue {

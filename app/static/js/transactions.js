@@ -1,4 +1,4 @@
-function fetchTransactions(page = 1, perPage = 4) {
+function fetchTransactions(page = 1, perPage = 3) {
     fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -92,7 +92,7 @@ function fetchTransactions(page = 1, perPage = 4) {
                 if (isActive) btn.classList.add('active');
                 if (isDisabled) btn.disabled = true;
                 btn.textContent = label;
-                btn.addEventListener('click', () => fetchPendingClients(label === 'Previous' ? currentPage - 1 : label === 'Next' ? currentPage + 1 : Number(label), perPage));
+                btn.addEventListener('click', () => fetchTransactions(label === 'Previous' ? currentPage - 1 : label === 'Next' ? currentPage + 1 : Number(label), perPage));
                 return btn;
             };
 

@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{user.unit}} Transactions {% endblock %}
+{% block title %}{{user.unit}} Dashboard {% endblock %}
 
 {% block content %}
 <div class="sidebar" id="sidebar">
@@ -17,8 +17,8 @@
             <a href="{% url 'transactions' %}" class="menu-item">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-users icon"></i> Customers
+            <a href="{% url 'account' %}" class="menu-item">
+                <i class="fas fa-user-plus icon"></i> Accounts
             </a>
             <a href="#" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Analytics
@@ -40,7 +40,7 @@
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title">{{ user.unit }} Transaction</h1>
+        <h1 class="navbar-title">{{ user.unit }} Dashboard </h1>
     </div>
     
     <div class="navbar-right">

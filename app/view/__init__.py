@@ -6,3 +6,4 @@ from .dashboard import *
 from .notifications import *
 from .viewdata import *
 from .graph import *
+from .account import *

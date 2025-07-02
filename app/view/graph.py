@@ -37,7 +37,7 @@ def get_monthly_data(request):
         .order_by('month')
     )
 
-    labels = [entry['month'].strftime('%Y-%m') for entry in data]
+    labels = [entry['month'].strftime('%B') for entry in data]
     values = [entry['count'] for entry in data]
 
     return JsonResponse({'labels': labels, 'values': values})

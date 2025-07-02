@@ -18,8 +18,14 @@ function fetchDailyData() {
                         borderColor: '#008000',
                         backgroundColor: 'rgba(0, 128, 0, 0.1)', // Slightly transparent fill
                         tension: 0.3,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
+                        pointRadius: 4,                  // Size of the point
+                        pointBorderWidth: 3,            // Border thickness of point
+                        pointBackgroundColor: '#ffffff', // Fill color of the point
+                        pointBorderColor: '#008000',     // Border color of the point
+                        pointHoverRadius: 8,                     // Size when hovered
+                        pointHoverBackgroundColor: '#008000',    // Fill color on hover
+                        pointHoverBorderColor: '#004d00',        // Border color on hover
+                        pointHoverBorderWidth: 3, 
                         fill: true                        
                     }]
                 },

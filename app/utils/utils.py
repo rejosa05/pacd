@@ -7,28 +7,19 @@ def get_clients(unit):
 
     if unit == 'PACD':
         clients = DivisionLog.objects.all().order_by('-client_id')
-        for client in clients:
-            getClients.append({
-                'id': client.id,
-                'client_id': f"#CTS-{client.client_id.id}",
-                'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
-                'client_division': client.division,
-                'client_unit': client.unit,
-                'client_status': client.status,
-                'date_served': client.date.isoformat() if client.date else None,
-            })
     else:
         clients = DivisionLog.objects.filter(unit=unit).order_by('-client_id')
-        for client in clients:
-            getClients.append({
-                'id': client.id,
-                'client_id': f"#CTS-{client.client_id.id}",
-                'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
-                'client_division': client.division,
-                'client_unit': client.unit,
-                'client_status': client.status,
-                'date_served': client.date.isoformat() if client.date else None,
-            })
+        
+    for client in clients:
+        getClients.append({
+            'id': client.id,
+            'client_id': f"#CTS-{client.client_id.id}",
+            'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
+            'client_division': client.division,
+            'client_unit': client.unit,
+            'client_status': client.status,
+            'date_served': client.date.isoformat() if client.date else None,
+        })
     return getClients
 
 def get_totals(date, unit):
