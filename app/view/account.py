@@ -1,5 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
+from ..utils.utils import *
 from django.contrib import messages
 from ..models import AccountDetails, SessionHistory
 from django.http import JsonResponse
@@ -24,6 +23,11 @@ def accountList(request):
             }
             for accounts in account
         ]
-        return JsonResponse({'accountList': accountList})
+
+        totalAccounts = get_total_accounts()
+        return JsonResponse({
+            'accountList': accountList,
+            'totalAccount': totalAccounts
+            })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)

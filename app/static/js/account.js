@@ -11,8 +11,15 @@ function fetchAccount(page = 1, perPage = 3) {
     .then(data => {
         const selectorList = document.querySelector('#accountList');
         const paginationControls = document.getElementById('paginationControls');
+        const countDisplay = document.getElementById('accountCount');
         selectorList.innerHTML = '';
         paginationControls.innerHTML = '';
+        const counts = data.totalAccount || {};
+
+        document.getElementById('total-accounts').textContent = counts['totalAccounts'] || 0;
+        document.getElementById('total-active').textContent = counts['totalActive'] || 0;
+        document.getElementById('total-inactive').textContent = counts['totalInactive'] || 0;
+        document.getElementById('total-for-approval').textContent = counts['totalForApproval'] || 0;
 
         let accounts = data.accountList || [];
 
@@ -27,9 +34,14 @@ function fetchAccount(page = 1, perPage = 3) {
             );
         });
 
+        const totalAccounts = accounts.length;
         const totalPages = Math.ceil(accounts.length / perPage);
         const start = (page - 1) * perPage;
         const paginatedClients = accounts.slice(start, start + perPage);
+
+        const showingStart = totalAccounts === 0 ? 0 : start + 1;
+        
+        countDisplay.textContent = `Showing ${showingStart} of ${totalAccounts} accounts`;
 
         function addAccount(acc, highlight = false) {
 

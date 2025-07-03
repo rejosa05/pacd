@@ -69,23 +69,30 @@
             
             <h3> <i class="fas fa-users icon"></i> Total Account</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-transactions"></span>
+                <span class="card-value" id="total-accounts"></span>
                 <!-- <div class="badge badge-green">+12%</div> -->
             </div>
         </div>
 
         <div class="card">
-            <h3><i class="fas fa-check icon"></i> Accounts</h3>
+            <h3><i class="fas fa-user-check icon"></i> Active</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-completed"> </span>
+                <span class="card-value" id="total-active"> </span>
                 <!-- <div class="badge badge-blue">Active</div> -->
             </div>
         </div>
 
         <div class="card">
-            <h3> <i class="fas fa-exclamation-circle icon"></i> Active</h3>
+            <h3> <i class="fas fa-user-clock icon"></i> For Approval</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-skipped"> </span>
+                <span class="card-value" id="total-for-approval"> </span>
+                <!-- <span class="card-subtext">minutes</span> -->
+            </div>
+        </div>
+        <div class="card">
+            <h3> <i class="fas fa-user-xmark icon"></i> Inactive</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-inactive"> </span>
                 <!-- <span class="card-subtext">minutes</span> -->
             </div>
         </div>
@@ -101,11 +108,8 @@
     <div class="transaction-list" id="accountList">
         <!-- data fetch -->
     </div>
-    <div class="panel-footer">
-      <input type="text"
-    id="accountSearch"
-    placeholder="Search account..."/>
-        <span class="footer-text">Showing 4 out of 18 transactions</span>
+    <div class="panel-footer"> <input type="text" id="accountSearch" placeholder="Search account..."/>
+        <div id="accountCount" class="footer-text"></div>
         <div class="pagination" id="paginationControls">
         </div>
     </div>

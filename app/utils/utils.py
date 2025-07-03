@@ -1,4 +1,4 @@
-from ..models import DivisionLog, ClientDetails
+from ..models import DivisionLog, ClientDetails, AccountDetails
 from django.utils import timezone
 
 def get_clients(unit):
@@ -59,3 +59,15 @@ def get_percentage(totals):
     }
 
     return getPercentage
+
+def get_total_accounts():
+    account = AccountDetails.objects.all()
+
+    totalAccounts = {
+        'totalAccounts': account.count(),
+        'totalActive': account.filter(status='Active').count(),
+        'totalForApproval': account.filter(status='For Approval').count(),
+        'totalInactive': account.filter(status='Inactive').count(),
+    }
+
+    return totalAccounts
