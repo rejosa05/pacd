@@ -17,15 +17,17 @@
             <a href="{% url 'transactions' %}" class="menu-item">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
+        {% if user.unit == 'PACD' %}
             <a href="{% url 'account' %}" class="menu-item">
                 <i class="fas fa-user-plus icon"></i> Accounts
             </a>
-            <a href="#" class="menu-item">
+        {% endif %}
+            <!-- <a href="#" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Analytics
             </a>
             <a href="#" class="menu-item">
                 <i class="fas fa-cog icon"></i> Settings
-            </a>
+            </a> -->
         </div>
 
         <div class="support-box">

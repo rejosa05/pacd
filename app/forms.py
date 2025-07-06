@@ -51,8 +51,8 @@ class LoginForm(forms.Form):
         return cleaned_data
 
 class AuthorizedPersonnelForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(),label="Password", required=True)
-    email = forms.CharField(widget=forms.EmailInput(attrs={'placeholder': 'example@gmail.com'}), required=True)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'org'}),label="Password", required=True)
+    email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'org', 'placeholder': 'example@gmail.com' }), required=True)
     class Meta:
         model = AccountDetails
         fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position', 'email', 'contact','created_by']

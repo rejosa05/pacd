@@ -156,3 +156,12 @@ function viewClientDetails(id) {
             modal.focus();
         })
 }
+
+
+function openAddAccount() {
+    document.getElementById('add-client').style.display = 'flex';
+}
+
+function closeAddAccount() {
+    document.getElementById('add-client').style.display = 'none';
+}

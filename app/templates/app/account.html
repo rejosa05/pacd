@@ -17,15 +17,17 @@
             <a href="{% url 'transactions' %}" class="menu-item">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
+        {% if user.unit == 'PACD' %}
             <a href="#" class="menu-item active">
                 <i class="fas fa-user-plus icon"></i> Accounts
             </a>
-            <a href="#" class="menu-item">
+        {% endif %}
+            <!-- <a href="#" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Analytics
             </a>
             <a href="#" class="menu-item">
                 <i class="fas fa-cog icon"></i> Settings
-            </a>
+            </a> -->
         </div>
 
         <div class="support-box">
@@ -101,7 +103,7 @@
 <div class="transaction-panel">
     <div class="panel-header">
         <h2> Account List </h2>
-        <button class="button button-blue">
+        <button class="button button-blue" onclick="openAddAccount()">
             <i class="fas fa-user-plus icon-margin-right"></i> Add Account
         </button>
     </div>
@@ -116,11 +118,39 @@
 </div>
 
 <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-view" tabindex="-1">
+    <div class="modal-view" tabindex="-1">
     <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
     <h2>User Details</h2>
     <dl id="user-details-list">
     </dl>
+    </div>
+</div>
+
+<div class="modal-overlay" id="add-client">
+    <div class="modal-view">
+        <button class="close-btn" aria-label="Close modal" onclick="closeAddAccount()">&times;</button>
+        <h2>Queue No. <span id="f-client-que"></span></h2>
+        {% csrf_token %}
+        <div class="approved-form" novalidate>
+        <label for="user">Email</label>
+        {{ form.email }}
+        <label for="password">Password</label>
+        {{ form.password }}
+        <label class="form-label" for="division">Division: </label>
+            <select class="form-option" name="divisions" id="f-division-select">
+                <option value="">Select Division</option>
+                <option value="MSD">MSD</option>
+                <option value="LHSD">LHSD</option>
+                <option value="RD/ARD">RD/ARD</option>
+                <option value="RLED">RLED</option>
+            </select>
+            <label class="form-label" for="unit">Unit:</label>
+            <select class="form-option" name="unit" id="f-unit-select" required>
+                <option value="">Select Unit</option>
+            </select>
+            <button type="submit" onclick="">Save</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -170,6 +200,8 @@
 
     window.addEventListener('load', checkScreenSize);
     window.addEventListener('resize', checkScreenSize);
+
+    
 </script>
 
 

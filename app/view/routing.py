@@ -78,30 +78,6 @@ def add_account(request):
     
     return render(request, 'app/account.html', {'form': form, 'user': user})
 
-def accountList(request):
-    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        account = AccountDetails.objects.filter().order_by('-date_created')
-        accountList = [
-            {
-                'id': accounts.id,
-                'first_name': accounts.first_name,
-                'last_name': accounts.last_name,
-                'position': accounts.position,
-                'divisions': accounts.divisions,
-                'unit': accounts.unit,
-                'email': accounts.email,
-                'contact': accounts.contact,
-                'user': accounts.user,
-                'password': accounts.password,
-                'status': accounts.status,
-                'date_created': accounts.date_created.isoformat() if accounts.date_created else None,
-            }
-            for accounts in account
-        ]
-        return JsonResponse({'accountList': accountList})
-    else:
-        return JsonResponse({'message': 'Invalid request'}, status=400)
-
 def reports_page(request):
     username = request.session.get('username')
     user = AccountDetails.objects.filter(user=username).first()
@@ -135,4 +111,8 @@ def accounts(request):
     if not user:
         return redirect('login')
     
-    return render(request, 'app/account.html', {'user':user})
+    form = AuthorizedPersonnelForm()
+    return render(request, 'app/account.html', {
+        'user':user,
+        'form': form
+        })
