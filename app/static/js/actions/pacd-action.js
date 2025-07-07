@@ -165,3 +165,17 @@ function openAddAccount() {
 function closeAddAccount() {
     document.getElementById('add-client').style.display = 'none';
 }
+
+function saveAccount(){
+    const division = document.getElementById('division-select').value;
+    const unit = document.getElementById('unit-select').value;
+    fetch(saveNewAccount, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+    })
+    closeAddAccount();
+}

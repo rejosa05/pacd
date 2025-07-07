@@ -22,12 +22,12 @@
                 <i class="fas fa-user-plus icon"></i> Accounts
             </a>
         {% endif %}
-            <!-- <a href="#" class="menu-item">
-                <i class="fas fa-chart-line icon"></i> Analytics
+            <a href="{% url 'reports' %}" class="menu-item">
+                <i class="fas fa-chart-line icon"></i> Reports
             </a>
             <a href="#" class="menu-item">
                 <i class="fas fa-cog icon"></i> Settings
-            </a> -->
+            </a>
         </div>
 
         <div class="support-box">
@@ -42,7 +42,7 @@
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title">{{ user.unit }} Transaction</h1>
+        <h1 class="navbar-title">{{ user.unit }} Accounts </h1>
     </div>
     
     <div class="navbar-right">
@@ -103,6 +103,9 @@
 <div class="transaction-panel">
     <div class="panel-header">
         <h2> Account List </h2>
+         {% for message in messages %}
+            <p style="color: red"> {{ message }} </p>
+        {% endfor %}
         <button class="button button-blue" onclick="openAddAccount()">
             <i class="fas fa-user-plus icon-margin-right"></i> Add Account
         </button>
@@ -129,27 +132,44 @@
 <div class="modal-overlay" id="add-client">
     <div class="modal-view">
         <button class="close-btn" aria-label="Close modal" onclick="closeAddAccount()">&times;</button>
-        <h2>Queue No. <span id="f-client-que"></span></h2>
-        {% csrf_token %}
-        <div class="approved-form" novalidate>
-        <label for="user">Email</label>
-        {{ form.email }}
-        <label for="password">Password</label>
-        {{ form.password }}
-        <label class="form-label" for="division">Division: </label>
-            <select class="form-option" name="divisions" id="f-division-select">
-                <option value="">Select Division</option>
-                <option value="MSD">MSD</option>
-                <option value="LHSD">LHSD</option>
-                <option value="RD/ARD">RD/ARD</option>
-                <option value="RLED">RLED</option>
-            </select>
+        <h2> Add Account </h2>
+        <form method="post" action="{% url 'account' %}">
+            {% csrf_token %}
+            <label for="f_name" class="form-label">First Name</label>
+            {{ form.first_name }}
+            <label for="l_name" class="form-label">Last Name</label>
+            {{ form.last_name }}
+            <label for="email" class="form-label">Contact</label>
+            {{ form.contact }}
+            <label for="email" class="form-label">Email</label>
+            {{ form.email }}
+            <label for="username" class="form-label">Username</label>
+            {{ form.user }}
+            <label for="password" class="form-label">Password</label>
+            {{ form.password }}
+
+            <label class="form-label" for="division">Division: </label>
+                <select class="form-option" name="divisions" id="division-select">
+                    <option value="">Select Division</option>   
+                    <option value="MSD">MSD</option>
+                    <option value="LHSD">LHSD</option>
+                    <option value="RD/ARD">RD/ARD</option>
+                    <option value="RLED">RLED</option>
+                </select>
             <label class="form-label" for="unit">Unit:</label>
-            <select class="form-option" name="unit" id="f-unit-select" required>
-                <option value="">Select Unit</option>
+                <select class="form-option" name="unit" id="unit-select" required>
+                    <option value="">Select Unit</option>
+                </select>
+            <label class="form-label" for="division">Position: </label>
+            <select class="form-option" name="position" id="position">
+                <option value="">Select role</option>
+                <option>Administrative Assistant II</option>
+                <option>Administrative Assistant III</option>
+                <option>Administrative Assistant IV</option>
             </select>
-            <button type="submit" onclick="">Save</button>
-        </div>
+        
+            <button class="add-user-btn" type="submit">Add User</button>
+        </form>
     </div>
 </div>
 
@@ -199,9 +219,46 @@
     });
 
     window.addEventListener('load', checkScreenSize);
-    window.addEventListener('resize', checkScreenSize);
+    window.addEventListener('resize', checkScreenSize); 
 
-    
+    function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
+    const divisionSelect = document.getElementById(divisionId);
+    const unitSelect = document.getElementById(unitId);
+
+    const unitOptions = {
+      'MSD': ['HRMDU', 'Cashier', 'Finance'],
+      'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy'],
+      'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
+      'RLED': ['RLED'],
+      'SUPER': ['Super Admin'],
+    };
+
+    if (!divisionSelect || !unitSelect) return;
+
+    divisionSelect.addEventListener("change", function () {
+      const selectedDivision = divisionSelect.value;
+      const units = unitOptions[selectedDivision] || [];
+
+      unitSelect.innerHTML = ""; // Clear old options
+
+      const placeholderOption = document.createElement("option");
+      placeholderOption.textContent = "Select Unit";
+      placeholderOption.value = "";
+      unitSelect.appendChild(placeholderOption);
+
+      units.forEach(unit => {
+        const option = document.createElement("option");
+        option.textContent = unit;
+        option.value = unit;
+        unitSelect.appendChild(option);
+      });
+    });
+  }
+
+  // Initialize on DOM load
+  document.addEventListener("DOMContentLoaded", () => {
+    divisionUnitSelect();
+  });
 </script>
 
 

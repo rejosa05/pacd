@@ -183,7 +183,7 @@ def  update_user_details(request):
 def update_client_status_served_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
-            client_id = request.POST.get('client_id')
+            client_id = request.POST.get('selectedClient')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
             unit = users.unit
@@ -191,7 +191,7 @@ def update_client_status_served_unit(request):
             resolutions = request.POST.get('resolutions')
             today = timezone.now()
 
-            client = DivisionLog.objects.get(client_id__id=client_id, unit=unit)
+            client = DivisionLog.objects.get(id=client_id, unit=unit)
             client.action_type = 'Resolved'
             client.unit_user = user
             client.form = resolutions

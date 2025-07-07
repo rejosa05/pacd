@@ -27,10 +27,9 @@ function skipClientUnit(id) {
 function approvedUnitClose() {
     document.getElementById('approvedClient-unit').style.display = 'none';
 }
-function approvedUnit(name, type, que, id, details) {
-    selectedClient = id;
-    clientId = "#CT"+id+"-"+que;
-    document.getElementById('client-id').innerText = clientId;
+function approvedUnit(name, type, id, cid, details) {
+    selectedClient = cid;
+    document.getElementById('client-id').innerText = id;
     document.getElementById('client-fullname').innerText = name;
     document.getElementById('unit-transaction-type').innerText = type;
     document.getElementById('unit-transactions-details').innerText = details;
@@ -64,12 +63,11 @@ function saveActionResolved() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}`
+        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}`
     })
     .then(response => response.json())
     .then(() => {
         alert('succefully catered!!!')
         approvedUnitClose();
     })
-    console.log(1)
 }

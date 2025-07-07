@@ -1,0 +1,116 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{user.unit}} Reports {% endblock %}
+
+{% block content %}
+<style>
+
+</style>
+<header>
+  <div class="logo-header">
+    <img src="{% static 'images/logo.png' %}" alt="Logo" /> &nbsp; <!-- Replace with your logo path -->
+    {{ user.divisions }} Dashboard
+  </div>
+  <div class="header-icons">
+    <div class="user-icon">
+      <i class="fas fa-bell" title="notification"></i>
+      <span class="n-badge" id="notificationCount" style="display: none;"></span>
+    </div>
+    <div class="notification-icon">
+    <i class="fas fa-user-circle" title="Online User"></i>
+      <span class="n-badge">2</span>
+    </div>
+    <a class="sign-out" href="{% url 'logout' %}"><i class="fas fa-sign-out" title="Sign Out"></i></a>
+  </div>
+</header>
+<div class="app-container">
+  <aside>
+    <nav>
+      <a href="{% url 'pacd-transactions' %}">Transactions</a>
+      <a href="{% url 'pacd-dashboard' %}"> Dashboard</a>
+
+      <a href="" class="active"> <i class="fas fa-bell"></i> &nbsp; Reports </a>
+      <a href="{% url 'account' %}"> <i class="fas fa-user-plus"></i> Add Account</a>
+    </nav>
+  </aside>
+  <main class="main-dashboard">
+    <div class="cards">
+      <div class="card">
+        Total Transactions<br /><strong><span id="total-transactions"> </span></strong>
+      </div>
+      <div class="card">
+        Served <br /><strong><span id="total-completed"> </span></strong>
+      </div>
+      <div class="card">
+        CSM<br /><strong><span id="total-csm"> </span></strong>
+      </div>
+      <div class="card">
+        CSS<br /><strong><span id="total-css"> </span></strong>
+      </div>
+      <div class="card">
+        <div class="sub-cards">
+        <div class="division-card">
+          RD/ARD<br /><strong><span id="total-rd/ard"> </span></strong>
+        </div>
+        <div class="division-card">
+          LHSD<br /><strong><span id="total-lhsd"> </span></strong>
+        </div>
+        <div class="division-card">
+          MSD<br /><strong><span id="total-msd"> </span></strong>
+        </div>
+        <div class="division-card">
+          RLED<br /><strong><span id="total-rled"> </span></strong>
+        </div>
+      </div>
+      </div>
+    </div>
+    <section class="chart-container">
+    <section class="filters" aria-label="Filter reports">
+      <div class="filter-group">
+        <label for="filterDateStart">Date Started From</label>
+        <input type="date" id="dateStarted" name="filterDateStart" aria-describedby="startDateHelp" />
+      </div>
+      <div class="filter-group">
+        <label for="filterDateEnd">Date Ended Before</label>
+        <input type="date" id="dateEnd" name="filterDateEnd" aria-describedby="endDateHelp" />
+      </div>
+      <div class="filter-group" style="flex-grow: 1;">
+        <label for="searchBar">Search Reports</label>
+        <input type="search" id="search" name="searchBar" placeholder="Search by title or status" aria-label="Search reports text" />
+      </div>
+      <button class="btn-download" id="downloadExcel" aria-label="Download filtered reports as Excel file">
+        <span class="material-icons" aria-hidden="true"></span> Convert Excel
+      </button>
+    </section>
+      <h2>Transaction List</h2>
+      <div class="table-container">
+        <table id="transactionHistoryAll">
+        <thead>
+          <tr>
+            <th>Transactions ID</th>
+            <th>Client Fullname</th>
+            <th>Division</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th>Date Started</th>
+            <th>Date Served</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      </div >
+    </section>
+  </main>
+
+  <!-- Modal for user details -->
+  <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+      <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+      <h2>Client Details</h2>
+      <dl id="client-details-list">
+      </dl>
+  </div>
+{% endblock %}

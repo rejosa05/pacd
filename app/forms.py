@@ -53,9 +53,13 @@ class LoginForm(forms.Form):
 class AuthorizedPersonnelForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'org'}),label="Password", required=True)
     email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'org', 'placeholder': 'example@gmail.com' }), required=True)
+    user = forms.CharField(widget=forms.TextInput(attrs={'class': 'org' }), required=True)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'org', 'placeholder': 'Jhon' }), required=True)
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'org', 'placeholder': 'Doe' }), required=True)
+    contact = forms.CharField(widget=forms.TextInput(attrs={'class': 'org'}), required=True)
     class Meta:
         model = AccountDetails
-        fields = ['user', 'password', 'first_name', 'last_name', 'divisions', 'unit', 'position', 'email', 'contact','created_by']
+        fields = ['user', 'password', 'first_name', 'last_name',  'position', 'divisions', 'unit', 'email', 'contact','created_by']
     def clean_username(self):
         user = self.cleaned_data.get('user')
         if AccountDetails.objects.filter(user=user).exists():

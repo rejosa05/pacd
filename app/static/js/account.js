@@ -113,8 +113,6 @@ function fetchAccount(page = 1, perPage = 3) {
     });
 }
 
-
-
 function viewDetails(id) {
     fetch(`${viewAccount}${id}/`)
         .then(response => {
@@ -144,8 +142,11 @@ function viewDetails(id) {
         })
 }
 
+
+
 if (path.includes(accounts)) {
     fetchAccount();
 }
+
 
 

@@ -15,7 +15,7 @@ class AccountDetails(models.Model):
     email = models.CharField(max_length=100, null=True)
     contact = models.CharField(max_length=100, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=100, default='Active', null=True)
+    status = models.CharField(max_length=100, default='For Approval', null=True)
     created_by = models.CharField(max_length=100, null=True, blank=True)
     
 

@@ -18,7 +18,6 @@ urlpatterns = [
     path('que-view/', que_view, name="que-view"),
     path('serving-client', serving_client, name="serving-client"),
 
-    path('account/', add_account, name="account"),
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
     

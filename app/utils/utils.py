@@ -71,3 +71,27 @@ def get_total_accounts():
     }
 
     return totalAccounts
+
+def transaction_history(date, unit):
+    getTransaction = []
+
+    if unit == 'PACD':
+        transactions = DivisionLog.objects.filter(date__date=date).order_by('-date')
+
+    else:
+        transactions = DivisionLog.objects.filter(unit=unit, date__date=date).order_by('-date')
+
+    for transaction in transactions:
+        getTransaction.append({
+            'id': transaction.client_id.id,
+            'client_id': f"#CTS-{transaction.client_id.id}",
+            'client_queue_no': transaction.client_id.client_queue_no,
+            'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
+            'client_division': transaction.division,
+            'client_unit': transaction.unit,
+            'action_type': transaction.client_id.client_lane_type,
+            'transaction_type': transaction.transaction_type,
+            'status': transaction.status,
+            'date_resolved': transaction.date_resolved.isoformat() if transaction.date_resolved else None,
+        })
+    return getTransaction

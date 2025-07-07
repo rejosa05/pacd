@@ -43,49 +43,7 @@ def logout_view(request):
     request.session.flush()
     logout(request)
     return redirect('login')
-    
-    
-def add_account(request):
-    if request.method == 'POST':
-        form = AuthorizedPersonnelForm(request.POST)
-        
-        if form.is_valid():
-            username = form.cleaned_data.get("user")
-            
-            if AccountDetails.objects.filter(user=username).exists():
-                messages.error(request, "User already exists!")
-            else:
-                account = form.save(commit=False)
-                account.set_password(form.cleaned_data["password"])
-                account.created_by = request.session.get('username')
-                account.save()
-                messages.success(request, "Account created successfully!")
-                return redirect("account")
-        else:
-            messages.error(request, "User already exists!")
-    else:
-        form = AuthorizedPersonnelForm()
-    
-    username = request.session.get('username')
-    
-    if not username:
-        return redirect("login")
-    
-    user = AccountDetails.objects.filter(user=username).first()
 
-    if not user or user.unit != "PACD":
-        return HttpResponseForbidden("Access denied. PACD users only.")
-    
-    return render(request, 'app/account.html', {'form': form, 'user': user})
-
-def reports_page(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
-
-    if not username:
-        return redirect("login")
-
-    return render(request, "app/reports.html", {'user':user})
 
 def transaction(request):
     username = request.session.get('username')
@@ -104,15 +62,11 @@ def dashboard(request):
     
     return render(request, 'app/dashboard.html', {'user':user})
 
-def accounts(request):
+def reports_page(request):
     username = request.session.get('username')
     user = AccountDetails.objects.filter(user=username).first()
 
-    if not user:
-        return redirect('login')
-    
-    form = AuthorizedPersonnelForm()
-    return render(request, 'app/account.html', {
-        'user':user,
-        'form': form
-        })
+    if not username:
+        return redirect("login")
+
+    return render(request, "app/reports.html", {'user':user})
