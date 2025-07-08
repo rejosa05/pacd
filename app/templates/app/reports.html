@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{user.unit}} Reports {% endblock %}
+{% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
 <div class="sidebar" id="sidebar">
@@ -14,15 +14,15 @@
             <a href="{% url 'dashboard' %}" class="menu-item">
                 <i class="fas fa-home icon"></i> Dashboard
             </a>
-            <a href="" class="menu-item">
+            <a href="{% url 'transactions' %}" class="menu-item">
                 <i class="fas fa-exchange-alt icon"></i> Transactions
             </a>
         {% if user.unit == 'PACD' %}
-            <a href="{% url 'account' %}" class="menu-item">
+            <a href="#" class="menu-item">
                 <i class="fas fa-user-plus icon"></i> Accounts
             </a>
         {% endif %}
-        <a href="{% url 'reports' %}" class="menu-item active">
+            <a href="{% url 'reports' %}" class="menu-item active">
                 <i class="fas fa-chart-line icon"></i> Reports
             </a>
         </div>
@@ -39,11 +39,13 @@
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title">{{ user.unit }} Reports</h1>
+        <h1 class="navbar-title">{{ user.unit }} Accounts </h1>
     </div>
     
     <div class="navbar-right">
         <div class="notification-container">
+            <label for="searchBar"></label>
+        <input type="search" id="search" name="searchBar" placeholder="Search by title or status"/>
             <button class="notification-button">
                 <i class="fas fa-bell icon-gray"></i>
             </button>
@@ -65,167 +67,73 @@
 <main class="main">
     <div class="dashboard-cards">
         <div class="card">
-            
-            <h3> <i class="fas fa-users icon"></i> Transactions Today</h3>
+            <h3> <i class="fas fa-users icon"></i> Total Account</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-transactions"></span>
                 <!-- <div class="badge badge-green">+12%</div> -->
             </div>
         </div>
-
         <div class="card">
-            <h3><i class="fas fa-check icon"></i> Total Completed</h3>
+            <h3> <i class="fas fa-user-clock icon"></i> CSM</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-completed"> </span>
-                <!-- <div class="badge badge-blue">Active</div> -->
+                <span class="card-value" id="total-csm"> </span>
+                <!-- <span class="card-subtext">minutes</span> -->
             </div>
         </div>
-
         <div class="card">
-            <h3> <i class="fas fa-exclamation-circle icon"></i> Total Skipped</h3>
+            <h3> <i class="fas fa-user-xmark icon"></i> CSS</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-skipped"> </span>
+                <span class="card-value" id="total-css"> </span>
                 <!-- <span class="card-subtext">minutes</span> -->
             </div>
         </div>
     </div>
 
-<div class="transaction-panel">
-    <div class="panel-header">
-        <h2> Pending Transactions </h2>
-        <div class="pagination" id="paginationControls"></div>
-    </div>
-    <div class="transaction-list" id="pendingClientList">
-        <!-- data fetch -->
-    </div>
-</div>
-<br>
-<div class="transaction-panel">
-    <div class="panel-header">
-        <h2> Transaction History </h2>
-        <div class="pagination" id=""></div>
-    </div>
-    <div class="transaction-list" id="todayTransactions">
-        <!-- data fetch -->
-    </div>
-</div>
-
-
-<!-- Approved modal from pacd -->
-    <div class="modal-overlay" id="approvedClient">
-        <div class="modal-view">    
-        <button class="close-btn" aria-label="Close modal" onclick="closedApproved()">&times;</button>
-        <h2>Queue No. <span id="approve-client-que"></span></h2>
-        <div class="">
-            <div class="approved-form" novalidate>
-            <label for="first-name">Client ID</label>
-            <span id="approve-client-id"></span>
-            <label for="first-name">Full Name</label>
-            <span id="approve-client-fullname"></span>
-            <label for="org-name">Organization/Company Name</label>
-            <input class="org" type="text" id="a-org-name" placeholder="Organization/Company Name">
-            <label for="a-transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="a-transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquire</option>
-                    <option value="Request">Request</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="approved-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <label>Remarks</label>
-            <textarea id="approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
-            
-            <label class="form-label">CSS/CSM:</label>
-                <div class="checkbox-group">
-                    <label>
-                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
-                    CSM
-                    </label>
-                    <label>
-                    <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
-                    CSS
-                    </label>
-                </div>
-                <button type="submit" onclick="saveApprovedClientByPACD()">Save</button>
+    <div class="transaction-panel">
+        <div class="panel-header">
+             <div class="footer-text">
+            <label for="filterDateStart">Date Started &nbsp;</label>
+            <input type="date" id="dateStarted" name="filterDateStart" aria-describedby="startDateHelp" />
+            <label for="filterDateEnd">Date Ended &nbsp;</label>
+            <input type="date" id="dateEnd" name="filterDateEnd" aria-describedby="endDateHelp" />
             </div>
-        </div>
-        </div>
+            <button class="btn-download" id="downloadExcel" aria-label="Download filtered reports as Excel file">
+            <span class="material-icons" aria-hidden="true"></span> Convert Excel
+            </button>
+        </div>   
     </div>
-
-    <div class="modal-overlay" id="forwardClient" >
-        <div class="modal-view">
-            <button class="close-btn" aria-label="Close modal" onclick="closeForward()">&times;</button>
-            <h2>Queue No. <span id="f-client-que"></span></h2>
-            <div class="approved-form" novalidate>
-            <label for="first-name">Full Name</label>
-            <span id="forward-fullname"></span>
-            <label for="org-name">Organization/Company Name</label>
-            <input class="org" type="text" id="f-org-name" placeholder="Organization/Company Name">
-            <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="f-transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquiry</option>
-                    <option value="Request">Request</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="forwarded-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <label class="form-label" for="division">Division: </label>
-                <select class="form-option" name="divisions" id="f-division-select">
-                    <option value="">Select Division</option>
-                    <option value="MSD">MSD</option>
-                    <option value="LHSD">LHSD</option>
-                    <option value="RD/ARD">RD/ARD</option>
-                    <option value="RLED">RLED</option>
-                </select>
-                <label class="form-label" for="unit">Unit:</label>
-                <select class="form-option" name="unit" id="f-unit-select" required>
-                    <option value="">Select Unit</option>
-                </select>
-                <button type="submit" onclick="saveForwardedClient()">Save</button>
+    <div class="transaction-panel">
+        <div class="table-header">
+            <h2>Transactions</h2>
+            <div class="table-container">
+                <table id="clientList">
+                    <thead>
+                    <tr>
+                        <th>Transactions ID</th>
+                        <th>Client Fullname</th>
+                        <th>Division</th>
+                        <th>Unit</th>
+                        <th>Status</th>
+                        <th>Date Started</th>
+                        <th>Date Served</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </div >
     </div>
-</main>
-
-<div class="modal-overlay" id="approvedClient-unit">
-    <div class="modal-view">    
-      <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
-      <h2>Approved Client</h2>
-      <div class="">
-        <div class="approved-form" novalidate>
-          <label for="id">Client ID</label>
-          <span id="client-id"></span>
-          <label for="full-name">Full Name</label>
-          <span id="client-fullname"></span>
-          <label for="trnsaction-type">Transactions Type</label>
-          <span id="unit-transaction-type"></span>
-          <label>Transactions Details</label>
-          <span id="unit-transactions-details"></span>
-          <label>Remarks</label>
-          <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
-          <label class="form-label">CSS/CSM:</label>
-            <div class="checkbox-group">
-                <label>
-                  <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="CSM">
-                  CSM
-                </label>
-                <label>
-                  <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
-                  CSS
-                </label>
-              </div>
-            <button type="submit" onclick="saveActionResolved()">Save</button>
-        </div>
-      </div>
-    </div>
+<div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+      <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+      <h2>Client Details</h2>
+      <dl id="client-details-list">
+      </dl>
   </div>
-
+</div>
+</main>
 <script>
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggle');
@@ -269,7 +177,46 @@
     });
 
     window.addEventListener('load', checkScreenSize);
-    window.addEventListener('resize', checkScreenSize);
+    window.addEventListener('resize', checkScreenSize); 
+
+    function divisionUnitSelect(divisionId = "division-select", unitId = "unit-select") {
+    const divisionSelect = document.getElementById(divisionId);
+    const unitSelect = document.getElementById(unitId);
+
+    const unitOptions = {
+      'MSD': ['HRMDU', 'Cashier', 'Finance'],
+      'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy'],
+      'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
+      'RLED': ['RLED'],
+      'SUPER': ['Super Admin'],
+    };
+
+    if (!divisionSelect || !unitSelect) return;
+
+    divisionSelect.addEventListener("change", function () {
+      const selectedDivision = divisionSelect.value;
+      const units = unitOptions[selectedDivision] || [];
+
+      unitSelect.innerHTML = ""; // Clear old options
+
+      const placeholderOption = document.createElement("option");
+      placeholderOption.textContent = "Select Unit";
+      placeholderOption.value = "";
+      unitSelect.appendChild(placeholderOption);
+
+      units.forEach(unit => {
+        const option = document.createElement("option");
+        option.textContent = unit;
+        option.value = unit;
+        unitSelect.appendChild(option);
+      });
+    });
+  }
+
+  // Initialize on DOM load
+  document.addEventListener("DOMContentLoaded", () => {
+    divisionUnitSelect();
+  });
 </script>
 
 

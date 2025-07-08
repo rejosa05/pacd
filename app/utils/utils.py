@@ -18,6 +18,8 @@ def get_clients(unit):
             'client_division': client.division,
             'client_unit': client.unit,
             'client_status': client.status,
+            'date_started': client.date.isoformat() if client.date else None,
+            'form': client.form,
             'date_served': client.date.isoformat() if client.date else None,
         })
     return getClients
