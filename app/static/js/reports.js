@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Started', 'Date Served'];
         const rows = data.map(client => [
-            `#CT${client.client_id}`,
+            `${client.client_id}`,
             client.client_fullname,
             client.client_division,
             client.client_unit,
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
     filteredData.forEach(client => {
     const row = document.createElement('tr');
     row.innerHTML = `
-        <td>#CT${client.client_id}</td>
+        <td>${client.client_id}</td>
         <td>${client.client_fullname}</td>
         <td>${client.client_division}</td>
         <td>${client.client_unit}</td>
