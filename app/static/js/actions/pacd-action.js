@@ -1,6 +1,6 @@
 const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
-    saveUpdateForwardedClientUrl, reports,
+    saveUpdateForwardedClientUrl,
     updateDetails
 } = window.dashboardConfig;
 

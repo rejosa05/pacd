@@ -2,9 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
 from ..models import AccountDetails, SessionHistory
-from ..forms import LoginForm, AuthorizedPersonnelForm
-from django.http import HttpResponseForbidden
-from django.http import JsonResponse
+from ..forms import LoginForm
 from django.utils import timezone
 
 def login_view(request):
@@ -70,3 +68,12 @@ def reports_page(request):
         return redirect("login")
 
     return render(request, "app/reports.html", {'user':user})
+
+def services_page(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not username:
+        return redirect("login")
+
+    return render(request, "app/services.html", {'user':user})

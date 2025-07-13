@@ -27,6 +27,7 @@ def f_dashboard(request):
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
 
+
 def transaction_history(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()

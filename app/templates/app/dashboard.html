@@ -25,9 +25,9 @@
             <a href="{% url 'reports' %}" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Reports
             </a>
-            <!-- <a href="#" class="menu-item">
-                <i class="fas fa-cog icon"></i> Settings
-            </a> -->
+            <a href="{% url 'services' %}" class="menu-item">
+                <i class="fas fa-gears icon"></i> Services
+            </a>
         </div>
 
         <div class="support-box">
@@ -129,6 +129,15 @@
         {% endif %}
         
     </div>
+    <div class="type-panel">
+        <div class="panel-header">
+            <div class="chart-box">
+            <h2>Type of Transactions</h2>
+            <canvas height="500" id="typeOutputChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <br>
     <div class="transaction-panel">
         <div class="panel-header">
             <div class="chart-box">

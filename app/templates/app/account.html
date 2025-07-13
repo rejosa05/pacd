@@ -25,8 +25,8 @@
             <a href="{% url 'reports' %}" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Reports
             </a>
-            <a href="" class="menu-item">
-                <i class="fas fa-cog icon"></i> Settings
+            <a href="{% url 'services' %}" class="menu-item">
+                <i class="fas fa-gears icon"></i> Services
             </a>
         </div>
 
@@ -162,10 +162,10 @@
                 </select>
             <label class="form-label" for="division">Position: </label>
             <select class="form-option" name="position" id="position">
-                <option value="">Select role</option>
+                <option value="">Default</option>
                 <option>Administrative Assistant II</option>
                 <option>Administrative Assistant III</option>
-                <option>Administrative Assistant IV</option>
+                <option>Administrative Assitant IV</option>
             </select>
         
             <button class="add-user-btn" type="submit">Add User</button>

@@ -47,8 +47,9 @@ urlpatterns = [
 
     path('get-daily-data/', get_daily_data, name='get-daily-data'),
     path('get-monthly-data', get_monthly_data, name='get-monthly-data'),
-    path('get-daily-data-unit/', get_daily_data_unit, name='get-daily-data-unit'),
-    path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
+    path('get-type-data/', get_type_data, name='get-type-data'),
+    
+    # path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
     
 
     path('reports', reports_page, name='reports'),
@@ -56,4 +57,5 @@ urlpatterns = [
     path('transactions', transaction, name="transactions"),
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
+    path('services', services_page, name="services"),
 ]

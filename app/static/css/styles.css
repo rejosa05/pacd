@@ -273,6 +273,17 @@ h1, h2, h3 {
   overflow-y: auto;
 }
 
+.type-panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+#typeOutputChart {
+    height: 100px;
+}
+
 /* Panel */
 .transaction-panel {
     background-color: #ffffff;
@@ -1207,6 +1218,11 @@ tbody tr:nth-child(even):hover {
   canvas {
     max-width: 100%;
     height: 300px;
+  }
+
+  .canvas1 {
+    max-width: 100%;
+    height: 100px;
   }
 
 

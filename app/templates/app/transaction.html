@@ -25,6 +25,9 @@
             <a href="{% url 'reports' %}" class="menu-item">
                 <i class="fas fa-chart-line icon"></i> Reports
             </a>
+            <a href="{% url 'services' %}" class="menu-item">
+                <i class="fas fa-gears icon"></i> Services
+            </a>
         </div>
 
         <div class="support-box">
@@ -103,7 +106,7 @@
 <div class="transaction-panel">
     <div class="panel-header">
         <h2> Transaction History </h2>
-        <div class="pagination" id=""></div>
+        <div id="historyPagination" class="pagination"></div>
     </div>
     <div class="transaction-list" id="todayTransactions">
         <!-- data fetch -->
@@ -225,6 +228,16 @@
       </div>
     </div>
   </div>
+
+<div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+        <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+        <h2>Client Details</h2>
+        <dl id="client-details-list">
+        </dl>
+    </div>
+</div>
+
 
 <script>
     const sidebar = document.getElementById('sidebar');

@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             client.client_division,
             client.client_unit,
             client.form,
-            client.client_status
+            client.client_status,
         ].join(' ').toLowerCase();
 
         return combined.includes(search);
@@ -131,5 +131,8 @@ document.addEventListener('DOMContentLoaded', function () {
     searchInput.addEventListener('input', fetchAllServedClient);
 
     // Initial loadcd PACD
-      fetchAllServedClient();
+    if (path.includes(reports)) {
+    fetchAllServedClient();
+}
+      
 });

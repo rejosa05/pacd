@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountDetails, SessionHistory
+from .models import AccountDetails, SessionHistory, DivisionLog
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
@@ -15,4 +15,12 @@ class SessionHistoryAdmin(admin.ModelAdmin):
     search_fields = ('user', 'login_time', 'logout_time')
     list_filter = ('user','login_time')
     ordering = ('-login_time',)
+    list_per_page = 10
+
+@admin.register(DivisionLog)
+class DivisionLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form')
+    search_fields = ('action_type', 'transaction_type', 'form')
+    list_filter = ('action_type', 'transaction_type', 'unit', 'status')
+    ordering = ('-date_resolved',)
     list_per_page = 10

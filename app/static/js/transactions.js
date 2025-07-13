@@ -1,4 +1,4 @@
-function fetchTransactions(page = 1, perPage = 3) {
+function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPage = 3) {
     fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -7,10 +7,12 @@ function fetchTransactions(page = 1, perPage = 3) {
         const transacHistory = document.querySelector('#todayTransactions');
         const clientList = document.querySelector('#pendingClientList');
         const paginationControls = document.getElementById('paginationControls');
+        const historyPagination = document.getElementById('historyPagination');
         
         clientList.innerHTML = '';
         paginationControls.innerHTML = '';
         transacHistory.innerHTML = ''; // Clear history first
+        historyPagination.innerHTML = '';
 
         const counts = data.total;
         const userunit = data.account;
@@ -24,14 +26,13 @@ function fetchTransactions(page = 1, perPage = 3) {
         let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');
         let allClients = [...priorityClients, ...regularClients];
 
-        const totalPages = Math.ceil(allClients.length / perPage);
+        const totalClientPages = Math.ceil(allClients.length / perPage);
         const start = (page - 1) * perPage;
         const paginatedClients = allClients.slice(start, start + perPage);
 
+
+
         function addClientCard(client, highlight = false) {
-            const genderIcon = client.client_gender === 'Male'
-                ? '<i class="male-icon fa fa-mars" title="Male"></i>'
-                : '<i class="female-icon fa fa-venus" title="Female"></i>';
             
             const laneColorClass = client.client_lane_type === 'Priority' ? 'status-red' : 'status-blue';
 
@@ -60,7 +61,6 @@ function fetchTransactions(page = 1, perPage = 3) {
                     <div>
                         <div class="client-status-row">
                             <span class="transaction-id">#CTS-${client.client_id}</span>
-                            <span class="transaction-id">#CTS-${client.id}</span>
                             <span class="status ${actionTypeColor}">${client.client_status}</span>
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
@@ -68,8 +68,8 @@ function fetchTransactions(page = 1, perPage = 3) {
                         <p class="transaction-description"> ${client.client_fullname} Que No. ${client.client_queue_no} </p>
                     </div>
                     <div class="transaction-actions">   
+                    <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
                         ${userunit === 'PACD' ? `
-                            <span class="timestamp" ${formatDateTime(client.date_created)}</span>
                             <button class="icon-button text-blue" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
                                 <i class="fa fa-check"></i>
                             </button>
@@ -82,7 +82,6 @@ function fetchTransactions(page = 1, perPage = 3) {
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `
-                            <span class="timestamp">5 min ago</span>
                             <button class="icon-button text-blue" title="Resolved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
                                 <i class="fa fa-check-circle"></i>
                             </button>                 
@@ -95,6 +94,8 @@ function fetchTransactions(page = 1, perPage = 3) {
             `;
             clientList.appendChild(card);
         }
+
+
 
         function addHistoryCard(history) {
             const divisionColor = {
@@ -142,15 +143,17 @@ function fetchTransactions(page = 1, perPage = 3) {
                     <div class="transaction-actions">   
                         <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>
                         ${userunit === 'PACD' ? `
-                            
                             <button class="icon-button text-blue" title="Forward" onclick="forwardedModal('${history.client_fullname}', '${history.client_queue_no}', '${history.id}')">
                                 <i class="fa fa-repeat"></i>
                             </button>
                         ` : `
-                            <button class="icon-button text-blue" title="Resolved")'>
+                            <button class="icon-button text-blue" title="Edit")'>
                                 <i class="fa fa-edit"></i>
                             </button>                 
                         `}
+                        <button class="icon-button text-blue" title="View" onclick="viewClientDetails('${history.id}')">
+                                <i class="fa fa-eye"></i>
+                            </button>   
                     </div>
                 </div>
             `;
@@ -158,32 +161,45 @@ function fetchTransactions(page = 1, perPage = 3) {
         }
 
         paginatedClients.forEach(addClientCard);
-        transactionHistory.forEach(addHistoryCard);
 
-        function renderPagination(currentPage, totalPages) {
+        const totalHistoryPages = Math.ceil(transactionHistory.length / historyPerPage);
+        const historyStart = (historyPage - 1) * historyPerPage;
+        const paginatedHistory = transactionHistory.slice(historyStart, historyStart + historyPerPage);
+
+        paginatedHistory.forEach(addHistoryCard);
+
+        function renderPagination(container, currentPage, totalPages, callback) {
             const createBtn = (label, isActive = false, isDisabled = false) => {
                 const btn = document.createElement('button');
                 btn.className = 'pagination-button';
                 if (isActive) btn.classList.add('active');
                 if (isDisabled) btn.disabled = true;
                 btn.textContent = label;
-                btn.addEventListener('click', () => fetchTransactions(
-                    label === 'Previous' ? currentPage - 1 : label === 'Next' ? currentPage + 1 : Number(label),
-                    perPage
-                ));
+                btn.addEventListener('click', () => {
+                    const newPage = label === 'Previous' ? currentPage - 1 :
+                                    label === 'Next' ? currentPage + 1 : Number(label);
+                    callback(newPage);
+                });
                 return btn;
             };
 
             if (totalPages > 1) {
-                paginationControls.appendChild(createBtn('Previous', false, page === 1));
+                container.appendChild(createBtn('Previous', false, currentPage === 1));
                 for (let i = 1; i <= totalPages; i++) {
-                    paginationControls.appendChild(createBtn(i, page === i));
+                    container.appendChild(createBtn(i, currentPage === i));
                 }
-                paginationControls.appendChild(createBtn('Next', false, page === totalPages));
+                container.appendChild(createBtn('Next', false, currentPage === totalPages));
             }
         }
 
-        renderPagination(page, totalPages);
+        renderPagination(paginationControls, page, totalClientPages, (newPage) => {
+            fetchTransactions(newPage, perPage, historyPage, historyPerPage);
+        });
+
+        renderPagination(historyPagination, historyPage, totalHistoryPages, (newHistoryPage) => {
+            fetchTransactions(page, perPage, newHistoryPage, historyPerPage);
+        });
+
         divisionUnitSelect('f-division-select', 'f-unit-select');
     });
 }

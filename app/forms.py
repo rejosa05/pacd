@@ -65,3 +65,4 @@ class AuthorizedPersonnelForm(forms.ModelForm):
         if AccountDetails.objects.filter(user=user).exists():
             raise forms.ValidationError("Username already exists.")
         return user
+    

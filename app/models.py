@@ -98,7 +98,7 @@ class DivisionLog(models.Model):
 
 
     def __str__(self):
-        return self.action
+        return self.action_type
         
 class HistoryLog(models.Model):
     action = models.CharField(max_length=100)
@@ -136,3 +136,20 @@ class SessionHistory(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.login_time}"
+    
+class ServicesDetails(models.Model):
+    service_name = models.CharField(max_length=100)
+    service_code = models.CharField(max_length=100, null=True, blank=True)
+    division = models.CharField(max_length=100, null=True, blank=True)
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    benefit = models.CharField(max_length=100, null=True, blank=True)
+    classification = models.CharField(max_length=100, null=True, blank=True)
+    type_transaction = models.CharField(max_length=100, null=True, blank=True)
+    timeFrame =  models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.service_name}"
+
+    def save(self, *args, **kwargs):
+        self.service_name = self.service_name.title()
+        super(ServicesDetails, self).save(*args, **kwargs)

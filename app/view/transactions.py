@@ -50,7 +50,8 @@ def f_transactions(request):
                     'client_lane_type': client.client_id.client_lane_type,
                     'client_transaction_type': client.transaction_type,
                     'client_transaction_details': client.transaction_details,
-                    'client_status': client.status
+                    'client_status': client.status,
+                    'date_created': client.date.isoformat() if client.date else None,
                 })
             
             total = {
@@ -68,26 +69,3 @@ def f_transactions(request):
             })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
-
-# def transaction_history(request):
-#     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-#         today = timezone.now()
-#         resolved_clients = DivisionLog.objects.filter(date__date=today).order_by('-status', '-date')
-        
-#         resolved_client_all = []
-#         for client in resolved_clients:
-#             resolved_client_all.append({
-#                 'id': client.id,
-#                 'client_id': client.client_id.id,
-#                 'client_queue_no': client.client_id.client_queue_no,
-#                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
-#                 'client_division': client.division,
-#                 'client_unit': client.unit,
-#                 'action_type': client.action_type,
-#                 'status': client.status,
-#             })
-
-#         return JsonResponse({'resolved_clients': resolved_client_all})
-#     else:
-#         return JsonResponse({'message': 'Invalid request'}, status=400)
-    

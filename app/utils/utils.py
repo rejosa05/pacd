@@ -85,7 +85,7 @@ def transaction_history(date, unit):
 
     for transaction in transactions:
         getTransaction.append({
-            'id': transaction.client_id.id,
+            'id': transaction.id,
             'client_id': f"#CTS-{transaction.client_id.id}",
             'client_queue_no': transaction.client_id.client_queue_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
