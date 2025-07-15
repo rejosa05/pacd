@@ -207,6 +207,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
 
 if (path.includes(transaction)) {
     fetchTransactions();
+    setInterval(fetchTransactions, 2000);
 }
 
 

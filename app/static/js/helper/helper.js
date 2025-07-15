@@ -26,8 +26,8 @@ function divisionUnitSelect(divisionID, unitID) {
     const unitSelect = document.getElementById(unitID);
 
     const unitOptions = {
-        'MSD': ['HRMDU', 'Cashier', 'Finance'],
-        'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy'],
+        'MSD': ['HRMDU', 'Cashier', 'Finance', 'BAC', 'Procurement', 'Accounting'],
+        'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy', 'Clinic'],
         'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
         'RLED': ['RLED'],
         'SUPER': ['Super Admin'],
