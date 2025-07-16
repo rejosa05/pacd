@@ -32,7 +32,6 @@ urlpatterns = [
     path('skipped-client-unit', skipped_client_unit, name='skipped-client-unit'),
     
     path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
-    path('notifications-unit/', notifications_unit, name="notifications-unit"),
     path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
     path('count-type-transactio-unit/', count_type_transaction_unit, name="count-type-transaction-unit"),
 
@@ -50,7 +49,7 @@ urlpatterns = [
     path('get-type-data/', get_type_data, name='get-type-data'),
     
     # path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
-    
+    path('repeat-transaction', repeat_transactions, name='repeat-transaction'),
 
     path('reports', reports_page, name='reports'),
     path('accountList', accountList, name="accountList"),

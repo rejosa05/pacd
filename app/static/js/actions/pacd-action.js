@@ -1,7 +1,7 @@
 const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
-    updateDetails
+    updateDetails, repeatTransaction
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -178,4 +178,40 @@ function saveAccount(){
         },
     })
     closeAddAccount();
+}
+
+// repeat transactions
+function repeatTransactions(id, fname, que, org) {
+    selectedClient = id;
+    document.getElementById('r-fullname').innerText = fname;
+    document.getElementById('r-client-que').innerText = que;
+    document.getElementById('r-org').innerText = org;
+    document.getElementById('repeatTransaction').style.display = 'flex';
+}
+function closeRepeat() {
+    document.getElementById('repeatTransaction').style.display = 'none';
+    selectedClient = null;
+}
+
+function saveRepeat() {
+    const transaction_type = document.getElementById('r-transaction-type').value;
+    const org_name = document.getElementById('f-org-name').value;
+    const transaction_details = document.getElementById('r-transactions-details').value;
+    const division = document.getElementById('r-division-select').value;
+    const unit = document.getElementById('r-unit-select').value;
+
+    fetch(repeatTransaction, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `client_id=${selectedClient}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('repeat transactions!!');
+        closeRepeat();
+    })   
 }

@@ -1,6 +1,17 @@
 from ..models import DivisionLog, ClientDetails, AccountDetails
 from django.utils import timezone
 
+def notify(user, today):
+    today = timezone.now()
+    account = AccountDetails.objects.filter(user=user).first()
+    unit = account.unit
+
+    if unit == 'PACD':
+        notifications = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).count()
+    else:
+        notifications = DivisionLog.objects.filter(action_type='Processing', unit=unit, date__date=today).count()
+
+    return notifications
 def get_clients(unit):
     
     getClients = []
@@ -86,9 +97,11 @@ def transaction_history(date, unit):
     for transaction in transactions:
         getTransaction.append({
             'id': transaction.id,
+            'client_id_primary': transaction.client_id.id,
             'client_id': f"#CTS-{transaction.client_id.id}",
             'client_queue_no': transaction.client_id.client_queue_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
+            'client_org': transaction.client_id.client_org,
             'client_division': transaction.division,
             'client_unit': transaction.unit,
             'action_type': transaction.client_id.client_lane_type,

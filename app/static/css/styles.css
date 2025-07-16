@@ -131,12 +131,19 @@ h1, h2, h3 {
 
 .notification-badge {
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 8px;
-    height: 8px;
+    top: -4px;   /* Adjust as needed */
+    left: -4px;  /* Adjust as needed */
+    min-width: 18px;
+    height: 18px;
     background-color: #EF4444;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 18px;
     border-radius: 50%;
+    padding: 0 5px;
+    box-shadow: 0 0 0 2px white;
 }
 
 .profile {

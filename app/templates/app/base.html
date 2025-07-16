@@ -26,8 +26,7 @@
             skippedClientUnit: "{% url 'skipped-client-unit' %}", // action skipped client from unit
             updateDetails: "{% url 'update-details' %}", // action update the details of user
         
-            notificationPACD: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
-            notificationUNIT: "{% url 'notifications-unit' %}", // notifications for forwrded in unit
+            notification: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
             transactionCount: "{% url 'count-type-transaction' %}", // count per type of transactions
             transactionCountUnit: "{% url 'count-type-transaction-unit' %}", // count per type of unit transactions
 
@@ -49,6 +48,8 @@
             transaction: "{% url 'transactions' %}",
             dashboard: "{% url 'dashboard' %}",
             accounts: "{% url 'account' %}",
+
+            repeatTransaction: "{% url 'repeat-transaction' %}", // repeat transaction
 
             csrfToken: "{{ csrf_token }}"
         };

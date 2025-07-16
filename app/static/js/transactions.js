@@ -143,7 +143,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="transaction-actions">   
                         <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>
                         ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Forward" onclick="forwardedModal('${history.client_fullname}', '${history.client_queue_no}', '${history.id}')">
+                            <button class="icon-button text-blue" title="Forward" onclick="repeatTransactions('${history.client_id_primary}', '${history.client_fullname}', '${history.client_queue_no}', '${history.client_org}')">
                                 <i class="fa fa-repeat"></i>
                             </button>
                         ` : `
@@ -201,13 +201,39 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
         });
 
         divisionUnitSelect('f-division-select', 'f-unit-select');
+        divisionUnitSelect('r-division-select', 'r-unit-select');
     });
 }
 
+fetchTransactions();
 
-if (path.includes(transaction)) {
+document.addEventListener('DOMContentLoaded', () => {
     fetchTransactions();
-    setInterval(fetchTransactions, 2000);
-}
+
+    const notifyElement = document.getElementById('notify');
+    if (notifyElement) {
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (
+                    mutation.type === 'childList' ||
+                    mutation.type === 'attributes' ||
+                    mutation.type === 'characterData'
+                ) {
+                    fetchTransactions();
+                    break;
+                }
+            }
+        });
+
+        observer.observe(notifyElement, {
+            childList: true,
+            attributes: true,
+            characterData: true,
+            subtree: true
+        });
+    }
+});
+
+
 
 
