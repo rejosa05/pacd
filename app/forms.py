@@ -6,18 +6,18 @@ from django.contrib.auth.hashers import check_password, is_password_usable
 class ClientDetailsForm(forms.ModelForm):
     LANE_TYPE_CHOICES = (
         ('Regular', 'Regular'),
-        ('Priority', 'Priority'),
+        ('Priority', 'Priority (PWD, Senior Citizen, Pregnant)'),
     )
     GENDER_CHOICES = (
         ('Male', 'Male'),
         ('Female', 'Female'),
     )
         
-    client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES)
-    client_gender = forms.ChoiceField(choices=GENDER_CHOICES)
+    client_lane_type = forms.ChoiceField(choices=LANE_TYPE_CHOICES, label='Lane Type', widget=forms.Select(attrs={'class': 'option',}))
+    client_gender = forms.ChoiceField(choices=GENDER_CHOICES, widget=forms.Select(attrs={'class': 'option',}))
     client_firstname = forms.CharField(required=True, label="First Name", widget=forms.TextInput(attrs={'placeholder': 'Pangalan'}))
     client_lastname = forms.CharField(required=True, label="Last Name", widget=forms.TextInput(attrs={'placeholder': 'Apelyido'}))
-    client_contact = forms.CharField(max_length=10, required=True, label="Contact Number", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
+    client_contact = forms.CharField(max_length=10, required=True, label="Contact Number(+63)", widget=forms.TextInput(attrs={'placeholder': 'Contact Number'}))
 
     class Meta:
         model = ClientDetails

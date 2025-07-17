@@ -3,6 +3,98 @@
 {% block title %}Your Queue Ticket - Queue Management System{% endblock %}
 
 {% block content %}
+<style>
+    /* General wrapper for ticket */
+.ticket-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+
+/* Ticket card style */
+.ticket-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Header of the ticket card */
+.ticket-header h4 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Ticket number style */
+.ticket-number {
+    font-size: 50px;
+    font-weight: bold;
+    
+    margin-bottom: 15px;
+}
+
+/* Styling for paragraphs with information */
+.ticket-body p {
+    font-size: 16px;
+    color: #555;
+    margin: 8px 0;
+    text-align: left;
+}
+
+/* Strong elements for labels */
+.ticket-body p strong {
+    color: #333;
+}
+
+/* Note section style */
+.note {
+    font-size: 14px;
+    color: #777;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+/* Ticket actions - buttons and links */
+.ticket-actions {
+    margin-top: 20px;
+}
+
+.new-ticket-btn,
+.print-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.new-ticket-btn:hover,
+.print-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Footer note */
+.ticket-body .note:last-child {
+    font-size: 12px;
+    color: #999;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+</style>
 <div class="ticket-wrapper">
     <div class="ticket-card">
         <div class="ticket-header">
@@ -11,8 +103,6 @@
         <div class="ticket-body">
             <h2 class="ticket-number">{{ client.client_queue_no }}</h2>
             <p><strong>Client ID:</strong> {{ client.id }}</p>
-            <p><strong>Transaction:</strong> {{ client.client_transaction_type }}</p>
-            <p><strong>Full Name:</strong> {{ client.client_fullname }}</p>
             <p><strong>Lane Type:</strong> {{ client.client_lane_type }}</p>
             <p><strong>Status:</strong> {{ client.client_status }}</p>
             <p><strong>Date/Time:</strong> {{ client.client_created_date|date:"F d, Y - H:i" }}</p>

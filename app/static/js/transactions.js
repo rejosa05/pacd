@@ -205,10 +205,17 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
     });
 }
 
-fetchTransactions();
+
+if (path.includes(transaction)) {
+        fetchTransactions();
+}
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchTransactions();
+    if (path.includes(transaction)) {
+        fetchTransactions();
+    }
 
     const notifyElement = document.getElementById('notify');
     if (notifyElement) {

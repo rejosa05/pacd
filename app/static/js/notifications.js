@@ -48,38 +48,11 @@ function showNewNotificationAlert(newCount) {
     }
 }
 
-// Run notification fetch repeatedly
-fetchPACDNotifications();
-setInterval(fetchPACDNotifications, 3000);
-
-
-
-function fetchUNITNotifications() {
-    fetch(notificationUNIT, {
-        method: 'GET',
-        headers: { 'X-Requested-With': 'XMLHttpRequest'}
-    })
-    .then(response => response.json())
-    .then(data => {
-        const countSpan = document.getElementById('notificationCountUNIT');
-        const count = data.notifications;
-
-        if (count > 0) {
-            countSpan.textContent = count;
-            countSpan.style.display = 'inline-block'; // Show the badge
-        } else {
-            countSpan.style.display = 'none'; // Hide the badge
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching notifications:', error);
-    });
+if (["dashboard", "transaction", "reports", "account"].some(keyword => path.includes(keyword))) {
+    fetchPACDNotifications();
+    setInterval(fetchPACDNotifications, 3000);
 }
 
-
-
-
-fetchPACDNotifications();
 
 
 

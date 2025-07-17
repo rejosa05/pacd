@@ -76,6 +76,12 @@ function saveForwardedClient() {
     .then(() => {
         alert('forwarded the client!!');
         closeForward();   
+
+        document.getElementById('f-transaction-type').value = '';
+        document.getElementById('f-org-name').value = '';
+        document.getElementById('forwarded-transactions-details').value = '';
+        document.getElementById('f-division-select').value = '';
+        document.getElementById('f-unit-select').value = '';
     })
 }
 function closeViewDetails () {

@@ -627,6 +627,10 @@ h1, h2, h3 {
     text-align: right;
 }
 
+.option {
+    max-width: 350px;
+}
+
 .login input[type="text"], 
 .login input[type="password"] {
     width: 100%;

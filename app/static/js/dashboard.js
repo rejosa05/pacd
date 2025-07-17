@@ -55,7 +55,7 @@ function fetchDashboard() {
     })
 }
 
-if (path.includes(dashboard)) {
+if (path.includes(dashboard, transaction, reports)) {
     fetchDashboard();
 }
 
