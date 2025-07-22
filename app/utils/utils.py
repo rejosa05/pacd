@@ -106,7 +106,60 @@ def transaction_history(date, unit):
             'client_unit': transaction.unit,
             'action_type': transaction.client_id.client_lane_type,
             'transaction_type': transaction.transaction_type,
+            'transactions_details': transaction.transaction_details,
             'status': transaction.status,
             'date_resolved': transaction.date_resolved.isoformat() if transaction.date_resolved else None,
         })
     return getTransaction
+
+
+def pending_transaction(today, unit):
+    pendingTransactions = []
+    if unit == 'PACD':
+        pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
+        for client in pending_clients:
+            pendingTransactions.append({
+                'client_id': client.id,
+                'client_queue_no': client.client_queue_no,
+                'client_fullname': client.client_firstname + ' ' + client.client_lastname,
+                'client_lane_type': client.client_lane_type,
+                'client_transaction_type': 'Screening',
+                'client_status': client.client_status,
+                'client_gender': client.client_gender,
+                'date_created': client.client_created_date.isoformat() if client.client_created_date else None,
+            })
+    else:
+        pending_clients = DivisionLog.objects.filter(unit=unit, status='Pending', date__date=today)
+        for client in pending_clients:
+            pendingTransactions.append({
+                'id': client.id,
+                'client_id': client.client_id.id,
+                'client_queue_no': client.client_id.client_queue_no,
+                'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
+                'client_lane_type': client.client_id.client_lane_type,
+                'client_transaction_type': client.transaction_type,
+                'client_transaction_details': client.transaction_details,
+                'client_status': client.status,
+                'date_created': client.date.isoformat() if client.date else None,
+            })
+    
+    return pendingTransactions
+
+# def inprogress_transactions(today, unit, user):
+#     inprogressTransaction = []
+#     for inprogress in DivisionLog.objects.filter(date__date=today, unit=unit, status='Processing').order_by('-date'):
+#         if inprogress.client_id.user == user:
+#             inprogressTransaction.append({
+#                 'id': inprogress.id,
+#                 'client_id': inprogress.client_id.id,
+#                 'client_queue_no': inprogress.client_id.client_queue_no,
+#                 'client_fullname': f"{inprogress.client_id.client_firstname} {inprogress.client_id.client_lastname}",
+#                 'client_lane_type': inprogress.client_id.client_lane_type,
+#                 'client_transaction_type': inprogress.transaction_type,
+#                 'client_transaction_details': inprogress.transaction_details,
+#                 'client_status': inprogress.status,
+#                 'date_created': inprogress.date.isoformat() if inprogress.date else None,
+#             })
+
+#     return inprogressTransaction
+    

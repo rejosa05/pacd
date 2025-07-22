@@ -65,12 +65,13 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${client.client_fullname} Que No. ${client.client_queue_no} </p>
+                        <p class="transaction-description"> ${client.client_fullname}, Ticket No. ${client.client_queue_no}
+                        ${userunit === 'PACD' ? ``: `, Transaction Details: ${client.client_transaction_details} </p>`}
                     </div>
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
                         ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Resolved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
+                            <button class="icon-button text-blue" title="Approved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
@@ -82,7 +83,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `
-                            <button class="icon-button text-blue" title="Resolved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
+                            <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
                                 <i class="fa fa-check-circle"></i>
                             </button>                 
                             <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
@@ -108,6 +109,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
             const actionColor = {
                 'Completed': 'status-green',
                 'Processing': 'status-blue',
+                'Pending': 'status-yellow',
             } 
             
             const typeColor = {
@@ -138,7 +140,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${history.action_type}</span>
                             <span class="status ${documentType}">${history.transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${history.client_fullname} Que No. ${history.client_queue_no} </p>
+                        <p class="transaction-description"> ${history.client_fullname}, Ticket No. ${history.client_queue_no}, Transactions Details: ${history.transactions_details} </p>
                     </div>
                     <div class="transaction-actions">   
                         <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>

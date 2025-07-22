@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Dialog</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --danger-color: #ef4444;
+            --background-dark: rgba(0, 0, 0, 0.5);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc;
+        }
+
+        .trigger-btn {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .trigger-btn:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-speed) ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            transform: translateY(-20px);
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .modal-message {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .modal-btn.cancel {
+            background-color: white;
+            border-color: #e2e8f0;
+            color: #64748b;
+        }
+
+        .modal-btn.cancel:hover {
+            background-color: #f1f5f9;
+        }
+
+        .modal-btn.accept {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .modal-btn.accept:hover {
+            background-color: #4338ca;
+        }
+
+        /* Focus styles for accessibility */
+        button:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-icon {
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .modal-container {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="trigger-btn" id="triggerModal">Open Modal</button>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-container">
+            <div class="modal-icon">
+                <img src="https://placehold.co/80x80" alt="Warning icon with yellow exclamation mark in a triangle shape" />
+            </div>
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Action</h2>
+                <p class="modal-message">Are you sure you want to proceed with this action? This cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelBtn">Cancel</button>
+                <button class="modal-btn accept" id="acceptBtn">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modalOverlay = document.getElementById('modalOverlay');
+        const triggerModal = document.getElementById('triggerModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const acceptBtn = document.getElementById('acceptBtn');
+
+        // Open modal
+        triggerModal.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        });
+
+        // Close modal functions
+        const closeModal = () => {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        };
+
+        // Close on cancel button
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Close on accept button (with action confirmation)
+        acceptBtn.addEventListener('click', () => {
+            alert('Action Accepted!');
+            closeModal();
+        });
+
+        // Close when clicking outside modal
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

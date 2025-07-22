@@ -22,5 +22,5 @@ class DivisionLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form')
     search_fields = ('action_type', 'transaction_type', 'form')
     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
-    ordering = ('-date_resolved',)
+    ordering = ('-id',)
     list_per_page = 10
