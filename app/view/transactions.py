@@ -18,24 +18,8 @@ def f_transactions(request):
         transactionHistory  = transaction_history(today, accUnit)
         pendingTransaction = pending_transaction(today, accUnit)
         inprogressTransaction = inprogress_transactions(today, accUnit, user)
-        
-        print(inprogressTransaction)
-        if account.unit == 'PACD':
-            
-            total = {
-                'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
-                'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
-                'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
-            }
-
-        else:
-            
-            total = {
-                'totalTransaction': DivisionLog.objects.filter(unit=account.unit, date__date=today).count(),
-                'totalCompleted': DivisionLog.objects.filter(unit=account.unit, status='Completed', date__date=today).count(),
-                'totalSkipped': DivisionLog.objects.filter(unit=account.unit, status='Skipped', date__date=today).count()
-            }
-        
+        total = transaction_status(today, accUnit)
+             
         return JsonResponse({
             'pending_clients': pendingTransaction,
             'total':total, 

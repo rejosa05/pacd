@@ -68,22 +68,26 @@
 <main class="main">
     <div class="dashboard-cards">
         <div class="card">
-            
             <h3> <i class="fas fa-users icon"></i> Transactions Today</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-transactions"></span>
                 <!-- <div class="badge badge-green">+12%</div> -->
             </div>
         </div>
-
         <div class="card">
-            <h3><i class="fas fa-check icon"></i> Total Completed</h3>
+            <h3><i class="fas fa-check icon"></i> Total Served</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-completed"> </span>
                 <!-- <div class="badge badge-blue">Active</div> -->
             </div>
         </div>
-
+        <div class="card">
+            <h3><i class="fas fa-check icon"></i> Total Serving</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-serving"> 0</span>
+                <!-- <div class="badge badge-blue">Active</div> -->
+            </div>
+        </div>
         <div class="card">
             <h3> <i class="fas fa-exclamation-circle icon"></i> Total Skipped</h3>
             <div class="card-value-row">
@@ -96,10 +100,10 @@
     {% if user.unit != 'PACD' %}
         <div class="transaction-panel" style="height: 200px;">
             <div class="panel-header">
-                <h2> In Progress Transactions </h2>
+                <h2> Serving Client </h2>
                 <div class="pagination" id="paginationControls"></div>
             </div>
-            <div class="transaction-list" id="inprogressClientList">
+            <div class="transaction-list" id="servingClientList">
                 <!-- data fetch -->
             </div>
         </div>
@@ -261,7 +265,7 @@
                 <span id="to-served-trnsction-type"></span>
                 <label>Transactions Details</label>
                 <span id="to-served-trnsction-details"></span>
-                <button type="submit" onclick="toServed()">Serving</button>
+                <button type="submit" onclick="serving()">Serving</button>
             </div>
         </div>
     </div>

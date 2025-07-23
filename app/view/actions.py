@@ -210,27 +210,23 @@ def update_client_status_served_unit(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
-def update_status_to_served(request):
+def serving_client_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             client_id = request.POST.get('selectedClient')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
             unit = users.unit
-            remarks = request.POST.get('remarks')
-            resolutions = request.POST.get('resolutions')
-            today = timezone.now()
+            unitperson = users.first_name + ' ' + users.last_name
 
             client = DivisionLog.objects.get(id=client_id, unit=unit)
             client.action_type = 'Processing'
             client.unit_user = user
-            client.form = resolutions
-            client.date_resolved = today
-            client.remarks = remarks
             client.status = 'Serving'
+            client.unit_person = unitperson
             client.save()
 
-            return JsonResponse({'message': 'Client resolved successfully!'})
+            return JsonResponse({'message': 'Client serving!!!!'})
 
         except DivisionLog.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)

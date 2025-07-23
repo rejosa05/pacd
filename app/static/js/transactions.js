@@ -21,6 +21,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
         document.getElementById('total-transactions').textContent = counts['totalTransaction'] || 0;
         document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;
         document.getElementById('total-skipped').textContent = counts['totalSkipped'] || 0;
+        document.getElementById('total-serving').textContent = counts['totalServing'] || 0;
 
         let priorityClients = data.pending_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');

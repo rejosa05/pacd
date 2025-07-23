@@ -86,6 +86,7 @@ class DivisionLog(models.Model):
     transaction_type = models.CharField(max_length=100, blank=True)
     division = models.CharField(max_length=100)
     transaction_details = models.TextField(null=True)
+    unit_person = models.CharField(max_length=100, null=True)
     unit = models.CharField(max_length=100)
     action_type = models.CharField(max_length=100)
     user = models.CharField(max_length=100)

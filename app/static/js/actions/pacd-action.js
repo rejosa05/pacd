@@ -1,7 +1,7 @@
 const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
-    updateDetails, repeatTransaction
+    updateDetails, repeatTransaction, servingClientUnit
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -228,11 +228,28 @@ function servedClose() {
 }
 
 function toServed(fullname, type, id, cid, details) {
-    selectedClient = id;
+    selectedClient = cid;
     cts_id = "#CTS-" + id;
     document.getElementById('to-served-client-id').innerText = cts_id;
     document.getElementById('to-served-fullname').innerText = fullname;
     document.getElementById('to-served-trnsction-type').innerText = type;
-    document.getElementById('to-served-trnsction-type').innerText = details;
+    document.getElementById('to-served-trnsction-details').innerText = details;
     document.getElementById('servedClient-unit').style.display = 'flex';
+}
+
+function serving() {
+    fetch(servingClientUnit, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `selectedClient=${selectedClient}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('now serving!!');
+        servedClose();
+    })   
 }

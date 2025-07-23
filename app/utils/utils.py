@@ -12,6 +12,7 @@ def notify(user, today):
         notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit, date__date=today).count()
 
     return notifications
+
 def get_clients(unit):
     
     getClients = []
@@ -162,4 +163,20 @@ def inprogress_transactions(today, unit, user):
             })
 
     return inprogressTransaction
+
+def transaction_status(today, account):
+    if account == 'PACD':
+        countTransactionStatus = {
+            'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
+            'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
+            'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
+        }
+    else:
+        countTransactionStatus= {
+            'totalTransaction': DivisionLog.objects.filter(unit=account, date__date=today).count(),
+            'totalServing': DivisionLog.objects.filter(unit=account, status='Serving', date__date=today).count(),
+            'totalCompleted': DivisionLog.objects.filter(unit=account, status='Completed', date__date=today).count(),
+            'totalSkipped': DivisionLog.objects.filter(unit=account, status='Skipped', date__date=today).count()
+        }
+    return countTransactionStatus
     
