@@ -221,3 +221,18 @@ function saveRepeat() {
         closeRepeat();
     })   
 }
+
+// to served client
+function servedClose() {
+    document.getElementById('servedClient-unit').style.display = 'none';
+}
+
+function toServed(fullname, type, id, cid, details) {
+    selectedClient = id;
+    cts_id = "#CTS-" + id;
+    document.getElementById('to-served-client-id').innerText = cts_id;
+    document.getElementById('to-served-fullname').innerText = fullname;
+    document.getElementById('to-served-trnsction-type').innerText = type;
+    document.getElementById('to-served-trnsction-type').innerText = details;
+    document.getElementById('servedClient-unit').style.display = 'flex';
+}

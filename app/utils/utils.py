@@ -9,7 +9,7 @@ def notify(user, today):
     if unit == 'PACD':
         notifications = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).count()
     else:
-        notifications = DivisionLog.objects.filter(action_type='Processing', unit=unit, date__date=today).count()
+        notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit, date__date=today).count()
 
     return notifications
 def get_clients(unit):
@@ -145,21 +145,21 @@ def pending_transaction(today, unit):
     
     return pendingTransactions
 
-# def inprogress_transactions(today, unit, user):
-#     inprogressTransaction = []
-#     for inprogress in DivisionLog.objects.filter(date__date=today, unit=unit, status='Processing').order_by('-date'):
-#         if inprogress.client_id.user == user:
-#             inprogressTransaction.append({
-#                 'id': inprogress.id,
-#                 'client_id': inprogress.client_id.id,
-#                 'client_queue_no': inprogress.client_id.client_queue_no,
-#                 'client_fullname': f"{inprogress.client_id.client_firstname} {inprogress.client_id.client_lastname}",
-#                 'client_lane_type': inprogress.client_id.client_lane_type,
-#                 'client_transaction_type': inprogress.transaction_type,
-#                 'client_transaction_details': inprogress.transaction_details,
-#                 'client_status': inprogress.status,
-#                 'date_created': inprogress.date.isoformat() if inprogress.date else None,
-#             })
+def inprogress_transactions(today, unit, user):
+    inprogressTransaction = []
+    for inprogress in DivisionLog.objects.filter(date__date=today, unit=unit, status='In Progress').order_by('-date'):
+        if inprogress.client_id.user == user:
+            inprogressTransaction.append({
+                'id': inprogress.id,
+                'client_id': inprogress.client_id.id,
+                'client_queue_no': inprogress.client_id.client_queue_no,
+                'client_fullname': f"{inprogress.client_id.client_firstname} {inprogress.client_id.client_lastname}",
+                'client_lane_type': inprogress.client_id.client_lane_type,
+                'client_transaction_type': inprogress.transaction_type,
+                'client_transaction_details': inprogress.transaction_details,
+                'client_status': inprogress.status,
+                'date_created': inprogress.date.isoformat() if inprogress.date else None,
+            })
 
-#     return inprogressTransaction
+    return inprogressTransaction
     

@@ -83,9 +83,12 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `
+                            <button class="icon-button text-blue" title="Serving" onclick='toServed("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
+                                <i class="fa fa-check-circle"></i>
+                            </button>
                             <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
                                 <i class="fa fa-check-circle"></i>
-                            </button>                 
+                            </button>                   
                             <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
                                 <i class="fa fa-remove"></i>
                             </button>

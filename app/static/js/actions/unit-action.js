@@ -29,6 +29,7 @@ function approvedUnitClose() {
 }
 function approvedUnit(name, type, id, cid, details) {
     selectedClient = cid;
+    id = "#CTS-" + id;
     document.getElementById('client-id').innerText = id;
     document.getElementById('client-fullname').innerText = name;
     document.getElementById('unit-transaction-type').innerText = type;

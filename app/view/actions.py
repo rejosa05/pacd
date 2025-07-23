@@ -22,12 +22,12 @@ def forwarded_client_to_unit(request):
 
             DivisionLog.objects.create(
                 client_id_id=client_id,
-                action_type = 'Processing',
+                action_type = 'Pending',
                 division=division,
                 unit=unit,
                 transaction_type = type,
                 transaction_details=transaction_details,
-                status= 'Processing',
+                status= 'Pending',
                 user=username,
                 date=today
             )
@@ -198,6 +198,36 @@ def update_client_status_served_unit(request):
             client.date_resolved = today
             client.remarks = remarks
             client.status = 'Completed'
+            client.save()
+
+            return JsonResponse({'message': 'Client resolved successfully!'})
+
+        except DivisionLog.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_resolved: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
+def update_status_to_served(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            client_id = request.POST.get('selectedClient')
+            user = request.session.get('username')
+            users = AccountDetails.objects.filter(user=user).first()
+            unit = users.unit
+            remarks = request.POST.get('remarks')
+            resolutions = request.POST.get('resolutions')
+            today = timezone.now()
+
+            client = DivisionLog.objects.get(id=client_id, unit=unit)
+            client.action_type = 'Processing'
+            client.unit_user = user
+            client.form = resolutions
+            client.date_resolved = today
+            client.remarks = remarks
+            client.status = 'Serving'
             client.save()
 
             return JsonResponse({'message': 'Client resolved successfully!'})

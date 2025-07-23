@@ -17,8 +17,9 @@ def f_transactions(request):
         
         transactionHistory  = transaction_history(today, accUnit)
         pendingTransaction = pending_transaction(today, accUnit)
-        # inprogressTransaction = inprogress_transactions(today, accUnit, user)
+        inprogressTransaction = inprogress_transactions(today, accUnit, user)
         
+        print(inprogressTransaction)
         if account.unit == 'PACD':
             
             total = {
@@ -40,7 +41,7 @@ def f_transactions(request):
             'total':total, 
             'account': account.unit,
             'transactionHistory': transactionHistory,
-            # 'inprogressTransactions' : inprogressTransaction
+            'inprogressTransactions' : inprogressTransaction
             })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)

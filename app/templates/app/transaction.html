@@ -93,15 +93,17 @@
         </div>
     </div>
 
-<div class="transaction-panel" style="height: 200px;">
-    <div class="panel-header">
-        <h2> In Progress Transactions </h2>
-        <div class="pagination" id="paginationControls"></div>
-    </div>
-    <div class="transaction-list" id="inprogressClientList">
-        <!-- data fetch -->
-    </div>
-</div>
+    {% if user.unit != 'PACD' %}
+        <div class="transaction-panel" style="height: 200px;">
+            <div class="panel-header">
+                <h2> In Progress Transactions </h2>
+                <div class="pagination" id="paginationControls"></div>
+            </div>
+            <div class="transaction-list" id="inprogressClientList">
+                <!-- data fetch -->
+            </div>
+        </div>
+    {% endif %}
 <br>
 <div class="transaction-panel">
     <div class="panel-header">
@@ -206,8 +208,10 @@
     </div>
 </main>
 
+
+
 <!-- approved unit modal -->
-<div class="modal-overlay" id="approvedClient-unit">
+<!-- <div class="modal-overlay" id="approvedClient-unit">
     <div class="modal-view">    
         <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
         <h2>Approved Client</h2>
@@ -238,7 +242,31 @@
             </div>
         </div>
     </div>
+</div> -->
+
+<!-- for serving unit modal -->
+<div class="modal-overlay" id="servedClient-unit">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="servedClose()">&times;</button>
+        <h2>For Serving Client</h2>
+        <div class="">
+            <div class="approved-form" novalidate>
+                <label for="id">Client ID</label>
+                <span id="to-served-client-id"></span>
+                <label for="full-name">Full Name</label>
+                <span id="to-served-fullname"></span>
+                <label for="full-name">Company/Organization Name</label>
+                <span id="client-org"></span>
+                <label for="trnsaction-type">Transactions Type</label>
+                <span id="to-served-trnsction-type"></span>
+                <label>Transactions Details</label>
+                <span id="to-served-trnsction-details"></span>
+                <button type="submit" onclick="toServed()">Serving</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 <!-- repeat transactions modal -->
 <div class="modal-overlay" id="repeatTransaction" >
         <div class="modal-view">
