@@ -169,6 +169,7 @@ def transaction_status(today, account):
         countTransactionStatus = {
             'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
             'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
+            'totalServing': DivisionLog.objects.filter(status='Serving', date__date=today).count(),
             'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
         }
     else:

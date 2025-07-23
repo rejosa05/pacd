@@ -144,7 +144,8 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${history.action_type}</span>
                             <span class="status ${documentType}">${history.transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${history.client_fullname}, Ticket No. ${history.client_queue_no}, Transactions Details: ${history.transactions_details} </p>
+                        <p class="transaction-description"> ${history.client_fullname}, Ticket No. ${history.client_queue_no}</p>
+                        <p class="transaction-description"> Transaction Details: ${history.transactions_details} </p>
                     </div>
                     <div class="transaction-actions">   
                         <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>
