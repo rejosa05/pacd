@@ -51,6 +51,7 @@ urlpatterns = [
     # path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
     path('serving_client_unit', serving_client_unit, name='serving-client-unit'),
     path('repeat-transaction', repeat_transactions, name='repeat-transaction'),
+    
 
     path('reports', reports_page, name='reports'),
     path('accountList', accountList, name="accountList"),

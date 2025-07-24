@@ -17,7 +17,7 @@ def f_transactions(request):
         
         transactionHistory  = transaction_history(today, accUnit)
         pendingTransaction = pending_transaction(today, accUnit)
-        inprogressTransaction = inprogress_transactions(today, accUnit, user)
+        servingClient = serving_client(today, user)
         total = transaction_status(today, accUnit)
              
         return JsonResponse({
@@ -25,7 +25,7 @@ def f_transactions(request):
             'total':total, 
             'account': account.unit,
             'transactionHistory': transactionHistory,
-            'inprogressTransactions' : inprogressTransaction
+            'servingClient' : servingClient
             })
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
