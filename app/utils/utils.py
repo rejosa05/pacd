@@ -146,7 +146,7 @@ def pending_transaction(today, unit):
     
     return pendingTransactions
 
-def serving_client(today, user):
+def serving_client_unit_list(today, user):
     servingTransaction = []
     serving  = DivisionLog.objects.filter(date__date=today, unit_user=user , status='Serving').order_by('-date')
     for client in serving:
@@ -161,7 +161,7 @@ def serving_client(today, user):
             'client_status': client.status,
             'date_created': client.date.isoformat() if client.date else None,
         })
-
+    
     return servingTransaction
 
 def transaction_status(today, account):

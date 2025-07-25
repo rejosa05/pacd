@@ -26,7 +26,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         const counts = data.total;
         
         const transactionHistory = data.transactionHistory;
-        const serving = data.servingClient;
+        const serving = data.servingClientUnit;
 
         document.getElementById('total-transactions').textContent = counts['totalTransaction'] || 0;
         document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;
@@ -205,8 +205,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         }
 
         // serving list 
-
-        
         const totalServingPages = Math.ceil(serving.length / servingPerPage);
         const servingStart = (servingPage - 1) * servingPerPage;
         const paginatedServing = serving.slice(servingStart, servingStart + servingPerPage);

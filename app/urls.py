@@ -59,4 +59,5 @@ urlpatterns = [
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
     path('services', services_page, name="services"),
+    path('serving', serving_client, name="serving"), # serving list 
 ]

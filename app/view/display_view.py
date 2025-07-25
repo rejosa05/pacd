@@ -46,7 +46,7 @@ def serving_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
 
-        all_clients = DivisionLog.objects.filter(date__date=today, action_type = 'Processing').order_by('-date')
+        all_clients = DivisionLog.objects.filter(date__date=today, action_type = 'Forwarded').order_by('-date')
 
         seen_units = set()
         serving_clients = []

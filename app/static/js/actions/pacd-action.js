@@ -230,7 +230,7 @@ function servedClose() {
 function toServed(fullname, type, id, cid, details) {
     selectedClient = cid;
     cts_id = "#CTS-" + id;
-    document.getElementById('to-served-client-id').innerText = cts_id;
+    document.getElementById('to-served-client-id').innerText = selectedClient;
     document.getElementById('to-served-fullname').innerText = fullname;
     document.getElementById('to-served-trnsction-type').innerText = type;
     document.getElementById('to-served-trnsction-details').innerText = details;
