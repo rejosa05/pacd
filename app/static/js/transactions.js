@@ -26,7 +26,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         const counts = data.total;
         
         const transactionHistory = data.transactionHistory;
-        const serving = data.servingClientUnit;
+        const serving = data.servingClient;
 
         document.getElementById('total-transactions').textContent = counts['totalTransaction'] || 0;
         document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;

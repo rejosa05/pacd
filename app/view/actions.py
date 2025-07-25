@@ -220,7 +220,7 @@ def serving_client_unit(request):
             unit = users.unit
             unitperson = users.first_name + ' ' + users.last_name
 
-            client = DivisionLog.objects.get(id=client_id)
+            client = DivisionLog.objects.get(id=client_id, unit=unit)
             client.action_type = 'Processing'
             client.unit_user = user
             client.status = 'Serving'
