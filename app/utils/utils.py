@@ -156,7 +156,7 @@ def serving_client_unit_list(today, user):
     for client in serving:
         servingTransaction.append({
             'id': client.id,
-            'client_id': f"#CTS -{client.client_id.id}",
+            'client_id': f"#CTS-{client.client_id.id}",
             'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,

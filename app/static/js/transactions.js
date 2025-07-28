@@ -69,7 +69,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">#CTS-${client.client_id}</span>
+                            <span class="transaction-id">${client.client_id}</span>
                             <span class="status ${actionTypeColor}">${client.client_status}</span>
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
@@ -228,7 +228,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">#CTS-${served.client_id}</span>
+                            <span class="transaction-id">${served.client_id}</span>
                             <span class="status status-blue">Serving</span>
                             <span class="status ${laneColorClass}">${served.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>

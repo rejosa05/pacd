@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountDetails, SessionHistory, DivisionLog
+from .models import AccountDetails, SessionHistory, DivisionLog, ServicesDetails
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
@@ -23,4 +23,12 @@ class DivisionLogAdmin(admin.ModelAdmin):
     search_fields = ('action_type', 'transaction_type', 'form')
     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
     ordering = ('-id',)
+    list_per_page = 10
+
+@admin.register(ServicesDetails)
+class ServiceDetails(admin.ModelAdmin):
+    list_display = ('id', 'service_name', 'service_code', 'division', 'unit', 'classification', 'type_transaction')
+    search_fields = ('service_name', 'service_code', 'division', 'unit', 'classification', 'type_transaction')
+    list_filter = ('service_name', 'service_code', 'classification', 'type_transaction')
+    order = ('-id')
     list_per_page = 10
