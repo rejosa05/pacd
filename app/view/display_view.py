@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from ..models import ClientDetails, DivisionLog
 from ..forms import ClientDetailsForm
+from ..utils.utils import *
 
 def display_view(request):
     return render(request, 'app/display.html')
@@ -45,23 +46,10 @@ def que_view(request):
 def serving_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
+        
+        user = 'Sys'
 
-        all_clients = DivisionLog.objects.filter(date__date=today, action_type = 'Forwarded').order_by('-date')
-
-        seen_units = set()
-        serving_clients = []
-
-        for client in all_clients:
-            if client.unit not in seen_units:
-                seen_units.add(client.unit)
-                serving_clients.append({
-                    'id': client.id,
-                    'client_id': client.client_id.id,
-                    'client_ticket': client.client_id.client_queue_no,
-                    'client_transaction': client.transaction_type,
-                    'client_division': client.division,
-                    'client_unit': client.unit,
-                })
+        serving_clients = serving_client_unit_list(today, user = user)
 
         return JsonResponse({'serving_clients': serving_clients})
     else:

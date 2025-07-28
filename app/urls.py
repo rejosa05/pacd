@@ -16,7 +16,7 @@ urlpatterns = [
     path('ticket/<int:client_id>/', ticket_view, name="client_ticket"),
     path('clients/', client_details, name="client-page"),
     path('que-view/', que_view, name="que-view"),
-    path('serving-client', serving_client, name="serving-client"),
+    path('serving-list', serving_client, name='serving-list'),
 
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
@@ -48,7 +48,6 @@ urlpatterns = [
     path('get-monthly-data', get_monthly_data, name='get-monthly-data'),
     path('get-type-data/', get_type_data, name='get-type-data'),
     
-    # path('get-monthly-data-unit/', get_monthly_data_unit, name='get-monthly-data-unit'),
     path('serving_client_unit', serving_client_unit, name='serving-client-unit'),
     path('repeat-transaction', repeat_transactions, name='repeat-transaction'),
     
@@ -59,5 +58,4 @@ urlpatterns = [
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
     path('services', services_page, name="services"),
-    path('serving', serving_client, name="serving"), # serving list 
 ]

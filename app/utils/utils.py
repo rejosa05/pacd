@@ -148,20 +148,25 @@ def pending_transaction(today, unit):
 
 def serving_client_unit_list(today, user):
     servingTransaction = []
-    serving  = DivisionLog.objects.filter(date__date=today, unit_user=user , status='Serving').order_by('-date')
+    if user == 'Sys':
+        serving  = DivisionLog.objects.filter(date__date=today, status='Serving').order_by('-date')
+    else:
+        serving  = DivisionLog.objects.filter(date__date=today, unit_user=user , status='Serving').order_by('-date')
+    
     for client in serving:
         servingTransaction.append({
             'id': client.id,
-            'client_id': client.client_id.id,
+            'client_id': f"#CTS -{client.client_id.id}",
             'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
             'client_transaction_type': client.transaction_type,
+            'client_division': client.division,
+            'client_unit': client.unit,
             'transaction_details': client.transaction_details,
             'client_status': client.status,
             'date_created': client.date.isoformat() if client.date else None,
         })
-    
     return servingTransaction
 
 def transaction_status(today, account):

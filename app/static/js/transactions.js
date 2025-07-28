@@ -234,11 +234,11 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
                         </div>
                         <p class="transaction-description">${served.client_fullname}, Ticket No. ${served.client_queue_no}</p>
-                        <p class="transaction-description">Transaction Details: ${served.transactions_details}</p>
+                        <p class="transaction-description">Transaction Details: ${served.transaction_details}</p>
                     </div>
                     <div class="transaction-actions">
                         <span class="timestamp">Time Started: ${formatDateTime(served.date_created)}</span>
-                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${served.client_fullname}","${served.client_transaction_type}", "${served.client_id}", "${served.id}", "${served.client_transaction_details}")'>
+                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${served.client_fullname}","${served.client_transaction_type}", "${served.client_id}", "${served.id}", "${served.transaction_details}")'>
                             <i class="fa fa-check-circle"></i>
                         </button>
                     </div>

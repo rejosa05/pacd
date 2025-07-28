@@ -1,5 +1,5 @@
 const {
-    queViewUrl, servingClient
+    queViewUrl, servingList
 } = window.dashboardConfig;
 
 function displayQue() {
@@ -18,41 +18,50 @@ function displayQue() {
             regular: regularNo,
             priority: priorityNo
         };
-    })
+    })  
 }
 
 function fetchServingClient() {
-    fetch(servingClient, {
+    fetch(servingList, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
-        const tableBody = document.querySelector('#servingClients tbody');
-        tableBody.innerHTML = '';
+        // Clear all existing content from each division box
+        document.querySelectorAll('.clients-list').forEach(div => div.innerHTML = '');
 
         let priorityClients = data.serving_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.serving_clients.filter(client => client.client_lane_type !== 'Priority');
 
-        function addClientRow(client, color) {
-            const row = document.createElement('tr');
-            row.style.backgroundColor = color;
-            row.innerHTML = `
-                <td>#CT${client.client_id}</td>
-                <td>${client.client_ticket}</td>
-                <td>${client.client_transaction}</td>
-                <td>${client.client_division}</td>
-                <td>${client.client_unit}</td>
+        console.log(priorityClients)
+        function createClientBox(client) {
+            const clientBox = document.createElement('div');
+            clientBox.classList.add('client-card'); // Add styling class if needed
+            clientBox.innerHTML = `
+                <h2>${client.client_id} - ${client.client_unit} - ${client.client_queue_no}</h2>
+                
             `;
-            tableBody.appendChild(row);
+            return clientBox;
         }
-        priorityClients.forEach(client => addClientRow(client));
-        regularClients.forEach(client => addClientRow(client));
+
+        function insertClient(client) {
+            const divisionContainer = document.querySelector(`#${client.client_division} .clients-list`);
+            if (divisionContainer) {
+                divisionContainer.appendChild(createClientBox(client));
+            }
+        }
+        console.log(1)
+
+        // First priority, then regular
+        priorityClients.forEach(client => insertClient(client));
+        regularClients.forEach(client => insertClient(client));
     })
 }
+
 
 if (path.includes(displayQueUrl)) { 
     displayQue();
     fetchServingClient();
     setInterval(displayQue, 2000);
-    setInterval(fetchServingClient, 2000);
+    // setInterval(fetchServingClient, 2000);
 }
