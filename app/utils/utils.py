@@ -58,6 +58,7 @@ def get_totals(date, unit):
             'totalCSS': queryTotal.filter(form='CSS').count(),
         }
     return getTotals
+
 def get_percentage(totals):
     total = totals.get('totalTransaction') or 1
     getPercentage =  {
@@ -120,7 +121,8 @@ def pending_transaction(today, unit):
         pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
         for client in pending_clients:
             pendingTransactions.append({
-                'client_id': client.id,
+                'id': client.id,
+                'client_id': f"#CTS-{client.id}",
                 'client_queue_no': client.client_queue_no,
                 'client_fullname': client.client_firstname + ' ' + client.client_lastname,
                 'client_lane_type': client.client_lane_type,
@@ -134,7 +136,7 @@ def pending_transaction(today, unit):
         for client in pending_clients:
             pendingTransactions.append({
                 'id': client.id,
-                'client_id': client.client_id.id,
+                'client_id': f"#CTS-{client.client_id.id}",
                 'client_queue_no': client.client_id.client_queue_no,
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_lane_type': client.client_id.client_lane_type,

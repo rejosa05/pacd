@@ -1,7 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %} DOH Services {% endblock %}
+{% block title %} DOH Services - CITIZEN CHARTER {% endblock %}
 
 {% block content %}
 <div class="sidebar" id="sidebar">
@@ -29,7 +29,6 @@
                 <i class="fas fa-gears icon"></i> Services
             </a>
         </div>
-
         <div class="support-box">
             <h3 class="support-title">Need help?</h3>
             <p class="support-text">Our support team is just a click away.</p>
@@ -42,7 +41,7 @@
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title"> DOH Services </h1>
+        <h1 class="navbar-title"> DOH Services - CITIZEN CHARTER </h1>
     </div>
     
     <div class="navbar-right">
@@ -68,36 +67,61 @@
 <main class="main">
     <div class="dashboard-cards">
         <div class="card">
-            
-            <h3> <i class="fas fa-users icon"></i> Total Account</h3>
+            <h3> <i class="fas fa-users icon"></i> Total Services</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-accounts"></span>
                 <!-- <div class="badge badge-green">+12%</div> -->
             </div>
         </div>
-
         <div class="card">
+            <h3><i class="fas fa-user-md icon"></i> RD/ARD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-rd"> </span>
+                <div class="badge badge-blue"><span id="percent-rd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-users-gear icon"></i> MSD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-msd"> </span>
+                <div class="badge badge-blue"><span id="percent-msd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-medkit icon"></i> LHSD</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-lhsd"> </span>
+                <div class="badge badge-blue"><span id="percent-lhsd"></span></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-user-pen icon"></i> RLED</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-rled"> </span>
+                <div class="badge badge-blue"><span id="percent-rled"></span></div>
+            </div>
+        </div>
+        <!-- <div class="card">
             <h3><i class="fas fa-user-check icon"></i> Active</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-active"> </span>
-                <!-- <div class="badge badge-blue">Active</div> -->
+                <div class="badge badge-blue">Active</div>
             </div>
         </div>
-
         <div class="card">
             <h3> <i class="fas fa-user-clock icon"></i> For Approval</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-for-approval"> </span>
-                <!-- <span class="card-subtext">minutes</span> -->
+                <span class="card-subtext">minutes</span>
             </div>
         </div>
         <div class="card">
             <h3> <i class="fas fa-user-xmark icon"></i> Inactive</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-inactive"> </span>
-                <!-- <span class="card-subtext">minutes</span> -->
+                <span class="card-subtext">minutes</span>
             </div>
-        </div>
+        </div> -->
     </div>
 
 <div class="transaction-panel">
@@ -110,7 +134,7 @@
             <i class="fas fa-user-plus icon-margin-right"></i> Add Account
         </button>
     </div>
-    <div class="transaction-list" id="accountList">
+    <div class="transaction-list" id="serviceList">
         <!-- data fetch -->
     </div>
     <div class="panel-footer"> <input type="text" id="accountSearch" placeholder="Search account..."/>

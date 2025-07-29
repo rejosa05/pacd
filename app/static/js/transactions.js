@@ -88,7 +88,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
                             <button class="icon-button text-red" title="Skipped"
-                                onclick="skipClient('${client.client_id}')">
+                                onclick="skipClient('${client.id}')">
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `

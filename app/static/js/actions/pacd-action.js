@@ -26,7 +26,6 @@ function skipClient(id) {
     } else {
         return;
     }
-    fetchPendingClients();
 }
 
 // approved from pacd
