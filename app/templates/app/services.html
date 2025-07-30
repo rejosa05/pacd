@@ -45,13 +45,14 @@
     </div>
     
     <div class="navbar-right">
+        <label for="searchBar"></label>
+        <input type="search" id="serviceSearch" name="searchBar" placeholder="Search........."/>
         <div class="notification-container">
             <button class="notification-button">
                 <i class="fas fa-bell icon-gray"></i>
             </button>
             <span class="notification-badge"></span>
         </div>
-        
         <div class="profile">
             <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/52a9964b-98e3-4213-9b7d-f2a9624b66a7.png" 
                  alt="User profile picture with neutral background" 
@@ -69,59 +70,38 @@
         <div class="card">
             <h3> <i class="fas fa-users icon"></i> Total Services</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-accounts"></span>
+                <span class="card-value" id="total-services"></span>
                 <!-- <div class="badge badge-green">+12%</div> -->
             </div>
         </div>
         <div class="card">
             <h3><i class="fas fa-user-md icon"></i> RD/ARD</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-rd"> </span>
-                <div class="badge badge-blue"><span id="percent-rd"></span></div>
+                <span class="card-value" id="srvc-rd"> </span>
+                <div class="badge badge-blue"><span id="srvc-rd"></span></div>
             </div>
         </div>
         <div class="card">
             <h3><i class="fas fa-users-gear icon"></i> MSD</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-msd"> </span>
-                <div class="badge badge-blue"><span id="percent-msd"></span></div>
+                <span class="card-value" id="srvc-msd"> </span>
+                <div class="badge badge-blue"><span id="srvc-msd"></span></div>
             </div>
         </div>
         <div class="card">
             <h3><i class="fas fa-medkit icon"></i> LHSD</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-lhsd"> </span>
-                <div class="badge badge-blue"><span id="percent-lhsd"></span></div>
+                <span class="card-value" id="srvc-lhsd"> </span>
+                <!-- <div class="badge badge-blue"><span id="srvc-lhsd"></span></div> -->
             </div>
         </div>
         <div class="card">
             <h3><i class="fas fa-user-pen icon"></i> RLED</h3>
             <div class="card-value-row">
-                <span class="card-value" id="total-rled"> </span>
+                <span class="card-value" id="srvc-rled"> </span>
                 <div class="badge badge-blue"><span id="percent-rled"></span></div>
             </div>
         </div>
-        <!-- <div class="card">
-            <h3><i class="fas fa-user-check icon"></i> Active</h3>
-            <div class="card-value-row">
-                <span class="card-value" id="total-active"> </span>
-                <div class="badge badge-blue">Active</div>
-            </div>
-        </div>
-        <div class="card">
-            <h3> <i class="fas fa-user-clock icon"></i> For Approval</h3>
-            <div class="card-value-row">
-                <span class="card-value" id="total-for-approval"> </span>
-                <span class="card-subtext">minutes</span>
-            </div>
-        </div>
-        <div class="card">
-            <h3> <i class="fas fa-user-xmark icon"></i> Inactive</h3>
-            <div class="card-value-row">
-                <span class="card-value" id="total-inactive"> </span>
-                <span class="card-subtext">minutes</span>
-            </div>
-        </div> -->
     </div>
 
 <div class="transaction-panel">
@@ -130,14 +110,16 @@
          {% for message in messages %}
             <p style="color: red"> {{ message }} </p>
         {% endfor %}
+        {% if user.unit == 'PACD' %}
         <button class="button button-blue" onclick="openAddAccount()">
-            <i class="fas fa-user-plus icon-margin-right"></i> Add Account
+            <i class="fas fa-user-plus icon-margin-right"></i> Add Services
         </button>
+        {% endif %}
     </div>
-    <div class="transaction-list" id="serviceList">
+    <div class="transaction-list" id="serviceList" style="height: 490px;">
         <!-- data fetch -->
     </div>
-    <div class="panel-footer"> <input type="text" id="accountSearch" placeholder="Search account..."/>
+    <div class="panel-footer">
         <div id="accountCount" class="footer-text"></div>
         <div class="pagination" id="paginationControls">
         </div>
@@ -198,8 +180,8 @@
 </div> -->
 
 <script>
-  document.getElementById('accountSearch').addEventListener('input', () => {
-    fetchAccount(1); // Reset to first page on new search
+  document.getElementById('serviceSearch').addEventListener('input', () => {
+    fecthServices(1); // Reset to first page on new search
 });
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggle');

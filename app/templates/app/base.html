@@ -45,6 +45,8 @@
             
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
+            servicePage: "{% url 'services' %}",
+            serviceListUrl: "{% url 'service-list' %}",
             reports: "{% url 'reports' %}", // display reports in PACD user
             transaction: "{% url 'transactions' %}",
             dashboard: "{% url 'dashboard' %}",
@@ -67,6 +69,7 @@
     <script src="{% static 'js/reports.js' %}"></script>
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/transactions.js' %}"></script>
+    <script src="{% static 'js/services.js' %}"></script>
 </head>
 <body>
     {% block content %}

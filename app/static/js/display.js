@@ -52,7 +52,6 @@ function fetchServingClient() {
         }
         console.log(1)
 
-        // First priority, then regular
         priorityClients.forEach(client => insertClient(client));
         regularClients.forEach(client => insertClient(client));
     })

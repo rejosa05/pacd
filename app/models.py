@@ -139,11 +139,10 @@ class SessionHistory(models.Model):
         return f"{self.user} - {self.login_time}"
     
 class ServicesDetails(models.Model):
-    service_name = models.CharField(max_length=100)
+    service_name = models.CharField(max_length=500)
     service_code = models.CharField(max_length=100, null=True, blank=True)
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
-    benefit = models.CharField(max_length=100, null=True, blank=True)
     classification = models.CharField(max_length=100, null=True, blank=True)
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
     timeFrame =  models.CharField(max_length=100, null=True, blank=True)

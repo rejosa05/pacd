@@ -1,4 +1,4 @@
-from ..models import DivisionLog, ClientDetails, AccountDetails
+from ..models import DivisionLog, ClientDetails, AccountDetails, ServicesDetails
 from django.utils import timezone
 
 def notify(user, today):
@@ -84,8 +84,20 @@ def get_total_accounts():
         'totalForApproval': account.filter(status='For Approval').count(),
         'totalInactive': account.filter(status='Inactive').count(),
     }
-
     return totalAccounts
+
+def get_total_services():
+    srvc = ServicesDetails.objects.all()
+
+    totalServices = {
+        'totalServices': srvc.count(),
+        'totalSrvcRLED': srvc.filter(division='RLED').count(),
+        'totalSrvcMSD': srvc.filter(division='MSD').count(),
+        'totalSrvcLHSD': srvc.filter(division='LHSD').count(),
+        'totalSrvcRDARD': srvc.filter(division='RD/ARD').count()
+    }
+    return totalServices
+
 
 def transaction_history(date, unit):
     getTransaction = []
