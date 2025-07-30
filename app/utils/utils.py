@@ -98,6 +98,17 @@ def get_total_services():
     }
     return totalServices
 
+def get_srvc_div(division):
+    services = ServicesDetails.objects.filter(division=division)
+
+    getServices = []
+    for srvc in services:
+        getServices.append({
+            'id': srvc.id,
+            'service_name': srvc.service_name
+        })
+    return getServices
+
 
 def transaction_history(date, unit):
     getTransaction = []

@@ -10,11 +10,13 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         const paginationControls = document.getElementById('paginationControls');
         const historyPagination = document.getElementById('historyPagination');
         const servingPagination = document.getElementById('servingPagination')
+        const selectorList = document.querySelector('#serviceList')
         
         clientList.innerHTML = '';
         paginationControls.innerHTML = '';
         transacHistory.innerHTML = ''; // Clear history first
         historyPagination.innerHTML = '';
+        selectorList.innerHTML = '';
 
         const userunit = data.account;
         
@@ -23,7 +25,20 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         servingPagination.innerHTML = '';
         }
 
+        let services = data.getServices || [];
         const counts = data.total;
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select a service';
+        selectorList.appendChild(defaultOption);
+
+        services.forEach(srvc => {
+        const option = document.createElement('option');
+        option.value = srvc.service_name;
+        option.textContent = `${srvc.service_name} (${srvc.service_code})`;
+        selectorList.appendChild(option);
+    });
         
         const transactionHistory = data.transactionHistory;
         const serving = data.servingClient;
@@ -84,7 +99,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
-                                onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.client_id}')">
+                                onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.id}')">
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
                             <button class="icon-button text-red" title="Skipped"
@@ -92,7 +107,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `
-                            <button class="icon-button text-blue" title="Serving" onclick='toServed("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}")'>
+                            <button class="icon-button text-blue" title="Serving" onclick='toServed("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}", "${client.client_division}")'>
                                 <i class="fa fa-check-circle"></i>
                             </button>                   
                             <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
@@ -271,8 +286,6 @@ if (path.includes(transaction)) {
         fetchTransactions();
 }
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes(transaction)) {
         fetchTransactions();
@@ -301,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 
 
 

@@ -1,7 +1,8 @@
 const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
-    updateDetails, repeatTransaction, servingClientUnit
+    updateDetails, repeatTransaction, servingClientUnit,
+    getServices
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -226,7 +227,7 @@ function servedClose() {
     document.getElementById('servedClient-unit').style.display = 'none';
 }
 
-function toServed(fullname, type, id, cid, details) {
+function toServed(fullname, type, id, cid, details, division) {
     selectedClient = cid;
     cts_id = "#CTS-" + id;
     document.getElementById('to-served-client-id').innerText = selectedClient;
@@ -234,6 +235,8 @@ function toServed(fullname, type, id, cid, details) {
     document.getElementById('to-served-trnsction-type').innerText = type;
     document.getElementById('to-served-trnsction-details').innerText = details;
     document.getElementById('servedClient-unit').style.display = 'flex';
+
+    updateServiceOptionsForDivision(division);
 }
 
 function serving() {
