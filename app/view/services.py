@@ -24,7 +24,6 @@ def serviceList(request):
         ]
 
         totalServices  = get_total_services()
-        print(totalServices)
         return JsonResponse({
             'serviceList': serviceList,
             'totalServices': totalServices

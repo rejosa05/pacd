@@ -2,7 +2,8 @@ const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
     updateDetails, repeatTransaction, servingClientUnit,
-    getServices
+    getServices,
+    servicesPage
 } = window.dashboardConfig;
 
 let selectedClient = null;
@@ -229,14 +230,12 @@ function servedClose() {
 
 function toServed(fullname, type, id, cid, details, division) {
     selectedClient = cid;
-    cts_id = "#CTS-" + id;
-    document.getElementById('to-served-client-id').innerText = selectedClient;
+
+    document.getElementById('to-served-client-id').innerText = id   ;
     document.getElementById('to-served-fullname').innerText = fullname;
     document.getElementById('to-served-trnsction-type').innerText = type;
     document.getElementById('to-served-trnsction-details').innerText = details;
     document.getElementById('servedClient-unit').style.display = 'flex';
-
-    updateServiceOptionsForDivision(division);
 }
 
 function serving() {

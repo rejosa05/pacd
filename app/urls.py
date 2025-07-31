@@ -32,9 +32,8 @@ urlpatterns = [
     path('skipped-client/', skipped_client, name='skipped-client'),
     path('skipped-client-unit', skipped_client_unit, name='skipped-client-unit'),
     
-    path('notifications-pacd/', notifications_pacd, name='notifications-pacd'),
+    path('notifications', notifications, name='notifications'),
     path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
-    path('count-type-transactio-unit/', count_type_transaction_unit, name="count-type-transaction-unit"),
 
     path('update-details', update_user_details, name='update-details'),
 

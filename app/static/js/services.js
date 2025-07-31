@@ -1,5 +1,5 @@
 const {
-    services, serviceListUrl
+    serviceListUrl
 } = window.dashboardConfig;
 
 function fecthServices(page = 1, perPage = 4) {
@@ -141,7 +141,7 @@ function viewDetails(id) {
 
 fecthServices();
 
-// if (path.includes(services)) {
+// if (path.includes(servicesPage)) {
 //     fecthServices();
 // }
 

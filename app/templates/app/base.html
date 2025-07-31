@@ -15,21 +15,17 @@
             f_dashboard: "{% url 'f_dashboard' %}",
             transactionHistory: "{% url 'transaction-history' %}",  // resolved client list per day
 
-
             queViewUrl: "{% url 'que-view' %}", // que display on screen
             displayQueUrl: "{% url 'display-page' %}", // display page
             servingList: "{% url 'serving-list' %}",
-            
-
             
             forwardedClientToUnit: "{% url 'forwarded-client-to-unit' %}", // action forwarded client to unit from PACD
             skippedClient: "{% url 'skipped-client' %}", // action skipped client from PACD
             skippedClientUnit: "{% url 'skipped-client-unit' %}", // action skipped client from unit
             updateDetails: "{% url 'update-details' %}", // action update the details of user
         
-            notification: "{% url 'notifications-pacd' %}", // notifications for pending in pacd
+            notification: "{% url 'notifications' %}", // notifications for pending in pacd
             transactionCount: "{% url 'count-type-transaction' %}", // count per type of transactions
-            transactionCountUnit: "{% url 'count-type-transaction-unit' %}", // count per type of unit transactions
 
             updateClientStatusServedUrl: "{% url 'update-client-status-served' %}", // served by PACD resolved
             updateCLientStatusServedUnitUrl: "{% url 'update-client-status-served-unit' %}", // served by UNIT resolved
@@ -41,8 +37,7 @@
             dailyDAta: "{% url 'get-daily-data' %}",
             monthlyData: "{% url 'get-monthly-data' %}",
             typeData: "{% url 'get-type-data' %}",
-            
-            
+         
             addAccountUrl: "{% url 'account' %}", // add user account
             accountListUrl: "{% url 'accountList' %}",
             servicePage: "{% url 'services' %}",
@@ -51,6 +46,7 @@
             transaction: "{% url 'transactions' %}",
             dashboard: "{% url 'dashboard' %}",
             accounts: "{% url 'account' %}",
+            servicesPage: "{% url 'services' %}",
 
             repeatTransaction: "{% url 'repeat-transaction' %}", // repeat transaction
             servingClientUnit: "{% url 'serving-client-unit' %}", // serving client

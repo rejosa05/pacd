@@ -21,7 +21,7 @@ def f_transactions(request):
         servingClientUnit = serving_client_unit_list(today, user)
         total = transaction_status(today, accUnit)
         getServices = get_srvc_div(accDiv)
-             
+        
         return JsonResponse({
             'pending_clients': pendingTransaction,
             'total':total, 

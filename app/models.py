@@ -96,6 +96,7 @@ class DivisionLog(models.Model):
     remarks = models.TextField(blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     form = models.CharField(max_length=100, null=True)
+    service_avail = models.CharField(max_length=200, null=True)
 
 
     def __str__(self):
@@ -139,7 +140,7 @@ class SessionHistory(models.Model):
         return f"{self.user} - {self.login_time}"
     
 class ServicesDetails(models.Model):
-    service_name = models.CharField(max_length=500)
+    service_name = models.TextField(    )
     service_code = models.CharField(max_length=100, null=True, blank=True)
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
