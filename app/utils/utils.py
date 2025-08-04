@@ -105,7 +105,8 @@ def get_srvc_div(division):
     for srvc in services:
         getServices.append({
             'id': srvc.id,
-            'service_name': srvc.service_name
+            'service_name': srvc.service_name,
+            'service_code': srvc.service_code
         })
     return getServices
 

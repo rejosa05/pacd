@@ -37,6 +37,7 @@ function approvedUnit(name, type, id, cid, details) {
 }
 
 function saveActionResolved() {
+    const srvc_avail = document.getElementById('serviceList').value;
     const remarks = document.getElementById('unit-approved-remarks');
     const csmChecked = document.getElementById('unit-csm-checkbox');
     const cssChecked = document.getElementById('unit-css-checkbox');
@@ -63,11 +64,12 @@ function saveActionResolved() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}`
+        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc_avail}`
     })
     .then(response => response.json())
     .then(() => {
         alert('succefully catered!!!')
         approvedUnitClose();
+        fetchTransactions();
     })
 }

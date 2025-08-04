@@ -276,27 +276,46 @@ function getSrvc() {
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
         const selectorList = document.querySelector('#serviceList');
+        const serviceSelectWrapper = selectorList.closest('label') || selectorList;
+        const csmCheckbox = document.getElementById('unit-csm-checkbox').parentElement;
+        const cssCheckbox = document.getElementById('unit-css-checkbox').parentElement;
+
         selectorList.innerHTML = '';
 
         const services = data.getServices || [];
 
-        // Add default "Select a service" option
-        const defaultOption = new Option('Select a service', '');
-        selectorList.appendChild(defaultOption);
+        if (services.length > 0) {
+            // Show select and both checkboxes
+            serviceSelectWrapper.style.display = 'block';
+            csmCheckbox.style.display = 'inline-block';
+            cssCheckbox.style.display = 'inline-block';
 
-        // Populate service options
-        services.forEach(srvc => {
-            const option = new Option(
-                `${srvc.service_name} (${srvc.service_code})`,
-                srvc.service_name
-            );
-            selectorList.appendChild(option);
-        });
+            // Add default option
+            const defaultOption = new Option('Select a service', '');
+            selectorList.appendChild(defaultOption);
+
+            // Populate options
+            services.forEach(srvc => {
+                const option = new Option(
+                    `${srvc.service_name} (${srvc.service_code})`,
+                    srvc.service_name
+                );
+                selectorList.appendChild(option);
+            });
+        } else {
+            // Hide service select
+            serviceSelectWrapper.style.display = 'none';
+
+            // Show only CSS checkbox
+            csmCheckbox.style.display = 'none';
+            cssCheckbox.style.display = 'inline-block';
+        }
     })
     .catch(error => {
         console.error('Error fetching services:', error);
     });
 }
+
 
 
 if (path.includes(transaction)) {
@@ -307,6 +326,7 @@ if (path.includes(transaction)) {
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes(transaction)) {
         fetchTransactions();
+        getSrvc();
     }
 
     const notifyElement = document.getElementById('notify');
