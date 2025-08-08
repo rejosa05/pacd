@@ -805,9 +805,48 @@ tbody tr:nth-child(even):hover {
 
 .client-info {
     display: flex;
-    align-items: center;
+    align-items: left;
     gap: 10px;
 }
+
+
+.client-details {
+    text-align: left;
+    display: grid;
+    gap: 0;
+}
+
+.client-details span {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.client-id {
+    font-size: 1rem;
+    font-style: italic;
+}
+
+.client-ticket {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #0198cf;
+    text-decoration: underline;
+}
+
+.client-name {
+    font-weight: 600;
+    font-size: 2rem;
+    color: #333;
+}
+
+.client-transaction-type {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    font-style: italic;
+}
+
 
 .initial-circle {
     width: 30px;
@@ -995,16 +1034,8 @@ tbody tr:nth-child(even):hover {
 
 .approved-form label {
   display: block;
-  margin-top: 15px;
+  margin-top: 10px;
   font-weight: bold;
-}
-
-.approved-form span {
-  display: block;
-  margin-top: 5px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-radius: 5px;
 }
 
 .remarks-textarea {
@@ -1290,6 +1321,7 @@ tbody tr:nth-child(even):hover {
       font-size: 0.875rem;
       color: #334155;
     }
+    
     input[type="date"], input[type="search"] {
       padding: 10px 12px;
       border: 1.5px solid #cbd5e1;

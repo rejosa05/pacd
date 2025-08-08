@@ -27,13 +27,20 @@ function skipClientUnit(id) {
 function approvedUnitClose() {
     document.getElementById('approvedClient-unit').style.display = 'none';
 }
-function approvedUnit(name, type, id, cid, details) {
+function approvedUnit(name, type, id, cid, details, ticket, contact) {
     selectedClient = cid;
+    document.getElementById('client-ticket').innerText = ticket;
     document.getElementById('client-id').innerText = id;
     document.getElementById('client-fullname').innerText = name;
+    document.getElementById('client-contact').innerText = contact;
     document.getElementById('unit-transaction-type').innerText = type;
     document.getElementById('unit-transactions-details').innerText = details;
     document.getElementById('approvedClient-unit').style.display = 'flex';
+}
+
+function approvedUnits() {
+    console.log(1)
+    document.getElementById('approvedClient-units').style.display = 'flex'; 
 }
 
 function saveActionResolved() {

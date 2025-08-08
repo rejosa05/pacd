@@ -30,6 +30,7 @@ def f_transactions(request):
             'servingClient' : servingClientUnit,
             'getServices' : getServices
             })
+        
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
     

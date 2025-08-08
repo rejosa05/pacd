@@ -235,12 +235,16 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${served.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description">${served.client_fullname}, Ticket No. ${served.client_queue_no}</p>
+                        <p class="transaction-description">${served.client_fullname}, ${served.client_queue_no}</p>
                         <p class="transaction-description">Transaction Details: ${served.transaction_details}</p>
                     </div>
                     <div class="transaction-actions">
                         <span class="timestamp">Time Started: ${formatDateTime(served.date_created)}</span>
-                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${served.client_fullname}","${served.client_transaction_type}", "${served.client_id}", "${served.id}", "${served.transaction_details}")'>
+                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${served.client_fullname}","${served.client_transaction_type}", "${served.client_id}", "${served.id}", "${served.transaction_details}", "${served.client_queue_no}", "${served.client_contact}")'>
+                            <i class="fa fa-check-circle"></i>
+                        </button>
+                        
+                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnits()'>
                             <i class="fa fa-check-circle"></i>
                         </button>
                     </div>
@@ -285,28 +289,24 @@ function getSrvc() {
         const services = data.getServices || [];
 
         if (services.length > 0) {
-            // Show select and both checkboxes
+            
             serviceSelectWrapper.style.display = 'block';
             csmCheckbox.style.display = 'inline-block';
             cssCheckbox.style.display = 'inline-block';
 
-            // Add default option
-            const defaultOption = new Option('Select a service', '');
+            const defaultOption = new Option('Select a service avail', '');
             selectorList.appendChild(defaultOption);
 
-            // Populate options
             services.forEach(srvc => {
                 const option = new Option(
-                    `${srvc.service_name} (${srvc.service_code})`,
+                    `${srvc.service_classification} (${srvc.service_name})`,
                     srvc.service_name
                 );
                 selectorList.appendChild(option);
             });
         } else {
-            // Hide service select
             serviceSelectWrapper.style.display = 'none';
 
-            // Show only CSS checkbox
             csmCheckbox.style.display = 'none';
             cssCheckbox.style.display = 'inline-block';
         }

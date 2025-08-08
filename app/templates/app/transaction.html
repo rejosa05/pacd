@@ -4,6 +4,93 @@
 {% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
+
+<style>
+     /* body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .modal {
+        width: 320px;
+        background: #d9d9d9;
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        margin: 40px auto;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    h2 {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .client-info {
+        margin-bottom: 10px;
+    }
+
+    .client-info strong {
+        display: block;
+        font-size: 18px;
+    }
+
+    .big-number {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 40px;
+        font-weight: bold;
+    }
+
+    .btn {
+        display: inline-block;
+        background: #4ad2e0;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 20px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    input[type="text"], select, textarea {
+        width: 100%;
+        padding: 6px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    input[type="checkbox"] {
+        margin-left: 5px;
+    }
+
+    .checkbox-group {
+        margin-top: 5px;
+    }
+
+    textarea {
+        resize: none;
+        height: 50px;
+    } */
+</style>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-inner">
         <div class="logo-container">
@@ -218,20 +305,31 @@
 <div class="modal-overlay" id="approvedClient-unit">
     <div class="modal-view">    
         <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
-        <h2>Approved Client</h2>
+        <!-- <h2>Approved Client</h2> -->
         <div class="">
             <div class="approved-form" novalidate>
-                <label for="id">Client ID</label>
-                <span id="client-id"></span>
-                <label for="full-name">Full Name</label>
-                <span id="client-fullname"></span>
-                <label for="trnsaction-type">Transactions Type</label>
-                <span id="unit-transaction-type"></span>
-                <label>Transactions Details</label>
-                <span id="unit-transactions-details"></span>
-                <label id="service-select-label" for="a-transaction-type">Service Name</label>
-                <select class="form-option" name="divisions" id="serviceList">
-                </select>
+                <div class="client-details">
+                    <span class="client-ticket" id="client-ticket"></span>
+                    <span class="client-id" id="client-id"></span>
+                    <strong class="client-name" id="client-fullname"> Rolly Ejosa</strong>
+                    <span> Department of Health</span>
+                    <span> Butuan City</span>
+                    <span id="client-contact"> </span>
+                    <span class="client-transaction-type" id="unit-transaction-type"></span>
+                    <span id="unit-transactions-details"></span>
+                </div>
+                    <div class="checkbox-group">
+                        <label>is transaction covered by Citizen Charter? </label>
+                        <label id="csm-wrapper">
+                            <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="Yes">
+                            Yes
+                        </label>
+                        <label id="csm-wrapper">
+                            <input type="checkbox" id="unit-css-checkbox" name="resolution" value="No">
+                            No
+                        </label>
+                    </div>
+                <select class="form-option" name="divisions" id="serviceList"></select>
                 <label>Remarks</label>
                 <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
                 <label class="form-label">CSS/CSM:</label>
@@ -244,9 +342,69 @@
                         <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
                         CSS
                     </label>
-                    </div>
-                <button type="submit" onclick="saveActionResolved()">Save</button>
+                </div>
+                <button type="submit" onclick="saveActionResolved()">Served</button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal-overlay" id="approvedClient-units">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
+        <!-- <h2>Approved Client</h2> -->
+        <div class="">
+        <div class="client-info">
+        <h2>CLIENT ID: 01</h2>
+        <strong>Rolly J. Ejosa</strong>
+        Department of Health<br>
+        Butuan City<br>
+        09918202872
+    </div>
+    <div class="big-number">3</div>
+
+    <a href="#" class="btn">SUBMIT DOCUMENTS</a>
+
+    <label>Transactions Details: submit documents for ptc</label>
+
+    <label>Is transaction covered by CC?
+        <span class="checkbox-group">
+            Yes <input type="checkbox">
+            No <input type="checkbox">
+        </span>
+    </label>
+
+    <select>
+        <option>Service Name</option>
+    </select>
+
+    <label>If yes, are the requirements in the citizen’s charter lacking?
+        <span class="checkbox-group">
+            Yes <input type="checkbox">
+            No <input type="checkbox">
+        </span>
+    </label>
+
+    <label>Deficiencies to comply</label>
+    <input type="text" placeholder="input deficiencies to complied .....">
+
+    <label>Request processed or resolved?
+        <span class="checkbox-group">
+            Yes <input type="checkbox">
+            No <input type="checkbox">
+        </span>
+    </label>
+
+    <label>Remarks</label>
+    <textarea placeholder="Remarks ................."></textarea>
+
+    <label>CSM / CSS
+        <span class="checkbox-group">
+            CSM <input type="checkbox">
+            CSS <input type="checkbox">
+        </span>
+    </label>
         </div>
     </div>
 </div>
@@ -274,6 +432,27 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="servedClient-unit">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="servedClose()">&times;</button>
+        <h2>For Serving Client</h2>
+        <div class="">
+            <div class="approved-form" novalidate>
+                <label for="id">Client ID</label>
+                <span id="to-served-client-id"></span>
+                <label for="full-name">Full Name</label>
+                <span id="to-served-fullname"></span>
+                <label for="full-name">Company/Organization Name</label>
+                <span id="client-org"></span>
+                <label for="trnsaction-type">Transactions Type</label>
+                <span id="to-served-trnsction-type"></span>
+                <label>Transactions Details</label>
+                <span id="to-served-trnsction-details"></span>
+                <button type="submit" onclick="serving()">Serving</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- repeat transactions modal -->
 <div class="modal-overlay" id="repeatTransaction" >
         <div class="modal-view">

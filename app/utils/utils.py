@@ -106,7 +106,8 @@ def get_srvc_div(division):
         getServices.append({
             'id': srvc.id,
             'service_name': srvc.service_name,
-            'service_code': srvc.service_code
+            'service_code': srvc.service_code,
+            'service_classification': srvc.classification,
         })
     return getServices
 
@@ -182,14 +183,15 @@ def serving_client_unit_list(today, user):
     for client in serving:
         servingTransaction.append({
             'id': client.id,
-            'client_id': f"#CTS-{client.client_id.id}",
-            'client_queue_no': client.client_id.client_queue_no,
+            'client_id': f"Client Id: #{client.client_id.id}",
+            'client_queue_no': f"Ticket No: #{client.client_id.client_queue_no}",
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
             'client_transaction_type': client.transaction_type,
+            'client_contact': client.client_id.client_contact,
             'client_division': client.division,
             'client_unit': client.unit,
-            'transaction_details': client.transaction_details,
+            'transaction_details': f"Details: {client.transaction_details}",
             'client_status': client.status,
             'date_created': client.date.isoformat() if client.date else None,
         })
