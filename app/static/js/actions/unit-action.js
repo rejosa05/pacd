@@ -38,31 +38,37 @@ function approvedUnit(name, type, id, cid, details, ticket, contact) {
     document.getElementById('approvedClient-unit').style.display = 'flex';
 }
 
-function approvedUnits() {
-    console.log(1)
-    document.getElementById('approvedClient-units').style.display = 'flex'; 
-}
-
 function saveActionResolved() {
     const srvc_avail = document.getElementById('serviceList').value;
     const remarks = document.getElementById('unit-approved-remarks');
-    const csmChecked = document.getElementById('unit-csm-checkbox');
-    const cssChecked = document.getElementById('unit-css-checkbox');
+    const deficiencies = document.getElementById('deficiencies-textarea');
+    const csmChecked = document.getElementById('unit-csm-checkbox').checked;
+    const cssChecked = document.getElementById('unit-css-checkbox').checked;
 
-    if (!remarks.value) { 
+    const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
+    const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null;
+
+    const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
+    const requirementsValue = requirementsRadio ? requirementsRadio.value : null;
+
+    if (!remarks.value.trim()) { 
         alert('please do not leave blanks !!!');
         return;
     }
     
-    const isCSM = csmChecked.checked;
-    const isCSS = cssChecked.checked;
-
-    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
+    if ((csmChecked && cssChecked) || (!csmChecked && !cssChecked)) {
         alert('Please select only one satisfaction form (CSM or CSS)!');
         return;
     }
 
     const resolutions = isCSM ? 'CSM' : 'CSS';
+
+    let deficienciesValue = '';
+    if (requirementsValue === 'Yes') {
+        deficienciesValue = deficienciesTextarea.value.trim();
+    } else {
+        deficienciesValue = '';
+    }
 
     fetch(updateCLientStatusServedUnitUrl, {
         method: 'POST',
@@ -71,7 +77,7 @@ function saveActionResolved() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc_avail}`
+        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc_avail}&cc_cover=${charterCoveredValue}&requiremnets_met=${requirementsValue}&deficiencies=${deficiencies.value}`
     })
     .then(response => response.json())
     .then(() => {

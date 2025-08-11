@@ -206,7 +206,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             }
         }
 
-        // serving list 
         const totalServingPages = Math.ceil(serving.length / servingPerPage);
         const servingStart = (servingPage - 1) * servingPerPage;
         const paginatedServing = serving.slice(servingStart, servingStart + servingPerPage);
@@ -273,6 +272,44 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
 }
 
 
+document.addEventListener('DOMContentLoaded', function () {
+    const firstYes = document.querySelector('input[name="cc-cover"][value="Yes"]');
+    const firstNo = document.querySelector('input[name="cc-cover"][value="No"]');
+    const secondYes = document.querySelector('input[name="requirements"][value="Yes"]');
+    const secondNo = document.querySelector('input[name="requirements"][value="No"]');
+
+    const serviceListWrapper = document.getElementById('serviceList').closest('label') || document.getElementById('serviceList');
+    const deficienciesWrapper = document.getElementById('deficiencies-wrapper');
+    const deficienciesTextarea = document.getElementById('deficiencies-textarea');
+
+    serviceListWrapper.style.display = 'none';
+    deficienciesWrapper.style.display = 'none';
+    deficienciesTextarea.style.display = 'none';
+
+    [firstYes, firstNo].forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.value === 'Yes') {
+                serviceListWrapper.style.display = 'block';
+                deficienciesWrapper.style.display = 'block';
+                getSrvc();
+            } else {
+                serviceListWrapper.style.display = 'none';
+                deficienciesWrapper.style.display = 'none';
+            }
+        });
+    });
+
+    [secondYes, secondNo].forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.value === 'Yes') {
+                deficienciesTextarea.style.display = 'block';
+            } else {
+                deficienciesTextarea.style.display = 'none';
+            }
+        });
+    });
+});
+
 function getSrvc() {
     fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -280,42 +317,28 @@ function getSrvc() {
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
         const selectorList = document.querySelector('#serviceList');
-        const serviceSelectWrapper = selectorList.closest('label') || selectorList;
-        const csmCheckbox = document.getElementById('unit-csm-checkbox').parentElement;
-        const cssCheckbox = document.getElementById('unit-css-checkbox').parentElement;
-
         selectorList.innerHTML = '';
 
         const services = data.getServices || [];
 
         if (services.length > 0) {
-            
-            serviceSelectWrapper.style.display = 'block';
-            csmCheckbox.style.display = 'inline-block';
-            cssCheckbox.style.display = 'inline-block';
-
-            const defaultOption = new Option('Select a service avail', '');
-            selectorList.appendChild(defaultOption);
-
+            selectorList.appendChild(new Option('Select a service avail', ''));
             services.forEach(srvc => {
-                const option = new Option(
-                    `${srvc.service_classification} (${srvc.service_name})`,
-                    srvc.service_name
+                selectorList.appendChild(
+                    new Option(`${srvc.service_classification} (${srvc.service_name})`, srvc.service_name)
                 );
-                selectorList.appendChild(option);
             });
         } else {
-            serviceSelectWrapper.style.display = 'none';
-
-            csmCheckbox.style.display = 'none';
-            cssCheckbox.style.display = 'inline-block';
+            document.getElementById('citizen-charter-wrapper').style.display = 'none';
+            document.getElementById('serviceList').style.display = 'none';
+            document.getElementById('deficiencies-wrapper').style.display = 'none';
+            document.getElementById('deficiencies-textarea').style.display = 'none';
         }
     })
     .catch(error => {
         console.error('Error fetching services:', error);
     });
 }
-
 
 
 if (path.includes(transaction)) {

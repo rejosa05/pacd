@@ -186,22 +186,22 @@ def update_client_status_served_unit(request):
             client_id = request.POST.get('selectedClient')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
-            unit = users.unit
+            srvc_avail = request.POST.get('srvc_avail')
+            deficiencies = request.POST.get('deficiencies')
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
-            srvc_avail = request.POST.get('srvc_avail')
+            
             today = timezone.now()
 
-            print(srvc_avail)
 
-            client = DivisionLog.objects.get(id=client_id, unit=unit)
+            client = DivisionLog.objects.get(id=client_id, unit=users.unit)
             client.action_type = 'Resolved'
-            client.unit_user = user
             client.form = resolutions
-            client.date_resolved = today
+            client.date_resolved = today   
             client.remarks = remarks
             client.status = 'Completed'
             client.service_avail = srvc_avail
+            client.deficiencies = deficiencies
             client.save()
 
             return JsonResponse({'message': 'Client resolved successfully!'})
@@ -214,11 +214,11 @@ def update_client_status_served_unit(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+#serving
 def serving_client_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             client_id = request.POST.get('selectedClient')
-            
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
             unit = users.unit

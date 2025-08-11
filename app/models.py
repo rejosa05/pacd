@@ -93,10 +93,14 @@ class DivisionLog(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     unit_user = models.CharField(max_length=100, null=True)
     date_resolved = models.DateTimeField(null=True, blank=True)
-    remarks = models.TextField(blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     form = models.CharField(max_length=100, null=True)
     service_avail = models.CharField(max_length=200, null=True)
+    deficiencies = models.TextField(null=True, blank=True)
+    remarks = models.TextField(blank=True)
+    requirements_met = models.BooleanField(default=False)
+    cc_cover = models.BooleanField(default=False)
+    request_catered = models.BooleanField(default=False)
 
 
     def __str__(self):
