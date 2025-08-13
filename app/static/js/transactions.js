@@ -322,7 +322,7 @@ function getSrvc() {
         const services = data.getServices || [];
 
         if (services.length > 0) {
-            selectorList.appendChild(new Option('Select a service avail', ''));
+            selectorList.appendChild(new Option('Select Service', ''));
             services.forEach(srvc => {
                 selectorList.appendChild(
                     new Option(`${srvc.service_classification} (${srvc.service_name})`, srvc.service_name)

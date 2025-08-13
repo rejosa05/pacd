@@ -39,36 +39,65 @@ function approvedUnit(name, type, id, cid, details, ticket, contact) {
 }
 
 function saveActionResolved() {
-    const srvc_avail = document.getElementById('serviceList').value;
+    const srvcSelect = document.getElementById('serviceList');
     const remarks = document.getElementById('unit-approved-remarks');
-    const deficiencies = document.getElementById('deficiencies-textarea');
+    const deficienciesInput = document.getElementById('deficiencies');
     const csmChecked = document.getElementById('unit-csm-checkbox').checked;
     const cssChecked = document.getElementById('unit-css-checkbox').checked;
 
     const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
-    const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null;
+    const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
 
     const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
-    const requirementsValue = requirementsRadio ? requirementsRadio.value : null;
+    const requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
 
-    if (!remarks.value.trim()) { 
-        alert('please do not leave blanks !!!');
+    let srvc = "";
+    let deficienciesValue = "";
+
+    if (charterCoveredValue === "Yes") {
+        // Must select a service
+        srvc = srvcSelect.value;
+        if (!srvc) {
+            alert('Please select a service!');
+            return;
+        }
+
+        if (requirementsValue === "Yes") {
+            // Must provide deficiencies details
+            deficienciesValue = deficienciesInput.value.trim();
+            if (!deficienciesValue) {
+                alert('Please provide deficiencies details!');
+                return;
+            }
+        } else if (requirementsValue === "No") {
+            // Keep service value, clear and empty deficiencies
+            deficienciesInput.value = "";
+            deficienciesValue = "";
+        } else {
+            alert('Please answer Question 2 (Requirements Met)!');
+            return;
+        }
+    } else if (charterCoveredValue === "No") {
+        // Service empty, clear deficiencies
+        srvc = "";
+        deficienciesInput.value = "";
+        deficienciesValue = "";
+    } else {
+        alert('Please answer Question 1 (Citizen Charter)!');
         return;
     }
-    
+
+    if (!remarks.value.trim()) {
+        alert('Please do not leave Remarks blank!');
+        return;
+    }
+
     if ((csmChecked && cssChecked) || (!csmChecked && !cssChecked)) {
         alert('Please select only one satisfaction form (CSM or CSS)!');
         return;
     }
 
-    const resolutions = isCSM ? 'CSM' : 'CSS';
-
-    let deficienciesValue = '';
-    if (requirementsValue === 'Yes') {
-        deficienciesValue = deficienciesTextarea.value.trim();
-    } else {
-        deficienciesValue = '';
-    }
+    const resolutions = csmChecked ? 'CSM' : 'CSS';
 
     fetch(updateCLientStatusServedUnitUrl, {
         method: 'POST',
@@ -77,12 +106,17 @@ function saveActionResolved() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${selectedClient}&remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc_avail}&cc_cover=${charterCoveredValue}&requiremnets_met=${requirementsValue}&deficiencies=${deficiencies.value}`
+        body: `selectedClient=${encodeURIComponent(selectedClient)}&remarks=${encodeURIComponent(remarks.value)}&resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}&cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}&deficiencies=${encodeURIComponent(deficienciesValue)}`
     })
     .then(response => response.json())
     .then(() => {
-        alert('succefully catered!!!')
+        alert('Successfully catered!');
         approvedUnitClose();
         fetchTransactions();
     })
+    .catch(err => {
+        console.error('Error updating client:', err);
+    });
 }
+
+

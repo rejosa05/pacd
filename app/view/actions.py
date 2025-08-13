@@ -180,28 +180,41 @@ def  update_user_details(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+
+# process for unit resolved
 def update_client_status_served_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             client_id = request.POST.get('selectedClient')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
+
             srvc_avail = request.POST.get('srvc_avail')
             deficiencies = request.POST.get('deficiencies')
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
-            
-            today = timezone.now()
 
+            # New fields (Q1, Q2, Q3)
+            cc_cover = request.POST.get('cc_cover')  # Q1
+            requirements_met = request.POST.get('requirements_met')  # Q2
+            request_processed = request.POST.get('request_processed')  # Q3 (make sure JS sends this)
+
+            today = timezone.now()
 
             client = DivisionLog.objects.get(id=client_id, unit=users.unit)
             client.action_type = 'Resolved'
             client.form = resolutions
-            client.date_resolved = today   
+            client.date_resolved = today
             client.remarks = remarks
             client.status = 'Completed'
             client.service_avail = srvc_avail
             client.deficiencies = deficiencies
+
+            # Save Q1, Q2, Q3 into DB
+            client.cc_cover = cc_cover
+            client.requirements_met = requirements_met
+            client.request_catered = request_processed
+
             client.save()
 
             return JsonResponse({'message': 'Client resolved successfully!'})
@@ -209,10 +222,11 @@ def update_client_status_served_unit(request):
         except DivisionLog.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:
-            print(f"Error in update_client_status_resolved: {e}")
+            print(f"Error in update_client_status_served_unit: {e}")
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 #serving
 def serving_client_unit(request):

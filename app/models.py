@@ -98,9 +98,9 @@ class DivisionLog(models.Model):
     service_avail = models.CharField(max_length=200, null=True)
     deficiencies = models.TextField(null=True, blank=True)
     remarks = models.TextField(blank=True)
-    requirements_met = models.BooleanField(default=False)
-    cc_cover = models.BooleanField(default=False)
-    request_catered = models.BooleanField(default=False)
+    requirements_met = models.CharField(max_length=10, null=True, blank=True)
+    cc_cover = models.CharField(max_length=10, null=True, blank=True)
+    request_catered = models.CharField(max_length=10, null=True, blank=True)
 
 
     def __str__(self):
