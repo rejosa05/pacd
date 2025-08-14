@@ -837,7 +837,7 @@ tbody tr:nth-child(even):hover {
 .client-name {
     font-weight: 600;
     font-size: 2rem;
-    color: #333;
+    color: var(--title-txt);
 }
 
 .client-transaction-type {

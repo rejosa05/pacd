@@ -46,10 +46,13 @@ function approveModal(client, que, id) {
     document.getElementById('approvedClient').style.display = 'flex';
 }
 
-function forwardedModal(client, que, id) {
+function forwardedModal(client, que, id, contact) {
     selectedClient = id;
-    document.getElementById('forward-fullname').innerText = client;
+    cid = "Client Id: #" + id;
     document.getElementById('f-client-que').innerText = que;
+    document.getElementById('f-client-id').innerText = cid; 
+    document.getElementById('forward-fullname').innerText = client;
+    document.getElementById('contacts').innerText = contact;
     document.getElementById('forwardClient').style.display = 'flex';
 }
 

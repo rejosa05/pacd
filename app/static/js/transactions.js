@@ -76,17 +76,17 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${client.client_fullname}, Ticket No. ${client.client_queue_no} </p>
+                        <p class="transaction-description"> ${client.client_fullname}, ${client.client_queue_no}, ${client.client_contact} </p>
                         ${userunit === 'PACD' ? ``: `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>`}
                     </div>
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
                         ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Approved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}", "${client.client_id}")'>
+                            <button class="icon-button text-blue" title="Approved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}")'>
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
-                                onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.id}')">
+                                onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.id}', '${client.client_contact}')">
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
                             <button class="icon-button text-red" title="Skipped"

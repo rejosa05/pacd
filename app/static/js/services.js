@@ -9,7 +9,7 @@ function fecthServices(page = 1, perPage = 4) {
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
-        const selectorList = document.querySelector('#serviceList');
+        const selectorList = document.querySelector('#serviceLists');
         const paginationControls = document.getElementById('paginationControls');
         const countDisplay = document.getElementById('accountCount');
         selectorList.innerHTML = '';

@@ -1,231 +1,259 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modal Dialog</title>
-    <style>
-        :root {
-            --primary-color: #4f46e5;
-            --danger-color: #ef4444;
-            --background-dark: rgba(0, 0, 0, 0.5);
-            --transition-speed: 0.3s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f8fafc;
-        }
-
-        .trigger-btn {
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-speed) ease;
-        }
-
-        .trigger-btn:hover {
-            background-color: #4338ca;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--background-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all var(--transition-speed) ease;
-            z-index: 1000;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-container {
-            background-color: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 450px;
-            padding: 30px;
-            transform: translateY(-20px);
-            transition: all var(--transition-speed) ease;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
-                        0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .modal-overlay.active .modal-container {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .modal-message {
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 30px;
-        }
-
-        .modal-btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .modal-btn.cancel {
-            background-color: white;
-            border-color: #e2e8f0;
-            color: #64748b;
-        }
-
-        .modal-btn.cancel:hover {
-            background-color: #f1f5f9;
-        }
-
-        .modal-btn.accept {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .modal-btn.accept:hover {
-            background-color: #4338ca;
-        }
-
-        /* Focus styles for accessibility */
-        button:focus-visible {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-icon {
-            margin-bottom: 16px;
-        }
-
-        @media (max-width: 480px) {
-            .modal-container {
-                padding: 20px;
-            }
-            
-            .modal-footer {
-                flex-direction: column-reverse;
-                gap: 8px;
-            }
-            
-            .modal-btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <button class="trigger-btn" id="triggerModal">Open Modal</button>
-
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-container">
-            <div class="modal-icon">
-                <img src="https://placehold.co/80x80" alt="Warning icon with yellow exclamation mark in a triangle shape" />
+Approved modal from pacd
+<div class="modal-overlay" id="approvedClient">
+    <div class="modal-view">    
+    <button class="close-btn" aria-label="Close modal" onclick="closedApproved()">&times;</button>
+    <!-- <h2>Queue No. <span id="approve-client-que"></span></h2> -->
+    <div class="">
+        <div class="approved-form" novalidate>
+            <div class="client-details">
+                <span class="client-ticket" id="approve-client-que"></span>
+                <span class="client-id" id="approve-client-id"></span>
+                <strong class="client-name" id="approve-client-fullname"> </strong>
+                <span> Department of Health</span>
+                <span> Butuan City</span>
+                <span id="contact">09918202872 </span>
             </div>
-            <div class="modal-header">
-                <h2 class="modal-title">Confirm Action</h2>
-                <p class="modal-message">Are you sure you want to proceed with this action? This cannot be undone.</p>
+            <label for="org-name">Organization/Company Name</label>
+            <input class="org" type="text" id="a-org-name" placeholder="Organization/Company Name">
+            <label for="a-transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="a-transaction-type">
+                    <option value="">Select Type</option>
+                    <option value="Inquiry">Inquire</option>
+                    <option value="Request">Request</option>
+                    <option value="Submit Documents">Submit Documents</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Others">Others</option>
+                </select>
+            <label>Transactions Details</label>
+            <textarea id="approved-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+            <label>Remarks</label>
+            <textarea id="approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+            <div class="checkbox-group">
+                <label class="form-label">CSS/CSM:</label>
+                <label>
+                <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
+                CSM
+                </label>
+                <label>
+                <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
+                CSS
+                </label>
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn cancel" id="cancelBtn">Cancel</button>
-                <button class="modal-btn accept" id="acceptBtn">Accept</button>
+            <button type="submit" onclick="saveApprovedClientByPACD()">Save</button>
+        </div>
+    </div>
+    </div>
+</div>
+    
+ <!-- forward client modal -->
+<div class="modal-overlay" id="forwardClient" >
+    <div class="modal-view">
+        <button class="close-btn" aria-label="Close modal" onclick="closeForward()">&times;</button>
+        <!-- <h2>Queue No. <span id="f-client-que"></span></h2> -->
+        <div class="">
+            <div class="approved-form" novalidate>
+                <div class="client-details">
+                    <span class="client-ticket" id="f-client-que"></span>
+                    <span class="client-id" id="f-client-id"> 1 </span>
+                    <strong class="client-name" id="forward-fullname"> </strong>
+                    <span> Department of Health</span>
+                    <span> Butuan City</span>
+                    <span id="contact">09918202872 </span>
+                </div>
+                <label for="org-name">Organization/Company Name</label>
+                <input class="org" type="text" id="f-org-name" placeholder="Organization/Company Name">
+                <label for="transaction-type">Transactions Type</label>
+                    <select class="form-option" name="divisions" id="f-transaction-type">
+                        <option value="">Select Type</option>
+                        <option value="Inquiry">Inquiry</option>
+                        <option value="Request">Request</option>
+                        <option value="Submit Documents">Submit Documents</option>
+                        <option value="Payment">Payment</option>
+                        <option value="Others">Others</option>
+                    </select>
+                <label>Transactions Details</label>
+                <textarea id="forwarded-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+                <label class="form-label" for="division">Division: </label>
+                    <select class="form-option" name="divisions" id="f-division-select">
+                        <option value="">Select Division</option>
+                        <option value="MSD">MSD</option>
+                        <option value="LHSD">LHSD</option>
+                        <option value="RD/ARD">RD/ARD</option>
+                        <option value="RLED">RLED</option>
+                    </select>
+                <label class="form-label" for="unit">Unit:</label>
+                <select class="form-option" name="unit" id="f-unit-select" required>
+                    <option value="">Select Unit</option>
+                </select>
+                <button type="submit" onclick="saveForwardedClient()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- approved unit modal -->
+<div class="modal-overlay" id="approvedClient-unit">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="approvedUnitClose()">&times;</button>
+        <!-- <h2>Approved Client</h2> -->
+        <div class="">
+            <div class="approved-form" novalidate>
+                <div class="client-details">
+                    <span class="client-ticket" id="client-ticket"></span>
+                    <span class="client-id" id="client-id"></span>
+                    <strong class="client-name" id="client-fullname"> </strong>
+                    <span> Department of Health</span>
+                    <span> Butuan City</span>
+                    <span id="client-contact"> </span>
+                    <span class="client-transaction-type" id="unit-transaction-type"></span>
+                    <span id="unit-transactions-details"></span>
+                </div>
+                <div id="citizen-charter-wrapper">
+                    <div class="checkbox-group">
+                        <label>is transaction covered by Citizen Charter? </label>
+                        <label id="csm-wrapper">
+                            <input type="radio" id="" name="cc-cover" value="Yes"> Yes
+                        </label>
+                        <label id="csm-wrapper">
+                            <input type="radio" id="" name="cc-cover" value="No"> No
+                        </label>
+                    </div>
+                    <select class="form-option" name="divisions" id="serviceList"></select>
+                    <div id="deficiencies-wrapper">
+                        <div class="checkbox-group">
+                            <label>if yes, are the requirements in the Citizen's Charter? </label>
+                            <label id="csm-wrapper">
+                            <input type="radio" id="" name="requirements" value="Yes">
+                            Yes
+                            </label>
+                            <label id="csm-wrapper">
+                                <input type="radio" id="" name="requirements" value="No">
+                                No
+                            </label>
+                        </div>
+                        <div id="deficiencies-textarea">
+                            <label>Deficiencies to comply</label>
+                            <textarea id="deficiencies" class="remarks-textarea" placeholder="Deficiencies....." required=True></textarea>
+                        </div>
+                    </div>                   
+                </div>
+                <label>Remarks</label>
+                <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+                <div class="checkbox-group">
+                    <label class="form-label">is the transaction request catered and/or resolved? </label>
+                    <label id="csm-wrapper">
+                        <input type="radio" id="" name="resolution" value="CSM">
+                        Yes
+                    </label>
+                    <label id="csm-wrapper">
+                        <input type="radio" id="" name="resolution" value="CSS">
+                        No
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label class="form-label">CSS/CSM:</label>
+                    <label id="csm-wrapper">
+                        <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="CSM">
+                        CSM
+                    </label>
+                    <label id="csm-wrapper">
+                        <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
+                        CSS
+                    </label>
+                </div>
+                <button type="submit" onclick="saveActionResolved()">Served</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- for serving unit modal -->
+<div class="modal-overlay" id="servedClient-unit">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="servedClose()">&times;</button>
+        <h2>For Serving Client</h2>
+        <div class="">
+            <div class="approved-form" novalidate>
+                <label for="id">Client ID</label>
+                <span id="to-served-client-id"></span>
+                <label for="full-name">Full Name</label>
+                <span id="to-served-fullname"></span>
+                <label for="full-name">Company/Organization Name</label>
+                <span id="client-org"></span>
+                <label for="trnsaction-type">Transactions Type</label>
+                <span id="to-served-trnsction-type"></span>
+                <label>Transactions Details</label>
+                <span id="to-served-trnsction-details"></span>
+                <button type="submit" onclick="serving()">Serving</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="servedClient-unit">
+    <div class="modal-view">    
+        <button class="close-btn" aria-label="Close modal" onclick="servedClose()">&times;</button>
+        <h2>For Serving Client</h2>
+        <div class="">
+            <div class="approved-form" novalidate>
+                <label for="id">Client ID</label>
+                <span id="to-served-client-id"></span>
+                <label for="full-name">Full Name</label>
+                <span id="to-served-fullname"></span>
+                <label for="full-name">Company/Organization Name</label>
+                <span id="client-org"></span>
+                <label for="trnsaction-type">Transactions Type</label>
+                <span id="to-served-trnsction-type"></span>
+                <label>Transactions Details</label>
+                <span id="to-served-trnsction-details"></span>
+                <button type="submit" onclick="serving()">Serving</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- repeat transactions modal -->
+<div class="modal-overlay" id="repeatTransaction" >
+        <div class="modal-view">
+            <button class="close-btn" aria-label="Close modal" onclick="closeRepeat()">&times;</button>
+            <h2>Queue No. <span id="r-client-que"></span></h2>
+            <div class="approved-form" novalidate>
+            <label for="first-name">Full Name</label>
+            <span id="r-fullname"></span>
+            <label for="org-name">Organization/Company Name</label>
+            <span id="r-org"></span>
+            <label for="transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="r-transaction-type">
+                    <option value="">Select Type</option>
+                    <option value="Inquiry">Inquiry</option>
+                    <option value="Request">Request</option>
+                    <option value="Submit Documents">Submit Documents</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Others">Others</option>
+                </select>
+            <label>Transactions Details</label>
+            <textarea id="r-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+            <label class="form-label" for="division">Division: </label>
+                <select class="form-option" name="divisions" id="r-division-select">
+                    <option value="">Select Division</option>
+                    <option value="MSD">MSD</option>
+                    <option value="LHSD">LHSD</option>
+                    <option value="RD/ARD">RD/ARD</option>
+                    <option value="RLED">RLED</option>
+                </select>
+                <label class="form-label" for="unit">Unit:</label>
+                <select class="form-option" name="unit" id="r-unit-select" required>
+                    <option value="">Select Unit</option>
+                </select>
+                <button type="submit" onclick="saveRepeat()">Save</button>
             </div>
         </div>
     </div>
 
-    <script>
-        const modalOverlay = document.getElementById('modalOverlay');
-        const triggerModal = document.getElementById('triggerModal');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const acceptBtn = document.getElementById('acceptBtn');
-
-        // Open modal
-        triggerModal.addEventListener('click', () => {
-            modalOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-        });
-
-        // Close modal functions
-        const closeModal = () => {
-            modalOverlay.classList.remove('active');
-            document.body.style.overflow = ''; // Re-enable scrolling
-        };
-
-        // Close on cancel button
-        cancelBtn.addEventListener('click', closeModal);
-
-        // Close on accept button (with action confirmation)
-        acceptBtn.addEventListener('click', () => {
-            alert('Action Accepted!');
-            closeModal();
-        });
-
-        // Close when clicking outside modal
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                closeModal();
-            }
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
-                closeModal();
-            }
-        });
-    </script>
-</body>
-</html>
+<div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-view" tabindex="-1">
+        <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
+        <h2>Client Details</h2>
+        <dl id="client-details-list">
+        </dl>
+    </div>
+</div>
