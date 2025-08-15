@@ -1034,14 +1034,13 @@ tbody tr:nth-child(even):hover {
 
 .approved-form label {
   display: block;
-  margin-top: 10px;
+  margin: 2px;
   font-weight: bold;
 }
 
 .remarks-textarea {
   width: 100%;
   padding: 10px;
-  margin-top: 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
@@ -1075,7 +1074,7 @@ tbody tr:nth-child(even):hover {
 .approved-form select.form-option {
   width: 100%;
   padding: 10px;
-  margin-top: 8px;
+  
   border: 1px solid #ccc;
   border-radius: 6px;
   background-color: #fff;
@@ -1317,7 +1316,6 @@ tbody tr:nth-child(even):hover {
     }
     label {
       font-weight: 600;
-      margin-bottom: 6px;
       font-size: 0.875rem;
       color: #334155;
     }

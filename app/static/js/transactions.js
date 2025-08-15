@@ -65,28 +65,43 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             const typeTransaction = typeColor[client.client_transaction_type] || 'status-default';
             const actionTypeColor = actionColor[client.client_status] || 'status-default';
 
+            const clientData = {
+                client_id: client.client_id,
+                client_fullname: client.client_fullname,
+                client_queue_no: client.client_queue_no,
+                client_contact: client.client_contact,
+            };
+
             const card = document.createElement('div');
             card.className = 'client-card' + (highlight ? ' highlight' : '');
             card.innerHTML = `
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">${client.client_id}</span>
+                            <span class="transaction-id">CID-${client.client_id}</span>
                             <span class="status ${actionTypeColor}">${client.client_status}</span>
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${client.client_fullname}, ${client.client_queue_no}, ${client.client_contact} </p>
+                        <p class="transaction-description"> ${client.client_fullname}, Tkt.No. ${client.client_queue_no}, ${client.client_contact} </p>
                         ${userunit === 'PACD' ? ``: `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>`}
                     </div>
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
                         ${userunit === 'PACD' ? `
+                            <button class="icon-button text-blue" title="Sample"
+                                onclick='openModal("approved", ${JSON.stringify(clientData)} )'>
+                                <i class="fa fa-check"></i>
+                            </button>
                             <button class="icon-button text-blue" title="Approved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}")'>
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
                                 onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.id}', '${client.client_contact}')">
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </button>
+                            <button class="icon-button" title="Sample"
+                                onclick='openModal("forward", ${JSON.stringify(clientData)} )'>
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
                             <button class="icon-button text-red" title="Skipped"
@@ -266,8 +281,8 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             fetchTransactions(page, perPage, historyPage, historyPerPage, newServingPage, servingPerPage);
         });
 
-        divisionUnitSelect('f-division-select', 'f-unit-select');
-        divisionUnitSelect('r-division-select', 'r-unit-select');
+        divisionUnitSelect('division-select', 'unit-select');
+        // divisionUnitSelect('division-select', 'unit-select');
     });
 }
 
@@ -341,9 +356,11 @@ function getSrvc() {
 }
 
 
+getSrvc();
+
 if (path.includes(transaction)) {
         fetchTransactions();
-        getSrvc();
+        
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -146,9 +146,8 @@ def pending_transaction(today, unit):
         pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
         for client in pending_clients:
             pendingTransactions.append({
-                'id': client.id,
-                'client_id': f"Client Id: #{client.id}",
-                'client_queue_no': f"Ticket No: #{client.client_queue_no}",
+                'client_id': client.id,
+                'client_queue_no': client.client_queue_no,
                 'client_fullname': client.client_firstname + ' ' + client.client_lastname,
                 'client_lane_type': client.client_lane_type,
                 'client_contact': client.client_contact,
@@ -162,7 +161,7 @@ def pending_transaction(today, unit):
         for client in pending_clients:
             pendingTransactions.append({
                 'id': client.id,
-                'client_id': f"#CTS-{client.client_id.id}",
+                'client_id': {client.client_id.id},
                 'client_queue_no': client.client_id.client_queue_no,
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_lane_type': client.client_id.client_lane_type,

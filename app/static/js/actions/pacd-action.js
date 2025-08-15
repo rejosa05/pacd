@@ -60,6 +60,7 @@ function closeForward() {
     document.getElementById('forwardClient').style.display = 'none';
     selectedClient = null;
 }
+
 function saveForwardedClient() {
     const transaction_type = document.getElementById('f-transaction-type').value;
     const org_name = document.getElementById('f-org-name').value;
@@ -88,6 +89,32 @@ function saveForwardedClient() {
         document.getElementById('f-unit-select').value = '';
     })
 }
+
+function forwardClient(id) {
+    const transaction_type = document.getElementById('transaction-type').value;
+    const org_name = document.getElementById('org-name').value;
+    const transaction_details = document.getElementById('transactions-details').value;
+    const division = document.getElementById('division-select').value;
+    const unit = document.getElementById('unit-select').value;
+
+    fetch(forwardedClientToUnit, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `client_id=${id}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('forwarded the client!!');
+        closeModal();   
+    })
+}
+
+
+
 function closeViewDetails () {
     document.getElementById('view-details-modal').style.display = 'none';
 }
@@ -256,4 +283,93 @@ function serving() {
         alert('now serving!!');
         servedClose();
     })   
+}
+
+let activeClientData = {};
+
+function openModal(type, data = {}) {
+    const form = document.getElementById("clientForm");
+    // const title = document.getElementById("modalTitle");
+
+    // // title.textContent = data.title || "Client Details";
+
+    let htmlContent = `
+    <div class="client-details">
+        <span class="client-ticket">Tkt. No. ${data.client_queue_no || "N/A"}</span>
+        <span class="client-id"> Client id: ${data.client_id || "N/A"}</span>
+        <span class="client-name">${data.client_fullname || "N/A"}</span>
+        <span> ${data.client_address || "N/A"}</span>
+        <span> ${data.client_contact || "N/A"}</span>
+    </div>
+    `;
+
+    if (type === "approved") {
+        htmlContent += `
+            <label for="org-name">Organization/Company Name</label>
+            <input class="org" type="text" id="f-org-name" placeholder="Organization/Company Name">
+            <label for="a-transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="a-transaction-type">
+                    <option value="">Select Type</option>
+                    <option value="Inquiry">Inquire</option>
+                    <option value="Request">Request</option>
+                    <option value="Submit Documents">Submit Documents</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Others">Others</option>
+                </select>
+            <label>Transactions Details</label>
+            <textarea id="forwarded-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+            <button type="submit"> Serve </button>
+        `;
+    }
+
+    if (type === "forward") {
+        htmlContent += `
+            <label for="org-name">Organization/Company Name</label>
+            <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
+            <label for="transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="transaction-type">
+                    <option value="">Select Type</option>
+                    <option value="Inquiry">Inquiry</option>
+                    <option value="Request">Request</option>
+                    <option value="Submit Documents">Submit Documents</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Others">Others</option>
+                </select>
+            <label>Transactions Details</label>
+            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+            <label class="form-label" for="division">Division: </label>
+                <select class="form-option" name="divisions" id="division-select">
+                    <option value="">Select Division</option>
+                    <option value="MSD">MSD</option>
+                    <option value="LHSD">LHSD</option>
+                    <option value="RD/ARD">RD/ARD</option>
+                    <option value="RLED">RLED</option>
+                </select>
+            <label class="form-label" for="unit">Unit:</label>
+                <select class="form-option" name="unit" id="unit-select" required>
+                    <option value="">Select Unit</option>
+                </select>
+            <button type="submit"> Forward </button>
+        `;
+    }
+
+
+    form.innerHTML = htmlContent;
+
+    document.getElementById("clientModal").style.display = "flex";
+
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        // const formData = new FormData(form);
+        if (type === "forward") {
+            forwardClient(data.client_id);
+        }
+    }
+
+}
+
+function closeModal() {
+    document.getElementById("clientModal").style.display = "none";
+    document.getElementById("clientForm").innerHTML = "";
+    activeClientData = {};
 }

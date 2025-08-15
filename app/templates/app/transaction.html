@@ -130,11 +130,22 @@
 </div>
 </main>
 
+
+<!-- sample modal -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal-view">
+    <!-- <h3 id="modalTitle"></h3> -->
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <form class="approved-form" id="clientForm" novalidate></form>
+  </div>
+</div>
+
+
 <!-- Approved modal from pacd -->
 <div class="modal-overlay" id="approvedClient">
     <div class="modal-view">    
     <button class="close-btn" aria-label="Close modal" onclick="closedApproved()">&times;</button>
-    <!-- <h2>Queue No. <span id="approve-client-que"></span></h2> -->
+    <h2>Queue No. <span id="approve-client-que"></span></h2>
     <div class="">
         <div class="approved-form" novalidate>
             <div class="client-details">
