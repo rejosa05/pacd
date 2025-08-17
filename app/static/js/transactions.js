@@ -66,10 +66,14 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             const actionTypeColor = actionColor[client.client_status] || 'status-default';
 
             const clientData = {
+                transaction_id: client.tid,
                 client_id: client.client_id,
                 client_fullname: client.client_fullname,
                 client_queue_no: client.client_queue_no,
                 client_contact: client.client_contact,
+                client_org: client.client_org,
+                client_transaction_type: client.client_transaction_type,
+                client_details: client.client_transaction_details,
             };
 
             const card = document.createElement('div');
@@ -78,13 +82,15 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">CID-${client.client_id}</span>
+                            <span class="transaction-id">Client ID. ${client.client_id}</span>
                             <span class="status ${actionTypeColor}">${client.client_status}</span>
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
                         <p class="transaction-description"> ${client.client_fullname}, Tkt.No. ${client.client_queue_no}, ${client.client_contact} </p>
-                        ${userunit === 'PACD' ? ``: `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>`}
+                        ${userunit === 'PACD' ? ``: 
+                            `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>
+                            <p class="transaction-description"> Company Name: ${client.client_org} </p>`}
                     </div>
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
@@ -97,10 +103,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
-                                onclick="forwardedModal('${client.client_fullname}', '${client.client_queue_no}', '${client.id}', '${client.client_contact}')">
-                                <i class="fa fa-arrow-circle-right"></i>
-                            </button>
-                            <button class="icon-button" title="Sample"
                                 onclick='openModal("forward", ${JSON.stringify(clientData)} )'>
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
@@ -109,7 +111,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                                 <i class="fa fa-times"></i>
                             </button>
                         ` : `
-                            <button class="icon-button text-blue" title="Serving" onclick='toServed("${client.client_fullname}","${client.client_transaction_type}", "${client.client_id}", "${client.id}", "${client.client_transaction_details}", "${client.client_division}")'>
+                            <button class="icon-button text-blue" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)} )'>
                                 <i class="fa fa-check-circle"></i>
                             </button>                   
                             <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
@@ -121,8 +123,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             `;
             clientList.appendChild(card);
         }
-
-
 
         function addHistoryCard(history) {
             const divisionColor = {
@@ -159,7 +159,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">${history.client_id}</span>
+                            <span class="transaction-id">Client ID. ${history.client_id}</span>
                             <span class="status ${actionTypeColor}">${history.status}</span>
                             <span class="status ${divisionType}">${history.client_division}</span>
                             <span class="status ${divisionType}">${history.client_unit}</span>
@@ -244,8 +244,8 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">${served.client_id}</span>
-                            <span class="status status-blue">Serving</span>
+                            <span class="transaction-id">Client ID. ${served.client_id}</span>
+                            <span class="status status-blue"> ${served.client_action}</span>
                             <span class="status ${laneColorClass}">${served.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
                         </div>
@@ -254,7 +254,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                     </div>
                     <div class="transaction-actions">
                         <span class="timestamp">Time Started: ${formatDateTime(served.date_created)}</span>
-                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnit("${served.client_fullname}","${served.client_transaction_type}", "${served.client_id}", "${served.id}", "${served.transaction_details}", "${served.client_queue_no}", "${served.client_contact}")'>
+                        <button class="icon-button text-blue" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'>
                             <i class="fa fa-check-circle"></i>
                         </button>
                         
@@ -286,78 +286,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', function () {
-    const firstYes = document.querySelector('input[name="cc-cover"][value="Yes"]');
-    const firstNo = document.querySelector('input[name="cc-cover"][value="No"]');
-    const secondYes = document.querySelector('input[name="requirements"][value="Yes"]');
-    const secondNo = document.querySelector('input[name="requirements"][value="No"]');
-
-    const serviceListWrapper = document.getElementById('serviceList').closest('label') || document.getElementById('serviceList');
-    const deficienciesWrapper = document.getElementById('deficiencies-wrapper');
-    const deficienciesTextarea = document.getElementById('deficiencies-textarea');
-
-    serviceListWrapper.style.display = 'none';
-    deficienciesWrapper.style.display = 'none';
-    deficienciesTextarea.style.display = 'none';
-
-    [firstYes, firstNo].forEach(input => {
-        input.addEventListener('change', function () {
-            if (this.value === 'Yes') {
-                serviceListWrapper.style.display = 'block';
-                deficienciesWrapper.style.display = 'block';
-                getSrvc();
-            } else {
-                serviceListWrapper.style.display = 'none';
-                deficienciesWrapper.style.display = 'none';
-            }
-        });
-    });
-
-    [secondYes, secondNo].forEach(input => {
-        input.addEventListener('change', function () {
-            if (this.value === 'Yes') {
-                deficienciesTextarea.style.display = 'block';
-            } else {
-                deficienciesTextarea.style.display = 'none';
-            }
-        });
-    });
-});
-
-function getSrvc() {
-    fetch(f_transactions, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-    .then(data => {
-        const selectorList = document.querySelector('#serviceList');
-        selectorList.innerHTML = '';
-
-        const services = data.getServices || [];
-
-        if (services.length > 0) {
-            selectorList.appendChild(new Option('Select Service', ''));
-            services.forEach(srvc => {
-                selectorList.appendChild(
-                    new Option(`${srvc.service_classification} (${srvc.service_name})`, srvc.service_name)
-                );
-            });
-        } else {
-            document.getElementById('citizen-charter-wrapper').style.display = 'none';
-            document.getElementById('serviceList').style.display = 'none';
-            document.getElementById('deficiencies-wrapper').style.display = 'none';
-            document.getElementById('deficiencies-textarea').style.display = 'none';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching services:', error);
-    });
-}
-
-
-getSrvc();
-
 if (path.includes(transaction)) {
         fetchTransactions();
         
@@ -366,7 +294,7 @@ if (path.includes(transaction)) {
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes(transaction)) {
         fetchTransactions();
-        getSrvc();
+        // getSrvc();
     }
 
     const notifyElement = document.getElementById('notify');

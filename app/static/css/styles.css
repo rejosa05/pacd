@@ -204,6 +204,10 @@ h1, h2, h3 {
     margin-right: 12px;
 }
 
+.icon_modal {
+    margin-right: 10px;
+}
+
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -442,6 +446,8 @@ h1, h2, h3 {
 .transaction-description {
     font-size: 14px;
     color: #6B7280;
+    padding: 0;
+    margin: 3px;
 }
 
 .transaction-actions {
@@ -809,17 +815,21 @@ tbody tr:nth-child(even):hover {
     gap: 10px;
 }
 
-
 .client-details {
     text-align: left;
     display: grid;
     gap: 0;
+    padding: 5px;
+}
+
+.client-details i {
+    gap: 0;
+    padding: 5px;
 }
 
 .client-details span {
     display: block;
-    margin: 0;
-    padding: 0;
+
 }
 
 .client-id {
@@ -831,13 +841,17 @@ tbody tr:nth-child(even):hover {
     font-weight: 600;
     font-size: 1.2rem;
     color: #0198cf;
-    text-decoration: underline;
 }
 
 .client-name {
     font-weight: 600;
-    font-size: 2rem;
-    color: var(--title-txt);
+    color: purple;
+    text-decoration: underline;
+}
+
+.org-name {
+    font-weight: 600;
+    color: rgb(23, 0, 128);
 }
 
 .client-transaction-type {

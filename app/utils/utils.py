@@ -124,8 +124,7 @@ def transaction_history(date, unit):
     for transaction in transactions:
         getTransaction.append({
             'id': transaction.id,
-            'client_id_primary': transaction.client_id.id,
-            'client_id': f"#CTS-{transaction.client_id.id}",
+            'client_id': transaction.client_id.id,
             'client_queue_no': transaction.client_id.client_queue_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
             'client_org': transaction.client_id.client_org,
@@ -160,13 +159,15 @@ def pending_transaction(today, unit):
         pending_clients = DivisionLog.objects.filter(unit=unit, status='Pending', date__date=today)
         for client in pending_clients:
             pendingTransactions.append({
-                'id': client.id,
-                'client_id': {client.client_id.id},
+                'tid': client.id,
+                'client_id': client.client_id.id,
                 'client_queue_no': client.client_id.client_queue_no,
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
+                'client_contact': client.client_id.client_contact,
                 'client_lane_type': client.client_id.client_lane_type,
                 'client_transaction_type': client.transaction_type,
                 'client_transaction_details': client.transaction_details,
+                'client_org': client.client_id.client_org,
                 'client_status': client.status,
                 'date_created': client.date.isoformat() if client.date else None,
             })
@@ -182,16 +183,18 @@ def serving_client_unit_list(today, user):
     
     for client in serving:
         servingTransaction.append({
-            'id': client.id,
-            'client_id': f"Client Id: #{client.client_id.id}",
-            'client_queue_no': f"Ticket No: #{client.client_id.client_queue_no}",
+            'transaction_id': client.id,
+            'client_id': client.client_id.id,
+            'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
+            'client_action': client.action_type,
             'client_transaction_type': client.transaction_type,
             'client_contact': client.client_id.client_contact,
+            'client_org': client.client_id.client_org,
             'client_division': client.division,
             'client_unit': client.unit,
-            'transaction_details': f"Details: {client.transaction_details}",
+            'transaction_details': client.transaction_details,
             'client_status': client.status,
             'date_created': client.date.isoformat() if client.date else None,
         })

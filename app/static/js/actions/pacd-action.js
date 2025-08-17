@@ -30,66 +30,7 @@ function skipClient(id) {
     }
 }
 
-// approved from pacd
-function closedApproved() {
-    document.getElementById('approvedClient').style.display = 'none';
-}
-
-function approveModal(client, que, id) {
-    selectedClient = id;
-    document.getElementById('approve-client-id').innerText = id;
-    document.getElementById('approve-client-que').innerText = que;
-    document.getElementById('approve-client-fullname').innerText = client;
-    document.getElementById('approved-remarks').value = '';
-    document.getElementById('csm-checkbox').checked = false;
-    document.getElementById('css-checkbox').checked = false;
-    document.getElementById('approvedClient').style.display = 'flex';
-}
-
-function forwardedModal(client, que, id, contact) {
-    selectedClient = id;
-    cid = "Client Id: #" + id;
-    document.getElementById('f-client-que').innerText = que;
-    document.getElementById('f-client-id').innerText = cid; 
-    document.getElementById('forward-fullname').innerText = client;
-    document.getElementById('contacts').innerText = contact;
-    document.getElementById('forwardClient').style.display = 'flex';
-}
-
-function closeForward() {
-    document.getElementById('forwardClient').style.display = 'none';
-    selectedClient = null;
-}
-
-function saveForwardedClient() {
-    const transaction_type = document.getElementById('f-transaction-type').value;
-    const org_name = document.getElementById('f-org-name').value;
-    const transaction_details = document.getElementById('forwarded-transactions-details').value;
-    const division = document.getElementById('f-division-select').value;
-    const unit = document.getElementById('f-unit-select').value;
-
-    fetch(forwardedClientToUnit, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
-        },
-        body: `client_id=${selectedClient}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
-    })
-    .then(response => response.json())
-    .then(() => {
-        alert('forwarded the client!!');
-        closeForward();   
-
-        document.getElementById('f-transaction-type').value = '';
-        document.getElementById('f-org-name').value = '';
-        document.getElementById('forwarded-transactions-details').value = '';
-        document.getElementById('f-division-select').value = '';
-        document.getElementById('f-unit-select').value = '';
-    })
-}
-
+// fixed function for action
 function forwardClient(id) {
     const transaction_type = document.getElementById('transaction-type').value;
     const org_name = document.getElementById('org-name').value;
@@ -112,8 +53,6 @@ function forwardClient(id) {
         closeModal();   
     })
 }
-
-
 
 function closeViewDetails () {
     document.getElementById('view-details-modal').style.display = 'none';
@@ -253,22 +192,7 @@ function saveRepeat() {
     })   
 }
 
-// to served client
-function servedClose() {
-    document.getElementById('servedClient-unit').style.display = 'none';
-}
-
-function toServed(fullname, type, id, cid, details, division) {
-    selectedClient = cid;
-
-    document.getElementById('to-served-client-id').innerText = id   ;
-    document.getElementById('to-served-fullname').innerText = fullname;
-    document.getElementById('to-served-trnsction-type').innerText = type;
-    document.getElementById('to-served-trnsction-details').innerText = details;
-    document.getElementById('servedClient-unit').style.display = 'flex';
-}
-
-function serving() {
+function servingClient(id) {
     fetch(servingClientUnit, {
         method: 'POST',
         headers: {
@@ -276,13 +200,90 @@ function serving() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${selectedClient}`
+        body: `selectedClient=${id}`
     })
     .then(response => response.json())
     .then(() => {
         alert('now serving!!');
-        servedClose();
+        closeModal();
     })   
+}
+function serveClient(id) {
+    console.log(id);
+    const srvcSelect = document.getElementById('serviceList');
+    const remarks = document.getElementById('unit-approved-remarks');
+    const deficienciesInput = document.getElementById('deficiencies');
+    const csmChecked = document.getElementById('unit-csm-checkbox').checked;
+    const cssChecked = document.getElementById('unit-css-checkbox').checked;
+
+    const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
+    const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
+
+    const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
+    const requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
+
+    let srvc = "";
+    let deficienciesValue = "";
+
+    if (charterCoveredValue === "Yes") {
+        srvc = srvcSelect.value;
+        if (!srvc) {
+            alert('Please select a service!');
+            return;
+        }
+
+        if (requirementsValue === "Yes") {
+            deficienciesValue = deficienciesInput.value.trim();
+            if (!deficienciesValue) {
+                alert('Please provide deficiencies details!');
+                return;
+            }
+        } else if (requirementsValue === "No") {
+            deficienciesInput.value = "";
+            deficienciesValue = "";
+        } else {
+            alert('Please answer Question 2 (Requirements Met)!');
+            return;
+        }
+    } else if (charterCoveredValue === "No") {
+        srvc = "";
+        deficienciesInput.value = "";
+        deficienciesValue = "";
+    } else {
+        alert('Please answer Question 1 (Citizen Charter)!');
+        return;
+    }
+
+    if (!remarks.value.trim()) {
+        alert('Please do not leave Remarks blank!');
+        return;
+    }
+
+    if ((csmChecked && cssChecked) || (!csmChecked && !cssChecked)) {
+        alert('Please select only one satisfaction form (CSM or CSS)!');
+        return;
+    }
+
+    const resolutions = csmChecked ? 'CSM' : 'CSS';
+
+    fetch(updateCLientStatusServedUnitUrl, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `selectedClient=${encodeURIComponent(id)}&remarks=${encodeURIComponent(remarks.value)}&resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}&cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}&deficiencies=${encodeURIComponent(deficienciesValue)}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('Successfully catered!');
+        closeModal();
+        // fetchTransactions();
+    })
+    .catch(err => {
+        console.error('Error updating client:', err);
+    });
 }
 
 let activeClientData = {};
@@ -294,12 +295,11 @@ function openModal(type, data = {}) {
     // // title.textContent = data.title || "Client Details";
 
     let htmlContent = `
-    <div class="client-details">
-        <span class="client-ticket">Tkt. No. ${data.client_queue_no || "N/A"}</span>
-        <span class="client-id"> Client id: ${data.client_id || "N/A"}</span>
-        <span class="client-name">${data.client_fullname || "N/A"}</span>
-        <span> ${data.client_address || "N/A"}</span>
-        <span> ${data.client_contact || "N/A"}</span>
+    <h3> <i class="fa fa-ticket icon_modal" aria-hidden="true" title="Ticket"> </i>  Ticket No. ${data.client_queue_no || "N/A"}</h3>
+    <div class="">
+        <span class="client-id"> <i class="fa fa-id-badge icon_modal"></i> Client ID: ${data.client_id || "N/A"}</span>
+        <span class="client-name"> <i class="fa fa-user icon_modal"></i> ${data.client_fullname || "N/A"}</span>
+        <span> <i class="fa fa-phone icon_modal"></i> +63 ${data.client_contact || "N/A"}</span>
     </div>
     `;
 
@@ -353,6 +353,76 @@ function openModal(type, data = {}) {
         `;
     }
 
+    if (type === "serving") {
+        htmlContent += `
+            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
+            <span> <i class="fa fa-folder icon_modal" title="Type"></i> ${data.client_transaction_type} </span>
+            <span> <i class="fa fa-info-circle icon_modal" title="Transaction Details"></i> Details: ${data.client_details} </span>
+            <button type="submit"> Serving </button>
+        `;
+        setTimeout(initCitizenCharterHandlers, 0);
+    }
+
+    if (type === "served") {
+        htmlContent += `
+            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
+            <span> <i class="fa fa-folder icon_modal" title="Type"></i> ${data.client_transaction_type} </span>
+            <span> <i class="fa fa-info-circle icon_modal" title="Transaction Details"></i> Details: ${data.transaction_details} </span>
+            <div id="citizen-charter-wrapper">
+                <div class="checkbox-group">
+                    <label>is transaction covered by Citizen Charter? </label>
+                    <label>
+                        <input type="radio" name="cc-cover" value="Yes"> Yes
+                    </label>
+                    <label>
+                        <input type="radio" name="cc-cover" value="No"> No
+                    </label>
+                </div>
+                <select class="form-option" name="divisions" id="serviceList"></select>
+                <div id="deficiencies-wrapper">
+                    <div class="checkbox-group">
+                        <label>if yes, are the requirements in the Citizen's Charter? </label>
+                        <label>
+                            <input type="radio" name="requirements" value="Yes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="requirements" value="No"> No
+                        </label>
+                    </div>
+                    <div id="deficiencies-textarea">
+                        <label>Deficiencies to comply</label>
+                        <textarea id="deficiencies" class="remarks-textarea" placeholder="Deficiencies....." required></textarea>
+                    </div>
+                </div>                   
+            </div>
+            <label>Remarks</label>
+            <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+            <div class="checkbox-group">
+                <label class="form-label">is the transaction request catered and/or resolved? </label>
+                <label id="csm-wrapper">
+                    <input type="radio" id="" name="resolution" value="CSM">
+                    Yes
+                </label>
+                <label id="csm-wrapper">
+                    <input type="radio" id="" name="resolution" value="CSS">
+                    No
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label class="form-label">CSS/CSM:</label>
+                <label id="csm-wrapper">
+                    <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="CSM">
+                    CSM
+                </label>
+                <label id="csm-wrapper">
+                    <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
+                    CSS
+                </label>
+            </div>
+            <button type="submit"> Served </button>
+        `;
+        setTimeout(initCitizenCharterHandlers, 0);
+    }
 
     form.innerHTML = htmlContent;
 
@@ -363,9 +433,12 @@ function openModal(type, data = {}) {
         // const formData = new FormData(form);
         if (type === "forward") {
             forwardClient(data.client_id);
-        }
+        } else if (type === "served") {
+            serveClient(data.transaction_id);
+        } else if (type === "serving") {
+            servingClient(data.transaction_id)
+        } 
     }
-
 }
 
 function closeModal() {
@@ -373,3 +446,72 @@ function closeModal() {
     document.getElementById("clientForm").innerHTML = "";
     activeClientData = {};
 }
+
+function initCitizenCharterHandlers() {
+    const firstYes = document.querySelector('input[name="cc-cover"][value="Yes"]');
+    const firstNo = document.querySelector('input[name="cc-cover"][value="No"]');
+    const secondYes = document.querySelector('input[name="requirements"][value="Yes"]');
+    const secondNo = document.querySelector('input[name="requirements"][value="No"]');
+
+    const serviceListWrapper = document.getElementById('serviceList')?.closest('label') || document.getElementById('serviceList');
+    const deficienciesWrapper = document.getElementById('deficiencies-wrapper');
+    const deficienciesTextarea = document.getElementById('deficiencies-textarea');
+
+    if (!firstYes || !firstNo || !secondYes || !secondNo) return; // stop if not rendered yet
+
+    serviceListWrapper.style.display = 'none';
+    deficienciesWrapper.style.display = 'none';
+    deficienciesTextarea.style.display = 'none';
+
+    [firstYes, firstNo].forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.value === 'Yes') {
+                serviceListWrapper.style.display = 'block';
+                deficienciesWrapper.style.display = 'block';
+                getSrvc();
+            } else {
+                serviceListWrapper.style.display = 'none';
+                deficienciesWrapper.style.display = 'none';
+            }
+        });
+    });
+
+    [secondYes, secondNo].forEach(input => {
+        input.addEventListener('change', function () {
+            deficienciesTextarea.style.display = (this.value === 'Yes') ? 'block' : 'none';
+        });
+    });
+}
+
+function getSrvc() {
+    fetch(f_transactions, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const selectorList = document.querySelector('#serviceList');
+        selectorList.innerHTML = '';
+
+        const services = data.getServices || [];
+
+        if (services.length > 0) {
+            selectorList.appendChild(new Option('Select Service', ''));
+            services.forEach(srvc => {
+                selectorList.appendChild(
+                    new Option(`${srvc.service_classification} (${srvc.service_name})`, srvc.service_name)
+                );
+            });
+        } else {
+            document.getElementById('citizen-charter-wrapper').style.display = 'none';
+            document.getElementById('serviceList').style.display = 'none';
+            document.getElementById('deficiencies-wrapper').style.display = 'none';
+            document.getElementById('deficiencies-textarea').style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching services:', error);
+    });
+}
+
+
+
