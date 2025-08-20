@@ -303,7 +303,7 @@ function openModal(type, data = {}) {
     </div>
     `;
 
-    if (type === "approved") {
+    if (type === "approved" || type === "repeat") {
         htmlContent += `
             <label for="org-name">Organization/Company Name</label>
             <input class="org" type="text" id="f-org-name" placeholder="Organization/Company Name">

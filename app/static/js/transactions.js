@@ -95,11 +95,8 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
                         ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Sample"
+                            <button class="icon-button text-blue" title="Approved"
                                 onclick='openModal("approved", ${JSON.stringify(clientData)} )'>
-                                <i class="fa fa-check"></i>
-                            </button>
-                            <button class="icon-button text-blue" title="Approved" onclick='approveModal("${client.client_fullname}", "${client.client_queue_no}")'>
                                 <i class="fa fa-check"></i>
                             </button>
                             <button class="icon-button" title="Forward"
@@ -249,16 +246,13 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${served.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description">${served.client_fullname}, ${served.client_queue_no}</p>
+                        <p class="transaction-description">${served.client_fullname}, Ticket No. ${served.client_queue_no}</p>
+                        <p class="transaction-description">Office Name: ${served.client_org}</p>
                         <p class="transaction-description">Transaction Details: ${served.transaction_details}</p>
                     </div>
                     <div class="transaction-actions">
                         <span class="timestamp">Time Started: ${formatDateTime(served.date_created)}</span>
                         <button class="icon-button text-blue" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'>
-                            <i class="fa fa-check-circle"></i>
-                        </button>
-                        
-                        <button class="icon-button text-blue" title="Approved" onclick='approvedUnits()'>
                             <i class="fa fa-check-circle"></i>
                         </button>
                     </div>
