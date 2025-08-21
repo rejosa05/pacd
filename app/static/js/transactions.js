@@ -131,7 +131,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
 
             const actionColor = {
                 'Completed': 'status-green',
-                'Processing': 'status-blue',
+                'Serving': 'status-blue',
                 'Pending': 'status-yellow',
             } 
             
@@ -282,13 +282,11 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
 
 if (path.includes(transaction)) {
         fetchTransactions();
-        
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes(transaction)) {
         fetchTransactions();
-        // getSrvc();
     }
 
     const notifyElement = document.getElementById('notify');

@@ -97,18 +97,25 @@ def skipped_client_unit(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
+# pacd resolved
 def update_client_status_served(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             today = timezone.now()
+            client_id = request.POST.get('client_id')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
-            client_id = request.POST.get('client_id')
             org_name = request.POST.get('org_name')
             type = request.POST.get('transactions_type')
             transaction_details = request.POST.get('transaction_details')
-            remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
+            remarks = request.POST.get('remarks')
+
+            srvc_avail = request.POST.get('srvc_avail')
+            deficiencies = request.POST.get('deficiencies')
+            cc_cover = request.POST.get('cc_cover')
+            requirements_met = request.POST.get('requirements_met')
+            request_processed = request.POST.get('request_processed')   
             action_type = 'Resolved'
             status = 'Completed'
             
@@ -131,7 +138,12 @@ def update_client_status_served(request):
             user=users.user,
             date_resolved = today,
             status = status,
-            date=today
+            date=today,
+            service_avail = srvc_avail,
+            deficiencies = deficiencies,
+            cc_cover = cc_cover,
+            requirements_met =  requirements_met,
+            request_catered = request_processed
             )
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
@@ -185,6 +197,7 @@ def  update_user_details(request):
 def update_client_status_served_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
+            today = timezone.now()
             client_id = request.POST.get('selectedClient')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
@@ -193,13 +206,13 @@ def update_client_status_served_unit(request):
             deficiencies = request.POST.get('deficiencies')
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
+            
 
             # New fields (Q1, Q2, Q3)
             cc_cover = request.POST.get('cc_cover')  # Q1
             requirements_met = request.POST.get('requirements_met')  # Q2
             request_processed = request.POST.get('request_processed')  # Q3 (make sure JS sends this)
 
-            today = timezone.now()
 
             client = DivisionLog.objects.get(id=client_id, unit=users.unit)
             client.action_type = 'Resolved'

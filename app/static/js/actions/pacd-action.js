@@ -58,28 +58,73 @@ function closeViewDetails () {
     document.getElementById('view-details-modal').style.display = 'none';
 }
 
-function saveApprovedClientByPACD() {
-    const org_name = document.getElementById('a-org-name').value;
-    const transaction_type = document.getElementById('a-transaction-type').value;
-    const transaction_details = document.getElementById('approved-transactions-details');
-    const remarks = document.getElementById('approved-remarks');
-    const csmChecked = document.getElementById('csm-checkbox');
-    const cssChecked = document.getElementById('css-checkbox');
+function approvedClient(id) {
+    console.log(id)
+    const org_name = document.getElementById('org-name').value;
+    const transaction_type = document.getElementById('transaction-type').value;
+    const transaction_details = document.getElementById('transactions-details');
+    const srvcSelect = document.getElementById('serviceList');
+    const remarks = document.getElementById('remarks');
+    const deficienciesInput = document.getElementById('deficiencies');
+    const csmChecked = document.getElementById('csm-checkbox').checked;
+    const cssChecked = document.getElementById('css-checkbox').checked;
 
-    if (!transaction_details.value || !remarks.value) { 
-        alert('please do not leave blanks !!!');
+    const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
+    const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
+
+    const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
+    const requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
+    const actionRadio = document.querySelector('input[name="request_processed"]:checked');
+    const actionValue = actionRadio ? actionRadio.value : null; // Q3
+
+    let srvc = "";
+    let deficienciesValue = "";
+
+    if (!transaction_type) {
+        alert('Please select a transaction type!');
         return;
     }
-    
-    const isCSM = csmChecked.checked;
-    const isCSS = cssChecked.checked;
 
-    if ((isCSM && isCSS) || (!isCSM && !isCSS)) {
+    if (charterCoveredValue === "Yes") {
+        srvc = srvcSelect.value;
+        if (!srvc) {
+            alert('Please select a service!');
+            return;
+        }
+
+        if (requirementsValue === "Yes") {
+            deficienciesValue = deficienciesInput.value.trim();
+            if (!deficienciesValue) {
+                alert('Please provide deficiencies details!');
+                return;
+            }
+        } else if (requirementsValue === "No") {
+            deficienciesInput.value = "";
+            deficienciesValue = "";
+        } else {
+            alert('Please answer Question 2 (Requirements Met)!');
+            return;
+        }
+    } else if (charterCoveredValue === "No") {
+        srvc = "";
+        deficienciesInput.value = "";
+
+    } else {
+        alert('Please answer Question 1 (Citizen Charter)!');
+        return;
+    }
+
+    if (!remarks.value.trim() || !transaction_details.value.trim()) {
+        alert('Please do not leave Remarks blank!');
+        return;
+    }
+
+    if ((csmChecked && cssChecked) || (!csmChecked && !cssChecked)) {
         alert('Please select only one satisfaction form (CSM or CSS)!');
         return;
     }
 
-    const resolutions = isCSM ? 'CSM' : 'CSS';
+    const resolutions = csmChecked ? 'CSM' : 'CSS';
 
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
@@ -88,12 +133,16 @@ function saveApprovedClientByPACD() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&org_name=${org_name}&transactions_type=${transaction_type}&transaction_details=${transaction_details.value}&remarks=${remarks.value}&resolutions=${resolutions}`
+        body: `client_id=${id}&org_name=${org_name}
+        &transactions_type=${transaction_type}&transaction_details=${transaction_details.value}
+        &remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc}
+        &cc_cover=${charterCoveredValue}&requirements_met=${encodeURIComponent(requirementsValue)}
+        &deficiencies=${deficienciesValue}&request_processed=${actionValue}`
     })
     .then(response => response.json())
     .then(() => {
         alert('succefully catered!!!')
-        closedApproved();
+        closeModal();
     })
 }
 
@@ -209,18 +258,19 @@ function servingClient(id) {
     })   
 }
 function serveClient(id) {
-    console.log(id);
     const srvcSelect = document.getElementById('serviceList');
-    const remarks = document.getElementById('unit-approved-remarks');
+    const remarks = document.getElementById('remarks');
     const deficienciesInput = document.getElementById('deficiencies');
-    const csmChecked = document.getElementById('unit-csm-checkbox').checked;
-    const cssChecked = document.getElementById('unit-css-checkbox').checked;
+    const csmChecked = document.getElementById('csm-checkbox').checked;
+    const cssChecked = document.getElementById('css-checkbox').checked;
 
     const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
     const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
 
     const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
     const requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
+    const actionRadio = document.querySelector('input[name="request_processed"]:checked');
+    const actionValue = actionRadio ? actionRadio.value : null; // Q3
 
     let srvc = "";
     let deficienciesValue = "";
@@ -248,7 +298,7 @@ function serveClient(id) {
     } else if (charterCoveredValue === "No") {
         srvc = "";
         deficienciesInput.value = "";
-        deficienciesValue = "";
+
     } else {
         alert('Please answer Question 1 (Citizen Charter)!');
         return;
@@ -273,13 +323,16 @@ function serveClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${encodeURIComponent(id)}&remarks=${encodeURIComponent(remarks.value)}&resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}&cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}&deficiencies=${encodeURIComponent(deficienciesValue)}`
+        body: `selectedClient=${id}&remarks=${encodeURIComponent(remarks.value)}
+        &resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}
+        &cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}
+        &deficiencies=${encodeURIComponent(deficienciesValue)}&request_processed=${actionValue}`
     })
     .then(response => response.json())
     .then(() => {
         alert('Successfully catered!');
+        fetchTransactions();
         closeModal();
-        // fetchTransactions();
     })
     .catch(err => {
         console.error('Error updating client:', err);
@@ -303,23 +356,73 @@ function openModal(type, data = {}) {
     </div>
     `;
 
-    if (type === "approved" || type === "repeat") {
+    if (type === "approved") {
         htmlContent += `
             <label for="org-name">Organization/Company Name</label>
-            <input class="org" type="text" id="f-org-name" placeholder="Organization/Company Name">
-            <label for="a-transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="a-transaction-type">
+            <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
+            <label for="transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="transaction-type">
                     <option value="">Select Type</option>
                     <option value="Inquiry">Inquire</option>
-                    <option value="Request">Request</option>
                     <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
                     <option value="Others">Others</option>
                 </select>
             <label>Transactions Details</label>
-            <textarea id="forwarded-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <button type="submit"> Serve </button>
+            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
+            <div id="citizen-charter-wrapper">
+                <div class="checkbox-group">
+                    <label>is transaction covered by Citizen Charter? </label>
+                    <label>
+                        <input type="radio" name="cc-cover" value="Yes"> Yes
+                    </label>
+                    <label>
+                        <input type="radio" name="cc-cover" value="No"> No
+                    </label>
+                </div>
+                <select class="form-option" name="divisions" id="serviceList"></select>
+                <div id="deficiencies-wrapper">
+                    <div class="checkbox-group">
+                        <label>if yes, are the requirements in the Citizen's Charter? </label>
+                        <label>
+                            <input type="radio" name="requirements" value="Yes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="requirements" value="No"> No
+                        </label>
+                    </div>
+                    <div id="deficiencies-textarea">
+                        <label>Deficiencies to comply</label>
+                        <textarea id="deficiencies" class="remarks-textarea" placeholder="Deficiencies....." required></textarea>
+                    </div>
+                </div>                   
+            </div>
+            <label>Remarks</label>
+            <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+            <div class="checkbox-group">
+                <label class="form-label">is the transaction request catered and/or resolved? </label>
+                <label id="csm-wrapper">
+                    <input type="radio" id="" name="request_processed" value="Yes">
+                    Yes
+                </label>
+                <label id="csm-wrapper">
+                    <input type="radio" id="" name="request_processed" value="No">
+                    No
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label class="form-label">CSS/CSM:</label>
+                <label id="csm-wrapper">
+                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
+                    CSM
+                </label>
+                <label id="csm-wrapper">
+                    <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
+                    CSS
+                </label>
+            </div>
+            <button type="submit"> Served </button>
         `;
+        setTimeout(initCitizenCharterHandlers, 0);
     }
 
     if (type === "forward") {
@@ -396,26 +499,26 @@ function openModal(type, data = {}) {
                 </div>                   
             </div>
             <label>Remarks</label>
-            <textarea id="unit-approved-remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
+            <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
             <div class="checkbox-group">
                 <label class="form-label">is the transaction request catered and/or resolved? </label>
                 <label id="csm-wrapper">
-                    <input type="radio" id="" name="resolution" value="CSM">
+                    <input type="radio" id="" name="request_processed" value="Yes">
                     Yes
                 </label>
                 <label id="csm-wrapper">
-                    <input type="radio" id="" name="resolution" value="CSS">
+                    <input type="radio" id="" name="request_processed" value="No">
                     No
                 </label>
             </div>
             <div class="checkbox-group">
                 <label class="form-label">CSS/CSM:</label>
                 <label id="csm-wrapper">
-                    <input type="checkbox" id="unit-csm-checkbox" name="resolution" value="CSM">
+                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
                     CSM
                 </label>
                 <label id="csm-wrapper">
-                    <input type="checkbox" id="unit-css-checkbox" name="resolution" value="CSS">
+                    <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
                     CSS
                 </label>
             </div>
@@ -437,7 +540,9 @@ function openModal(type, data = {}) {
             serveClient(data.transaction_id);
         } else if (type === "serving") {
             servingClient(data.transaction_id)
-        } 
+        } else if (type === "approved") {
+            approvedClient(data.client_id);
+        }
     }
 }
 
