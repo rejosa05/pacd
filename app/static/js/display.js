@@ -33,7 +33,6 @@ function fetchServingClient() {
         let priorityClients = data.serving_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.serving_clients.filter(client => client.client_lane_type !== 'Priority');
 
-        console.log(priorityClients)
         function createClientBox(client) {
             const clientBox = document.createElement('div');
             clientBox.classList.add('client-card'); // Add styling class if needed
@@ -45,12 +44,11 @@ function fetchServingClient() {
         }
 
         function insertClient(client) {
-            const divisionContainer = document.querySelector(`#${client.client_division} .clients-list`);
+            const divisionContainer = document.querySelector(`[id="${client.client_division}"] .clients-list`);
             if (divisionContainer) {
                 divisionContainer.appendChild(createClientBox(client));
             }
         }
-        console.log(1)
 
         priorityClients.forEach(client => insertClient(client));
         regularClients.forEach(client => insertClient(client));
@@ -62,5 +60,5 @@ if (path.includes(displayQueUrl)) {
     displayQue();
     fetchServingClient();
     setInterval(displayQue, 2000);
-    setInterval(fetchServingClient, 2000);
+    // setInterval(fetchServingClient, 2000);
 }
