@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib import messages
-from ..models import AccountDetails, SessionHistory
+from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails
 from ..forms import LoginForm
 from django.utils import timezone
 
@@ -77,3 +77,14 @@ def services_page(request):
         return redirect("login")
 
     return render(request, "app/services.html", {'user':user})
+
+def acknowledgement(request, id):
+    today = timezone.now().strftime("%B. %d, %Y %I:%M %p")
+    divisionLog = get_object_or_404(DivisionLog, id=id)
+    clientDetails = get_object_or_404(ClientDetails, id=divisionLog.client_id.id)
+    print(clientDetails)
+    return render(request, "app/acknowledgement.html",
+                   {
+                    'clientDetails': clientDetails,
+                    'divisionLog': divisionLog,
+                    'today': today})

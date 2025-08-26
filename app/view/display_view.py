@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from ..models import ClientDetails, DivisionLog
+from ..models import ClientDetails
 from ..forms import ClientDetailsForm
 from ..utils.utils import *
 
