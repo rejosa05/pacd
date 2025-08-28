@@ -241,7 +241,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 <div class="transaction-card">
                     <div>
                         <div class="client-status-row">
-                            <span class="transaction-id">Client ID. ${served.client_id}</span>
+                            <span class="transaction-id">Client ID. ${served.client_id} </span>
                             <span class="status status-blue"> ${served.client_action}</span>
                             <span class="status ${laneColorClass}">${served.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
@@ -276,7 +276,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         });
 
         divisionUnitSelect('division-select', 'unit-select');
-        // divisionUnitSelect('division-select', 'unit-select');
     });
 }
 

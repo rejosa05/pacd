@@ -249,14 +249,16 @@ function servingClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${id}`
+        body: `transaction-id=${id}`
     })
     .then(response => response.json())
     .then(() => {
         alert('now serving!!');
         closeModal();
+        fetchTransactions();
     })   
 }
+
 function serveClient(id) {
     const srvcSelect = document.getElementById('serviceList');
     const remarks = document.getElementById('remarks');
@@ -323,7 +325,7 @@ function serveClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `selectedClient=${id}&remarks=${encodeURIComponent(remarks.value)}
+        body: `transaction-id=${id}&remarks=${encodeURIComponent(remarks.value)}
         &resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}
         &cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}
         &deficiencies=${encodeURIComponent(deficienciesValue)}&request_processed=${actionValue}`
@@ -333,6 +335,10 @@ function serveClient(id) {
         alert('Successfully catered!');
         fetchTransactions();
         closeModal();
+
+        // 🚀 Open acknowledgement receipt in new tab
+        const receiptUrl = `/acknowledgement/${id}`;  // Django URL pattern should match
+        window.open(receiptUrl, '_blank');
     })
     .catch(err => {
         console.error('Error updating client:', err);

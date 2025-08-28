@@ -5,30 +5,33 @@ from django.utils import timezone
 def forwarded_client_to_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
+            user = request.session.get('username')
+            account = AccountDetails.objects.filter(user=user).first()
             client_id = request.POST.get('client_id')
             org_name = request.POST.get('org_name')
             type = request.POST.get('transaction_type')
             division = request.POST.get('division')
             unit = request.POST.get('unit')
             transaction_details = request.POST.get('transaction_details')
-            username = request.session.get('username')
             today = timezone.now()
+
+            print(account.id)
 
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = 'Serving'
-            client.user = username
+            client.user = user
             client.client_org = org_name
             client.save()
 
             DivisionLog.objects.create(
                 client_id_id=client_id,
+                pacd_officer_id_id = account.id,
                 action_type = 'Pending',
                 division=division,
                 unit=unit,
                 transaction_type = type,
                 transaction_details=transaction_details,
                 status= 'Pending',
-                user=username,
                 date=today
             )
 
@@ -198,7 +201,7 @@ def update_client_status_served_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             today = timezone.now()
-            client_id = request.POST.get('selectedClient')
+            transaction_id = request.POST.get('transaction-id')
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
 
@@ -214,7 +217,7 @@ def update_client_status_served_unit(request):
             request_processed = request.POST.get('request_processed')  # Q3 (make sure JS sends this)
 
 
-            client = DivisionLog.objects.get(id=client_id, unit=users.unit)
+            client = DivisionLog.objects.get(id=transaction_id, unit=users.unit)
             client.action_type = 'Resolved'
             client.form = resolutions
             client.date_resolved = today
@@ -245,17 +248,14 @@ def update_client_status_served_unit(request):
 def serving_client_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
-            client_id = request.POST.get('selectedClient')
+            transaction_id = request.POST.get('transaction-id')
             user = request.session.get('username')
-            users = AccountDetails.objects.filter(user=user).first()
-            unit = users.unit
-            unitperson = users.first_name + ' ' + users.last_name
+            account = AccountDetails.objects.filter(user=user).first()
 
-            client = DivisionLog.objects.get(id=client_id, unit=unit)
+            client = DivisionLog.objects.get(id=transaction_id)
             client.action_type = 'Processing'
-            client.unit_user = user
             client.status = 'Serving'
-            client.unit_person = unitperson
+            client.process_owner_id_id = account.id
             client.save()
 
             return JsonResponse({'message': 'Client serving!!!!'})
