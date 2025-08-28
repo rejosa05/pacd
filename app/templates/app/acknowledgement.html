@@ -77,7 +77,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: .75rem 1rem;
-      padding: 1rem 1.5rem 1.25rem;
+      padding: .25rem 1.5rem .25rem;
       border-bottom: 1px solid var(--line);
       background: #fff;
     }
@@ -90,7 +90,7 @@
       border-bottom: 1px solid var(--line);
     }
     section:last-of-type { border-bottom: 0; }
-    h3 { margin: 0 0 .75rem; font-size: 1.05rem; letter-spacing: .02em; text-transform: uppercase; color: var(--brand); }
+    h4 { margin: 0 0 .75rem; font-size: 1.05rem; letter-spacing: .02em; text-transform: uppercase; color: var(--brand); }
 
     .grid-2 {
       display: grid;
@@ -108,6 +108,14 @@
       border-radius: 12px;
       padding: 1rem;
       line-height: 1.6;
+    }
+
+    .ack-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      padding: 20px;
+      text-align: justify;
+      border: 1px outset #ddd;
     }
 
     .footer {
@@ -165,9 +173,9 @@
         <img alt="Department of Health (Philippines) logo" src="{% static 'images/logo.png'%}" />
       </div>
       <div class="headings">
-        <h1>Department of Health — Philippines</h1>
+        <h1>DOH Center Of HEALTH Development - CARAGA</h1>
         <h2>Acknowledgement Receipt</h2>
-        <div class="subtext">Official confirmation of receipt for filed transaction</div>
+        <!-- <div class="subtext">Official confirmation of receipt for filed transaction</div> -->
       </div>
     </header>
 
@@ -177,59 +185,47 @@
     </div>
 
     <section>
-      <h3>Client Information</h3>
+      <h4>Client Information</h4>
       <div class="grid-2">
-        <div class="row"><div class="label">Client ID</div><div class="value">{{ clientDetails.id }}</div></div>
-        <div class="row"><div class="label">Full Name</div><div class="value">{{ clientDetails.client_firstname }} {{ clientDetails.client_lastname }}</div></div>
+        <div class="row"><div class="label">Client ID </div><div class="value">{{ clientDetails.id }}</div></div>
         <div class="row"><div class="label">Contact No.</div><div class="value">+63 9918202822</div></div>
-        <div class="row"><div class="label">Company / Organization</div><div class="value">{{ clientDetails.client_org }}</div></div>
+        <div class="row"><div class="label">Full Name</div><div class="value">{{ clientDetails.client_firstname }} {{ clientDetails.client_lastname }}</div></div>
         <div class="row"><div class="label">Gender</div><div class="value">{{ clientDetails.client_gender }}</div></div>
+        <div class="row"><div class="label">Company / Organization</div><div class="value">{{ clientDetails.client_org }}</div></div>
       </div>
     </section>
 
     <section>
-      <h3>Transaction Details</h3>
+      <h4>Transaction Details</h4>
       <div class="grid-2">
         <div class="row"><div class="label">Lane Type</div><div class="value">Regular</div></div>
         <div class="row"><div class="label">Transaction Type</div><div class="value">Others</div></div>
         <div class="row"><div class="label">Transaction Details</div><div class="value">Complaint</div></div>
-        <div class="row"><div class="label">Division</div><div class="value">RDnARD</div></div>
-        <div class="row"><div class="label">Unit</div><div class="value">Legal</div></div>
-        <div class="row"><div class="label">Status</div><div class="value">Serving</div></div>
-        <div class="row"><div class="label">Date Created</div><div class="value">August 22, 2025, 08:00 PM</div></div>
+        <div class="row"><div class="label">Division</div><div class="value">RD/ARD</div></div>
+        <div class="row"><div class="label">Unit/Process Owner</div><div class="value">Legal</div></div>
+        <!-- <div class="row"><div class="label">Status</div><div class="value">Serving</div></div> -->
+        <div class="row"><div class="label">Date Created</div><div class="value">Aug 22, 2025, 08:00 PM</div></div>
         <div class="row"><div class="label">Date Forwarded</div><div class="value">August 22, 2025, 08:01 PM</div></div>
-        <div class="row"><div class="label">Date Resolved</div><div class="value">N/A</div></div>
+        <div class="row"><div class="label">Date Resolved</div><div class="value">August 22, 2025, 08:01 PM</div></div>
         <div class="row"><div class="label">Remarks</div><div class="value">None</div></div>
-        <div class="row"><div class="label">Forms Submitted</div><div class="value">None</div></div>
+        <div class="row"><div class="label">CSM / CSS</div><div class="value">None</div></div>
       </div>
     </section>
-
     <section>
-      <h3>Acknowledgement</h3>
-      <div class="ack">
-        This acknowledges that <strong>Mr. Rolly Ejosa</strong> has filed a <strong>complaint transaction</strong> with the <strong>RDnARD — Legal Unit</strong>. The request has been received and is being processed by the assigned personnel.
-      </div>
-    </section>
-
-    <section>
-      <h3>Processed By</h3>
+      <h4>Processed By</h4>
       <div class="grid-2">
-        <div class="row"><div class="label">Personnel Unit</div><div class="value">Sheena</div></div>
+        <div class="row"><div class="label">Personnel Unit</div><div class="value">{{ divisionLog.unit_person }}</div></div>
       </div>
     </section>
-
-    <section class="footer">
-      <div class="signbox">
-        <div class="line" aria-hidden="true"></div>
-        <div class="hint">Signature over Printed Name (Receiver)</div>
-      </div>
-      <div class="signbox">
-        <div class="line" aria-hidden="true"></div>
-        <div class="hint">Date</div>
-      </div>
-      <div class="signbox">
-        <div class="line" aria-hidden="true"></div>
-        <div class="hint">ISO-QMS-01-01</div>
+    <section>
+      <h4>Acknowledgement</h4>
+      <div class="grid-2">
+        <div class="ack-row">
+          This document serves as your official acknowledgement receipt and reference for all subsequent communications regarding this request. <br><br> Kindly present your Unique Transaction ID for any follow-up or inquiry at the PACD.
+        </div>
+        <div class="ack-row">
+          Kining dokumento nagserbisyo isip imong opisyal nga resibo. Alang sa tanang mosunod nga komunikasyon kabahin niini nga request. <br><br> Palihug ipakita ang imong Unique Transaction ID alang sa bisan unsang follow-up o pangutana sa PACD.
+        </div>
       </div>
     </section>
   </main>

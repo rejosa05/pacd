@@ -27,7 +27,7 @@ class DivisionLogAdmin(admin.ModelAdmin):
 
 @admin.register(ServicesDetails)
 class ServiceDetails(admin.ModelAdmin):
-    list_display = ('id', 'service_name', 'service_code', 'division', 'unit', 'classification', 'type_transaction')
+    list_display = ('id', 'service_name', 'service_code', 'division', 'unit', 'classification', 'type_transaction', 'edition', 'function')
     search_fields = ('service_name', 'service_code', 'division', 'unit', 'classification', 'type_transaction')
     list_filter = ('service_name', 'service_code', 'classification', 'type_transaction')
     order = ('-id')

@@ -45,7 +45,8 @@ function forwardClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${id}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}&action_type=forwarded`
+        body: `client_id=${id}&org_name=${org_name}&transaction_type=${transaction_type}
+        &transaction_details=${transaction_details}&division=${division}&unit=${unit}`
     })
     .then(response => response.json())
     .then(() => {
@@ -145,7 +146,6 @@ function approvedClient(id) {
         closeModal();
     })
 }
-
 
 function viewClientDetails(id) {
     fetch(`${viewCLient}${id}/`)
