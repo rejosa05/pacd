@@ -2,8 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib import messages
 from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails
-from ..forms import LoginForm
+from ..forms import LoginForm, ClientDetailsForm
 from django.utils import timezone
+
+def display_view(request):
+    return render(request, 'app/display.html')
+
+def client_details(request):
+    if request.method == 'POST':
+        form = ClientDetailsForm(request.POST)
+        if form.is_valid():
+            client = form.save()
+            return redirect('client_ticket', client_id=client.id)
+    else:
+         form = ClientDetailsForm()
+    return render(request, 'app/client.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":

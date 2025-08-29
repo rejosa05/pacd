@@ -7,16 +7,190 @@
 {% block content %}
 <style>
     body {
-    font-size: 17px;
-    line-height: 1.6;
-    align-items: center;
-    padding: .5rem 1rem;
-  }
+      font-size: 17px;
+      line-height: 1.6;
+      align-items: center;
+      padding: .5rem 1rem;
+      font-family: Arial, sans-serif;
+    }
 
+    h3 {
+        margin: 1px 0;
+    }
+
+    h5 {
+      font-size: 14px;
+      color: #555;
+      margin: 0;
+    }
+    
+
+
+    main.login {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .login-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .login-btn:hover {
+      background: #0056b3;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5); 
+    }
+    .modal-content {
+      background: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 1000px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.25);
+    }
+    .modal h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .modal-body {
+      display: flex;
+      gap: 20px;
+    }
+    .modal-col {
+      flex: 1;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 6px;
+      background: #fafafa;
+      overflow-y: auto;
+      max-height: 500px;
+      text-align: justify;
+    }
+
+    .modal-footer {
+      text-align: right;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-agree {
+      background: #28a745;
+      color: white;
+    }
+    .btn-decline {
+      background: #dc3545;
+      color: white;
+    }
 </style>
+
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <h2>Data Privacy Notice / Pahibalo sa Data Privacy</h2>
+            <div class="modal-body">
+            <!-- Left Column: Other Language -->
+            <div class="modal-col">
+                <h3> DATA PRIVACY NOTICE </h3>
+                <h5><i> In compliance with the Data Privacy Act of 2012 (R.A No. 10173) </i></h5>
+                <p> The <strong> Department of Health - Center for Health Development CARAGA (DOH CHD CARAGA)</strong>, throught its Legal Service Unit, values you right to privacy and ensures the protection of your personal information. </p>
+                <p> As part of our <strong> Queuing System for the Public Assisatnce and Comlaints Desk (PACD) </strong>, we collect the following personal data: </p>
+                <ul>
+                <li> Full Name </li>
+                <li> Address </li>
+                <li> Contact Number </li>
+                <li> Nature of Concern or Request </li>
+                </ul>
+                <p> Theses data are collected for the following purposes: </p>
+                <ol type="1">
+                    <li> To facilitate oderly provision assistance and complaints services;</li>
+                    <li> To accurately document and respond to your concer;</li>
+                    <li> To generate reference numbers and transaction receipts for monitoring and reporting purposes;</li>
+                    <li> For communication and follow-up related to your concern.</li>
+                </ol>
+                <p> Your information will be kept <strong> ketp confidential </strong> and will be <strong> processed and stored securely </strong> inaccordacne with the Data Privacy Act. It will only be <strong> accessed by authorized DOH personnel </strong> your consent, unless required or authorized by law. </p>
+                <p> You have the right to: </p>
+                <ol type="1">
+                    <li> Be informed about how your data is processed. </li>
+                    <li> Access, correct, or object to the processing of your data: </li>
+                    <li> File a complaint with the National Privacy Commission (NPC), if necessary. </li>
+                </ol>
+                <p> If you have any questions or concerns about ht processing of your personal information, you may contact: </p>
+                DOH CHD CARAGA - Legal Service Unit <br>
+                📧 Email: example@doh.com <br> 
+                📞 Phone: 817 - 1363
+                <p> By providing you information, you are giving your consent to the collection and processing of your personal data for the states purposes. </p>
+                <p> <strong> <i> Thank you for your trust. </i></strong></p>
+            </div>
+
+            <!-- Right Column: English -->
+            <div class="modal-col">
+                <h3> PABIBALO SA DATA PRIVACY </h3>
+                <h5><i> Subay sa Data Privacy Act of 2012 (R.A. No. 10173) </i></h5>
+                <p> Ang <strong> Department of Health - Center for Health Development CARAGA (DOH CHD CARAGA)</strong>, pinaagi sa Legal Service Unit, naghatag ug bili sa imong katungod sa pagpanalipod sa personal nga impormasyon ug nag siguro sa seguridad niini. </p>
+                <p> Isip kabahin sa among <strong> Queuing System for the Public Assisatnce and Comlaints Desk (PACD) </strong>, among kolektahon ang mosunod ng personal nga datos: </p>
+                <ul>
+                <li> Tibouk Ngalan </li>
+                <li> Addressa </li>
+                <li> Numero sa Telepono </li>
+                <li> Kinatibuk-ang Sulod sa Imong Kabalaka o Hangyo </li>
+                </ul>
+                <p> Ang mga datos among kolektahon alang sa mosunod nga katuyoan: </p>
+                <ol type="1">
+                    <li> Aron mapaayo ang mahan-ay nga paghatag sa serbisyo sa publiko ug sa pagdawat ug pagtubag sa mga reklamo; </li>
+                    <li> Aron husto ug tukam nga madokumento ug matubag ang imong kabalaka; </li>
+                    <li> Aron makahimo og reference number ug resibo sa transaksiyon alang sa monitoring ug reporting; </li>
+                    <li> Alang sa komunikasyon ug follow-up bahin sa imong kabalaka. </li>
+                </ol>
+                <p> Ang imong impormasyon among pagatipigan nga <strong> sekreto ug luwas, ug iproseso ug itipig subay sa Data Privacy Act. </strong> Kini ma-access lamang sa awtorisadong personal sa DOH ug dili ipasa sa ikatulong partido nga walay imong pagtugot gawas kung gikinahanglan o gitugotan sa balaod. </p>
+                <p> Aduna kay katungod sa: </p>
+                <ol type="1">
+                    <li> Pagkahibalo kung giunsa pagprosesos ang imong datos; </li>
+                    <li> Pag-access, pag-ayo, o pagdumili sa pagproseso sa imong datos; </li>
+                    <li> Pagsang-at og reklamo sa National Privacy Commission (NPC) kung gikinahanglan. </li>
+                </ol>
+                <p> Kung aduna kay mga pangutana o kabalaka bahin sa proseso sa imong personal nga impormasyon, mahimo ka makigkontak sa: </p>
+                DOH CHD CARAGA - Legal Service Unit <br>
+                📧 Email: example@doh.com <br> 
+                📞 Phone: 817 - 1363
+                <p> Pinaagi sa paghatag sa imongimpormasyon, ikaw nagahatag ug pagtugot sa pagkolekta ug pagprosesos sa imong personal nga datos alang sa gilitok nga katuyoan. </p>
+                <p> <strong> <i> Salamat sa imong pagsalig.  </i></strong></p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+        <button class="btn btn-agree" onclick="acceptPrivacy()">I Agree</button>
+        </div>
+    </div>
+    </div>
     <main class="login" aria-labelledby="form-title" role="main">    
         <h1>Welcome Client</h1>
-        <p class="subtitle">Fill in the client information</p>
+        <span class="subtitle">Fill in the client information</span>
         <form method="post">        
                 {% csrf_token %}
                 {{ message }}
@@ -25,6 +199,14 @@
         </form>
      </main>
     <script>
+        window.onload = function() {
+            document.getElementById('privacyModal').style.display = 'block';
+        };
+
+        function acceptPrivacy() {
+            document.getElementById('privacyModal').style.display = 'none';
+        }
+
         document.getElementById('client-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);

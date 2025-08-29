@@ -60,7 +60,6 @@ function closeViewDetails () {
 }
 
 function approvedClient(id) {
-    console.log(id)
     const org_name = document.getElementById('org-name').value;
     const transaction_type = document.getElementById('transaction-type').value;
     const transaction_details = document.getElementById('transactions-details');
@@ -74,7 +73,7 @@ function approvedClient(id) {
     const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
 
     const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
-    const requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
+    let requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
     const actionRadio = document.querySelector('input[name="request_processed"]:checked');
     const actionValue = actionRadio ? actionRadio.value : null; // Q3
 
@@ -99,17 +98,16 @@ function approvedClient(id) {
                 alert('Please provide deficiencies details!');
                 return;
             }
-        } else if (requirementsValue === "No") {
-            deficienciesInput.value = "";
-            deficienciesValue = "";
+        } else if (requirementsValue === "No") {    
+            deficienciesValue = "N/A";
         } else {
             alert('Please answer Question 2 (Requirements Met)!');
             return;
         }
     } else if (charterCoveredValue === "No") {
         srvc = "";
-        deficienciesInput.value = "";
-
+        deficienciesValue = "N/A";
+        requirementsValue = "";
     } else {
         alert('Please answer Question 1 (Citizen Charter)!');
         return;
@@ -136,9 +134,9 @@ function approvedClient(id) {
         },
         body: `client_id=${id}&org_name=${org_name}
         &transactions_type=${transaction_type}&transaction_details=${transaction_details.value}
-        &remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${srvc}
+        &remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${encodeURIComponent(srvc)}
         &cc_cover=${charterCoveredValue}&requirements_met=${encodeURIComponent(requirementsValue)}
-        &deficiencies=${deficienciesValue}&request_processed=${actionValue}`
+        &deficiencies=${encodeURIComponent(deficienciesValue)}&request_processed=${encodeURIComponent(actionValue)}`
     })
     .then(response => response.json())
     .then(() => {

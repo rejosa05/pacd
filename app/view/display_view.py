@@ -2,21 +2,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from ..models import ClientDetails
-from ..forms import ClientDetailsForm
-from ..utils.utils import *
-
-def display_view(request):
-    return render(request, 'app/display.html')
-    
-def client_details(request):
-    if request.method == 'POST':
-        form = ClientDetailsForm(request.POST)
-        if form.is_valid():
-            client = form.save()
-            return redirect('client_ticket', client_id=client.id)
-    else:
-         form = ClientDetailsForm()
-    return render(request, 'app/client.html', {'form': form})
+from ..utils.utils import *    
     
 def ticket_view(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)

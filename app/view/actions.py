@@ -107,7 +107,7 @@ def update_client_status_served(request):
             today = timezone.now()
             client_id = request.POST.get('client_id')
             user = request.session.get('username')
-            users = AccountDetails.objects.filter(user=user).first()
+            account = AccountDetails.objects.filter(user=user).first()
             org_name = request.POST.get('org_name')
             type = request.POST.get('transactions_type')
             transaction_details = request.POST.get('transaction_details')
@@ -121,24 +121,24 @@ def update_client_status_served(request):
             request_processed = request.POST.get('request_processed')   
             action_type = 'Resolved'
             status = 'Completed'
-            
+
+        
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
-            client.user = user
             client.client_org = org_name
             client.save()
             
             DivisionLog.objects.create(
-            client_id_id=client_id,
+            client_id_id = client_id,
+            pacd_officer_id_id = account.id,
+            process_owner_id_id = account.id,
             action_type = action_type,
             transaction_type = type,
-            division=users.divisions,
-            unit=users.unit,
+            division = account.divisions,
+            unit = account.unit,
             transaction_details=transaction_details,
             remarks = remarks,
             form = resolutions,
-            unit_user = user,
-            user=users.user,
             date_resolved = today,
             status = status,
             date=today,
