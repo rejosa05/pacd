@@ -92,7 +92,7 @@ def services_page(request):
     return render(request, "app/services.html", {'user':user})
 
 def acknowledgement(request, pk):
-    today = timezone.now().strftime("%B. %d, %Y %I:%M %p")
+    today = timezone.now().strftime("%B %d, %Y %I:%M %p")
     divisionLog = get_object_or_404(DivisionLog, id=pk)
     clientDetails = divisionLog.client_id
     print(clientDetails)

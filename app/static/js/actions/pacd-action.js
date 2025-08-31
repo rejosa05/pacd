@@ -334,8 +334,7 @@ function serveClient(id) {
         fetchTransactions();
         closeModal();
 
-        // 🚀 Open acknowledgement receipt in new tab
-        const receiptUrl = `/acknowledgement/${id}`;  // Django URL pattern should match
+        const receiptUrl = `/acknowledgement/${id}`;
         window.open(receiptUrl, '_blank');
     })
     .catch(err => {
