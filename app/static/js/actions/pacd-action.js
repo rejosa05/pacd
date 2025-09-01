@@ -428,7 +428,7 @@ function openModal(type, data = {}) {
         setTimeout(initCitizenCharterHandlers, 0);
     }
 
-    if (type === "forward") {
+    if (type === "forward" || type === "repeat") {
         htmlContent += `
             <label for="org-name">Organization/Company Name</label>
             <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
@@ -528,6 +528,35 @@ function openModal(type, data = {}) {
             <button type="submit"> Served </button>
         `;
         setTimeout(initCitizenCharterHandlers, 0);
+    }
+
+    if (type === "repeat") {
+        htmlContent += `
+            <label for="transaction-type">Transactions Type</label>
+                <select class="form-option" name="divisions" id="transaction-type">
+                    <option value="">Select Type</option>
+                    <option value="Inquiry">Inquiry</option>
+                    <option value="Request">Request</option>
+                    <option value="Submit Documents">Submit Documents</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Others">Others</option>
+                </select>
+            <label>Transactions Details</label>
+            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required></textarea>
+            <label class="form-label" for="division">Division: </label>
+                <select class="form-option" name="divisions" id="division-select">
+                    <option value="">Select Division</option>
+                    <option value="MSD">MSD</option>
+                    <option value="LHSD">LHSD</option>
+                    <option value="RD/ARD">RD/ARD</option>
+                    <option value="RLED">RLED</option>
+                </select>
+            <label class="form-label" for="unit">Unit:</label>
+                <select class="form-option" name="unit" id="unit-select" required>
+                    <option value="">Select Unit</option>
+                </select>
+            <button type="submit"> Repeat </button>
+        `;
     }
 
     form.innerHTML = htmlContent;

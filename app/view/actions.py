@@ -216,7 +216,6 @@ def update_client_status_served_unit(request):
             requirements_met = request.POST.get('requirements_met')  # Q2
             request_processed = request.POST.get('request_processed')  # Q3 (make sure JS sends this)
 
-
             client = DivisionLog.objects.get(id=transaction_id, unit=users.unit)
             client.action_type = 'Resolved'
             client.form = resolutions
