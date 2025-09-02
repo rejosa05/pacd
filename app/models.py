@@ -81,10 +81,30 @@ def set_queue_no(sender, instance, **kwargs):
     if instance._state.adding and (not instance.client_queue_no or instance.client_queue_no == 1):
         instance.client_queue_no = ClientDetails.get_queue_no()
 
+class ServicesDetails(models.Model):
+    service_name = models.TextField(    )
+    service_code = models.CharField(max_length=100, null=True, blank=True)
+    category = models.CharField(max_length=100, null=True, blank=True)
+    division = models.CharField(max_length=100, null=True, blank=True)
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    classification = models.CharField(max_length=100, null=True, blank=True)
+    type_transaction = models.CharField(max_length=100, null=True, blank=True)
+    edition = models.CharField(max_length=100, null=True, blank=True)
+    function = models.CharField(max_length=100, null=True, blank=True)
+    processing_time =  models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.service_name}"
+
+    def save(self, *args, **kwargs):
+        self.service_name = self.service_name.title()
+        super(ServicesDetails, self).save(*args, **kwargs)
+
 class DivisionLog(models.Model):
     client_id = models.ForeignKey(ClientDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='client_logs')
     process_owner_id = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='process_owner')
     pacd_officer_id = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='pacd_officer')
+    service_id = models.ForeignKey(ServicesDetails, on_delete=models.CASCADE, null=True, blank=True)
     transaction_type = models.CharField(max_length=100, blank=True)
     division = models.CharField(max_length=100)
     transaction_details = models.TextField(null=True)
@@ -94,7 +114,6 @@ class DivisionLog(models.Model):
     date_resolved = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     form = models.CharField(max_length=100, null=True)
-    service_avail = models.CharField(max_length=200, null=True)
     deficiencies = models.TextField(null=True, blank=True)
     remarks = models.TextField(blank=True)
     requirements_met = models.CharField(max_length=10, null=True, blank=True)
@@ -142,21 +161,3 @@ class SessionHistory(models.Model):
     def __str__(self):
         return f"{self.user} - {self.login_time}"
     
-class ServicesDetails(models.Model):
-    service_name = models.TextField(    )
-    service_code = models.CharField(max_length=100, null=True, blank=True)
-    category = models.CharField(max_length=100, null=True, blank=True)
-    division = models.CharField(max_length=100, null=True, blank=True)
-    unit = models.CharField(max_length=100, null=True, blank=True)
-    classification = models.CharField(max_length=100, null=True, blank=True)
-    type_transaction = models.CharField(max_length=100, null=True, blank=True)
-    edition = models.CharField(max_length=100, null=True, blank=True)
-    function = models.CharField(max_length=100, null=True, blank=True)
-    processing_time =  models.CharField(max_length=100, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.service_name}"
-
-    def save(self, *args, **kwargs):
-        self.service_name = self.service_name.title()
-        super(ServicesDetails, self).save(*args, **kwargs)

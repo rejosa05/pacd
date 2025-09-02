@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib import messages
-from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails
+from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails, ServicesDetails
 from ..forms import LoginForm, ClientDetailsForm
 from django.utils import timezone
 
@@ -92,12 +92,25 @@ def services_page(request):
     return render(request, "app/services.html", {'user':user})
 
 def acknowledgement(request, pk):
+    username = request.session.get('username')
+    if not username:
+        return redirect("login")
+
+    user = AccountDetails.objects.filter(user=username).first()
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
-    divisionLog = get_object_or_404(DivisionLog, id=pk)
-    clientDetails = divisionLog.client_id
-    print(clientDetails)
-    return render(request, "app/acknowledgement.html",
-                   {
-                    'clientDetails': clientDetails,
-                    'divisionLog': divisionLog,
-                    'today': today})
+
+    clientDetails = get_object_or_404(ClientDetails, id=pk)
+    divisionLog = get_object_or_404(DivisionLog, client_id=clientDetails)
+
+    # ✅ Use .filter().first() so it won't 404 if missing
+    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
+    account = AccountDetails.objects.filter(id=divisionLog.pacd_officer_id_id).first()
+
+    return render(request, "app/acknowledgement.html", {
+        'clientDetails': clientDetails,
+        'divisionLog': divisionLog,
+        'today': today,
+        'services': services,   # can be None if not found
+        'account': account,     # can be None if not found
+        'user': user
+    })

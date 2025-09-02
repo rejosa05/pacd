@@ -188,7 +188,7 @@
       <h4>Client Information</h4>
       <div class="grid-2">
         <div class="row"><div class="label">Client ID </div><div class="value">{{ clientDetails.id }}</div></div>
-        <div class="row"><div class="label">Contact No.</div><div class="value">+63 9918202822</div></div>
+        <div class="row"><div class="label">Contact No.</div><div class="value">+63 {{ clientDetails.client_contact }}</div></div>
         <div class="row"><div class="label">Full Name</div><div class="value">{{ clientDetails.client_firstname }} {{ clientDetails.client_lastname }}</div></div>
         <div class="row"><div class="label">Gender</div><div class="value">{{ clientDetails.client_gender }}</div></div>
         <div class="row"><div class="label">Company / Organization</div><div class="value">{{ clientDetails.client_org }}</div></div>
@@ -198,7 +198,7 @@
     <section>
       <h4>Transaction Details</h4>
       <div class="grid-2">
-        <div class="row"><div class="label">Lane Type</div><div class="value">Regular</div></div>
+        <div class="row"><div class="label">Lane Type</div><div class="value">{{ clientDetails.lane_type }}</div></div>
         <div class="row"><div class="label">Transaction Type</div><div class="value">Others</div></div>
         <div class="row"><div class="label">Transaction Details</div><div class="value">Complaint</div></div>
         <div class="row"><div class="label">Division</div><div class="value">RD/ARD</div></div>
@@ -214,14 +214,14 @@
     <section>
       <h4>Service Avail</h4>
       <div class="">
-        <div class="row"><div class="label">Service Code</div><div class="value">{{ divisionLog.unit_person }}</div></div>
-        <div class="row"><div class="label">Service Name</div><div class="value">{{ divisionLog.unit_person }}</div></div>
+        <div class="row"><div class="label">Service Code</div><div class="value">{{ services.service_code }}</div></div>
+        <div class="row"><div class="label">Service Name</div><div class="value">{{ services.service_name }}</div></div>
       </div>
     </section>
     <section>
       <h4>Processed By</h4>
-      <div class="grid-2">
-        <div class="row"><div class="label">Personnel Unit</div><div class="value">{{ divisionLog.unit_person }}</div></div>
+      <div>
+        <div class="row"><div class="label">Personnel Unit</div><div class="value">{{ account.first_name }} {{ account.last_name }}</div></div>
       </div>
     </section>
     <section>

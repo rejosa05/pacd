@@ -140,8 +140,12 @@ function approvedClient(id) {
     })
     .then(response => response.json())
     .then(() => {
-        alert('succefully catered!!!')
+        alert('Successfully catered!');
+        fetchTransactions();
         closeModal();
+
+        const receiptUrl = `/acknowledgement/${id}`;
+        window.open(receiptUrl, '_blank');
     })
 }
 
@@ -337,9 +341,6 @@ function serveClient(id) {
         const receiptUrl = `/acknowledgement/${id}`;
         window.open(receiptUrl, '_blank');
     })
-    .catch(err => {
-        console.error('Error updating client:', err);
-    });
 }
 
 let activeClientData = {};
@@ -645,9 +646,6 @@ function getSrvc() {
             document.getElementById('deficiencies-textarea').style.display = 'none';
         }
     })
-    .catch(error => {
-        console.error('Error fetching services:', error);
-    });
 }
 
 

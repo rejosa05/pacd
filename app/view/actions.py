@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from ..models import ClientDetails, DivisionLog, AccountDetails
+from ..models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
 from django.utils import timezone
 
 def forwarded_client_to_unit(request):
@@ -107,14 +107,15 @@ def update_client_status_served(request):
             today = timezone.now()
             client_id = request.POST.get('client_id')
             user = request.session.get('username')
-            account = AccountDetails.objects.filter(user=user).first()
+            account = AccountDetails.objects.filter(user = user).first()
             org_name = request.POST.get('org_name')
             type = request.POST.get('transactions_type')
             transaction_details = request.POST.get('transaction_details')
             resolutions = request.POST.get('resolutions')
             remarks = request.POST.get('remarks')
 
-            srvc_avail = request.POST.get('srvc_avail')
+            srvc_avail = (request.POST.get('srvc_avail') or "").strip()
+            srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
             deficiencies = request.POST.get('deficiencies')
             cc_cover = request.POST.get('cc_cover')
             requirements_met = request.POST.get('requirements_met')
@@ -122,7 +123,8 @@ def update_client_status_served(request):
             action_type = 'Resolved'
             status = 'Completed'
 
-        
+            
+            print(srvc_avail)
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
             client.client_org = org_name
@@ -132,6 +134,7 @@ def update_client_status_served(request):
             client_id_id = client_id,
             pacd_officer_id_id = account.id,
             process_owner_id_id = account.id,
+            service_id_id = srvc.id if srvc else None,
             action_type = action_type,
             transaction_type = type,
             division = account.divisions,
@@ -142,7 +145,6 @@ def update_client_status_served(request):
             date_resolved = today,
             status = status,
             date=today,
-            service_avail = srvc_avail,
             deficiencies = deficiencies,
             cc_cover = cc_cover,
             requirements_met =  requirements_met,
