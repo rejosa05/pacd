@@ -386,7 +386,7 @@ function openModal(type, data = {}) {
                 <select class="form-option" name="divisions" id="serviceList"></select>
                 <div id="deficiencies-wrapper">
                     <div class="checkbox-group">
-                        <label>if yes, are the requirements in the Citizen's Charter? </label>
+                        <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
                         <label>
                             <input type="radio" name="requirements" value="Yes"> Yes
                         </label>
@@ -488,7 +488,7 @@ function openModal(type, data = {}) {
                 <select class="form-option" name="divisions" id="serviceList"></select>
                 <div id="deficiencies-wrapper">
                     <div class="checkbox-group">
-                        <label>if yes, are the requirements in the Citizen's Charter? </label>
+                        <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
                         <label>
                             <input type="radio" name="requirements" value="Yes"> Yes
                         </label>

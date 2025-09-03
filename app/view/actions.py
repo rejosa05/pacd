@@ -15,8 +15,6 @@ def forwarded_client_to_unit(request):
             transaction_details = request.POST.get('transaction_details')
             today = timezone.now()
 
-            print(account.id)
-
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = 'Serving'
             client.user = user
@@ -123,8 +121,6 @@ def update_client_status_served(request):
             action_type = 'Resolved'
             status = 'Completed'
 
-            
-            print(srvc_avail)
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
             client.client_org = org_name
@@ -134,7 +130,7 @@ def update_client_status_served(request):
             client_id_id = client_id,
             pacd_officer_id_id = account.id,
             process_owner_id_id = account.id,
-            service_id_id = srvc.id if srvc else None,
+            service_id_id = srvc.id,
             action_type = action_type,
             transaction_type = type,
             division = account.divisions,
@@ -207,7 +203,8 @@ def update_client_status_served_unit(request):
             user = request.session.get('username')
             users = AccountDetails.objects.filter(user=user).first()
 
-            srvc_avail = request.POST.get('srvc_avail')
+            srvc_avail = request.POST.get('srvc_avail' or "").strip()
+            srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
             deficiencies = request.POST.get('deficiencies')
             remarks = request.POST.get('remarks')
             resolutions = request.POST.get('resolutions')
@@ -224,13 +221,13 @@ def update_client_status_served_unit(request):
             client.date_resolved = today
             client.remarks = remarks
             client.status = 'Completed'
-            client.service_avail = srvc_avail
             client.deficiencies = deficiencies
 
             # Save Q1, Q2, Q3 into DB
             client.cc_cover = cc_cover
             client.requirements_met = requirements_met
             client.request_catered = request_processed
+            client.service_id_id = srvc.id if srvc else None  # Handle case where service is not found
 
             client.save()
 

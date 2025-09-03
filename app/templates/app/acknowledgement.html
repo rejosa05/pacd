@@ -180,8 +180,8 @@
     </header>
 
     <div class="meta">
-      <div class="item"><span class="label">Transaction Reciept No.</span><span class="value">AR-TR{{ divisionLog.id }}</span></div>
-      <div class="item"><span class="label">Date Issued</span><span class="value">{{ today }}</span></div>
+      <div class="item"><span class="label">Transaction Reciept No.</span><span class="value">AR-TR{{ divisionLog.date_resolved|date:"Y" }}-{{ divisionLog.id }}</span></div>
+      <div class="item"><span class="label">Date Issued</span><span class="value">{{ divisionLog.date_resolved|date:"F d, Y h:i A" }}</span></div>
     </div>
 
     <section>
@@ -196,32 +196,37 @@
     </section>
 
     <section>
-      <h4>Transaction Details</h4>
+      <h4>Transaction</h4>
       <div class="grid-2">
-        <div class="row"><div class="label">Lane Type</div><div class="value">{{ clientDetails.lane_type }}</div></div>
-        <div class="row"><div class="label">Transaction Type</div><div class="value">Others</div></div>
-        <div class="row"><div class="label">Transaction Details</div><div class="value">Complaint</div></div>
+        <div class="row"><div class="label">Lane Type</div><div class="value">{{ clientDetails.client_lane_type }}</div></div>
+        <div class="row"><div class="label">Transaction Type</div><div class="value">{{ divisionLog.transaction_type}}</div></div>
         <div class="row"><div class="label">Division</div><div class="value">RD/ARD</div></div>
         <div class="row"><div class="label">Unit/Process Owner</div><div class="value">Legal</div></div>
-        <!-- <div class="row"><div class="label">Status</div><div class="value">Serving</div></div> -->
-        <!-- <div class="row"><div class="label">Date Register</div><div class="value">Aug 22, 2025, 08:00 PM</div></div> -->
+        <!-- <div class="row"><div class="label">Date Register</div><div class="value">/div></div> -->
         <!-- <div class="row"><div class="label">Date Forwarded</div><div class="value">August 22, 2025, 08:01 PM</div></div>
         <div class="row"><div class="label">Date Resolved</div><div class="value">August 22, 2025, 08:01 PM</div></div> -->
-        <div class="row"><div class="label">Remarks</div><div class="value">None</div></div>
-        <div class="row"><div class="label">CSM / CSS</div><div class="value">None</div></div>
       </div>
+      <div class="row"><div class="label">Date Transaction</div><div class="value">{{ divisionLog.date_resolved|date:"F d, Y h:i A" }}</div></div>
+      <div class="row"><div class="label">Transaction Details</div><div class="value">{{ divisionLog.transaction_details }}</div></div>
     </section>
     <section>
-      <h4>Service Avail</h4>
+      <h4>Service Avail</h4>  
       <div class="">
-        <div class="row"><div class="label">Service Code</div><div class="value">{{ services.service_code }}</div></div>
-        <div class="row"><div class="label">Service Name</div><div class="value">{{ services.service_name }}</div></div>
+        {% if divisionLog.service_id_id != None %}
+          <div class="row"><div class="label">Service Code</div><div class="value">{{ services.service_code }}</div></div>
+          <div class="row"><div class="label">Service Name</div><div class="value">{{ services.service_name }}</div></div>
+        {% else %}
+          <div class="row"><div class="label">Service Name</div><div class="value">Not Applicable</div></div>
+        {% endif %}
+        
+        <div class="row"><div class="label">Remarks</div><div class="value">{{ divisionLog.remarks }}</div></div>
+        <div class="row"><div class="label">CSM / CSS</div><div class="value">{{ divisionLog.form }}</div></div>
       </div>
     </section>
     <section>
       <h4>Processed By</h4>
       <div>
-        <div class="row"><div class="label">Personnel Unit</div><div class="value">{{ account.first_name }} {{ account.last_name }}</div></div>
+        <div class="row"><div class="label">Responsible Person</div><div class="value">{{ account.first_name }} {{ account.last_name }} - {{ account.position }}</div></div>
       </div>
     </section>
     <section>
