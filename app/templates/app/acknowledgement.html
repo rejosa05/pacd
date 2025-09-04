@@ -215,6 +215,9 @@
         {% if divisionLog.service_id_id != None %}
           <div class="row"><div class="label">Service Code</div><div class="value">{{ services.service_code }}</div></div>
           <div class="row"><div class="label">Service Name</div><div class="value">{{ services.service_name }}</div></div>
+          {% if divisionLog.deficiencies != "N/A" %}
+            <div class="row"><div class="label">Deficiencies</div><div class="value">{{ divisionLog.deficiencies }}</div></div>            
+          {% endif %}
         {% else %}
           <div class="row"><div class="label">Service Name</div><div class="value">Not Applicable</div></div>
         {% endif %}

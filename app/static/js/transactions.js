@@ -175,7 +175,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                     <div class="transaction-actions">   
                         <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>
                         ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Forward" onclick="repeatTransactions('${history.client_id_primary}', '${history.client_fullname}', '${history.client_queue_no}', '${history.client_org}')">
+                            <button class="icon-button text-blue" title="Repeat" onclick='openModal("repeat", ${JSON.stringify(history)})'>
                                 <i class="fa fa-repeat"></i>
                             </button>
                         ` : `

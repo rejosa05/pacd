@@ -32,7 +32,7 @@ def login_view(request):
                 request.session['username'] = user.user
 
                 session_key = request.session.session_key or request.session._get_or_create_session_key()
-                SessionHistory.objects.create(user=user.user, login_time=timezone.now(), session_key=session_key)   
+                SessionHistory.objects.create(user=user.user, login_time=timezone.now(), session_key=session_key)
                 return redirect("transactions")
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
@@ -99,30 +99,18 @@ def acknowledgement(request, pk):
     user = AccountDetails.objects.filter(user=username).first()
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
 
-    divisionLog = None
-    clientDetails = None
+    clientDetails = get_object_or_404(ClientDetails, id=pk)
+    divisionLog = get_object_or_404(DivisionLog, client_id=clientDetails)
 
-    # ✅ Check the user role/type
-    if user.unit == "PACD":
-        # PACD → pk is client id
-        clientDetails = get_object_or_404(ClientDetails, id=pk)
-        divisionLog = DivisionLog.objects.filter(client_id=clientDetails).last()
-        account = AccountDetails.objects.filter(id=divisionLog.pacd_officer_id_id).first() if divisionLog else None
-    else:
-        # RLED → pk is division log id (transaction id)
-        divisionLog = get_object_or_404(DivisionLog, id=pk)
-        clientDetails = divisionLog.client_id
-        account = AccountDetails.objects.filter(id=divisionLog.process_owner_id_id).first() if divisionLog else None
-
-    # ✅ Get service and PACD officer account (if any)
-    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first() if divisionLog else None
-    
+    # ✅ Use .filter().first() so it won't 404 if missing
+    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
+    account = AccountDetails.objects.filter(id=divisionLog.pacd_officer_id_id).first()
 
     return render(request, "app/acknowledgement.html", {
         'clientDetails': clientDetails,
         'divisionLog': divisionLog,
         'today': today,
-        'services': services,
-        'account': account,
+        'services': services,   # can be None if not found
+        'account': account,     # can be None if not found
         'user': user
     })

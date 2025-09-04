@@ -33,13 +33,3 @@ def f_transactions(request):
         
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)
-    
-# def get_services_by_division(request):
-#     division_name = request.GET.get('division')
-
-#     try:
-#         division = DivisionLog.objects.get(name=division_name)
-#         services = ServicesDetails.objects.filter(division=division).values_list('name', flat=True)
-#         return JsonResponse({'services': list(services)})
-#     except DivisionLog.DoesNotExist:
-#         return JsonResponse({'services': []})

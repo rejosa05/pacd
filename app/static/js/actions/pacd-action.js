@@ -207,19 +207,6 @@ function saveAccount(){
     closeAddAccount();
 }
 
-// repeat transactions
-function repeatTransactions(id, fname, que, org) {
-    selectedClient = id;
-    document.getElementById('r-fullname').innerText = fname;
-    document.getElementById('r-client-que').innerText = que;
-    document.getElementById('r-org').innerText = org;
-    document.getElementById('repeatTransaction').style.display = 'flex';
-}
-function closeRepeat() {
-    document.getElementById('repeatTransaction').style.display = 'none';
-    selectedClient = null;
-}
-
 function saveRepeat() {
     const transaction_type = document.getElementById('r-transaction-type').value;
     const org_name = document.getElementById('f-org-name').value;
@@ -429,12 +416,12 @@ function openModal(type, data = {}) {
         setTimeout(initCitizenCharterHandlers, 0);
     }
 
-    if (type === "forward" || type === "repeat") {
+    if (type === "forward") {
         htmlContent += `
             <label for="org-name">Organization/Company Name</label>
             <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
             <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="transaction-type">
+                <select class="form-option" name="transaction" id="transaction-type">
                     <option value="">Select Type</option>
                     <option value="Inquiry">Inquiry</option>
                     <option value="Request">Request</option>
@@ -533,8 +520,9 @@ function openModal(type, data = {}) {
 
     if (type === "repeat") {
         htmlContent += `
+            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
             <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="transaction-type">
+                <select class="form-option" name="transaction" id="transaction-type">
                     <option value="">Select Type</option>
                     <option value="Inquiry">Inquiry</option>
                     <option value="Request">Request</option>
@@ -575,6 +563,8 @@ function openModal(type, data = {}) {
             servingClient(data.transaction_id)
         } else if (type === "approved") {
             approvedClient(data.client_id);
+        } else if (type === "repeat") {
+            saveRepeat(data.transaction_id);
         }
     }
 }

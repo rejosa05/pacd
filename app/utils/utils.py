@@ -127,6 +127,7 @@ def transaction_history(date, unit):
             'client_id': transaction.client_id.id,
             'client_queue_no': transaction.client_id.client_queue_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
+            'client_contact': transaction.client_id.client_contact,
             'client_org': transaction.client_id.client_org,
             'client_division': transaction.division,
             'client_unit': transaction.unit,
