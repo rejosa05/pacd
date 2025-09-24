@@ -32,10 +32,12 @@ def que_view(request):
 def serving_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
-        
-        user = 'Sys'
+        user = request.session.get('username')
+        division = AccountDetails.objects.filter(user=user).first().divisions
 
-        serving_clients = serving_client_unit_list(today, user = user)
+        serving_clients = serving_client_unit_list(today, division)
+
+        print(division)
 
         return JsonResponse({'serving_clients': serving_clients})
     else:
