@@ -104,8 +104,9 @@ def acknowledgement(request, pk):
 
     # ✅ Use .filter().first() so it won't 404 if missing
     services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
-    account = AccountDetails.objects.filter(id=divisionLog.pacd_officer_id_id).first()
+    account = AccountDetails.objects.filter(id=divisionLog.process_owner_id_id).first()
 
+    print(pk)
     return render(request, "app/acknowledgement.html", {
         'clientDetails': clientDetails,
         'divisionLog': divisionLog,
