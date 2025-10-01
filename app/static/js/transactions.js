@@ -90,7 +90,9 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> ${client.client_fullname}, Tkt.No. ${client.client_queue_no}, ${client.client_contact} </p>
+                        <p class="transaction-description"> Tkt.No. ${client.client_queue_no} </p>
+                        <p class="transaction-description"> ${client.client_fullname} </p>
+                        <p class="transaction-description"> Contact No. ${client.client_contact} </p>
                         ${userunit === 'PACD' ? ``: 
                             `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>
                             <p class="transaction-description"> Company Name: ${client.client_org} </p>`}
@@ -256,7 +258,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
                         </div>
                         <p class="transaction-description">${served.client_fullname}, Ticket No. ${served.client_queue_no}</p>
-                        <p class="transaction-description">Office Name: ${served.client_org}</p>
+                        <p class="transaction-description">Office Name: ${served.client_org ? served.client_org : "Individual"}</p>
                         <p class="transaction-description">Transaction Details: ${served.transaction_details}</p>
                     </div>
                     <div class="transaction-actions">

@@ -37,8 +37,7 @@ function fetchServingClient() {
             const clientBox = document.createElement('div');
             clientBox.classList.add('client-card'); // Add styling class if needed
             clientBox.innerHTML = `
-                <h2>Client Id. ${client.client_id} - ${client.client_unit} - ${client.client_queue_no}</h2>
-                
+                <h2>${client.client_unit} - ${client.client_queue_no}</h2>
             `;
             return clientBox;
         }

@@ -18,7 +18,7 @@ def f_transactions(request):
         
         transactionHistory  = transaction_history(today, accUnit)
         pendingTransaction = pending_transaction(today, accUnit)
-        servingClientUnit = serving_client_unit_list(today, account.id)
+        servingClientUnit = serving_client_unit_list(today, accDiv, account.id)
         total = transaction_status(today, accUnit)
         getServices = get_srvc_div(accDiv)
         

@@ -558,7 +558,7 @@ function openModal(type, data = {}) {
         if (type === "forward") {
             forwardClient(data.client_id);
         } else if (type === "served") {
-            serveClient(data.client_id);
+            serveClient(data.transaction_id);
         } else if (type === "serving") {
             servingClient(data.transaction_id)
         } else if (type === "approved") {

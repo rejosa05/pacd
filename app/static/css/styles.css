@@ -211,13 +211,13 @@ h1, h2, h3 {
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
+    gap: 18px;
     margin-bottom: 10px;
 }
 
 .card {
     background-color: #ffffff;
-    padding: 24px;
+    padding: 12px 20px;
     border-radius: 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -297,14 +297,15 @@ h1, h2, h3 {
 
 /* Panel */
 .transaction-panel {
+    margin-top: 10px;
     background-color: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(94, 206, 163, 0.05);
     overflow: hidden;
 }
 
 .panel-header {
-    padding: 16px 24px;
+    padding: 0 8px;
     border-bottom: 1px solid #E5E7EB;
     display: flex;
     justify-content: space-between;
@@ -357,18 +358,18 @@ h1, h2, h3 {
 }
 
 .transaction-card {
-    padding: 24px;
+    padding: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease;
     cursor: pointer;
-    border-bottom: 1px solid #a9a9a9;
+    border-bottom: 1px solid #006b1e;
 }
 
 .transaction-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(18, 232, 121, 0.1);
 }
 
 .avatar-circle {

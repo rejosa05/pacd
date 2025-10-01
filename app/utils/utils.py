@@ -176,10 +176,10 @@ def pending_transaction(today, unit):
     
     return pendingTransactions
 
-def serving_client_unit_list(today, id):
+def serving_client_unit_list(today, division, id):
     servingTransaction = []
 
-    serving  = DivisionLog.objects.filter(date__date=today, process_owner_id_id = id , status='Serving').order_by('-date')
+    serving  = DivisionLog.objects.filter(date__date=today, division = division , status='Serving').order_by('-date')
     
     for client in serving:
         servingTransaction.append({
@@ -218,7 +218,6 @@ def transaction_status(today, account):
     return countTransactionStatus
     
 def client_context(pk, request):
-    """Reusable function to fetch client-related context."""
     username = request.session.get('username')
     if not username:
         return None  # means user not logged in
@@ -227,7 +226,7 @@ def client_context(pk, request):
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
 
     clientDetails = get_object_or_404(ClientDetails, id=pk)
-    divisionLog = get_object_or_404(DivisionLog, client_id=clientDetails)
+    divisionLog = get_object_or_404(DivisionLog, client_id_id=clientDetails)
 
     # Safe fetching
     services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()

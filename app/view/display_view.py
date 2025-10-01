@@ -35,7 +35,7 @@ def serving_client(request):
         user = request.session.get('username')
         division = AccountDetails.objects.filter(user=user).first().divisions
 
-        serving_clients = serving_client_unit_list(today, division)
+        serving_clients = serving_client_unit_list(today, division, id)
 
         return JsonResponse({'serving_clients': serving_clients})
     else:

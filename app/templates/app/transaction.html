@@ -42,7 +42,7 @@
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title">{{ user.unit }} Transaction</h1>
+        <h2>{{ user.unit }} Transaction</h2>
     </div>
     
     <div class="navbar-right">
@@ -96,11 +96,10 @@
             </div>
         </div>
     </div>
-
     {% if user.unit != 'PACD' %}
         <div class="transaction-panel" style="height: 265px;">
             <div class="panel-header">
-                <h2> Serving Client </h2>
+                <h3> Serving Client </h3>
                 <div class="pagination" id="servingPagination"></div>
             </div>
             <div class="transaction-list" id="servingClientList">
@@ -108,20 +107,18 @@
             </div>
         </div>
     {% endif %}
-<br>
 <div class="transaction-panel">
     <div class="panel-header">
-        <h2> Pending Transactions </h2>
+        <h3> Pending Transactions </h3>
         <div class="pagination" id="paginationControls"></div>
     </div>
     <div class="transaction-list" id="pendingClientList">
         <!-- data fetch -->
     </div>
 </div>
-<br>
 <div class="transaction-panel">
     <div class="panel-header">
-        <h2> Transaction History </h2>
+        <h3> Transaction History </h3>
         <div id="historyPagination" class="pagination"></div>
     </div>
     <div class="transaction-list" id="todayTransactions">
@@ -129,8 +126,6 @@
     </div>
 </div>
 </main>
-
-
 <!-- sample modal -->
 <div class="modal-overlay" id="clientModal">
   <div class="modal-view">
