@@ -4,6 +4,7 @@ from django.contrib import messages
 from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails, ServicesDetails
 from ..forms import LoginForm, ClientDetailsForm
 from django.utils import timezone
+from ..utils.utils import *
 
 def display_view(request):
     return render(request, 'app/display.html')
@@ -92,26 +93,7 @@ def services_page(request):
     return render(request, "app/services.html", {'user':user})
 
 def acknowledgement(request, pk):
-    username = request.session.get('username')
-    if not username:
-        return redirect("login")
-
-    user = AccountDetails.objects.filter(user=username).first()
-    today = timezone.now().strftime("%B %d, %Y %I:%M %p")
-
-    clientDetails = get_object_or_404(ClientDetails, id=pk)
-    divisionLog = get_object_or_404(DivisionLog, client_id=clientDetails)
-
-    # ✅ Use .filter().first() so it won't 404 if missing
-    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
-    account = AccountDetails.objects.filter(id=divisionLog.process_owner_id_id).first()
-
-    print(pk)
-    return render(request, "app/acknowledgement.html", {
-        'clientDetails': clientDetails,
-        'divisionLog': divisionLog,
-        'today': today,
-        'services': services,   # can be None if not found
-        'account': account,     # can be None if not found
-        'user': user
-    })
+    context = client_context(pk, request)
+    if context is None:
+        return redirect('login')
+    return render(request, "app/acknowledgement.html", context)

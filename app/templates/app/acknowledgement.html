@@ -212,17 +212,17 @@
     <section>
       <h4>Service Avail</h4>  
       <div class="">
-        <div class="row"><div class="label">Service Code</div><div class="value">{{ services }}</div></div>
+       
+        {% if divisionLog.service_id_id != None %}
+             <div class="row"><div class="label">Service Code</div><div class="value">{{ services }}</div></div>
         <div class="row"><div class="label">Service Name</div><div class="value">{{ services.service_name }}</div></div>
-        <!-- {% if divisionLog.service_id_id != None %}
-          
           {% if divisionLog.deficiencies != "N/A" %}
-            <div class="row"><div class="label">Deficiencies</div><div class="value">{{ divisionLog.deficiencies }}</div></div>            
+            <div class="row"><div class="label">Deficiencies</div><div class="value">None</div></div>            
+
           {% endif %}
         {% else %}
           <div class="row"><div class="label">Service Name</div><div class="value">Not Applicable</div></div>
-        {% endif %} -->
-        
+        {% endif %}
         <div class="row"><div class="label">Remarks</div><div class="value">{{ divisionLog.remarks }}</div></div>
         <div class="row"><div class="label">CSM / CSS</div><div class="value">{{ divisionLog.form }}</div></div>
       </div>

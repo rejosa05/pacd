@@ -1,5 +1,6 @@
 from ..models import DivisionLog, ClientDetails, AccountDetails, ServicesDetails
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 def notify(user, today):
     today = timezone.now()
@@ -216,3 +217,27 @@ def transaction_status(today, account):
         }
     return countTransactionStatus
     
+def client_context(pk, request):
+    """Reusable function to fetch client-related context."""
+    username = request.session.get('username')
+    if not username:
+        return None  # means user not logged in
+
+    user = AccountDetails.objects.filter(user=username).first()
+    today = timezone.now().strftime("%B %d, %Y %I:%M %p")
+
+    clientDetails = get_object_or_404(ClientDetails, id=pk)
+    divisionLog = get_object_or_404(DivisionLog, client_id=clientDetails)
+
+    # Safe fetching
+    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
+    account = AccountDetails.objects.filter(id=divisionLog.process_owner_id_id).first()
+
+    return {
+        'clientDetails': clientDetails,
+        'divisionLog': divisionLog,
+        'today': today,
+        'services': services,
+        'account': account,
+        'user': user
+    }

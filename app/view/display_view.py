@@ -37,8 +37,6 @@ def serving_client(request):
 
         serving_clients = serving_client_unit_list(today, division)
 
-        print(division)
-
         return JsonResponse({'serving_clients': serving_clients})
     else:
         return JsonResponse({'message': 'Invalid request'}, status=400)

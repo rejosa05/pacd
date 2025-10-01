@@ -245,7 +245,10 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         card.className = 'client-card';
         card.innerHTML = `
                 <div class="transaction-card">
-                    <div>
+                    <div class="avatar-circle">
+                        ${served.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)}
+                    </div>
+                    <div class="transaction-info">
                         <div class="client-status-row">
                             <span class="transaction-id">Client ID. ${served.client_id} </span>
                             <span class="status status-blue"> ${served.client_action}</span>
