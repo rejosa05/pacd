@@ -59,5 +59,5 @@ urlpatterns = [
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
     path('services', services_page, name="services"),
-    path('acknowledgement/<int:pk>', acknowledgement, name="acknowledgement")
+    path('acknowledgement/<uuid:public_id>', acknowledgement, name="acknowledgement")
 ]

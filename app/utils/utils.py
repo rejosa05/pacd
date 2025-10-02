@@ -148,6 +148,7 @@ def pending_transaction(today, unit):
         for client in pending_clients:
             pendingTransactions.append({
                 'client_id': client.id,
+                'public_id': client.public_id,
                 'client_queue_no': client.client_queue_no,
                 'client_fullname': client.client_firstname + ' ' + client.client_lastname,
                 'client_lane_type': client.client_lane_type,
@@ -176,14 +177,15 @@ def pending_transaction(today, unit):
     
     return pendingTransactions
 
-def serving_client_unit_list(today, division, id):
+def serving_client_unit_list(today, unit, id):
     servingTransaction = []
 
-    serving  = DivisionLog.objects.filter(date__date=today, division = division , status='Serving').order_by('-date')
+    serving  = DivisionLog.objects.filter(date__date=today, unit = unit , status='Serving').order_by('-date')
     
     for client in serving:
         servingTransaction.append({
             'transaction_id': client.id,
+            'public_id': client.client_id.public_id,
             'client_id': client.client_id.id,
             'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
@@ -217,7 +219,7 @@ def transaction_status(today, account):
         }
     return countTransactionStatus
     
-def client_context(pk, request):
+def client_context(public_id, request):
     username = request.session.get('username')
     if not username:
         return None  # means user not logged in
@@ -225,18 +227,19 @@ def client_context(pk, request):
     user = AccountDetails.objects.filter(user=username).first()
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
 
-    clientDetails = get_object_or_404(ClientDetails, id=pk)
-    divisionLog = get_object_or_404(DivisionLog, client_id_id=clientDetails)
+    clientDetails = get_object_or_404(ClientDetails, public_id=public_id)
+    divisionLog = DivisionLog.objects.filter(client_id__id = clientDetails.id).first()
 
-    # Safe fetching
-    services = ServicesDetails.objects.filter(id=divisionLog.service_id_id).first()
-    account = AccountDetails.objects.filter(id=divisionLog.process_owner_id_id).first()
+    print("data", divisionLog)
+
+    services = getattr(divisionLog, "service_id", None)
+    account = getattr(divisionLog, "process_owner_id", None)
 
     return {
         'clientDetails': clientDetails,
         'divisionLog': divisionLog,
         'today': today,
-        'services': services,
-        'account': account,
+        'services' : services,
+        'account' : account,
         'user': user
     }

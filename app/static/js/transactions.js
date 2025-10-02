@@ -67,6 +67,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
 
             const clientData = {
                 transaction_id: client.tid,
+                public_id: client.public_id,
                 client_id: client.client_id,
                 client_fullname: client.client_fullname,
                 client_queue_no: client.client_queue_no,
@@ -90,12 +91,11 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <span class="status ${laneColorClass}">${client.client_lane_type}</span>
                             <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
                         </div>
-                        <p class="transaction-description"> Tkt.No. ${client.client_queue_no} </p>
-                        <p class="transaction-description"> ${client.client_fullname} </p>
-                        <p class="transaction-description"> Contact No. ${client.client_contact} </p>
+                        <p class="transaction-description"> Ticket No. ${client.client_queue_no} </p>
+                        <p class="transaction-description"> Complete Name: ${client.client_fullname} </p>
                         ${userunit === 'PACD' ? ``: 
                             `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>
-                            <p class="transaction-description"> Company Name: ${client.client_org} </p>`}
+                            <p class="transaction-description"> Company Name: ${client.client_org || "Individual"} </p>`}
                     </div>
                     <div class="transaction-actions">   
                     <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>

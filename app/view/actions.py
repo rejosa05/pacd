@@ -2,6 +2,63 @@ from django.http import JsonResponse
 from ..models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
 from django.utils import timezone
 
+# pacd resolved
+def update_client_status_served(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            today = timezone.now()
+            client_id = request.POST.get('client_id')
+            user = request.session.get('username')
+            account = AccountDetails.objects.filter(user = user).first()
+            org_name = request.POST.get('org_name')
+            type = request.POST.get('transactions_type')
+            transaction_details = request.POST.get('transaction_details')
+            resolutions = request.POST.get('resolutions')
+            remarks = request.POST.get('remarks')
+
+            srvc_avail = (request.POST.get('srvc_avail') or "").strip()
+            srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
+            deficiencies = request.POST.get('deficiencies')
+            cc_cover = request.POST.get('cc_cover')
+            requirements_met = request.POST.get('requirements_met')
+            request_processed = request.POST.get('request_processed')   
+            action_type = 'Resolved'
+            status = 'Completed'
+
+            client = ClientDetails.objects.get(id=client_id)
+            client.client_status = action_type
+            client.client_org = org_name
+            client.save()
+            
+            DivisionLog.objects.create(
+            client_id_id = client_id,
+            pacd_officer_id_id = account.id,
+            process_owner_id_id = account.id,
+            service_id_id = srvc.id,
+            action_type = action_type,
+            transaction_type = type,
+            division = account.divisions,
+            unit = account.unit,
+            transaction_details=transaction_details,
+            remarks = remarks,
+            form = resolutions,
+            date_resolved = today,
+            status = status,
+            date=today,
+            deficiencies = deficiencies,
+            cc_cover = cc_cover,
+            requirements_met =  requirements_met,
+            request_catered = request_processed
+            )
+
+            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
+        except ClientDetails.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_served: {e}")  # Log the error
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
 def forwarded_client_to_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -98,64 +155,6 @@ def skipped_client_unit(request):
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
-# pacd resolved
-def update_client_status_served(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            today = timezone.now()
-            client_id = request.POST.get('client_id')
-            user = request.session.get('username')
-            account = AccountDetails.objects.filter(user = user).first()
-            org_name = request.POST.get('org_name')
-            type = request.POST.get('transactions_type')
-            transaction_details = request.POST.get('transaction_details')
-            resolutions = request.POST.get('resolutions')
-            remarks = request.POST.get('remarks')
-
-            srvc_avail = (request.POST.get('srvc_avail') or "").strip()
-            srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
-            deficiencies = request.POST.get('deficiencies')
-            cc_cover = request.POST.get('cc_cover')
-            requirements_met = request.POST.get('requirements_met')
-            request_processed = request.POST.get('request_processed')   
-            action_type = 'Resolved'
-            status = 'Completed'
-
-            client = ClientDetails.objects.get(id=client_id)
-            client.client_status = action_type
-            client.client_org = org_name
-            client.save()
-            
-            DivisionLog.objects.create(
-            client_id_id = client_id,
-            pacd_officer_id_id = account.id,
-            process_owner_id_id = account.id,
-            service_id_id = srvc.id,
-            action_type = action_type,
-            transaction_type = type,
-            division = account.divisions,
-            unit = account.unit,
-            transaction_details=transaction_details,
-            remarks = remarks,
-            form = resolutions,
-            date_resolved = today,
-            status = status,
-            date=today,
-            deficiencies = deficiencies,
-            cc_cover = cc_cover,
-            requirements_met =  requirements_met,
-            request_catered = request_processed
-            )
-
-            return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
-        except ClientDetails.DoesNotExist:
-            return JsonResponse({'message': 'Client not found'}, status=404)
-        except Exception as e:
-            print(f"Error in update_client_status_served: {e}")  # Log the error
-            return JsonResponse({'message': 'Internal Server Error'}, status=500)
-    return JsonResponse({'message': 'Invalid request'}, status=400)
-
-
 def  update_user_details(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -242,7 +241,7 @@ def update_client_status_served_unit(request):
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 
-#serving
+# change status to serving
 def serving_client_unit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -250,11 +249,16 @@ def serving_client_unit(request):
             user = request.session.get('username')
             account = AccountDetails.objects.filter(user=user).first()
 
-            client = DivisionLog.objects.get(id=transaction_id)
-            client.action_type = 'Processing'
-            client.status = 'Serving'
-            client.process_owner_id_id = account.id
-            client.save()
+            
+            if account.unit == "PACD":
+                print(user, account.unit, transaction_id)
+            else:
+                
+                client = DivisionLog.objects.get(id=transaction_id)
+                client.action_type = 'Processing'
+                client.status = 'Serving'
+                client.process_owner_id_id = account.id
+                client.save()
 
             return JsonResponse({'message': 'Client serving!!!!'})
 

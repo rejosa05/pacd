@@ -3,7 +3,7 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-
+import uuid
 class AccountDetails(models.Model):
     user = models.CharField(max_length=100, null=True, unique=True)
     password = models.CharField(max_length=100)
@@ -46,6 +46,7 @@ class AccountDetails(models.Model):
             user.save()
     
 class ClientDetails(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
     client_firstname = models.CharField(max_length=100, blank=True)
     client_lastname = models.CharField(max_length=100, blank=True)
     client_org = models.CharField(max_length=100, blank=True)

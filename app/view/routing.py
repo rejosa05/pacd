@@ -92,8 +92,8 @@ def services_page(request):
 
     return render(request, "app/services.html", {'user':user})
 
-def acknowledgement(request, pk):
-    context = client_context(pk, request)
+def acknowledgement(request, public_id):
+    context = client_context(public_id, request)
     if context is None:
         return redirect('login')
     return render(request, "app/acknowledgement.html", context)

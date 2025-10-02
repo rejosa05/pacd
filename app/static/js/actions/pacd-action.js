@@ -59,7 +59,7 @@ function closeViewDetails () {
     document.getElementById('view-details-modal').style.display = 'none';
 }
 
-function approvedClient(id) {
+function approvedClient(cid, pid) {
     const org_name = document.getElementById('org-name').value;
     const transaction_type = document.getElementById('transaction-type').value;
     const transaction_details = document.getElementById('transactions-details');
@@ -132,7 +132,7 @@ function approvedClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${id}&org_name=${org_name}
+        body: `client_id=${cid}&org_name=${org_name}
         &transactions_type=${transaction_type}&transaction_details=${transaction_details.value}
         &remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${encodeURIComponent(srvc)}
         &cc_cover=${charterCoveredValue}&requirements_met=${encodeURIComponent(requirementsValue)}
@@ -144,7 +144,7 @@ function approvedClient(id) {
         fetchTransactions();
         closeModal();
 
-        const receiptUrl = `/acknowledgement/${id}`;
+        const receiptUrl = `/acknowledgement/${pid}`;
         window.open(receiptUrl, '_blank');
     })
 }
@@ -248,7 +248,7 @@ function servingClient(id) {
     })   
 }
 
-function serveClient(id) {
+function serveClient(tid, cid, pid) {
     const srvcSelect = document.getElementById('serviceList');
     const remarks = document.getElementById('remarks');
     const deficienciesInput = document.getElementById('deficiencies');
@@ -314,7 +314,7 @@ function serveClient(id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `transaction-id=${id}&remarks=${encodeURIComponent(remarks.value)}
+        body: `transaction-id=${tid}&remarks=${encodeURIComponent(remarks.value)}
         &resolutions=${encodeURIComponent(resolutions)}&srvc_avail=${encodeURIComponent(srvc)}
         &cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_met=${encodeURIComponent(requirementsValue)}
         &deficiencies=${encodeURIComponent(deficienciesValue)}&request_processed=${actionValue}`
@@ -325,7 +325,7 @@ function serveClient(id) {
         fetchTransactions();
         closeModal();
 
-        const receiptUrl = `/acknowledgement/${id}`;
+        const receiptUrl = `/acknowledgement/${pid}`;
         window.open(receiptUrl, '_blank');
     })
 }
@@ -558,11 +558,11 @@ function openModal(type, data = {}) {
         if (type === "forward") {
             forwardClient(data.client_id);
         } else if (type === "served") {
-            serveClient(data.transaction_id);
+            serveClient(data.transaction_id, data.client_id, data.public_id);
         } else if (type === "serving") {
             servingClient(data.transaction_id)
         } else if (type === "approved") {
-            approvedClient(data.client_id);
+            approvedClient(data.client_id, data.public_id);
         } else if (type === "repeat") {
             saveRepeat(data.transaction_id);
         }
