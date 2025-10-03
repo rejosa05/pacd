@@ -137,16 +137,23 @@ function fetchTypeData() {
                 options: {
                     responsive: true,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Daily Transactions by Type'
-                        },
+                        // title: {
+                        //     display: true,
+                        //     text: 'Daily Transactions',
+                        // },
                         tooltip: {
                             mode: 'index',
                             intersect: false,
                         },
                         legend: {
-                            position: 'top'
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                borderWidth: 5,
+                                boxHeight: 5,
+                                padding: 30
+                            }
                         }
                     },
                     interaction: {
