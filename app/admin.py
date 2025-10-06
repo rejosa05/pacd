@@ -35,7 +35,7 @@ class ServiceDetails(admin.ModelAdmin):
 
 @admin.register(ClientDetails)
 class ClientDetailsAdmin(admin.ModelAdmin):
-    list_display = ('id','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'client_created_date')
+    list_display = ('id','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'client_created_date', 'public_id')
     search_fields = ('client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status')
     list_filter = ('client_lane_type', 'client_status', 'client_created_date')
     ordering = ('-client_created_date',)

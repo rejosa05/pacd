@@ -51,6 +51,8 @@ def update_client_status_served(request):
             request_catered = request_processed
             )
 
+            print(cc_cover, requirements_met, request_processed)
+
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
         except ClientDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)

@@ -231,6 +231,7 @@ def client_context(public_id, request):
     divisionLog = DivisionLog.objects.filter(client_id__id = clientDetails.id).first()
 
     print("data", divisionLog)
+    print('id', clientDetails.id)
 
     services = getattr(divisionLog, "service_id", None)
     account = getattr(divisionLog, "process_owner_id", None)
