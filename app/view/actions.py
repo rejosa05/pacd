@@ -17,10 +17,14 @@ def update_client_status_served(request):
             remarks = request.POST.get('remarks')
 
             srvc_avail = (request.POST.get('srvc_avail') or "").strip()
-            srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
+            if srvc_avail == "not applicable":
+                srvcA = ""
+            else:
+                srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
+                srvcA = srvc.id
             deficiencies = request.POST.get('deficiencies')
             cc_cover = request.POST.get('cc_cover')
-            requirements_met = request.POST.get('requirements_met')
+            requirements_met = request.POST.get('requirements_value')
             request_processed = request.POST.get('request_processed')   
             action_type = 'Resolved'
             status = 'Completed'
@@ -29,12 +33,12 @@ def update_client_status_served(request):
             client.client_status = action_type
             client.client_org = org_name
             client.save()
-            
+        
             DivisionLog.objects.create(
             client_id_id = client_id,
             pacd_officer_id_id = account.id,
             process_owner_id_id = account.id,
-            service_id_id = srvc.id,
+            service_id_id = srvcA,
             action_type = action_type,
             transaction_type = type,
             division = account.divisions,
@@ -51,7 +55,6 @@ def update_client_status_served(request):
             request_catered = request_processed
             )
 
-            print(cc_cover, requirements_met, request_processed)
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
         except ClientDetails.DoesNotExist:

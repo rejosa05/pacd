@@ -71,7 +71,6 @@ function approvedClient(cid, pid) {
 
     const charterCoveredRadio = document.querySelector('input[name="cc-cover"]:checked');
     const charterCoveredValue = charterCoveredRadio ? charterCoveredRadio.value : null; // Q1
-
     const requirementsRadio = document.querySelector('input[name="requirements"]:checked');
     let requirementsValue = requirementsRadio ? requirementsRadio.value : null; // Q2
     const actionRadio = document.querySelector('input[name="request_processed"]:checked');
@@ -91,7 +90,6 @@ function approvedClient(cid, pid) {
             alert('Please select a service!');
             return;
         }
-
         if (requirementsValue === "Yes") {
             deficienciesValue = deficienciesInput.value.trim();
             if (!deficienciesValue) {
@@ -105,9 +103,9 @@ function approvedClient(cid, pid) {
             return;
         }
     } else if (charterCoveredValue === "No") {
-        srvc = "";
+        srvc = "not applicable";
         deficienciesValue = "N/A";
-        requirementsValue = "";
+        requirementsValue = "N/A";
     } else {
         alert('Please answer Question 1 (Citizen Charter)!');
         return;
@@ -135,7 +133,7 @@ function approvedClient(cid, pid) {
         body: `client_id=${cid}&org_name=${org_name}
         &transactions_type=${transaction_type}&transaction_details=${transaction_details.value}
         &remarks=${remarks.value}&resolutions=${resolutions}&srvc_avail=${encodeURIComponent(srvc)}
-        &cc_cover=${charterCoveredValue}&requirements_met=${encodeURIComponent(requirementsValue)}
+        &cc_cover=${encodeURIComponent(charterCoveredValue)}&requirements_value=${encodeURIComponent(requirementsValue)}
         &deficiencies=${encodeURIComponent(deficienciesValue)}&request_processed=${encodeURIComponent(actionValue)}`
     })
     .then(response => response.json())
