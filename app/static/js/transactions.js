@@ -281,11 +281,11 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         renderPagination(historyPagination, historyPage, totalHistoryPages, (newHistoryPage) => {
             fetchTransactions(page, perPage, newHistoryPage, historyPerPage);
         });
+        divisionUnitSelect('division-select', 'unit-select');
 
         renderPagination(servingPagination, servingPage, totalServingPages, (newServingPage) => {
             fetchTransactions(page, perPage, historyPage, historyPerPage, newServingPage, servingPerPage);
         });
-
         divisionUnitSelect('division-select', 'unit-select');
     });
 }

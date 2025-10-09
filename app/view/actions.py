@@ -22,9 +22,10 @@ def update_client_status_served(request):
             else:
                 srvc = ServicesDetails.objects.filter(service_name = srvc_avail).first()
                 srvcA = srvc.id
-            deficiencies = request.POST.get('deficiencies')
+
+            deficienciesValue = request.POST.get('deficiencies')
             cc_cover = request.POST.get('cc_cover')
-            requirements_met = request.POST.get('requirements_value')
+            requirements_met = (request.POST.get('requirements_value') or "").strip()
             request_processed = request.POST.get('request_processed')   
             action_type = 'Resolved'
             status = 'Completed'
@@ -49,7 +50,7 @@ def update_client_status_served(request):
             date_resolved = today,
             status = status,
             date=today,
-            deficiencies = deficiencies,
+            deficiencies = deficienciesValue,
             cc_cover = cc_cover,
             requirements_met =  requirements_met,
             request_catered = request_processed

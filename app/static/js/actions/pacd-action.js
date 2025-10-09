@@ -105,7 +105,6 @@ function approvedClient(cid, pid) {
     } else if (charterCoveredValue === "No") {
         srvc = "not applicable";
         deficienciesValue = "N/A";
-        requirementsValue = "N/A";
     } else {
         alert('Please answer Question 1 (Citizen Charter)!');
         return;
@@ -207,7 +206,6 @@ function saveAccount(){
 
 function saveRepeat() {
     const transaction_type = document.getElementById('r-transaction-type').value;
-    const org_name = document.getElementById('f-org-name').value;
     const transaction_details = document.getElementById('r-transactions-details').value;
     const division = document.getElementById('r-division-select').value;
     const unit = document.getElementById('r-unit-select').value;
@@ -219,12 +217,12 @@ function saveRepeat() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&org_name=${org_name}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
+        body: `client_id=${selectedClient}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
     })
     .then(response => response.json())
     .then(() => {
         alert('repeat transactions!!');
-        closeRepeat();
+        closeModal();
     })   
 }
 
