@@ -37,7 +37,7 @@ function fetchServingClient() {
             const clientBox = document.createElement('div');
             clientBox.classList.add('client-card'); // Add styling class if needed
             clientBox.innerHTML = `
-                <h2>${client.client_division} - ${client.client_queue_no}</h2>
+                <h2>${client.client_unit} - ${client.client_queue_no}</h2>
             `;
             return clientBox;
         }
@@ -59,5 +59,5 @@ if (path.includes(displayQueUrl)) {
     displayQue();
     fetchServingClient();
     setInterval(displayQue, 2000);
-    // setInterval(fetchServingClient, 2000);
+    setInterval(fetchServingClient, 2000);
 }

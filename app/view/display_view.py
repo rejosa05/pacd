@@ -1,5 +1,5 @@
 from django.utils import timezone
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from ..models import ClientDetails
 from ..utils.utils import *    
@@ -32,11 +32,20 @@ def que_view(request):
 def serving_client(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now().date()
-        user = request.session.get('username')
-        division = AccountDetails.objects.filter(user=user).first().divisions
 
-        serving_clients = serving_client_unit_list(today, division, id)
+        serving_clients = []
+        
+        serving = DivisionLog.objects.filter(date__date=today, status='Serving').order_by('-date')
+
+        for client in serving:
+            serving_clients.append({
+                'id': client.id,
+                'client_id': client.client_id.id,
+                'client_queue_no': client.client_id.client_queue_no,
+                'client_division': client.division,
+                'client_unit': client.unit,
+            })
+
+        print
 
         return JsonResponse({'serving_clients': serving_clients})
-    else:
-        return JsonResponse({'message': 'Invalid request'}, status=400)

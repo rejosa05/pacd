@@ -14,9 +14,9 @@ urlpatterns = [
     path('', login_view, name="logins"), 
 
     path('display/', display_view, name="display-page"),
+    path('que-view/', que_view, name="que-view"),
     path('ticket/<int:client_id>/', ticket_view, name="client_ticket"),
     path('kiosk/', client_details, name="client-page"),
-    path('que-view/', que_view, name="que-view"),
     path('serving-list', serving_client, name='serving-list'),
 
     path('login/', login_view, name="login"),
