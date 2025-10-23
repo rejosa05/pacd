@@ -27,7 +27,7 @@ function divisionUnitSelect(divisionID, unitID) {
 
     const unitOptions = {
         'MSD': ['HRMDU', 'Cashier', 'Finance', 'BAC', 'Procurement', 'Accounting', 'Supply'],
-        'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy', 'Clinic'],
+        'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy', 'Clinic', 'EOH'],
         'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
         'RLED': ['RLED'],
         'SUPER': ['Super Admin'],
