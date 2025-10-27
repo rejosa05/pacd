@@ -3,7 +3,6 @@ from ..models import ClientDetails, DivisionLog, AccountDetails
 from ..utils.utils import *
 from django.utils import timezone
 from django.http import JsonResponse
-from .helper import clean_text
 
 def f_transactions(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
