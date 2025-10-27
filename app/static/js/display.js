@@ -54,7 +54,6 @@ function fetchServingClient() {
     })
 }
 
-
 if (path.includes(displayQueUrl)) { 
     displayQue();
     fetchServingClient();

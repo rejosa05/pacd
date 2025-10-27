@@ -124,6 +124,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 </div>
             `;
             clientList.appendChild(card);
+            divisionUnitSelect('division-select', 'unit-select');
         }
 
         function addHistoryCard(history) {
@@ -286,7 +287,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         renderPagination(servingPagination, servingPage, totalServingPages, (newServingPage) => {
             fetchTransactions(page, perPage, historyPage, historyPerPage, newServingPage, servingPerPage);
         });
-        
+        divisionUnitSelect('division-select', 'unit-select');
     });
 }
 

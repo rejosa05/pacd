@@ -180,7 +180,7 @@ def pending_transaction(today, unit):
 def serving_client_unit_list(today, unit, id):
     servingTransaction = []
 
-    serving  = DivisionLog.objects.filter(date__date=today, unit = unit , status='Serving').order_by('-date')
+    serving  = DivisionLog.objects.filter(date__date=today, unit = unit , status='Serving', process_owner_id__id = id).order_by('-date')
     
     for client in serving:
         servingTransaction.append({
