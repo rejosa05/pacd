@@ -75,6 +75,12 @@ WSGI_APPLICATION = 'PACD_Project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        }
+    }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

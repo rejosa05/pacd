@@ -5,16 +5,16 @@
 <style>
         body {
             background-color: #f5f7fa;
-            padding: 40px;
-            min-height: 100vh;
+            /* padding: 40px; */
+            /* min-height: 100vh; */
             display: flex;
             /* justify-content: center;
             align-items: center; */
+            margin: 0;
         }
 
         .container {
             width: 100%;
-            
         }
 
         .grid-layout {
@@ -41,7 +41,7 @@
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 10px;
+            padding: 5px;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -78,6 +78,7 @@
         .box-content {
             display: flex;
             flex-direction: column;
+            margin: 0;
         }
 
         .box-icon {
@@ -95,6 +96,7 @@
             font-size: 1.2rem;
             color: #333;
             font-weight: 600;
+            padding: 0;
         }
 
         .box p {
@@ -129,12 +131,14 @@
                 <div class="box">
                     <div class="box-content">
                         <h1 style="color: red">PACD Priority Lane</h1>
+                        <h1 style="color: red">NOW SERVING</h1>
                         <h1 class="priority" id="fastCurrent"></h1>
                     </div>
                 </div>
                 <div class="box">
                     <div class="box-content">
                       <h1 style="color: blue">PACD Regular Lane</h1>
+                      <h1 style="color: blue">NOW SERVING</h1>
                       <h1 class="regular" id="regularCurrent"></h1>
                     </div>
                 </div>
