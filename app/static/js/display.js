@@ -37,7 +37,7 @@ function fetchServingClient() {
             const clientBox = document.createElement('div');
             clientBox.classList.add('client-card'); // Add styling class if needed
             clientBox.innerHTML = `
-                <h2>${client.client_unit} - ${client.client_queue_no}</h2>
+                <h2>  <i class="fas fa-home icon" style="color: #03e28c;"> </i> ${client.client_unit} - ${client.client_queue_no}</h2>
             `;
             return clientBox;
         }

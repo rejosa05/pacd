@@ -12,10 +12,10 @@
 
         <div class="menu">
             <a href="{% url 'dashboard' %}" class="menu-item">
-                <i class="fa-solid icon"></i> Dashboard
+                <i class="fas fa-area-chart icon"></i> Dashboard
             </a>
             <a href="" class="menu-item active">
-                <i class="fas fa-exchange-alt icon"></i> Transactions
+                <i class="fas fa-comments icon"></i> Transactions
             </a>
             {% if user.unit == 'PACD' %}
             <a href="{% url 'account' %}" class="menu-item">

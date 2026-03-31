@@ -114,7 +114,7 @@ class DivisionLog(models.Model):
     unit = models.CharField(max_length=100)
     action_type = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
-    dateFrwrd = models.DateTimeField(null=True, blank=True)
+    
     date_resolved = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     form = models.CharField(max_length=100, null=True)

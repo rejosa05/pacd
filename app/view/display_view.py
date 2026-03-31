@@ -35,7 +35,7 @@ def serving_client(request):
 
         serving_clients = []
         
-        serving = DivisionLog.objects.filter(date=today, status='Serving').order_by('-date')
+        serving = DivisionLog.objects.filter(date__date=today, status='Serving').order_by('-date')
 
         for client in serving:
             serving_clients.append({
@@ -46,6 +46,6 @@ def serving_client(request):
                 'client_unit': client.unit,
             })
 
-        print
+        print (serving_clients)
 
         return JsonResponse({'serving_clients': serving_clients})
