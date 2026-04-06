@@ -50,7 +50,7 @@
             <button class="notification-button">
                 <i class="fas fa-bell icon-gray"></i>
             </button>
-            <span class="notification-badge" id="notify"></span>
+            <span class="notification-badge" id="notify" style="display:none;"></span>
         </div>
         
         <div class="profile">
@@ -183,5 +183,43 @@
     </div>
 </div>
 
+<script>
+const socket = new WebSocket("ws://" + window.location.host + "/ws/notifications/");
+
+let notificationSound;
+
+// enable sound after click (browser policy)
+document.addEventListener('click', () => {
+    if (!notificationSound) {
+        notificationSound = new Audio("{% static 'audio/notify.mp3' %}");
+        notificationSound.load();
+    }
+}, { once: true });
+
+// receive data from backend
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const count = data.count;
+    const badge = document.getElementById('notify');
+
+    if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+    } else {
+        badge.style.display = 'none';
+    }
+
+    // play sound if new notification
+    if (notificationSound) {
+        notificationSound.play().catch(err => console.warn(err));
+    }
+};
+
+// optional debug
+socket.onopen = () => console.log("✅ WebSocket Connected");
+socket.onerror = (e) => console.error("❌ WebSocket Error", e);
+socket.onclose = () => console.warn("⚠️ WebSocket Closed");     
+</script>
 
 {% endblock %}
+
