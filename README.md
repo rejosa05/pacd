@@ -2,7 +2,7 @@
 
 
 # database
-    ** client
+    ** client :white_check_mark:
     ** transactionLogs
     ** queueLogs
     ** user
