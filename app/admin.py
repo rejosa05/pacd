@@ -18,7 +18,7 @@ class SessionHistoryAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 @admin.register(DivisionLog)
-class DivisionLogAdmin(admin.ModelAdmin):
+class TransactionLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form', 'service_id')
     search_fields = ('action_type', 'transaction_type', 'form')
     list_filter = ('action_type', 'transaction_type', 'unit', 'status')

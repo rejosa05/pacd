@@ -124,6 +124,9 @@ class DivisionLog(models.Model):
     cc_cover = models.CharField(max_length=10, null=True, blank=True)
     request_catered = models.CharField(max_length=10, null=True, blank=True)
 
+    class Meta:
+        db_table = 'transactions_log'
+
 
     def __str__(self):
         return self.action_type
