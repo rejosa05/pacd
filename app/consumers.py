@@ -1,9 +1,9 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-class NotificationConsumer(AsyncWebsocketConsumer):
+class QueueConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.group_name = "notifications"
+        self.group_name = "queue_group"
 
         await self.channel_layer.group_add(
             self.group_name,
@@ -18,7 +18,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def send_notification(self, event):
+    async def send_queue(self, event):
         await self.send(text_data=json.dumps({
-            'count': event['count']
+            'data': event['data']
         }))

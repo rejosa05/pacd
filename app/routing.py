@@ -1,9 +1,6 @@
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-import app.routing
+from django.urls import path
+from .consumers import QueueConsumer
 
-application = ProtocolTypeRouter({
-    "websocket": AuthMiddlewareStack(
-        URLRouter(app.routing.websocket_urlpatterns)
-    ),
-})
+websocket_urlpatterns = [
+    path('ws/queue/', QueueConsumer.as_asgi()),
+]

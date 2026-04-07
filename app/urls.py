@@ -9,6 +9,7 @@ from .view.notifications import *
 from .view.viewdata import *
 from .view.graph import *
 from .view.account import *
+# from .view.kiosk import create_client
 
 urlpatterns = [
     path('', login_view, name="logins"), 
@@ -59,5 +60,7 @@ urlpatterns = [
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
     path('services', services_page, name="services"),
-    path('acknowledgement/<uuid:public_id>', acknowledgement, name="acknowledgement")
+    path('acknowledgement/<uuid:public_id>', acknowledgement, name="acknowledgement"),
+
+    # path('api/clients/', create_client, name='create_client'),
 ]

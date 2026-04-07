@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from forms import ClientDetailsForm
-from utils import send_queue_update
+from ..forms import ClientDetailsForm
+from ..utils.utils import send_queue_update
 
 
 def client_details(request):

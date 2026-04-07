@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    'rest_framework',
     'app',
 ]
 
@@ -71,17 +72,6 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'PACD_Project.asgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#         }
-#     }
-
 
 CHANNEL_LAYERS = {
     "default": {
