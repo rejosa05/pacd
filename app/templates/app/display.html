@@ -2,25 +2,182 @@
 {% load static %}
 {% block title %} Display Board {% endblock %}
 {% block content %}
+
 <style>
-        body {
-            background-color: #f5f7fa;
-            /* padding: 40px; */
-            /* min-height: 100vh; */
-            display: flex;
-            /* justify-content: center;
-            align-items: center; */
-            margin: 0;
+    body {
+        margin: 0;
+        
+        background: #0a1f44;
+        color: white;
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background: #037a29;
+    }
+    .left {
+        display: flex;
+        align-items: center;   
+    }
+
+    .logo {
+        height: 70px;
+        width: auto;
+    }
+
+    .title {
+        font-size: 2vw;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    .time {
+        font-size: 2vw;
+    }
+
+    /* MAIN */
+    .container {
+        display: flex;
+        height: 30vh;
+    }
+
+    /* LANES */
+    .lane {
+        flex: 1;
+    }
+
+    .priority { 
+        background: #ff5151; 
+        color: #ff1f1f;
+        letter-spacing: 10px;
+        font-weight: bolder;
+    }
+    .regular {
+        background: #439bff; 
+        color: #150df7;
+        letter-spacing: 10px;
+        font-weight: bolder;
+    }
+
+    .lane h2 {
+        text-align: center;
+        font-size: 2vw;
+        color: #ffffff;
+    }
+
+    .queue-number {
+        text-align: center;
+        font-size: 5vw;
+        margin: 10px 0;
+    }
+
+    /* SERVING */
+    .serving {
+        background: #000;
+        padding: 10px;
+    }
+
+    .serving h2 {
+        text-align: center;
+        font-size: 2vw;
+        color: #f8f2f2;
+    }
+
+    .windows {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .window {
+        background: #222;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.8vw;
+        border-radius: 10px;
+    }
+
+    /* 📱 MOBILE / SMALL SCREEN */
+    @media (max-width: 768px) {
+
+        .logo {
+            height: 40px;
         }
 
         .container {
-            width: 100%;
+            flex-direction: column;
+            height: auto;
+        }
+        .title { font-size: 18px; }
+        .time { font-size: 14px; }
+
+        .lane h2 { font-size: 18px; }
+        .queue-number { font-size: 24px; }
+
+        .windows {
+            grid-template-columns: repeat(2, 1fr);
         }
 
+        .window {
+            font-size: 16px;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+    <div class="left">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+    <div class="title">DEPARTMENT OF HEALTH</div>
+    </div>
+    <div class="time" id="time"></div>
+</div>
+
+<div class="container">
+    <div class="lane priority">
+        <h2>PRIORITY LANE</h2>
+        <div class="queue-number">00</div>
+    </div>
+
+    <div class="lane regular">
+        <h2>REGULAR LANE</h2>
+        <div class="queue-number">00</div>
+    </div>
+</div>
+
+<div class="serving">
+    <h2>NOW SERVING</h2>
+    <div class="windows">
+        <div class="window">RLED<br>P-003</div>
+        <div class="window">MSD<br>R-017</div>
+        <div class="window">LHSD<br>R-018</div>
+        <div class="window">RD/ARD<br>P-004</div>
+    </div>
+</div>
+
+<script>
+function updateTime() {
+    const now = new Date();
+    document.getElementById("time").innerHTML =
+        now.toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+</script>
+
+</body>
+</html>
+<!-- <style>
         .grid-layout {
             display: grid;
             grid-template-columns: 1fr 2fr;
-                
+            gap: 20px;
             width: 100%;
         }
 
@@ -41,7 +198,7 @@
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 5px;
+            padding: 10px;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -78,7 +235,6 @@
         .box-content {
             display: flex;
             flex-direction: column;
-            margin: 0;
         }
 
         .box-icon {
@@ -96,7 +252,6 @@
             font-size: 1.2rem;
             color: #333;
             font-weight: 600;
-            padding: 0;
         }
 
         .box p {
@@ -122,7 +277,6 @@
             }
         }
     </style>
-</head>
 
 <body>
     <div class="container">
@@ -131,14 +285,12 @@
                 <div class="box">
                     <div class="box-content">
                         <h1 style="color: red">PACD Priority Lane</h1>
-                        <h1 style="color: red">NOW SERVING</h1>
                         <h1 class="priority" id="fastCurrent"></h1>
                     </div>
                 </div>
                 <div class="box">
                     <div class="box-content">
                       <h1 style="color: blue">PACD Regular Lane</h1>
-                      <h1 style="color: blue">NOW SERVING</h1>
                       <h1 class="regular" id="regularCurrent"></h1>
                     </div>
                 </div>
@@ -171,7 +323,7 @@
             </div>
         </div>
     </div>
-</body>
+</body> -->
   
         </script>
         <audio id="queue-audio" preload="auto">

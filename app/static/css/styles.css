@@ -337,7 +337,7 @@ h1, h2, h3 {
     margin-right: 8px;
 }
 
-.regular {
+/* .regular {
     font-size: 8rem;
     font-weight: 900;
     color: #3a86ff;
@@ -349,7 +349,7 @@ h1, h2, h3 {
     font-size: 8rem;
     font-weight: 900;
     color: #ff3c78;
-}
+} */
 
 /* Transactions */
 .transaction-list {
