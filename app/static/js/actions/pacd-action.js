@@ -387,25 +387,28 @@ function openModal(type, data = {}) {
             <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
             <div class="checkbox-group">
                 <label class="form-label">is the transaction request catered and/or resolved? </label>
-                <label id="csm-wrapper">
+                <label>
                     <input type="radio" id="" name="request_processed" value="Yes">
                     Yes
                 </label>
-                <label id="csm-wrapper">
+                <label>
                     <input type="radio" id="" name="request_processed" value="No">
                     No
                 </label>
             </div>
             <div class="checkbox-group">
                 <label class="form-label">CSS/CSM:</label>
-                <label id="csm-wrapper">
-                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
-                    CSM
+                <div id="csm-wrapper">
+                <label>
+                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM"> CSM
                 </label>
-                <label id="csm-wrapper">
-                    <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
-                    CSS
-                </label>
+                </div> 
+                <div id="css-wrapper">
+                    <label>
+                        <input type="checkbox" id="css-checkbox" name="resolution" value="CSS"> CSS
+                    </label>
+                </div>
+                
             </div>
             <button type="submit"> Served </button>
         `;
@@ -489,11 +492,11 @@ function openModal(type, data = {}) {
             <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
             <div class="checkbox-group">
                 <label class="form-label">is the transaction request catered and/or resolved? </label>
-                <label id="csm-wrapper">
+                <label id="">
                     <input type="radio" id="" name="request_processed" value="Yes">
                     Yes
                 </label>
-                <label id="csm-wrapper">
+                <label id="">
                     <input type="radio" id="" name="request_processed" value="No">
                     No
                 </label>
@@ -504,7 +507,7 @@ function openModal(type, data = {}) {
                     <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
                     CSM
                 </label>
-                <label id="csm-wrapper">
+                <label id="css-wrapper">
                     <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
                     CSS
                 </label>
@@ -572,39 +575,75 @@ function closeModal() {
 }
 
 function initCitizenCharterHandlers() {
-    const firstYes = document.querySelector('input[name="cc-cover"][value="Yes"]');
-    const firstNo = document.querySelector('input[name="cc-cover"][value="No"]');
-    const secondYes = document.querySelector('input[name="requirements"][value="Yes"]');
-    const secondNo = document.querySelector('input[name="requirements"][value="No"]');
+    const ccYes = document.querySelector('input[name="cc-cover"][value="Yes"]');
+    const ccNo = document.querySelector('input[name="cc-cover"][value="No"]');
+    const reqYes = document.querySelector('input[name="requirements"][value="Yes"]');
+    const reqNo = document.querySelector('input[name="requirements"][value="No"]');
+    const caterYes = document.querySelector('input[name="request_processed"][value="Yes"]');
+    const caterNo = document.querySelector('input[name="request_processed"][value="No"]');
 
     const serviceListWrapper = document.getElementById('serviceList')?.closest('label') || document.getElementById('serviceList');
     const deficienciesWrapper = document.getElementById('deficiencies-wrapper');
     const deficienciesTextarea = document.getElementById('deficiencies-textarea');
+    const csmWrapper = document.getElementById('csm-wrapper');
+    const cssWrapper = document.getElementById('css-wrapper');
 
-    if (!firstYes || !firstNo || !secondYes || !secondNo) return; // stop if not rendered yet
+    if (!ccYes || !ccNo || !reqYes || !reqNo) return; // stop if not rendered yet
 
     serviceListWrapper.style.display = 'none';
     deficienciesWrapper.style.display = 'none';
     deficienciesTextarea.style.display = 'none';
+    csmWrapper.style.display = 'none';
+    cssWrapper.style.display = 'none';
 
-    [firstYes, firstNo].forEach(input => {
+    [ccYes, ccNo].forEach(input => {
         input.addEventListener('change', function () {
             if (this.value === 'Yes') {
                 serviceListWrapper.style.display = 'block';
                 deficienciesWrapper.style.display = 'block';
+                // csmWrapper.style.display = 'block';
+                // cssWrapper.style.display = 'block';
                 getSrvc();
             } else {
                 serviceListWrapper.style.display = 'none';
                 deficienciesWrapper.style.display = 'none';
+                csmWrapper.style.display = 'none';
+                cssWrapper.style.display = 'block';
             }
         });
     });
 
-    [secondYes, secondNo].forEach(input => {
+    [reqYes, reqNo].forEach(input => {
         input.addEventListener('change', function () {
-            deficienciesTextarea.style.display = (this.value === 'Yes') ? 'block' : 'none';
+            if (this.value === 'Yes') {
+                deficienciesTextarea.style.display = 'block';
+                cssWrapper.style.display = 'block';
+            } else {
+                deficienciesTextarea.style.display = 'none';
+        
+
+                [caterYes, caterNo](input => {
+                    input.addEventListener('change', function () {
+                        if (this.value === 'Yes') {
+                            csmWrapper.style.display = 'none';
+                            cssWrapper.style.display = 'block';
+                        } else {
+                            csmWrapper.style.display = 'block';
+                            cssWrapper.style.display = 'none';
+                        }
+                    })
+                })
+            } 
         });
     });
+    
+    // [caterYes, caterNo].forEach(input => {
+    //     input.addEventListener('change', function () {
+    //         if (this.value === "Yes") {
+    //             csmWrapper.style.display = 'block';
+    //         }
+    //     });
+    // });
 }
 
 function getSrvc() {

@@ -4,95 +4,90 @@
 
 {% block content %}
 <style>
-    /* General wrapper for ticket */
+<style>
+/* PRINT SETTINGS FOR 80MM */
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .ticket-wrapper {
+        display: block;
+        padding: 0;
+        height: auto;
+        background: none;
+    }
+
+    .ticket-card {
+        width: 80mm;
+        max-width: 80mm;
+        padding: 10px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .ticket-actions {
+        display: none; /* hide buttons when printing */
+    }
+}
+
+/* SCREEN + PRINT SHARED */
 .ticket-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     background-color: #f4f4f9;
-    padding: 20px;
+    padding: 10px;
 }
 
-/* Ticket card style */
+/* RECEIPT STYLE */
 .ticket-card {
-    width: 100%;
-    max-width: 400px;
+    width: 80mm;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 10px;
+    font-family: monospace; /* better for thermal */
     text-align: center;
-    font-famil  y: Arial, sans-serif;
 }
 
-/* Header of the ticket card */
+/* HEADER */
 .ticket-header h4 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* Ticket number style */
-.ticket-number {
-    font-size: 50px;
-    font-weight: bold;
-    
-    margin-bottom: 15px;
-}
-
-/* Styling for paragraphs with information */
-.ticket-body p {
     font-size: 16px;
-    color: #555;
-    margin: 8px 0;
+    margin-bottom: 10px;
+}
+
+/* QUEUE NUMBER */
+.ticket-number {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* DETAILS */
+.ticket-body p {
+    font-size: 12px;
+    margin: 4px 0;
     text-align: left;
 }
 
-/* Strong elements for labels */
-.ticket-body p strong {
-    color: #333;
-}
-
-/* Note section style */
+/* NOTE */
 .note {
-    font-size: 14px;
-    color: #777;
-    margin-top: 20px;
-    font-style: italic;
+    font-size: 11px;
+    margin-top: 10px;
+    text-align: center;
 }
 
-/* Ticket actions - buttons and links */
+/* BUTTONS */
 .ticket-actions {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .new-ticket-btn,
 .print-btn {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 5px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.new-ticket-btn:hover,
-.print-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Footer note */
-.ticket-body .note:last-child {
     font-size: 12px;
-    color: #999;
-    font-weight: bold;
-    margin-top: 30px;
+    padding: 6px 10px;
 }
+</style>
 
 </style>
 <div class="ticket-wrapper">
