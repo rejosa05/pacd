@@ -1,42 +1,12 @@
 {% extends 'app/base.html' %}
-{% load static %}
 
+{% load static %}
 {% block title %}{{user.unit}} Accounts {% endblock %}
 
 {% block content %}
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-inner">
-        <div class="logo-container">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo"/>
-        </div>
 
-        <div class="menu">
-            <a href="{% url 'dashboard' %}" class="menu-item">
-                <i class="fas fa-area-chart icon"></i> Dashboard
-            </a>
-            <a href="" class="menu-item active">
-                <i class="fas fa-comments icon"></i> Transactions
-            </a>
-            {% if user.unit == 'PACD' %}
-            <a href="{% url 'account' %}" class="menu-item">
-                <i class="fas fa-user-plus icon"></i> Accounts
-            </a>
-            {% endif %}
-            <a href="{% url 'reports' %}" class="menu-item">
-                <i class="fas fa-chart-line icon"></i> Reports
-            </a>
-            <a href="{% url 'services' %}" class="menu-item">
-                <i class="fas fa-gears icon"></i> Services
-            </a>
-        </div>
 
-        <div class="support-box">
-            <h3 class="support-title">Need help?</h3>
-            <p class="support-text">Our support team is just a click away.</p>
-            <button class="support-button">Contact Support</button>
-        </div>
-    </div>
-</div>
+{% include 'app/partials/sidebar.html' %}
 <nav class="navbar">
     <div class="navbar-left">
         <button class="sidebar-toggle" id="sidebarToggle">

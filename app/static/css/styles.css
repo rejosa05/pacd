@@ -176,7 +176,7 @@ h1, h2, h3 {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 1px;
 }
 
 .menu-item {

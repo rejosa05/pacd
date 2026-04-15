@@ -601,8 +601,8 @@ function initCitizenCharterHandlers() {
             if (this.value === 'Yes') {
                 serviceListWrapper.style.display = 'block';
                 deficienciesWrapper.style.display = 'block';
-                // csmWrapper.style.display = 'block';
-                // cssWrapper.style.display = 'block';
+                csmWrapper.style.display = 'block';
+                cssWrapper.style.display = 'block';
                 getSrvc();
             } else {
                 serviceListWrapper.style.display = 'none';
@@ -618,32 +618,26 @@ function initCitizenCharterHandlers() {
             if (this.value === 'Yes') {
                 deficienciesTextarea.style.display = 'block';
                 cssWrapper.style.display = 'block';
+                csmWrapper.style.display = 'none';
             } else {
                 deficienciesTextarea.style.display = 'none';
-        
-
-                [caterYes, caterNo](input => {
-                    input.addEventListener('change', function () {
-                        if (this.value === 'Yes') {
-                            csmWrapper.style.display = 'none';
-                            cssWrapper.style.display = 'block';
-                        } else {
-                            csmWrapper.style.display = 'block';
-                            cssWrapper.style.display = 'none';
-                        }
-                    })
-                })
+                cssWrapper.style.display = 'none';
+                csmWrapper.style.display = 'block';
             } 
         });
     });
     
-    // [caterYes, caterNo].forEach(input => {
-    //     input.addEventListener('change', function () {
-    //         if (this.value === "Yes") {
-    //             csmWrapper.style.display = 'block';
-    //         }
-    //     });
-    // });
+    [caterYes, caterNo].forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.value === "Yes") {
+                csmWrapper.style.display = 'block';
+                cssWrapper.style.display = 'none';
+            } else {
+                csmWrapper.style.display = 'none';
+                cssWrapper.style.display = 'block';
+            }
+        });
+    });
 }
 
 function getSrvc() {
