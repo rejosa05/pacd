@@ -201,7 +201,7 @@ h1, h2, h3 {
 }
 
 .icon {
-    margin-right: 12px;
+    margin-right: 10px;
 }
 
 .icon_modal {
@@ -305,13 +305,12 @@ h1, h2, h3 {
 }
 
 .panel-header {
-    padding: 0 8px;
+    padding: 0 20px;
     border-bottom: 1px solid #E5E7EB;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 
 .button {
     padding: 8px 16px;
@@ -337,28 +336,107 @@ h1, h2, h3 {
     margin-right: 8px;
 }
 
-/* .regular {
-    font-size: 8rem;
-    font-weight: 900;
-    color: #3a86ff;
-    letter-spacing: 6px;
-    margin-bottom: 10px;
-}
-
-.priority {
-    font-size: 8rem;
-    font-weight: 900;
-    color: #ff3c78;
-} */
-
 /* Transactions */
 .transaction-list {
     border-top: 1px solid #E5E7EB;
     height: 246px;
 }
 
+/* new design transaction card */
+
+/* HEADER */
+.table-headers {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 120px;
+    padding: 5px 10px;
+    color: #8b949e;
+    font-size: 13px;
+    border-bottom: 1px solid #21262d;
+    background-color: #161b22 ;
+}
+
+/* CARD */
 .transaction-card {
-    padding: 16px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 120px;
+    align-items: center;
+    padding: 15px 20px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+}
+
+/* GENERAL */
+.col {
+    font-size: 14px;
+}
+
+/* CUSTOMER */
+.customer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1f8b5c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+}
+
+.name {
+    color: #fff;
+    font-weight: bold;
+}
+
+.email {
+    font-size: 12px;
+    color: #8b949e;
+}
+
+/* STATUS */
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 12px;
+    width: fit-content;
+}
+
+.completed {
+    background: #1f8b5c;
+    color: #fff;
+}
+
+/* AMOUNT */
+.amount {
+    font-weight: bold;
+    color: #fff;
+}
+
+/* ACTIONS */
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.actions i {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.actions i:hover {
+    transform: scale(1.2);
+}
+
+/* .transaction-card {
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -372,21 +450,7 @@ h1, h2, h3 {
     box-shadow: 0 10px 20px rgba(18, 232, 121, 0.1);
 }
 
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #4CAF50; /* green, changeable */
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    margin-right: 10px;
-    text-transform: uppercase;
-    flex-shrink: 0;
-}
+
 
 .transaction-header {
     display: flex;
@@ -401,9 +465,9 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     margin-bottom: 4px;
-}
+} */
 
-.transaction-id {
+/* .transaction-id {
     font-weight: 500;
     color: #1F2937;
     margin-right: 12px;
@@ -414,21 +478,15 @@ h1, h2, h3 {
     padding: 4px 8px;
     border-radius: 12px;
     font-weight: 500;
-}
+} */
 
-.status-blue {
-    background-color: #DBEAFE;
-    color: #1D4ED8;
-}
+.status-blue { background-color: #1D4ED8; color: #c7d5fc; }
+.status-yellow { background-color: #FEF3C7; color: #92400E;}
 
-.status-yellow {
-    background-color: #FEF3C7;
-    color: #92400E;
-}
-
+/* status color */
 .status-green {
-    background-color: #D1FAE5;
-    color: #065F46;
+    background-color: #0ba360;
+    color: #fefefe;
 }
 
 .status-red {
@@ -469,11 +527,11 @@ h1, h2, h3 {
 }
 
 
-.transaction-description {
+.transaction-description-row {
     font-size: 14px;
     color: #6B7280;
     padding: 0;
-    margin: 3px;
+    margin: 0;
 }
 
 .transaction-actions {

@@ -154,42 +154,31 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             const actionTypeColor = actionColor[history.status] || 'status-default';
             const documentType = typeColor[history.transaction_type] || 'status-default';
             const divisionType = divisionColor[history.client_division] || 'status-default';
+            const initials = history.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
 
 
             const card = document.createElement('div');
             card.className = 'transaction-history-card';
             card.innerHTML = `
                 <div class="transaction-card">
-                    <div class="avatar-circle">
-                        ${history.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)}
-                    </div>
-                    <div class="transaction-info">
-                        <div class="client-status-row">
-                            <span class="transaction-id">Client ID. ${history.client_id}</span>
-                            <span class="status ${actionTypeColor}">${history.status}</span>
-                            <span class="status ${divisionType}">${history.client_division}</span>
-                            <span class="status ${divisionType}">${history.client_unit}</span>
-                            <span class="status ${laneColorClass}">${history.action_type}</span>
-                            <span class="status ${documentType}">${history.transaction_type}</span>
+                    <div class="col customer">
+                        <div class="avatar">${initials}</div>
+                        <div class="info">
+                            <div class="name">${history.client_fullname}</div>
+                            <div class="email">emma@example.com</div>
                         </div>
-                        <p class="transaction-description"> ${history.client_fullname}, Ticket No. ${history.client_queue_no}</p>
-                        <p class="transaction-description"> Transaction Details: ${history.transactions_details} </p>
                     </div>
-                    <div class="transaction-actions">   
-                        <span class="timestamp"> Date Resolved: ${formatDateTime(history.date_resolved)}</span>
-                        ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Repeat" onclick='openModal("repeat", ${JSON.stringify(history)})'>
-                                <i class="fa fa-repeat"></i>
-                            </button>
-                        ` : `
-                            <button class="icon-button text-blue" title="Edit")'>
-                                <i class="fa fa-edit"></i>
-                            </button>                 
-                        `}
-                        <button class="icon-button text-blue" title="View" onclick="viewClientDetails('${history.id}')">
-                                <i class="fa fa-eye"></i>
-                            </button>   
+                    <div class="col order-id">${history.id}</div>
+                    <div class="col product">${history.transaction_type}</div>
+                    <div class="col status completed">Completed</div>
+
+                    <div class="col amount">$299.00</div>
+                    <div class="col actions">
+                        <i class="fas fa-pen edit"></i>
+                        <i class="fas fa-sync-alt update"></i>
+                        <i class="fas fa-trash delete"></i>
                     </div>
+
                 </div>
             `;
             transacHistory.appendChild(card);
@@ -250,7 +239,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         card.innerHTML = `
                 <div class="transaction-card">
                     <div class="avatar-circle">
-                        ${served.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)}
+                        
                     </div>
                     <div class="transaction-info">
                         <div class="client-status-row">

@@ -82,19 +82,30 @@
         <h3> Pending Transactions </h3>
         <div class="pagination" id="paginationControls"></div>
     </div>
-    <div class="transaction-list" id="pendingClientList" style="height: 220px;">
+    <div class="transaction-container" id="pendingClientList" style="height: 220px;">
         <!-- data fetch -->
     </div>
+    </div>
 </div>
+
 <div class="transaction-panel">
     <div class="panel-header">
-        <h3> Transaction History </h3>
+        <h3> Recent Transactions </h3>
         <div id="historyPagination" class="pagination"></div>
+    </div>
+        <div class="table-headers">
+            <div>Client Details</div>
+            <div>Transaction ID</div>
+            <div>Transction type</div>
+            <div>Status</div>
+            <div>Amount</div>
+        <div></div>
     </div>
     <div class="transaction-list" id="todayTransactions">
         <!-- data fetch -->
     </div>
 </div>
+
 </main>
 <!-- sample modal -->
 <div class="modal-overlay" id="clientModal">
