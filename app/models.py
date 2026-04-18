@@ -108,6 +108,7 @@ class DivisionLog(models.Model):
     process_owner_id = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='process_owner')
     pacd_officer_id = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='pacd_officer')
     service_id = models.ForeignKey(ServicesDetails, on_delete=models.CASCADE, null=True, blank=True)
+    transaction_no = models.CharField(max_length=100, null=True, blank=True)
     transaction_type = models.CharField(max_length=100, blank=True)
     division = models.CharField(max_length=100)
     transaction_details = models.TextField(null=True)

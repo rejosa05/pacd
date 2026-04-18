@@ -1,4 +1,4 @@
-function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPage = 2, servingPage = 1, servingPerPage = 1) {
+function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPage = 5, servingPage = 1, servingPerPage = 1) {
     fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -151,7 +151,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             }
             
             const laneColorClass = history.action_type === 'Priority' ? 'status-red' : 'status-blue';
-            const actionTypeColor = actionColor[history.status] || 'status-default';
+            const statusColor = actionColor[history.status] || 'status-default';
             const documentType = typeColor[history.transaction_type] || 'status-default';
             const divisionType = divisionColor[history.client_division] || 'status-default';
             const initials = history.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
@@ -160,23 +160,21 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             const card = document.createElement('div');
             card.className = 'transaction-history-card';
             card.innerHTML = `
-                <div class="transaction-card">
-                    <div class="col customer">
+                <div class="transaction-cards">
+                    <div class="col client">
                         <div class="avatar">${initials}</div>
                         <div class="info">
                             <div class="name">${history.client_fullname}</div>
                             <div class="email">emma@example.com</div>
                         </div>
                     </div>
-                    <div class="col order-id">${history.id}</div>
+                    <div class="col order-id">${history.transaction_no}</div>
                     <div class="col product">${history.transaction_type}</div>
-                    <div class="col status completed">Completed</div>
-
-                    <div class="col amount">$299.00</div>
+                    <div class="col status ${statusColor}"> ${history.status}</div>
+                    <div class="col amount">${formatDateTime(history.date_resolved)}</div>
                     <div class="col actions">
                         <i class="fas fa-pen edit"></i>
                         <i class="fas fa-sync-alt update"></i>
-                        <i class="fas fa-trash delete"></i>
                     </div>
 
                 </div>
@@ -239,7 +237,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         card.innerHTML = `
                 <div class="transaction-card">
                     <div class="avatar-circle">
-                        
+
                     </div>
                     <div class="transaction-info">
                         <div class="client-status-row">

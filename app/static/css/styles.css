@@ -347,7 +347,7 @@ h1, h2, h3 {
 /* HEADER */
 .table-headers {
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 120px;
+    grid-template-columns: 2fr 2fr 2fr 1fr 1fr 120px;
     padding: 5px 10px;
     color: #8b949e;
     font-size: 13px;
@@ -356,9 +356,9 @@ h1, h2, h3 {
 }
 
 /* CARD */
-.transaction-card {
+.transaction-cards {
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr 1fr 1fr 120px;
+    grid-template-columns: 2fr 2fr 2fr 1fr 1fr 120px;
     align-items: center;
     padding: 15px 20px;
     background: #161b22;
@@ -371,7 +371,7 @@ h1, h2, h3 {
 }
 
 /* CUSTOMER */
-.customer {
+.client {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -435,7 +435,7 @@ h1, h2, h3 {
     transform: scale(1.2);
 }
 
-/* .transaction-card {
+.transaction-card {
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -467,27 +467,16 @@ h1, h2, h3 {
     margin-bottom: 4px;
 } */
 
-/* .transaction-id {
+.transaction-id {
     font-weight: 500;
     color: #1F2937;
     margin-right: 12px;
 }
 
-.status {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 500;
-} */
 
 .status-blue { background-color: #1D4ED8; color: #c7d5fc; }
 .status-yellow { background-color: #FEF3C7; color: #92400E;}
-
-/* status color */
-.status-green {
-    background-color: #0ba360;
-    color: #fefefe;
-}
+.status-green { background-color: #0ba360; color: #fefefe;}
 
 .status-red {
     background-color: #f6abab;

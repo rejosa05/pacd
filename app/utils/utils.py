@@ -26,6 +26,7 @@ def get_clients(unit):
         getClients.append({
             'id': client.id,
             'client_id': f"Client Id: #{client.client_id.id}",
+            'transaction_no': client.transaction_no,
             'client_queue_no': f"Ticket No: #{client.client_id.client_queue_no}",
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_division': client.division,
@@ -127,6 +128,7 @@ def transaction_history(date, unit):
             'id': transaction.id,
             'client_id': transaction.client_id.id,
             'client_queue_no': transaction.client_id.client_queue_no,
+            'transaction_no': transaction.transaction_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",
             'client_contact': transaction.client_id.client_contact,
             'client_org': transaction.client_id.client_org,
@@ -187,6 +189,7 @@ def serving_client_unit_list(today, unit, id):
             'transaction_id': client.id,
             'public_id': client.client_id.public_id,
             'client_id': client.client_id.id,
+            'transaction_no': client.transaction_no,
             'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
