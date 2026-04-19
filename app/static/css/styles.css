@@ -1541,3 +1541,337 @@ th, td {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* Modern Modal Styles */
+.modern-modal {
+    max-width: 600px;
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.large-modal {
+    max-width: 800px;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.modal-header .modal-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.modal-header .modal-icon.warning {
+    color: #ff6b6b;
+}
+
+.modal-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.modal-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.modal-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-button.active {
+    color: #495057;
+    background: white;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #667eea;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.client-info-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.info-row .value {
+    color: #6c757d;
+    text-align: right;
+}
+
+.warning-message {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.warning-message i {
+    color: #856404;
+    font-size: 1.25rem;
+    margin-top: 0.125rem;
+}
+
+.warning-message span {
+    color: #856404;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.modern-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+}
+
+.form-control {
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-control::placeholder {
+    color: #adb5bd;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.recent-transactions {
+    width: 100%;
+}
+
+.transaction-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.transaction-history-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.transaction-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.transaction-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+}
+
+.no-transactions i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    background: white;
+    transition: box-shadow 0.3s ease;
+}
+
+.transaction-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1rem;
+}
+
+.transaction-icon.completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.transaction-icon.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.transaction-icon.serving {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.transaction-details {
+    flex: 1;
+}
+
+.transaction-details h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: #495057;
+}
+
+.transaction-meta {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.transaction-date {
+    font-size: 0.75rem;
+    color: #adb5bd;
+}

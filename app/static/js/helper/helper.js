@@ -4,7 +4,7 @@ const {
     forwardedClientUrl, csrfToken,
     f_dashboard, dashboard,
     f_transactions, transaction, accounts,
-    reports,
+    reports, urlHistory
 } = window.dashboardConfig;
 
 

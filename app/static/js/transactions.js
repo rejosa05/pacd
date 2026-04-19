@@ -97,11 +97,11 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                         <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-pen edit" title="Serving" onclick='openModal("edit", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-sync-alt update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-trash delete" title="Skipped" onclick="skipClient('${client.id}')"></i>
+                        <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
                         ` : `
                         <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-trash delete" title="Skipped" onclick="skipClient('${client.id}')"></i>
-                        `} 
+                        <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
+                        `}
                     </div>
                 </div>
             `;
@@ -247,9 +247,9 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
     });
 }
 
-if (path.includes(transaction)) {
-        fetchTransactions();      
-}
+    if (path.includes(transaction)) {
+            fetchTransactions();      
+    }
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -280,3 +280,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Modern Modal Functions
+function openSkipModal(clientId, fullname, queueNo) {
+    document.getElementById('skip-client-id').textContent = clientId;
+    document.getElementById('skip-fullname').textContent = fullname;
+    document.getElementById('skip-queue-no').textContent = queueNo;
+    document.getElementById('skipClientModal').style.display = 'flex';
+}
+
+function closeSkipModal() {
+    document.getElementById('skipClientModal').style.display = 'none';
+}
+
+function confirmSkip() {
+    const clientId = document.getElementById('skip-client-id').textContent;
+    skipClient(clientId);
+    closeSkipModal();
+}
+
+// Tab switching for view modal
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Show selected tab content
+    document.getElementById(tabName + '-tab').classList.add('active');
+
+    // Add active class to clicked tab button
+    event.target.classList.add('active');
+
+    // If switching to recent tab, load transaction history
+    if (tabName === 'recent') {
+        loadClientTransactionHistory();
+    }
+}
+
+// Load client transaction history for the view modal
+function loadClientTransactionHistory() {
+    const clientId = document.querySelector('#client-details-list dt:contains("Client ID") + dd')?.textContent ||
+                     document.querySelector('#client-details-list dd:first-child')?.textContent;
+
+    if (!clientId) return;
+
+    // This would need to be implemented with a backend endpoint to get client-specific transactions
+    // For now, show a placeholder
+    const transactionList = document.getElementById('client-transaction-history');
+    transactionList.innerHTML = `
+        <div class="no-transactions">
+            <i class="fas fa-history"></i>
+            <p>Transaction history feature coming soon</p>
+        </div>
+    `;
+    document.getElementById('transaction-count').textContent = 'Feature coming soon';
+}

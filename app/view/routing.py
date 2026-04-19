@@ -97,3 +97,14 @@ def acknowledgement(request, public_id):
     if context is None:
         return redirect('login')
     return render(request, "app/acknowledgement.html", context)
+
+def client_transaction(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    print("test")
+
+    if not username:
+        return redirect("login")
+
+    return render(request, "app/clients.html", {'user':user})

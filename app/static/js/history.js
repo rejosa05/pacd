@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const totalTransactions = document.getElementById('total-transactions');
-    const totalCSM = document.getElementById('total-csm');
-    const totalCSS = document.getElementById('total-css');
     const convertToExcel = document.getElementById('downloadExcel');
-    const dateStartInput = document.getElementById('dateStarted');
-    const dateEndInput = document.getElementById('dateEnd');
     const searchInput = document.getElementById('searchInput');
     const filterButtons = document.querySelectorAll('.btn-filter');
 
@@ -14,39 +10,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemsPerPage = 10;
 
     function getColorFromName(name) {
-    const colors = ["#fc6969", "#60a5fa", "#34d399", "#fbbf24", "#c1acff", "#fb7185"];
-
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    return colors[Math.abs(hash) % colors.length];
-}
-
-    function formatDateOnly(dateString) {
-        return dateString ? new Date(dateString) : null;
-    }
-
-    function getDateFilteredClients(data) {
-        const startDate = formatDateOnly(dateStartInput.value);
-        const endDate = formatDateOnly(dateEndInput.value);
-        const endOfDay = endDate ? new Date(endDate.getTime() + 86399999) : null;
-        const allClients = Array.isArray(data.getClients) ? data.getClients : [];
-
-        return allClients.filter(client => {
-            if (!client.date_served) return false;
-            const servedDate = new Date(client.date_served);
-
-            if (startDate && servedDate < startDate) return false;
-            if (endOfDay && servedDate > endOfDay) return false;
-
-            return true;
-        });
+        const colors = ["#fc6969", "#60a5fa", "#34d399", "#fbbf24", "#c1acff", "#fb7185"];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return colors[Math.abs(hash) % colors.length];
     }
 
     function applyFilters(clients) {
-        const searchTerm = searchInput.value.toLowerCase().trim();
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
         return clients.filter(client => {
             // Status filter
@@ -57,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'serving': 'Serving',
                     'completed': 'Completed'
                 };
-                if (client.client_status !== statusMap[currentStatusFilter]) return false;
+                if (client.status !== statusMap[currentStatusFilter]) return false;
             }
 
             // Search filter
@@ -67,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     client.client_fullname || '',
                     client.client_division || '',
                     client.client_unit || '',
-                    client.client_status || ''
+                    client.status || ''
                 ].join(' ').toLowerCase();
                 if (!combined.includes(searchTerm)) return false;
             }
@@ -78,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderPagination(totalItems) {
         const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer) return;
         paginationContainer.innerHTML = '';
 
         const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -143,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function renderTable(clients) {
         const tableBody = document.querySelector('#clientList tbody');
+        if (!tableBody) return;
         tableBody.innerHTML = '';
 
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -150,12 +125,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const paginatedClients = clients.slice(startIndex, endIndex);
 
         paginatedClients.forEach(client => {
-            const actionColor = {
+            const statusColor = {
                 'Completed': 'status-green',
                 'Serving': 'status-blue',
                 'Pending': 'status-brown',
+                'Skipped': 'status-gray'
             } 
-            const clientStatus = actionColor[client.client_status] || 'status-default';
+            const clientStatus = statusColor[client.status] || 'status-default';
             const initials = client.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2);
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -163,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="product">
                         <div class=""><i class="fas fa-box"></i></div>
                         <div>
-                            <div class="transaction-id">${client.transaction_no}</div>
+                            <div class="transaction-id">${client.client_queue_no}</div>
                         </div>
                     </div>
                 </td>
@@ -172,16 +148,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="avatar">${initials}</div>
                         <div class="info">
                             <div class="name">${client.client_fullname || 'N/A'}</div>
-                            <div class="email">${client.client_org || 'N/A'}</div>
                         </div>
                     </div>
                 </td>
                 <td class="type">${client.client_division || 'N/A'}</td>
                 <td class="type">${client.client_unit || 'N/A'}</td>
                 <td>
-                    <div class="col status ${clientStatus}"> ${client.client_status}</div>
+                    <div class="col status ${clientStatus}"> ${client.status}</div>
                 </td>
-                <td class="date">${client.date_resolved ? formatDateTime(client.date_resolved) : '---'}</td>
+                <td class="date">${client.action_type || '---'}</td>
                 <td>
                     <button class="icon-button text-green" title="View details" onclick="viewClientDetails('${client.id}')">
                         <i class="fa fa-eye view"></i>
@@ -194,18 +169,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.client').forEach(el => {
             const name = el.querySelector('.name').innerText;
             const avatar = el.querySelector('.avatar');
-
             avatar.style.backgroundColor = getColorFromName(name);
         });
     }
 
     function updateMetrics(clients) {
-        const csmCount = clients.filter(client => client.form === 'CSM').length;
-        const cssCount = clients.filter(client => client.form === 'CSS').length;
-
-        totalCSM.textContent = csmCount;
-        totalCSS.textContent = cssCount;
-        totalTransactions.textContent = clients.length;
+        if (totalTransactions) {
+            totalTransactions.textContent = clients.length;
+        }
     }
 
     function downloadCSV(data) {
@@ -214,15 +185,14 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Started', 'Date Served'];
+        const headers = ['Queue No', 'Full Name', 'Division', 'Unit', 'Status', 'Action Type'];
         const rows = data.map(client => [
-            client.client_id || '',
+            client.client_queue_no || '',
             client.client_fullname || '',
             client.client_division || '',
             client.client_unit || '',
-            client.client_status || '',
-            formatDateTime(client.date_started),
-            formatDateTime(client.date_served)
+            client.status || '',
+            client.action_type || ''
         ]);
 
         const csvContent = [headers, ...rows]
@@ -236,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const timestamp = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
 
         a.href = url;
-        a.download = `served_clients_${timestamp}.csv`;
+        a.download = `transaction_history_${timestamp}.csv`;
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
@@ -244,41 +214,35 @@ document.addEventListener('DOMContentLoaded', function () {
         URL.revokeObjectURL(url);
     }
 
-    function fetchAllServedClient() {
-        return fetch(f_dashboard, {
+    function fetchTransactionHistory() {
+        return fetch(f_transactions, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
         .then(data => {
-            filteredClientsCache = getDateFilteredClients(data);
+            filteredClientsCache = Array.isArray(data.transactionHistory) ? data.transactionHistory : [];
             currentPage = 1;
             renderFiltered();
         })
-        .catch(error => console.error('Error fetching served clients:', error));
+        .catch(error => console.error('Error fetching transaction history:', error));
     }
-
-    if (dateStartInput) {
-        dateStartInput.addEventListener('change', fetchAllServedClient);
-    }
-
-    if (dateEndInput) {
-        dateEndInput.addEventListener('change', fetchAllServedClient);
-    }
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            currentStatusFilter = this.dataset.status;
-            currentPage = 1;
-            renderFiltered();
-        });
-    });
 
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             currentPage = 1;
             renderFiltered();
+        });
+    }
+
+    if (filterButtons && filterButtons.length > 0) {
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                currentStatusFilter = this.dataset.status;
+                currentPage = 1;
+                renderFiltered();
+            });
         });
     }
 
@@ -288,10 +252,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const filteredData = applyFilters(filteredClientsCache);
             downloadCSV(filteredData);
         });
- 
     }
 
-    if (path.includes(reports)) {
-        fetchAllServedClient();
+    if (document.getElementById('clientList')) {
+        fetchTransactionHistory();
     }
 });

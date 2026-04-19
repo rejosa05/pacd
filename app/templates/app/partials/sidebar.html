@@ -23,7 +23,7 @@
             <a href="{% url 'reports' %}" class="menu-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
                 <i class="fas fa-file-text icon"></i> Reports
             </a>
-            <a href="{% url 'transactions' %}" class="menu-item {% if request.resolver_match.url_name == '' %} active {% endif %}">
+            <a href="{% url 'transactions_history' %}" class="menu-item {% if request.resolver_match.url_name == 'transactions_history' %} active {% endif %}">
                 <i class="fas fa-list icon"></i> Transactions
             </a>
         </div>

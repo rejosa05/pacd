@@ -136,72 +136,198 @@
   </div>
 </div>
 
+<!-- Modern Served Client Modal -->
 <div class="modal-overlay" id="servedClient-unit">
-    <div class="modal-view">    
+    <div class="modal-view modern-modal">
         <button class="close-btn" aria-label="Close modal" onclick="servedClose()">&times;</button>
-        <h2>For Serving Client</h2>
-        <div class="">
-            <div class="approved-form" novalidate>
-                <label for="id">Client ID</label>
-                <span id="to-served-client-id"></span>
-                <label for="full-name">Full Name</label>
-                <span id="to-served-fullname"></span>
-                <label for="full-name">Company/Organization Name</label>
-                <span id="client-org"></span>
-                <label for="trnsaction-type">Transactions Type</label>
-                <span id="to-served-trnsction-type"></span>
-                <label>Transactions Details</label>
-                <span id="to-served-trnsction-details"></span>
-                <button type="submit" onclick="serving()">Serving</button>
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-user-check"></i>
             </div>
+            <h2>Serve Client</h2>
+            <p>Mark this client as currently being served</p>
+        </div>
+        <div class="modal-body">
+            <div class="client-info-card">
+                <div class="info-row">
+                    <span class="label">Client ID:</span>
+                    <span class="value" id="to-served-client-id"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Full Name:</span>
+                    <span class="value" id="to-served-fullname"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Organization:</span>
+                    <span class="value" id="client-org"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Transaction Type:</span>
+                    <span class="value" id="to-served-trnsction-type"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Details:</span>
+                    <span class="value" id="to-served-trnsction-details"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="servedClose()">Cancel</button>
+            <button type="submit" class="btn-primary" onclick="serving()">
+                <i class="fas fa-play"></i> Start Serving
+            </button>
         </div>
     </div>
 </div>
 
-<!-- repeat transactions modal -->
-<div class="modal-overlay" id="repeatTransaction" >
-        <div class="modal-view">
-            <button class="close-btn" aria-label="Close modal" onclick="closeRepeat()">&times;</button>
-            <h2>Queue No. <span id="r-client-que"></span></h2>
-            <div class="approved-form" novalidate>
-            <label for="first-name">Full Name</label>
-            <span id="r-fullname"></span>
-            <label for="org-name">Organization/Company Name</label>
-            <span id="r-org"></span>
-            <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="r-transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquiry</option>
-                    <option value="Request">Request</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="r-transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <label class="form-label" for="division">Division: </label>
-                <select class="form-option" name="divisions" id="r-division-select">
-                    <option value="">Select Division</option>
-                    <option value="MSD">MSD</option>
-                    <option value="LHSD">LHSD</option>
-                    <option value="RD/ARD">RD/ARD</option>
-                    <option value="RLED">RLED</option>
-                </select>
-                <label class="form-label" for="unit">Unit:</label>
-                <select class="form-option" name="unit" id="r-unit-select" required>
-                    <option value="">Select Unit</option>
-                </select>
-                <button type="submit" onclick="saveRepeat()">Save</button>
+<!-- Modern Skip Client Modal -->
+<div class="modal-overlay" id="skipClientModal">
+    <div class="modal-view modern-modal">
+        <button class="close-btn" aria-label="Close modal" onclick="closeSkipModal()">&times;</button>
+        <div class="modal-header">
+            <div class="modal-icon warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Skip Client</h2>
+            <p>Are you sure you want to skip this client? This action cannot be undone.</p>
+        </div>
+        <div class="modal-body">
+            <div class="client-info-card">
+                <div class="info-row">
+                    <span class="label">Client ID:</span>
+                    <span class="value" id="skip-client-id"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Full Name:</span>
+                    <span class="value" id="skip-fullname"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Queue No:</span>
+                    <span class="value" id="skip-queue-no"></span>
+                </div>
+            </div>
+            <div class="warning-message">
+                <i class="fas fa-info-circle"></i>
+                <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>
             </div>
         </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeSkipModal()">Cancel</button>
+            <button type="button" class="btn-danger" onclick="confirmSkip()">
+                <i class="fas fa-times"></i> Skip Client
+            </button>
+        </div>
     </div>
+</div>
+    <div class="modal-view modern-modal">
+        <button class="close-btn" aria-label="Close modal" onclick="closeRepeat()">&times;</button>
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-share"></i>
+            </div>
+            <h2>Forward Client</h2>
+            <p>Forward this client to another division/unit</p>
+        </div>
+        <div class="modal-body">
+            <div class="client-info-card">
+                <div class="info-row">
+                    <span class="label">Queue No:</span>
+                    <span class="value" id="r-client-que"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Full Name:</span>
+                    <span class="value" id="r-fullname"></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Organization:</span>
+                    <span class="value" id="r-org"></span>
+                </div>
+            </div>
+            <form class="modern-form">
+                <div class="form-group">
+                    <label for="r-transaction-type">Transaction Type</label>
+                    <select class="form-control" name="divisions" id="r-transaction-type">
+                        <option value="">Select Type</option>
+                        <option value="Inquiry">Inquiry</option>
+                        <option value="Request">Request</option>
+                        <option value="Submit Documents">Submit Documents</option>
+                        <option value="Payment">Payment</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="r-transactions-details">Transaction Details</label>
+                    <textarea id="r-transactions-details" class="form-control" placeholder="Transaction Details....." required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="r-division-select">Division</label>
+                        <select class="form-control" name="divisions" id="r-division-select">
+                            <option value="">Select Division</option>
+                            <option value="MSD">MSD</option>
+                            <option value="LHSD">LHSD</option>
+                            <option value="RD/ARD">RD/ARD</option>
+                            <option value="RLED">RLED</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="r-unit-select">Unit</label>
+                        <select class="form-control" name="unit" id="r-unit-select" required>
+                            <option value="">Select Unit</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeRepeat()">Cancel</button>
+            <button type="submit" class="btn-primary" onclick="saveRepeat()">
+                <i class="fas fa-paper-plane"></i> Forward Client
+            </button>
+        </div>
+    </div>
+</div>
 
+<!-- Modern View Details Modal with Recent Transactions -->
 <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-view" tabindex="-1">
+    <div class="modal-view modern-modal large-modal" tabindex="-1">
         <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
-        <h2>Client Details</h2>
-        <dl id="client-details-list">
-        </dl>
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2>Client Information</h2>
+            <p>View client details and transaction history</p>
+        </div>
+        <div class="modal-tabs">
+            <button class="tab-button active" onclick="switchTab('details')">Client Details</button>
+            <button class="tab-button" onclick="switchTab('recent')">Recent Transactions</button>
+        </div>
+        <div class="modal-body">
+            <div id="details-tab" class="tab-content active">
+                <div class="client-info-card">
+                    <dl id="client-details-list">
+                    </dl>
+                </div>
+            </div>
+            <div id="recent-tab" class="tab-content">
+                <div class="recent-transactions">
+                    <div class="transaction-history-header">
+                        <h3>Transaction History</h3>
+                        <span class="transaction-count" id="transaction-count">0 transactions</span>
+                    </div>
+                    <div class="transaction-list" id="client-transaction-history">
+                        <div class="no-transactions">
+                            <i class="fas fa-history"></i>
+                            <p>No recent transactions found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-primary" onclick="closeViewDetails()">Close</button>
+        </div>
     </div>
 </div>
 

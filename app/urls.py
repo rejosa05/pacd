@@ -54,6 +54,7 @@ urlpatterns = [
     
 
     path('reports', reports_page, name='reports'),
+    path('transactions_history', client_transaction, name='transactions_history'),
     path('accountList', accountList, name="accountList"),
     path('service-list', serviceList, name="service-list"),
     path('transactions', transaction, name="transactions"),
