@@ -4,44 +4,15 @@
 {% block title %} DOH Services - CITIZEN CHARTER {% endblock %}
 
 {% block content %}
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-inner">
-        <div class="logo-container">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo"/>
-        </div>
 
-        <div class="menu">
-            <a href="{% url 'dashboard' %}" class="menu-item">
-                <i class="fas fa-home icon"></i> Dashboard
-            </a>
-            <a href="{% url 'transactions' %}" class="menu-item">
-                <i class="fas fa-exchange-alt icon"></i> Transactions
-            </a>
-        {% if user.unit == 'PACD' %}
-            <a href="{% url 'account' %}" class="menu-item">
-                <i class="fas fa-user-plus icon"></i> Accounts
-            </a>
-        {% endif %}
-            <a href="{% url 'reports' %}" class="menu-item">
-                <i class="fas fa-chart-line icon"></i> Reports
-            </a>
-            <a href="" class="menu-item active">
-                <i class="fas fa-gears icon"></i> Services
-            </a>
-        </div>
-        <div class="support-box">
-            <h3 class="support-title">Need help?</h3>
-            <p class="support-text">Our support team is just a click away.</p>
-            <button class="support-button">Contact Support</button>
-        </div>
-    </div>
-</div>
+{% include 'app/partials/sidebar.html' %}
+
 <nav class="navbar">
     <div class="navbar-left">
         <button class="sidebar-toggle" id="sidebarToggle">
             <i class="fas fa-bars icon-gray"></i>
         </button>
-        <h1 class="navbar-title"> DOH Services - CITIZEN CHARTER </h1>
+        <h2> DOH Services - CITIZEN CHARTER </h2>
     </div>
     
     <div class="navbar-right">
@@ -105,7 +76,7 @@
     </div>
 
 <div class="transaction-panel">
-    <div class="panel-header">
+    <!-- <div class="panel-header">
         <h2> Services </h2>
          {% for message in messages %}
             <p style="color: red"> {{ message }} </p>
@@ -115,6 +86,60 @@
             <i class="fas fa-user-plus icon-margin-right"></i> Add Services
         </button>
         {% endif %}
+    </div> -->
+    <div class="top-bar">
+        <input type="text" class="search-box" placeholder="Search products...">
+    </div>
+
+    <div class="table">
+
+        <!-- HEADER -->
+        <div class="table-header">
+            <div>Product</div>
+            <div>Category</div>
+            <div>Status</div>
+            <div>Stock</div>
+            <div>Price</div>
+            <div>Created</div>
+            <div></div>
+        </div>
+
+        <!-- ROW -->
+        <div class="table-row">
+            <div class="product">
+                <div class="icon"><i class="fas fa-box"></i></div>
+                <div>
+                    <div class="product-name">Pro Dashboard License</div>
+                    <div class="product-desc">Full-featured admin dashboard template</div>
+                </div>
+            </div>
+
+            <div><span class="badge template">Templates</span></div>
+            <div><span class="badge active">Active</span></div>
+            <div>999</div>
+            <div class="price">$299.00</div>
+            <div>Jan 15, 2026</div>
+            <div class="actions"><i class="fas fa-ellipsis-h"></i></div>
+        </div>
+
+        <!-- ROW -->
+        <div class="table-row">
+            <div class="product">
+                <div class="icon"><i class="fas fa-box"></i></div>
+                <div>
+                    <div class="product-name">CRM Module</div>
+                    <div class="product-desc">Customer relationship management</div>
+                </div>
+            </div>
+
+            <div><span class="badge template">Modules</span></div>
+            <div><span class="badge draft">Draft</span></div>
+            <div>999</div>
+            <div class="price">$349.00</div>
+            <div>Sep 25, 2025</div>
+            <div class="actions"><i class="fas fa-ellipsis-h"></i></div>
+        </div>
+
     </div>
     <div class="transaction-list" id="serviceLists" style="height: 490px;">
         <!-- data fetch -->

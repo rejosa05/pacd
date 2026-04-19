@@ -7,6 +7,8 @@ const {
     reports,
 } = window.dashboardConfig;
 
+
+
 const path = window.location.pathname;
 function formatDateTime(dateString) {
     if (!dateString) return 'N/A';
@@ -19,6 +21,17 @@ function formatDateTime(dateString) {
         minute: '2-digit',
         hour12: true
     });
+}
+
+function getColorFromName(name) {
+    const colors = ["#f87171", "#60a5fa", "#34d399", "#fbbf24", "#a78bfa", "#fb7185"];
+    
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
 }
 
 function divisionUnitSelect(divisionID, unitID) {

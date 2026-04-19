@@ -5,7 +5,6 @@
 
 {% block content %}
 
-
 {% include 'app/partials/sidebar.html' %}
 <nav class="navbar">
     <div class="navbar-left">
@@ -45,21 +44,28 @@
             </div>
         </div>
         <div class="card">
-            <h3><i class="fas fa-check icon"></i> Total Served</h3>
+            <h3><i class="fas fa-clock icon"></i> Waiting</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-completed"> </span>
                 <!-- <div class="badge badge-blue">Active</div> -->
             </div>
         </div>
         <div class="card">
-            <h3><i class="fas fa-user-message icon"></i> Total Serving</h3>
+            <h3><i class="fas fa-check icon"></i> Served</h3>
+            <div class="card-value-row">
+                <span class="card-value" id="total-completed"> </span>
+                <!-- <div class="badge badge-blue">Active</div> -->
+            </div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-user-message icon"></i> Serving</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-serving"> 0</span>
                 <!-- <div class="badge badge-blue">Active</div> -->
             </div>
         </div>
         <div class="card">
-            <h3> <i class="fas fa-exclamation-circle icon"></i> Total Skipped</h3>
+            <h3> <i class="fas fa-exclamation-circle icon"></i> Skipped</h3>
             <div class="card-value-row">
                 <span class="card-value" id="total-skipped"> </span>
                 <!-- <span class="card-subtext">minutes</span> -->
@@ -67,44 +73,58 @@
         </div>
     </div>
     {% if user.unit != 'PACD' %}
-        <div class="transaction-panel" style="height: 265px;">
+        <div class="transaction-panel" style="height: 165px;">
             <div class="panel-header">
                 <h3> Serving Client </h3>
                 <div class="pagination" id="servingPagination"></div>
             </div>
-            <div class="transaction-list" id="servingClientList">
-                data fetch
-            </div>
+            <div class="transaction-headers grid-pending">
+            <div>ID</div>
+            <div>Client Name</div>
+            <div>Trasaction No</div>
+            <div>Transaction Type</div>
+            <div></div>
+        </div>
+        <div class="transaction-list" id="servingClientList" style="height: 220px;">
+            <!-- data fetch -->
+        </div>
         </div>
     {% endif %}
+
 <div class="transaction-panel">
-    <div class="panel-header">
+    <div class="panel-title">
         <h3> Pending Transactions </h3>
         <div class="pagination" id="paginationControls"></div>
     </div>
-    <div class="transaction-container" id="pendingClientList" style="height: 220px;">
-        <!-- data fetch -->
+    <div class="transaction-headers grid-pending">
+        <div>ID</div>
+        <div>Client Name</div>
+        <div>Queue No</div>
+        <div>Client Type</div>
+        <div></div>
     </div>
+    <div class="transaction-list" id="pendingClientList" style="height: 220px;">
+        <!-- pending clients -->
     </div>
 </div>
 
-<div class="transaction-panel">
-    <div class="panel-header">
-        <h3> Recent Transactions </h3>
-        <div id="historyPagination" class="pagination"></div>
-    </div>
-        <div class="table-headers">
-            <div>Client Details</div>
-            <div>Transaction ID</div>
-            <div>Transction type</div>
+    <div class="transaction-panel">
+        <div class="panel-title">
+            <h3> Recent Transactions </h3>
+            <div id="historyPagination" class="pagination"></div>
+        </div>
+        <div class="transaction-headers grid-history">
+            <div>Client Name</div>
+            <div>Transaction No</div>
+            <div>Transaction type</div>
             <div>Status</div>
             <div>Date</div>
-        <div></div>
+            <div></div>
+        </div>
+        <div class="transaction-list" id="todayTransactions">
+            <!-- recent transactions -->
+        </div>
     </div>
-    <div class="transaction-list" id="todayTransactions">
-        <!-- data fetch -->
-    </div>
-</div>
 
 </main>
 <!-- sample modal -->

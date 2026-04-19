@@ -57,12 +57,11 @@ function fecthServices(page = 1, perPage = 4) {
                 'Complex': 'status-yellow',
                 'Highly Technical': 'status-red'
             }
-
-
+            
             const diviosionColor = typeColor[srvc.division] || 'status-default';
             const statColor = clssfction[srvc.classification] || 'status-default';
             const card = document.createElement('div');
-            card.className = 'client-card' + (highlight ? ' highlight' : '');
+            card.className = 'client-card';
             card.innerHTML = `
                 <div class="transaction-card"  >
                     <div>

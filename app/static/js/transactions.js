@@ -1,4 +1,16 @@
-function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPage = 5, servingPage = 1, servingPerPage = 1) {
+function getColorFromName(name) {
+    const colors = ["#fc6969", "#60a5fa", "#34d399", "#fbbf24", "#c1acff", "#fb7185"];
+
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
+}
+
+
+function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPage = 5, servingPage = 1, servingPerPage = 1) {
     fetch(f_transactions, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
@@ -16,7 +28,6 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         paginationControls.innerHTML = '';
         transacHistory.innerHTML = ''; // Clear history first
         historyPagination.innerHTML = '';
-        
 
         const userunit = data.account;
         
@@ -45,16 +56,7 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
 
         function addClientCard(client, highlight = false) {
             
-            const laneColorClass = client.client_lane_type === 'Priority' ? 'status-red' : 'status-blue';
-
-            const typeColor = {
-                'Inquiry': 'status-green',
-                'Payment': 'status-orange',
-                'Request': 'status-purple',
-                'Submit Documents': 'status-cyan',
-                'Screening': 'status-yellow',
-                'Others': 'status-gray',
-            }
+            const clientType = client.client_lane_type === 'Priority' ? 'status-red' : 'status-blue';
 
             const actionColor = {
                 'Completed': 'status-green',
@@ -62,8 +64,8 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                 'Pending': 'status-yellow',
             } 
 
-            const typeTransaction = typeColor[client.client_transaction_type] || 'status-default';
             const actionTypeColor = actionColor[client.client_status] || 'status-default';
+            const initials = client.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
 
             const clientData = {
                 transaction_id: client.tid,
@@ -78,48 +80,28 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
             };
 
             const card = document.createElement('div');
-            card.className = 'client-card' + (highlight ? ' highlight' : '');
+            card.className = 'transaction-history-card';
             card.innerHTML = `
-                <div class="transaction-card">
-                    <div class="avatar-circle">
-                        ${client.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)}
-                    </div>
-                    <div class="transaction-info">
-                        <div class="client-status-row">
-                            <span class="transaction-id">Client ID. ${client.client_id}</span>
-                            <span class="status ${actionTypeColor}">${client.client_status}</span>
-                            <span class="status ${laneColorClass}">${client.client_lane_type}</span>
-                            <span class="status ${typeTransaction}">${client.client_transaction_type}</span>
+                <div class="transaction-cards grid-pending">
+                    <div class="col client-id"><i class="fas fa-user" style="margin-right: 10px;"></i> ${client.client_id}</div>
+                    <div class="col client">
+                        <div class="avatar">${initials}</div>
+                        <div class="info">
+                            <div class="name">${client.client_fullname}</div>
+                            <div class="email">emma@example.com</div>
                         </div>
-                        <p class="transaction-description"> Ticket No. ${client.client_queue_no} </p>
-                        <p class="transaction-description"> Complete Name: ${client.client_fullname} </p>
-                        ${userunit === 'PACD' ? ``: 
-                            `<p class="transaction-description"> Transaction Details: ${client.client_transaction_details} </p>
-                            <p class="transaction-description"> Company Name: ${client.client_org || "Individual"} </p>`}
                     </div>
-                    <div class="transaction-actions">   
-                    <span class="timestamp">Date: ${formatDateTime(client.date_created)}</span>
-                        ${userunit === 'PACD' ? `
-                            <button class="icon-button text-blue" title="Approved"
-                                onclick='openModal("approved", ${JSON.stringify(clientData)} )'>
-                                <i class="fa fa-check"></i>
-                            </button>
-                            <button class="icon-button" title="Forward"
-                                onclick='openModal("forward", ${JSON.stringify(clientData)} )'>
-                                <i class="fa fa-arrow-circle-right"></i>
-                            </button>
-                            <button class="icon-button text-red" title="Skipped"
-                                onclick="skipClient('${client.id}')">
-                                <i class="fa fa-times"></i>
-                            </button>
+                    <div class="col transaction-id">${client.client_queue_no}</div>
+                    <div class="col product status ${clientType}">${client.client_lane_type}</div>
+                    <div class="col actions">${userunit === 'PACD' ? `
+                        <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-pen edit" title="Serving" onclick='openModal("edit", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-sync-alt update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-trash delete" title="Skipped" onclick="skipClient('${client.id}')"></i>
                         ` : `
-                            <button class="icon-button text-blue" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)} )'>
-                                <i class="fa fa-check-circle"></i>
-                            </button>                   
-                            <button class="icon-button text-red" title="Skipped" onclick="skipClientUnit('${client.client_id}')">
-                                <i class="fa fa-remove"></i>
-                            </button>
-                        `}
+                        <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-trash delete" title="Skipped" onclick="skipClient('${client.id}')"></i>
+                        `} 
                     </div>
                 </div>
             `;
@@ -128,39 +110,19 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         }
 
         function addHistoryCard(history) {
-            const divisionColor = {
-                'MSD': 'status-green',
-                'LHSD': 'status-orange',
-                'RLED': 'status-purple',
-                'RD/ARD': 'status-cyan',
-            }
-
             const actionColor = {
                 'Completed': 'status-green',
                 'Serving': 'status-blue',
-                'Pending': 'status-yellow',
+                'Pending': 'status-brown',
             } 
             
-            const typeColor = {
-                'Inquiry': 'status-green',
-                'Payment': 'status-orange',
-                'Request': 'status-purple',
-                'Submit Documents': 'status-cyan',
-                'Screening': 'status-yellow',
-                'Others': 'status-gray',
-            }
-            
-            const laneColorClass = history.action_type === 'Priority' ? 'status-red' : 'status-blue';
             const statusColor = actionColor[history.status] || 'status-default';
-            const documentType = typeColor[history.transaction_type] || 'status-default';
-            const divisionType = divisionColor[history.client_division] || 'status-default';
             const initials = history.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
-
 
             const card = document.createElement('div');
             card.className = 'transaction-history-card';
             card.innerHTML = `
-                <div class="transaction-cards">
+                <div class="transaction-cards grid-history">
                     <div class="col client">
                         <div class="avatar">${initials}</div>
                         <div class="info">
@@ -168,15 +130,18 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
                             <div class="email">emma@example.com</div>
                         </div>
                     </div>
-                    <div class="col order-id">${history.transaction_no}</div>
-                    <div class="col product">${history.transaction_type}</div>
+                    <div class="col transaction-id">${history.transaction_no}</div>
+                    <div class="col type">${history.transaction_type}</div>
                     <div class="col status ${statusColor}"> ${history.status}</div>
-                    <div class="col amount">${formatDateTime(history.date_resolved)}</div>
-                    <div class="col actions">
-                        <i class="fas fa-pen edit"></i>
+                    <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
+                    <div class="col actions"> ${userunit === 'PACD' ? `
+                        <i class="fas fa-eye view"></i>
                         <i class="fas fa-sync-alt update"></i>
+                        ` : `
+                        <i class="fas fa-eye view"></i>
+                        `}
+                        
                     </div>
-
                 </div>
             `;
             transacHistory.appendChild(card);
@@ -231,30 +196,25 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         }
 
         const typeTransaction = typeColor[served.client_transaction_type] || 'status-default';
-
+        const initials = served.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
+        // serving client
         const card = document.createElement('div');
         card.className = 'client-card';
         card.innerHTML = `
-                <div class="transaction-card">
-                    <div class="avatar-circle">
-
-                    </div>
-                    <div class="transaction-info">
-                        <div class="client-status-row">
-                            <span class="transaction-id">Client ID. ${served.client_id} </span>
-                            <span class="status status-blue"> ${served.client_action}</span>
-                            <span class="status ${laneColorClass}">${served.client_lane_type}</span>
-                            <span class="status ${typeTransaction}">${served.client_transaction_type}</span>
+                <div class="transaction-cards grid-pending">
+                    <div class="col client-id"><i class="fas fa-user" style="margin-right: 10px;"></i> ${served.client_id}</div>
+                    <div class="col client">
+                        <div class="avatar"> ${initials}</div>
+                        <div class="info">
+                            <div class="name">${served.client_fullname}</div>
+                            <div class="email">${served.client_org}</div>
                         </div>
-                        <p class="transaction-description">${served.client_fullname}, Ticket No. ${served.client_queue_no}</p>
-                        <p class="transaction-description">Office Name: ${served.client_org ? served.client_org : "Individual"}</p>
-                        <p class="transaction-description">Transaction Details: ${served.transaction_details}</p>
                     </div>
-                    <div class="transaction-actions">
-                        <span class="timestamp">Time Started: ${formatDateTime(served.date_created)}</span>
-                        <button class="icon-button text-blue" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'>
-                            <i class="fa fa-check-circle"></i>
-                        </button>
+                    <div class="col transaction-id"> ${served.transaction_no}</div>
+                    <div class="col type"> ${served.transaction_type}</div>
+                    <div class="col actions">
+                        <i class="fas fa-check accept" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'></i>
+                        <i class="fas fa-trash delete"></i>
                     </div>
                 </div>
             `;
@@ -274,13 +234,23 @@ function fetchTransactions(page = 1, perPage = 2, historyPage = 1, historyPerPag
         renderPagination(servingPagination, servingPage, totalServingPages, (newServingPage) => {
             fetchTransactions(page, perPage, historyPage, historyPerPage, newServingPage, servingPerPage);
         });
+
         divisionUnitSelect('division-select', 'unit-select');
+
+
+        document.querySelectorAll('.client').forEach(el => {
+            const name = el.querySelector('.name').innerText;
+            const avatar = el.querySelector('.avatar');
+
+            avatar.style.backgroundColor = getColorFromName(name);
+        });
     });
 }
 
 if (path.includes(transaction)) {
-        fetchTransactions();
+        fetchTransactions();      
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes(transaction)) {

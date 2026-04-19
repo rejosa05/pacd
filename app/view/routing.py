@@ -17,7 +17,7 @@ def client_details(request):
             return redirect('client_ticket', client_id=client.id)
     else:
          form = ClientDetailsForm()
-    return render(request, 'app/client.html', {'form': form})
+    return render(request, 'app/kiosk.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":

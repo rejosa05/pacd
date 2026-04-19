@@ -86,15 +86,12 @@ def set_queue_no(sender, instance, **kwargs):
 
 class ServicesDetails(models.Model):
     service_name = models.TextField(    )
-    service_code = models.CharField(max_length=100, null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
     classification = models.CharField(max_length=100, null=True, blank=True)
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
-    edition = models.CharField(max_length=100, null=True, blank=True)
-    function = models.CharField(max_length=100, null=True, blank=True)
-    processing_time =  models.CharField(max_length=100, null=True, blank=True)
+    processing_time = models.DurationField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.service_name}"

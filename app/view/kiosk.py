@@ -8,12 +8,11 @@ def client_details(request):
         form = ClientDetailsForm(request.POST)
         if form.is_valid():
             client = form.save()
-
-            # 🔥 REAL-TIME UPDATE
+            
             send_queue_update(client)
 
             return redirect('client_ticket', client_id=client.id)
     else:
         form = ClientDetailsForm()
 
-    return render(request, 'app/client.html', {'form': form})
+    return render(request, 'app/kiosk.html', {'form': form})

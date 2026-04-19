@@ -9,12 +9,11 @@ from django.http import JsonResponse
 
 def serviceList(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        services = ServicesDetails.objects.all().order_by('-service_code')
+        services = ServicesDetails.objects.all()
         serviceList = [
             {   
                 'id': service.id,
                 'service_name': service.service_name,
-                'service_code': service.service_code,
                 'division': service.division,
                 'unit': service.unit,
                 'classification': service.classification,

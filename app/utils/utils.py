@@ -15,9 +15,7 @@ def notify(user, today):
     return notifications
 
 def get_clients(unit):
-    
     getClients = []
-
     if unit == 'PACD':
         clients = DivisionLog.objects.all().order_by('-client_id')
     else:
@@ -35,6 +33,7 @@ def get_clients(unit):
             'date_started': client.date.isoformat() if client.date else None,
             'form': client.form,
             'date_served': client.date.isoformat() if client.date else None,
+            'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
         })
     return getClients
 
@@ -108,7 +107,6 @@ def get_srvc_div(division):
         getServices.append({
             'id': srvc.id,
             'service_name': srvc.service_name,
-            'service_code': srvc.service_code,
             'service_classification': srvc.classification,
         })
     return getServices
@@ -140,6 +138,7 @@ def transaction_history(date, unit):
             'status': transaction.status,
             'date_resolved': transaction.date_resolved.isoformat() if transaction.date_resolved else None,
         })
+
     return getTransaction
 
 
@@ -149,13 +148,12 @@ def pending_transaction(today, unit):
         pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
         for client in pending_clients:
             pendingTransactions.append({
-                'client_id': client.id,
+                'client_id': str(client.id).zfill(3),
                 'public_id': client.public_id,
-                'client_queue_no': client.client_queue_no,
+                'client_queue_no': str(client.client_queue_no).zfill(2),
                 'client_fullname': client.client_firstname + ' ' + client.client_lastname,
                 'client_lane_type': client.client_lane_type,
                 'client_contact': client.client_contact,
-                'client_transaction_type': 'Screening',
                 'client_status': client.client_status,
                 'client_gender': client.client_gender,
                 'date_created': client.client_created_date.isoformat() if client.client_created_date else None,
@@ -165,7 +163,7 @@ def pending_transaction(today, unit):
         for client in pending_clients:
             pendingTransactions.append({
                 'tid': client.id,
-                'client_id': client.client_id.id,
+                'client_id': str(client.client_id.id).zfill(3),
                 'client_queue_no': client.client_id.client_queue_no,
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_contact': client.client_id.client_contact,
@@ -188,13 +186,13 @@ def serving_client_unit_list(today, unit, id):
         servingTransaction.append({
             'transaction_id': client.id,
             'public_id': client.client_id.public_id,
-            'client_id': client.client_id.id,
+            'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,
             'client_queue_no': client.client_id.client_queue_no,
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
             'client_action': client.action_type,
-            'client_transaction_type': client.transaction_type,
+            'transaction_type': client.transaction_type,
             'client_contact': client.client_id.client_contact,
             'client_org': client.client_id.client_org,
             'client_division': client.division,

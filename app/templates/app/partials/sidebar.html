@@ -10,18 +10,21 @@
                 <i class="fas fa-area-chart icon"></i> Dashboard
             </a>
             <a href="{% url 'transactions' %}" class="menu-item {% if request.resolver_match.url_name == 'transactions' %} active {% endif %}">
-                <i class="fas fa-comments icon"></i> Transactions
+                <i class="fas fa-user icon"></i> Clients
             </a>
             {% if user.unit == 'PACD' %}
             <a href="{% url 'account' %}" class="menu-item {% if request.resolver_match.url_name == 'account' %} active {% endif %}">
-                <i class="fas fa-user-plus icon"></i> Accounts
+                <i class="fas fa-users icon"></i> Accounts
             </a>
             {% endif %}
-            <a href="{% url 'reports' %}" class="menu-item">
-                <i class="fas fa-chart-line icon"></i> Reports
-            </a>
-            <a href="{% url 'services' %}" class="menu-item">
+            <a href="{% url 'services' %}" class="menu-item menu-item {% if request.resolver_match.url_name == 'services' %} active {% endif %}">
                 <i class="fas fa-gears icon"></i> Services
+            </a>
+            <a href="{% url 'reports' %}" class="menu-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
+                <i class="fas fa-file-text icon"></i> Reports
+            </a>
+            <a href="{% url 'transactions' %}" class="menu-item {% if request.resolver_match.url_name == '' %} active {% endif %}">
+                <i class="fas fa-list icon"></i> Transactions
             </a>
         </div>
         <div class="support-box">
