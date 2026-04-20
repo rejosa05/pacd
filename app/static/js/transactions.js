@@ -95,7 +95,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col product status ${clientType}">${client.client_lane_type}</div>
                     <div class="col actions">${userunit === 'PACD' ? `
                         <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-sync-alt update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-paper-plane update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
                         ` : `
                         <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
