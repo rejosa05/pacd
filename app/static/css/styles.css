@@ -906,7 +906,7 @@ th, td {
     color: #2a3100;
     cursor: pointer;
 }
-
+/* ------------- Edit modal ---------- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -920,9 +920,9 @@ th, td {
 .modal-view {
     background: white;
     border-radius: 12px;
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     font-size: 1rem;
@@ -1556,10 +1556,9 @@ th, td {
 }
 
 .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-bg);
     color: white;
     padding: 2rem;
-    text-align: center;
     position: relative;
 }
 
@@ -1619,7 +1618,6 @@ th, td {
 }
 
 .modal-body {
-    padding: 2rem;
     max-height: 60vh;
     overflow-y: auto;
 }
@@ -1627,8 +1625,7 @@ th, td {
 .client-info-card {
     background: #f8f9fa;
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 0.5rem;
 }
 
 .info-row {
@@ -1682,12 +1679,6 @@ th, td {
     gap: 1.5rem;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1719,7 +1710,7 @@ th, td {
 }
 
 .modal-footer {
-    padding: 1.5rem 2rem;
+    padding: 0 3rem;
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
     display: flex;

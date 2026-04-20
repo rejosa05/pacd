@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
     const filterButtons = document.querySelectorAll('.btn-filter');
 
-    let filteredClientsCache = [];
+    let allClientsCache = [];
     let currentStatusFilter = 'all';
     let currentPage = 1;
     const itemsPerPage = 10;
@@ -28,25 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return dateString ? new Date(dateString) : null;
     }
 
-    function getDateFilteredClients(data) {
+    function applyFilters(clients) {
+        const searchTerm = searchInput.value.toLowerCase().trim();
         const startDate = formatDateOnly(dateStartInput.value);
         const endDate = formatDateOnly(dateEndInput.value);
         const endOfDay = endDate ? new Date(endDate.getTime() + 86399999) : null;
-        const allClients = Array.isArray(data.getClients) ? data.getClients : [];
-
-        return allClients.filter(client => {
-            if (!client.date_served) return false;
-            const servedDate = new Date(client.date_served);
-
-            if (startDate && servedDate < startDate) return false;
-            if (endOfDay && servedDate > endOfDay) return false;
-
-            return true;
-        });
-    }
-
-    function applyFilters(clients) {
-        const searchTerm = searchInput.value.toLowerCase().trim();
 
         return clients.filter(client => {
             // Status filter
@@ -58,6 +44,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     'completed': 'Completed'
                 };
                 if (client.client_status !== statusMap[currentStatusFilter]) return false;
+            }
+
+            // Date filter
+            if (startDate || endDate) {
+                if (!client.date_served) return false;
+                const servedDate = new Date(client.date_served);
+                if (startDate && servedDate < startDate) return false;
+                if (endOfDay && servedDate > endOfDay) return false;
             }
 
             // Search filter
@@ -135,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderFiltered() {
-        const filteredData = applyFilters(filteredClientsCache);
+        const filteredData = applyFilters(allClientsCache);
         updateMetrics(filteredData);
         renderTable(filteredData);
         renderPagination(filteredData.length);
@@ -250,8 +244,9 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
         .then(data => {
-            filteredClientsCache = getDateFilteredClients(data);
-            currentPage = 1;
+            // Store all clients without date filtering
+            allClientsCache = Array.isArray(data.getClients) ? data.getClients : [];
+            currentPage = 1;    
             renderFiltered();
         })
         .catch(error => console.error('Error fetching served clients:', error));
@@ -285,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (convertToExcel) {
         convertToExcel.addEventListener('click', function (event) {
             event.preventDefault();
-            const filteredData = applyFilters(filteredClientsCache);
+            const filteredData = applyFilters(allClientsCache);
             downloadCSV(filteredData);
         });
  

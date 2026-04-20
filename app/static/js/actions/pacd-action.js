@@ -335,12 +335,21 @@ function openModal(type, data = {}) {
     // // title.textContent = data.title || "Client Details";
 
     let htmlContent = `
-    <h3> <i class="fa fa-ticket icon_modal" aria-hidden="true" title="Ticket"> </i>  Ticket No. ${data.client_queue_no || "N/A"}</h3>
-    <div class="">
-        <span class="client-id"> <i class="fa fa-id-badge icon_modal"></i> Client ID: ${data.client_id || "N/A"}</span>
-        <span class="client-name"> <i class="fa fa-user icon_modal"></i> ${data.client_fullname || "N/A"}</span>
-        <span> <i class="fa fa-phone icon_modal"></i> +63 ${data.client_contact || "N/A"}</span>
-    </div>
+    <h2> <i class="fa fa-ticket icon_modal" aria-hidden="true" title="Ticket"> </i>  Ticket No. ${data.client_queue_no || "N/A"}</h2>
+        <div class="client-info-card">
+            <div class="info-row">
+                <span class="label">Client ID:</span>
+                <span class="value"> ${data.client_id}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Full Name:</span>
+                <span class="value"> ${data.client_fullname || "N/A"}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Contact:</span>
+                <span class="value"> ${data.client_contact || "N/A"} </span>
+            </div>
+        </div>        
     `;
 
     if (type === "approved") {
@@ -417,32 +426,51 @@ function openModal(type, data = {}) {
 
     if (type === "forward") {
         htmlContent += `
-            <label for="org-name">Organization/Company Name</label>
-            <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
-            <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="transaction" id="transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquiry</option>
-                    <option value="Request">Request</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <label class="form-label" for="division">Division: </label>
-                <select class="form-option" name="divisions" id="division-select">
-                    <option value="">Select Division</option>
-                    <option value="MSD">MSD</option>
-                    <option value="LHSD">LHSD</option>
-                    <option value="RD/ARD">RD/ARD</option>
-                    <option value="RLED">RLED</option>
-                </select>
-            <label class="form-label" for="unit">Unit:</label>
-                <select class="form-option" name="unit" id="unit-select" required>
-                    <option value="">Select Unit</option>
-                </select>
-            <button type="submit"> Forward </button>
+        <div class="modal-body">
+            <div class="info-row">
+                <span class="label">Organization:</span>
+                <span class="value"></span>
+                <input class="form-control" type="text" id="org-name" placeholder="Company Name">
+            </div>
+            <form class="modern-form">
+                <div class="form-group">
+                    <label for="transaction-type">Transactions Type</label>
+                        <select class="form-control" name="transaction" id="transaction-type">
+                            <option value="">Select Type</option>
+                            <option value="Inquiry">Inquiry</option>
+                            <option value="Request">Request</option>
+                            <option value="Submit Documents">Submit Documents</option>
+                            <option value="Payment">Payment</option>
+                            <option value="Others">Others</option>
+                        </select>
+                </div>
+                <div class="info-row">
+                    <label for="r-transactions-details">Transactions Details</label>
+                    <textarea id="transactions-details" class="form-control" placeholder="Transactions Details....." required=True></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"> 
+                        <label for="division">Division: </label>
+                        <select class="form-control" name="divisions" id="division-select">
+                            <option value="">Select Division</option>
+                            <option value="MSD">MSD</option>
+                            <option value="LHSD">LHSD</option>
+                            <option value="RD/ARD">RD/ARD</option>
+                            <option value="RLED">RLED</option>
+                        </select>
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="unit">Unit:</label>
+                            <select class="form-control" name="unit" id="unit-select" required>
+                                <option value="">Select Unit</option>
+                            </select>
+                    </div> 
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Forward </button>
+        </div>
         `;
     }
 

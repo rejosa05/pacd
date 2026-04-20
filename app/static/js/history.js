@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function renderTable(clients) {
-        const tableBody = document.querySelector('#clientList tbody');
+        const tableBody = document.querySelector('#client_List tbody');
         if (!tableBody) return;
         tableBody.innerHTML = '';
 
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (document.getElementById('clientList')) {
+    if (document.getElementById(urlHistory)) {
         fetchTransactionHistory();
     }
 });
