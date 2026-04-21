@@ -31,7 +31,6 @@ urlpatterns = [
 
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
     path('skipped-client/', skipped_client, name='skipped-client'),
-    path('skipped-client-unit', skipped_client_unit, name='skipped-client-unit'),
     
     path('notifications', notifications, name='notifications'),
     path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
@@ -61,7 +60,7 @@ urlpatterns = [
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
     path('services', services_page, name="services"),
-    path('acknowledgement/<uuid:public_id>', acknowledgement, name="acknowledgement"),
+    path('acknowledgement/<str:transaction_no>', acknowledgement, name="acknowledgement"),
 
     # path('api/clients/', create_client, name='create_client'),
 ]

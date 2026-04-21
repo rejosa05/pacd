@@ -118,6 +118,10 @@ function approvedClient(cid, pid) {
 
     const resolutions = csmChecked ? 'CSM' : 'CSS';
 
+    // Get transaction number before closing modal
+    const transactionNoElement = document.getElementById('transaction-no');
+    const transactionNo = transactionNoElement ? transactionNoElement.textContent.trim() : '';
+
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
         headers: {
@@ -137,8 +141,10 @@ function approvedClient(cid, pid) {
         fetchTransactions();
         closeModal();
 
-        const receiptUrl = `/acknowledgement/${pid}`;
-        window.open(receiptUrl, '_blank');
+        if (transactionNo) {
+            const receiptUrl = `/acknowledgement/${transactionNo}`;
+            window.open(receiptUrl, '_blank');
+        }
     })
 }
 
@@ -200,12 +206,12 @@ function saveAccount(){
     closeAddAccount();
 }
 
-function saveRepeat(id, tr_id) {
+function saveRepeat(id) {
     const transaction_type = document.getElementById('transaction-type').value;
     const transaction_details = document.getElementById('transactions-details').value;
     const division = document.getElementById('division-select').value;
     const unit = document.getElementById('unit-select').value;
-    console.log(id, tr_id)
+    const org_name = document.getElementById('org-name').textContent.trim();
     fetch(repeatTransaction, {
         method: 'POST',
         headers: {
@@ -213,12 +219,13 @@ function saveRepeat(id, tr_id) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${id}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
+        body: `client_id=${id}&org_name=${encodeURIComponent(org_name)}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
     })
     .then(response => response.json())
     .then(() => {
-        alert('repeat transactions!!');
+        
         closeModal();
+        fetchTransactions();
     })   
 }
 
@@ -241,6 +248,7 @@ function servingClient(id) {
 }
 
 function serveClient(tid, cid, pid) {
+    const trnsctionNo = document.getElementById('transaction-no');
     const srvcSelect = document.getElementById('serviceList');
     const remarks = document.getElementById('remarks');
     const deficienciesInput = document.getElementById('deficiencies');
@@ -299,6 +307,10 @@ function serveClient(tid, cid, pid) {
 
     const resolutions = csmChecked ? 'CSM' : 'CSS';
 
+    // Get transaction number before closing modal
+    const transactionNoElement = document.getElementById('transaction-no');
+    const transactionNo = transactionNoElement ? transactionNoElement.textContent.trim() : '';
+
     fetch(updateCLientStatusServedUnitUrl, {
         method: 'POST',
         headers: {
@@ -316,9 +328,10 @@ function serveClient(tid, cid, pid) {
         alert('Successfully catered!');
         fetchTransactions();
         closeModal();
-
-        const receiptUrl = `/acknowledgement/${pid}`;
-        window.open(receiptUrl, '_blank');
+        if (transactionNo) {
+            const receiptUrl = `/acknowledgement/${transactionNo}`;
+            window.open(receiptUrl, '_blank');
+        }
     })
 }
 
@@ -331,8 +344,12 @@ function openModal(type, data = {}) {
     // // title.textContent = data.title || "Client Details";
 
     let htmlContent = `
-    <h2> <i class="fa fa-ticket icon_modal" aria-hidden="true" title="Ticket"> </i>  Ticket No. ${data.client_queue_no || "N/A"}</h2>
+    <h3> <i class="fa fa-ticket icon_modal" aria-hidden="true" title="Ticket"> </i>  Ticket No. ${data.client_queue_no || "N/A"}</h3>
         <div class="client-info-card">
+        <div class="info-row">
+                <span class="label">Transactions No:</span>
+                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}</span>
+            </div>
             <div class="info-row">
                 <span class="label">Client ID:</span>
                 <span class="value"> ${data.client_id}</span>
@@ -470,71 +487,81 @@ function openModal(type, data = {}) {
 
     if (type === "serving") {
         htmlContent += `
-            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
-            <span> <i class="fa fa-folder icon_modal" title="Type"></i> ${data.client_transaction_type} </span>
-            <span> <i class="fa fa-info-circle icon_modal" title="Transaction Details"></i> Details: ${data.client_details} </span>
-            <button type="submit"> Serving </button>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Organization:</label>
+                <label class="value" type="text" id="org-name" placeholder="Company Name"> ${data.client_org || "Individual"} </label>
+            </div>
+            <div class="form-group">
+                <label>Transaction Type:</label>
+                <label class="value" type="text" id="transaction-type" placeholder="Transaction Type"> ${data.client_transaction_type || "N/A"} </label>
+            </div>
+            <div class="form-group">
+                <label>Transaction Details:</label>
+                <label class="value" type="text" id="transaction-details" placeholder="Transaction Details"> ${data.client_details || "N/A"} </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Serving </button>
+        </div>
         `;
         setTimeout(initCitizenCharterHandlers, 0);
     }
 
     if (type === "served") {
         htmlContent += `
-            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
-            <span> <i class="fa fa-folder icon_modal" title="Type"></i> ${data.client_transaction_type} </span>
-            <span> <i class="fa fa-info-circle icon_modal" title="Transaction Details"></i> Details: ${data.transaction_details} </span>
-            <div id="citizen-charter-wrapper">
-                <div class="checkbox-group">
-                    <label>is transaction covered by Citizen Charter? </label>
-                    <label>
-                        <input type="radio" name="cc-cover" value="Yes"> Yes
-                    </label>
-                    <label>
-                        <input type="radio" name="cc-cover" value="No"> No
-                    </label>
-                </div>
-                <select class="form-option" name="divisions" id="serviceList"></select>
-                <div id="deficiencies-wrapper">
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Organization:</label>
+                <label class="value" type="text" id="org-name" placeholder="Company Name"> ${data.client_org || "Individual"} </label>
+            </div>
+            <div class="form-group">
+                <label>Transaction Type:</label>
+                <label class="value" type="text" id="transaction-type" placeholder="Transaction Type"> ${data.transaction_type || "N/A"} </label>
+            </div>
+            <div class="form-group">
+                <label>Transaction Details:</label>
+                <label class="value" type="text" id="transaction-details" placeholder="Transaction Details"> ${data.transaction_details || "N/A"} </label>
+            </div>
+            <form class="modern-form">
+                <div class="form-group">
                     <div class="checkbox-group">
-                        <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
-                        <label>
-                            <input type="radio" name="requirements" value="Yes"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="requirements" value="No"> No
-                        </label>
+                        <label>is transaction covered by Citizen Charter? </label>
+                        <label> <input type="radio" name="cc-cover" value="Yes"> Yes </label>
+                        <label> <input type="radio" name="cc-cover" value="No"> No </label>
                     </div>
-                    <div id="deficiencies-textarea">
-                        <label>Deficiencies to comply</label>
-                        <textarea id="deficiencies" class="remarks-textarea" placeholder="Deficiencies....." required></textarea>
+                    <div id="citizen-charter-wrapper">
+                        <select class="form-control" name="divisions" id="serviceList"></select>
                     </div>
-                </div>                   
-            </div>
-            <label>Remarks</label>
-            <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
-            <div class="checkbox-group">
-                <label class="form-label">is the transaction request catered and/or resolved? </label>
-                <label id="">
-                    <input type="radio" id="" name="request_processed" value="Yes">
-                    Yes
-                </label>
-                <label id="">
-                    <input type="radio" id="" name="request_processed" value="No">
-                    No
-                </label>
-            </div>
-            <div class="checkbox-group">
-                <label class="form-label">CSS/CSM:</label>
-                <label id="csm-wrapper">
-                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM">
-                    CSM
-                </label>
-                <label id="css-wrapper">
-                    <input type="checkbox" id="css-checkbox" name="resolution" value="CSS">
-                    CSS
-                </label>
-            </div>
-            <button type="submit"> Served </button>
+                    <div id="deficiencies-wrapper">
+                        <div class="checkbox-group">
+                            <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
+                            <label><input type="radio" name="requirements" value="Yes"> Yes </label>
+                            <label><input type="radio" name="requirements" value="No"> No </label>
+                        </div>
+                        <div id="deficiencies-textarea">
+                            <textarea id="deficiencies" class="textarea form-control" placeholder="Deficiencies to comply....." required></textarea>
+                        </div>
+                    </div>
+                    <textarea id="remarks" class="textarea form-control" placeholder="Remarks....." required=True></textarea>
+                    <div class="checkbox-group">
+                        <label class="form-label">is the transaction request catered and/or resolved? </label>
+                        <label><input type="radio" name="request_processed" value="Yes"> Yes </label>
+                        <label><input type="radio" name="request_processed" value="No"> No </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label class="form-label">CSS/CSM:</label>
+                        <div id="csm-wrapper">
+                            <label><input type="radio" id="csm-checkbox" name="resolution" value="CSM"> CSM </label>
+                        </div> 
+                        <div id="css-wrapper"><label> <input type="radio" id="css-checkbox" name="resolution" value="CSS"> CSS </label>
+                    </div> 
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Serving </button>
+        </div>
         `;
         setTimeout(initCitizenCharterHandlers, 0);
     }
@@ -596,19 +623,26 @@ function openModal(type, data = {}) {
 
     document.getElementById("clientModal").style.display = "flex";
 
+    if (type === "forward" || type === "repeat") {
+        divisionUnitSelect('division-select', 'unit-select');
+        if (window.pendingCount === 0) {
+            document.getElementById('unit-select').disabled = true;
+        }
+    }
+
     form.onsubmit = (e) => {
         e.preventDefault();
         // const formData = new FormData(form);
         if (type === "forward") {
             forwardClient(data.client_id);
         } else if (type === "served") {
-            serveClient(data.transaction_id, data.client_id, data.public_id);
+            serveClient(data.transaction_id);
         } else if (type === "serving") {
             servingClient(data.transaction_id)
         } else if (type === "approved") {
             approvedClient(data.client_id, data.public_id);
         } else if (type === "repeat") {
-            saveRepeat(data.id, data.client_id);
+            saveRepeat(data.client_id);
         } else if (type === "skip") {
             skippedClient(data.client_id);
         }

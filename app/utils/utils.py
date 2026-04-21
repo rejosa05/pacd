@@ -164,7 +164,7 @@ def pending_transaction(today, unit):
             pendingTransactions.append({
                 'tid': client.id,
                 'client_id': str(client.client_id.id).zfill(3),
-                'client_queue_no': client.client_id.client_queue_no,
+                'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_contact': client.client_id.client_contact,
                 'client_lane_type': client.client_id.client_lane_type,
@@ -188,7 +188,7 @@ def serving_client_unit_list(today, unit, id):
             'public_id': client.client_id.public_id,
             'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,
-            'client_queue_no': client.client_id.client_queue_no,
+            'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
             'client_action': client.action_type,
@@ -220,7 +220,7 @@ def transaction_status(today, account):
         }
     return countTransactionStatus
     
-def client_context(public_id, request):
+def client_context(t_no, request):
     username = request.session.get('username')
     if not username:
         return None  # means user not logged in
@@ -228,11 +228,11 @@ def client_context(public_id, request):
     user = AccountDetails.objects.filter(user=username).first()
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
 
-    clientDetails = get_object_or_404(ClientDetails, public_id=public_id)
-    divisionLog = DivisionLog.objects.filter(client_id__id = clientDetails.id).first()
+    divisionLog = get_object_or_404(DivisionLog, transaction_no=t_no)
+    clientDetails = divisionLog.client_id  # Get related ClientDetails
 
-    services = getattr(divisionLog, "service_id", None)
-    account = getattr(divisionLog, "process_owner_id", None)
+    services = divisionLog.service_id  # Get related ServicesDetails
+    account = divisionLog.process_owner_id  # Get related AccountDetails
 
     return {
         'clientDetails': clientDetails,

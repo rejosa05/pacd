@@ -1652,6 +1652,16 @@ th, td {
     font-size: 0.875rem;
 }
 
+.form-group .value {
+    display: flex;
+    color: #6c757d;
+    text-align: right;
+    justify-content: space-between;
+    border-bottom: 1px solid #e9ecef;
+    font-style: italic;
+}
+
+
 .form-control {
     padding: 0.75rem;
     border: 2px solid #e9ecef;

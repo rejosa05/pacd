@@ -3,7 +3,7 @@ const {
     pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
     forwardedClientUrl, csrfToken,
     f_dashboard, dashboard,
-    f_transactions, transaction, accounts,
+    f_transactions, transaction, accounts, updateCLientStatusServedUnitUrl,
     reports, urlHistory
 } = window.dashboardConfig;
 

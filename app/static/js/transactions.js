@@ -98,7 +98,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                         <i class="fas fa-paper-plane update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-trash delete" title="Skipped" onclick="openModal("skip", ${JSON.stringify(clientData)})"></i>
                         ` : `
-                        <i class="fas fa-edit serving" title="Serving" onclick='openModal("skip", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
                         `}
                     </div>
@@ -144,6 +144,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                 </div>
             `;
             transacHistory.appendChild(card); 
+            divisionUnitSelect('division-select', 'unit-select');
         }
 
         paginatedClients.forEach(addClientCard);

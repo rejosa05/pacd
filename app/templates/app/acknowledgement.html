@@ -180,6 +180,7 @@
     </header>
 
     <div class="meta">
+      <div class="item"><span class="label">Transaction ID</span><span class="value">{{ divisionLog.transaction_no }}</span></div>
       <div class="item"><span class="label">Transaction Reciept No.</span><span class="value">AR-TR{{ divisionLog.date_resolved|date:"Y" }}-{{ divisionLog.id }}</span></div>
       <div class="item"><span class="label">Date Issued</span><span class="value">{{ divisionLog.date_resolved|date:"F d, Y h:i A" }}</span></div>
     </div>
