@@ -185,10 +185,7 @@ socket.onmessage = function(e) {
     }
 };
 
-// optional debug
-socket.onopen = () => console.log("✅ WebSocket Connected");
-socket.onerror = (e) => console.error("❌ WebSocket Error", e);
-socket.onclose = () => console.warn("⚠️ WebSocket Closed");     
+
 </script>
 
 {% endblock %}

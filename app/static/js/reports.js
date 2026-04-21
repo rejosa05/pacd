@@ -197,9 +197,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const csmCount = clients.filter(client => client.form === 'CSM').length;
         const cssCount = clients.filter(client => client.form === 'CSS').length;
 
-        totalCSM.textContent = csmCount;
-        totalCSS.textContent = cssCount;
-        totalTransactions.textContent = clients.length;
+        if(totalCSM) totalCSM.textContent = csmCount;
+        if(totalCSS) totalCSS.textContent = cssCount;
+        if(totalTransactions) totalTransactions.textContent = clients.length;
     }
 
     function downloadCSV(data) {
@@ -244,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
         .then(data => {
-            // Store all clients without date filtering
             allClientsCache = Array.isArray(data.getClients) ? data.getClients : [];
             currentPage = 1;    
             renderFiltered();

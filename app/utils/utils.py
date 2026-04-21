@@ -99,8 +99,8 @@ def get_total_services():
     }
     return totalServices
 
-def get_srvc_div(division):
-    services = ServicesDetails.objects.filter(division=division)
+def get_srvc_div(division, unit):
+    services = ServicesDetails.objects.filter(division=division, unit=unit)
 
     getServices = []
     for srvc in services:

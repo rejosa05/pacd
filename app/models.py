@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.hashers import make_password
 import uuid
 
@@ -64,9 +65,9 @@ class ClientDetails(models.Model):
         return f"({self.client_firstname} {self.client_lastname})"
     
     def save(self, *args, **kwargs):
-        self.client_firstname = self.client_firstname.title()
-        self.client_lastname = self.client_lastname.title()
-        self.client_org = self.client_org.title()
+        self.client_firstname = (self.client_firstname or '').title()
+        self.client_lastname = (self.client_lastname or '').title()
+        self.client_org = (self.client_org or '').title()
         
         super(ClientDetails, self).save(*args, **kwargs)
     
@@ -85,13 +86,13 @@ def set_queue_no(sender, instance, **kwargs):
         instance.client_queue_no = ClientDetails.get_queue_no()
 
 class ServicesDetails(models.Model):
-    service_name = models.TextField(    )
+    service_name = models.TextField()
     category = models.CharField(max_length=100, null=True, blank=True)
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
     classification = models.CharField(max_length=100, null=True, blank=True)
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
-    processing_time = models.DurationField(null=True, blank=True)
+    processing_time = models.DurationField(default=timedelta(days=1), null=True, blank=True)
 
     def __str__(self):
         return f"{self.service_name}"

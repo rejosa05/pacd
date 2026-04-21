@@ -281,6 +281,7 @@ def serving_client_unit(request):
 def repeat_transactions(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
+            transaction_id = request.POST.get('transaction_id')
             client_id = request.POST.get('client_id')
             org_name = request.POST.get('org_name')
             type = request.POST.get('transaction_type')
@@ -290,14 +291,14 @@ def repeat_transactions(request):
             username = request.session.get('username')
             today = timezone.now()
 
-            client = ClientDetails.objects.get(id=client_id)
+            client = ClientDetails.objects.get(id=transaction_id)
             client.client_status = 'Serving'
             client.user = username
-            client.client_org = org_name
+            client.client_org = org_name or client.client_org
             client.save()
 
             DivisionLog.objects.create(
-                client_id_id=client_id,
+                client_id=client_id,
                 action_type = 'Processing',
                 division=division,
                 unit=unit,
@@ -313,7 +314,7 @@ def repeat_transactions(request):
         except ClientDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:
-            print(f"Error in update_client_status_forwarded: {e}")
+            print(f"Error in repeat_transactions: {e}")
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)

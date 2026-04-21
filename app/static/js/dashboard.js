@@ -4,9 +4,6 @@ function fetchDashboard() {
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
-        const clientList = document.querySelector('#clientList tbody');
-        // clientList.innerHTML = '';
-        clientList.innerHTML = '';
         const counts = data.total;
         const percent = data.percentage;
         const userunit = data.account;
@@ -33,25 +30,25 @@ function fetchDashboard() {
             document.getElementById('percent-csm').textContent = percent['percentCSS'] || '0%';
         }
 
-        let fetchClient = data.getClients
-        function addClientRow(client) {
-            const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${client.client_id}</td>
-            <td>${client.client_fullname}</td>
-            <td>${client.client_division}</td>
-            <td>${client.client_unit}</td>
-            <td>${client.client_status}</td>
-            <td>${formatDateTime(client.date_served)}</td>
-            <td>
-            <button class="icon-button text-green" title="Resolved" onclick="viewClientDetails('${client.id}')">
-                <i class="fa fa-eye"></i>
-            </button>
-            </td>
-        `;
-        clientList.appendChild(row);
-        }
-        fetchClient.forEach(client => addClientRow(client));
+        // let fetchClient = data.getClients
+        // function addClientRow(client) {
+        //     const row = document.createElement('tr');
+        // row.innerHTML = `
+        //     <td>${client.client_id}</td>
+        //     <td>${client.client_fullname}</td>
+        //     <td>${client.client_division}</td>
+        //     <td>${client.client_unit}</td>
+        //     <td>${client.client_status}</td>
+        //     <td>${formatDateTime(client.date_served)}</td>
+        //     <td>
+        //     <button class="icon-button text-green" title="Resolved" onclick="viewClientDetails('${client.id}')">
+        //         <i class="fa fa-eye"></i>
+        //     </button>
+        //     </td>
+        // `;
+        // clientList.appendChild(row);
+        // }
+        // fetchClient.forEach(client => addClientRow(client));
     })
 }
 

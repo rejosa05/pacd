@@ -55,10 +55,6 @@ function forwardClient(id) {
     })
 }
 
-function closeViewDetails () {
-    document.getElementById('view-details-modal').style.display = 'none';
-}
-
 function approvedClient(cid, pid) {
     const org_name = document.getElementById('org-name').value;
     const transaction_type = document.getElementById('transaction-type').value;
@@ -204,12 +200,12 @@ function saveAccount(){
     closeAddAccount();
 }
 
-function saveRepeat() {
-    const transaction_type = document.getElementById('r-transaction-type').value;
-    const transaction_details = document.getElementById('r-transactions-details').value;
-    const division = document.getElementById('r-division-select').value;
-    const unit = document.getElementById('r-unit-select').value;
-
+function saveRepeat(id, tr_id) {
+    const transaction_type = document.getElementById('transaction-type').value;
+    const transaction_details = document.getElementById('transactions-details').value;
+    const division = document.getElementById('division-select').value;
+    const unit = document.getElementById('unit-select').value;
+    console.log(id, tr_id)
     fetch(repeatTransaction, {
         method: 'POST',
         headers: {
@@ -217,7 +213,7 @@ function saveRepeat() {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken,
         },
-        body: `client_id=${selectedClient}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
+        body: `client_id=${id}&transaction_type=${transaction_type}&transaction_details=${transaction_details}&division=${division}&unit=${unit}`
     })
     .then(response => response.json())
     .then(() => {
@@ -354,72 +350,71 @@ function openModal(type, data = {}) {
 
     if (type === "approved") {
         htmlContent += `
-            <label for="org-name">Organization/Company Name</label>
-            <input class="org" type="text" id="org-name" placeholder="Organization/Company Name">
-            <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="divisions" id="transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquire</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required=True></textarea>
-            <div id="citizen-charter-wrapper">
-                <div class="checkbox-group">
-                    <label>is transaction covered by Citizen Charter? </label>
-                    <label>
-                        <input type="radio" name="cc-cover" value="Yes"> Yes
-                    </label>
-                    <label>
-                        <input type="radio" name="cc-cover" value="No"> No
-                    </label>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Organization</label>
+                    <input class="org form-control" type="text" id="org-name" placeholder="Organization/Company Name">
                 </div>
-                <select class="form-option" name="divisions" id="serviceList"></select>
-                <div id="deficiencies-wrapper">
-                    <div class="checkbox-group">
-                        <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
-                        <label>
-                            <input type="radio" name="requirements" value="Yes"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="requirements" value="No"> No
-                        </label>
+                <form class="modern-form">
+                    <div class="form-group">
+                        <label for="transaction-type">Transactions Type</label>
+                        <select class="form-control" name="divisions" id="transaction-type">
+                            <option value="">Select Type</option>
+                            <option value="Inquiry">Inquire</option>
+                            <option value="Submit Documents">Submit Documents</option>
+                            <option value="Others">Others</option>
+                        </select>
                     </div>
-                    <div id="deficiencies-textarea">
-                        <label>Deficiencies to comply</label>
-                        <textarea id="deficiencies" class="remarks-textarea" placeholder="Deficiencies....." required></textarea>
+                    <div class="form-group">
+                        <label for="r-transactions-details">Transactions Details</label
                     </div>
-                </div>                   
+                    <textarea id="transactions-details" class="textarea form-control" placeholder="Transactions Details....." required=True></textarea>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label>is transaction covered by Citizen Charter? </label>
+                            <label>
+                                <input type="radio" name="cc-cover" value="Yes"> Yes
+                            </label>
+                            <label>
+                                <input type="radio" name="cc-cover" value="No"> No
+                            </label>
+                        </div>
+                        <div id="citizen-charter-wrapper">
+                            <select class="form-control" name="divisions" id="serviceList"></select>
+                        </div>
+                        <div id="deficiencies-wrapper">
+                            <div class="checkbox-group">
+                                <label>if yes, are there deficiencies in the accompanying requirements enumerated in the Citizen's Charter? </label>
+                                <label>
+                                    <input type="radio" name="requirements" value="Yes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="requirements" value="No"> No
+                                </label>
+                            </div>
+                            <div id="deficiencies-textarea">
+                                <textarea id="deficiencies" class="textarea form-control" placeholder="Deficiencies to comply....." required></textarea>
+                            </div>
+                        </div>
+                        <textarea id="remarks" class="textarea form-control" placeholder="Remarks....." required=True></textarea>
+                        <div class="checkbox-group">
+                            <label class="form-label">is the transaction request catered and/or resolved? </label>
+                            <label><input type="radio" name="request_processed" value="Yes"> Yes </label>
+                            <label><input type="radio" name="request_processed" value="No"> No </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label class="form-label">CSS/CSM:</label>
+                            <div id="csm-wrapper">
+                                <label><input type="radio" id="csm-checkbox" name="resolution" value="CSM"> CSM </label>
+                            </div> 
+                            <div id="css-wrapper"><label> <input type="radio" id="css-checkbox" name="resolution" value="CSS"> CSS </label>
+                        </div> 
+                    </div>
+                </form>
             </div>
-            <label>Remarks</label>
-            <textarea id="remarks" class="remarks-textarea" placeholder="Remarks....." required=True></textarea>
-            <div class="checkbox-group">
-                <label class="form-label">is the transaction request catered and/or resolved? </label>
-                <label>
-                    <input type="radio" id="" name="request_processed" value="Yes">
-                    Yes
-                </label>
-                <label>
-                    <input type="radio" id="" name="request_processed" value="No">
-                    No
-                </label>
+            <div class="modal-footer">
+                <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Forward </button>
             </div>
-            <div class="checkbox-group">
-                <label class="form-label">CSS/CSM:</label>
-                <div id="csm-wrapper">
-                <label>
-                    <input type="checkbox" id="csm-checkbox" name="resolution" value="CSM"> CSM
-                </label>
-                </div> 
-                <div id="css-wrapper">
-                    <label>
-                        <input type="checkbox" id="css-checkbox" name="resolution" value="CSS"> CSS
-                    </label>
-                </div>
-                
-            </div>
-            <button type="submit"> Served </button>
         `;
         setTimeout(initCitizenCharterHandlers, 0);
     }
@@ -427,10 +422,9 @@ function openModal(type, data = {}) {
     if (type === "forward") {
         htmlContent += `
         <div class="modal-body">
-            <div class="info-row">
-                <span class="label">Organization:</span>
-                <span class="value"></span>
-                <input class="form-control" type="text" id="org-name" placeholder="Company Name">
+            <div class="form-group">
+                <label>Organization</label>
+                <input class="org form-control" type="text" id="org-name" placeholder="Company Name">
             </div>
             <form class="modern-form">
                 <div class="form-group">
@@ -444,10 +438,10 @@ function openModal(type, data = {}) {
                             <option value="Others">Others</option>
                         </select>
                 </div>
-                <div class="info-row">
-                    <label for="r-transactions-details">Transactions Details</label>
-                    <textarea id="transactions-details" class="form-control" placeholder="Transactions Details....." required=True></textarea>
+                <div class="form-group">
+                    <label for="r-transactions-details">Transactions Details</label
                 </div>
+                <textarea id="transactions-details" class="textarea form-control" placeholder="Transaction Details....." required></textarea>
                 <div class="form-row">
                     <div class="form-group"> 
                         <label for="division">Division: </label>
@@ -547,32 +541,55 @@ function openModal(type, data = {}) {
 
     if (type === "repeat") {
         htmlContent += `
-            <span class="org-name"> <i class="fa fa-building icon_modal" title="Company"></i> ${data.client_org || "Individual"} </span>
-            <label for="transaction-type">Transactions Type</label>
-                <select class="form-option" name="transaction" id="transaction-type">
-                    <option value="">Select Type</option>
-                    <option value="Inquiry">Inquiry</option>
-                    <option value="Request">Request</option>
-                    <option value="Submit Documents">Submit Documents</option>
-                    <option value="Payment">Payment</option>
-                    <option value="Others">Others</option>
-                </select>
-            <label>Transactions Details</label>
-            <textarea id="transactions-details" class="remarks-textarea" placeholder="Transactions Details....." required></textarea>
-            <label class="form-label" for="division">Division: </label>
-                <select class="form-option" name="divisions" id="division-select">
-                    <option value="">Select Division</option>
-                    <option value="MSD">MSD</option>
-                    <option value="LHSD">LHSD</option>
-                    <option value="RD/ARD">RD/ARD</option>
-                    <option value="RLED">RLED</option>
-                </select>
-            <label class="form-label" for="unit">Unit:</label>
-                <select class="form-option" name="unit" id="unit-select" required>
-                    <option value="">Select Unit</option>
-                </select>
-            <button type="submit"> Repeat </button>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Organization:</label>
+                <label class="value" type="text" id="org-name" placeholder="Company Name"> ${data.client_org || "Individual"} </label>
+            </div>
+            <form class="modern-form">
+                <div class="form-group">
+                    <label for="transaction-type">Transactions Type</label>
+                        <select class="form-control" name="transaction" id="transaction-type">
+                            <option value="">Select Type</option>
+                            <option value="Inquiry">Inquiry</option>
+                            <option value="Request">Request</option>
+                            <option value="Submit Documents">Submit Documents</option>
+                            <option value="Payment">Payment</option>
+                            <option value="Others">Others</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="r-transactions-details">Transactions Details</label
+                </div>
+                <textarea id="transactions-details" class="textarea form-control" placeholder="Transaction Details....." required></textarea>
+                <div class="form-row">
+                    <div class="form-group"> 
+                        <label for="division">Division: </label>
+                        <select class="form-control" name="divisions" id="division-select">
+                            <option value="">Select Division</option>
+                            <option value="MSD">MSD</option>
+                            <option value="LHSD">LHSD</option>
+                            <option value="RD/ARD">RD/ARD</option>
+                            <option value="RLED">RLED</option>
+                        </select>
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="unit">Unit:</label>
+                            <select class="form-control" name="unit" id="unit-select" required>
+                                <option value="">Select Unit</option>
+                            </select>
+                    </div> 
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Repeat </button>
+        </div>
         `;
+    }
+
+    if (type === "skipped") {
+
     }
 
     form.innerHTML = htmlContent;
@@ -591,7 +608,9 @@ function openModal(type, data = {}) {
         } else if (type === "approved") {
             approvedClient(data.client_id, data.public_id);
         } else if (type === "repeat") {
-            saveRepeat(data.transaction_id);
+            saveRepeat(data.id, data.client_id);
+        } else if (type === "skip") {
+            skippedClient(data.client_id);
         }
     }
 }
@@ -679,12 +698,19 @@ function getSrvc() {
 
         const services = data.getServices || [];
 
+        function truncateText(text, limit = 55) {
+            return text.length > limit ? text.substring(0, limit) + '...' : text;
+        }
+
         if (services.length > 0) {
             selectorList.appendChild(new Option('Select Service', ''));
             services.forEach(srvc => {
-                selectorList.appendChild(
-                    new Option(`${srvc.service_classification} (${srvc.service_name})`, srvc.service_name)
-                );
+                let fullText = `${srvc.service_classification} (${srvc.service_name})`;
+                let shortText = truncateText(fullText, 55);
+
+                let option = new Option(shortText, srvc.service_name);
+                option.title = fullText;
+                selectorList.appendChild(option);
             });
         } else {
             document.getElementById('citizen-charter-wrapper').style.display = 'none';

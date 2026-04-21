@@ -96,9 +96,9 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col actions">${userunit === 'PACD' ? `
                         <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-paper-plane update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
+                        <i class="fas fa-trash delete" title="Skipped" onclick="openModal("skip", ${JSON.stringify(clientData)})"></i>
                         ` : `
-                        <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-edit serving" title="Serving" onclick='openModal("skip", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
                         `}
                     </div>
@@ -135,7 +135,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
                         <i class="fas fa-eye view"></i>
-                        <i class="fas fa-sync-alt update"></i>
+                        <i class="fas fa-sync-alt update" onclick='openModal("repeat", ${JSON.stringify(history)})'></i>
                         ` : `
                         <i class="fas fa-eye view"></i>
                         `}
@@ -143,8 +143,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     </div>
                 </div>
             `;
-            transacHistory.appendChild(card);
-            divisionUnitSelect('division-select', 'unit-select');
+            transacHistory.appendChild(card); 
         }
 
         paginatedClients.forEach(addClientCard);
@@ -218,6 +217,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                 </div>
             `;
             clientServing.appendChild(card);
+            divisionUnitSelect('division-select', 'unit-select');
         }
 
         paginatedServing.forEach(addServingCard);
@@ -234,9 +234,6 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
             fetchTransactions(page, perPage, historyPage, historyPerPage, newServingPage, servingPerPage);
         });
 
-        divisionUnitSelect('division-select', 'unit-select');
-
-
         document.querySelectorAll('.client').forEach(el => {
             const name = el.querySelector('.name').innerText;
             const avatar = el.querySelector('.avatar');
@@ -246,13 +243,13 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
     });
 }
 
-    if (path.includes(transaction)) {
+    if (path.includes('transaction')) {
             fetchTransactions();      
     }
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (path.includes(transaction)) {
+    if (path.includes('transaction')) {
         fetchTransactions();
     }
 

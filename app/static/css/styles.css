@@ -921,7 +921,6 @@ th, td {
     background: white;
     border-radius: 12px;
     max-width: 600px;
-    width: 90%;
     padding: 1rem 1.5rem;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
@@ -1055,19 +1054,17 @@ th, td {
     font-weight: 700;
 }
 
-.approved-form label {
+/* .approved-form label {
   display: block;
   margin: 2px;
   font-weight: bold;
-}
+} */
 
-.remarks-textarea {
+.textarea {
   width: 100%;
-  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
-  min-height: 80px;
 }
 
 .checkbox-group {
@@ -1076,45 +1073,9 @@ th, td {
     align-items: center;
 }
 
-.approved-form button {
-  display: block;
-  width: 100%;
-  margin-top: 25px;
-  padding: 12px;
-  background: var(--primary-bg);
-  color: #fff;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.approved-form button:hover {
-  background: #002e00;
-}
-
-.approved-form select.form-option {
-  width: 100%;
-  padding: 10px;
-  margin: 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.approved-form select.form-option:focus {
-  border-color: var(--primary-bg);
-  outline: none;
-  box-shadow: 0 0 0 2px #002e00;
-}
-
 .org {
   width: 100%;
   padding: 10px;
-  margin-top: 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
   background-color: #fff;
@@ -1623,8 +1584,8 @@ th, td {
 }
 
 .client-info-card {
-    background: #f8f9fa;
-    border-radius: 12px;
+    /* background: #eff0f0; */
+    border-radius: 2px;
     padding: 0.5rem;
 }
 
@@ -1632,7 +1593,7 @@ th, td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
+    
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -1701,8 +1662,8 @@ th, td {
 
 .form-control:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #00aa44;
+    box-shadow: 0 0 0 3px rgba(102, 234, 111, 0.1);
 }
 
 .form-control::placeholder {
@@ -1710,7 +1671,7 @@ th, td {
 }
 
 .modal-footer {
-    padding: 0 3rem;
+    padding: 1rem 5rem;
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
     display: flex;
@@ -1726,18 +1687,18 @@ th, td {
     font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #008d00;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #5a67d8;
+    background: #002e00;
     transform: translateY(-1px);
 }
 
