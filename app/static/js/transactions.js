@@ -129,14 +129,16 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <div class="email">emma@example.com</div>
                         </div>
                     </div>
-                    <div class="col transaction-id">${history.transaction_no}</div>
+                    <div class="col transaction-id">${history.transaction_no}${history.transaction_id}</div>
                     <div class="col type">${history.transaction_type}</div>
                     <div class="col status ${statusColor}"> ${history.status}</div>
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
+                        <i class="fas fa-pencil edit"></i>
                         <i class="fas fa-eye view"></i>
                         <i class="fas fa-sync-alt update" onclick='openModal("repeat", ${JSON.stringify(history)})'></i>
                         ` : `
+                        <i class="fas fa-pencil edit"></i>
                         <i class="fas fa-eye view"></i>
                         `}
                         
@@ -209,7 +211,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <div class="email">${served.client_org}</div>
                         </div>
                     </div>
-                    <div class="col transaction-id"> ${served.transaction_no}</div>
+                    <div class="col transaction-id"> ${served.transaction_no}${served.transaction_id}</div>
                     <div class="col type"> ${served.transaction_type}</div>
                     <div class="col actions">
                         <i class="fas fa-check accept" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'></i>

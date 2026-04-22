@@ -123,7 +123,7 @@ def transaction_history(date, unit):
 
     for transaction in transactions:
         getTransaction.append({
-            'id': transaction.id,
+            'transaction_id': str(transaction.id).zfill(3),
             'client_id': transaction.client_id.id,
             'client_queue_no': transaction.client_id.client_queue_no,
             'transaction_no': transaction.transaction_no,
@@ -184,7 +184,7 @@ def serving_client_unit_list(today, unit, id):
     
     for client in serving:
         servingTransaction.append({
-            'transaction_id': client.id,
+            'transaction_id': str(client.id).zfill(3),
             'public_id': client.client_id.public_id,
             'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,

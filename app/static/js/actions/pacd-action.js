@@ -332,6 +332,7 @@ function serveClient(tid, cid, pid) {
             const receiptUrl = `/acknowledgement/${transactionNo}`;
             window.open(receiptUrl, '_blank');
         }
+        console.log
     })
 }
 
@@ -348,7 +349,7 @@ function openModal(type, data = {}) {
         <div class="client-info-card">
         <div class="info-row">
                 <span class="label">Transactions No:</span>
-                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}</span>
+                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}${data.transaction_id || ""}</span>
             </div>
             <div class="info-row">
                 <span class="label">Client ID:</span>
@@ -754,6 +755,3 @@ function getSrvc() {
         }
     })
 }
-
-
-
