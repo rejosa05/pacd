@@ -257,3 +257,77 @@ Approved modal from pacd
         </dl>
     </div>
 </div>
+
+<!-- View Transaction Modal -->
+<div class="modal-overlay" id="viewTransactionModal">
+    <div class="modal-view modern-modal">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <h2>View Transaction Details</h2>
+            <button class="close-btn" onclick="closeViewModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="transaction-details-grid">
+                <div class="detail-row">
+                    <label>Client Name:</label>
+                    <span id="view-client-name"></span>
+                </div>
+                <div class="detail-row">
+                    <label>Transaction ID:</label>
+                    <span id="view-transaction-id"></span>
+                </div>
+                <div class="detail-row">
+                    <label>Transaction Type:</label>
+                    <span id="view-transaction-type"></span>
+                </div>
+                <div class="detail-row">
+                    <label>Status:</label>
+                    <span id="view-status"></span>
+                </div>
+                <div class="detail-row">
+                    <label>Date Resolved:</label>
+                    <span id="view-date-resolved"></span>
+                </div>
+                <div class="detail-row">
+                    <label>Remarks:</label>
+                    <span id="view-remarks"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Transaction Modal -->
+<div class="modal-overlay" id="editTransactionModal">
+    <div class="modal-view modern-modal">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <h2>Edit Transaction</h2>
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="edit-transaction-form">
+                <div class="form-group">
+                    <label for="edit-status">Status:</label>
+                    <select id="edit-status" class="form-control">
+                        <option value="Completed">Completed</option>
+                        <option value="Serving">Serving</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-remarks">Remarks:</label>
+                    <textarea id="edit-remarks" class="form-control" rows="4" placeholder="Enter remarks..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveEditTransaction()">Save Changes</button>
+        </div>
+    </div>
+</div>

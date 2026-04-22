@@ -40,7 +40,7 @@ def update_client_status_served(request):
                 pacd_officer_id_id = account.id,
                 process_owner_id_id = account.id,
                 service_id_id = srvcA,
-                transaction_no = f"TR-{account.divisions}-{account.unit}-{today.strftime('%Y')}{str(client_id).zfill(4)}",
+                transaction_no = f"TR-{account.divisions}-{account.unit}-{today.strftime('%Y')}{client_id}",
                 action_type = action_type,
                 transaction_type = type,
                 division = account.divisions,
@@ -87,7 +87,7 @@ def forwarded_client_to_unit(request):
 
             DivisionLog.objects.create(
                 client_id_id=client_id,
-                transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{str(client_id).zfill(4)}",
+                transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{client_id}",
                 pacd_officer_id_id = account.id,
                 action_type = 'Pending',
                 division=division,
@@ -107,7 +107,6 @@ def forwarded_client_to_unit(request):
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
-
 
 def skipped_client(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -139,6 +138,7 @@ def skipped_client(request):
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
 def  update_user_details(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -277,7 +277,7 @@ def repeat_transactions(request):
             DivisionLog.objects.create(
                 client_id=client,
                 pacd_officer_id=account,
-                transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{str(client_id).zfill(4)}",
+                transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{str(client_id).zfill(3)}",
                 action_type='Processing',
                 division=division,
                 unit=unit,

@@ -134,12 +134,12 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col status ${statusColor}"> ${history.status}</div>
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
-                        <i class="fas fa-pencil edit"></i>
-                        <i class="fas fa-eye view"></i>
+                        <i class="fas fa-pencil edit" onclick='openEditModal(${JSON.stringify(history)})' title="Edit"></i>
+                        <i class="fas fa-eye view" onclick='openViewModal(${JSON.stringify(history)})' title="View"></i>
                         <i class="fas fa-sync-alt update" onclick='openModal("repeat", ${JSON.stringify(history)})'></i>
                         ` : `
-                        <i class="fas fa-pencil edit"></i>
-                        <i class="fas fa-eye view"></i>
+                        <i class="fas fa-pencil edit" onclick='openEditModal(${JSON.stringify(history)})' title="Edit"></i>
+                        <i class="fas fa-eye view" onclick='openViewModal(${JSON.stringify(history)})' title="View"></i>
                         `}
                         
                     </div>
@@ -339,4 +339,76 @@ function loadClientTransactionHistory() {
         </div>
     `;
     document.getElementById('transaction-count').textContent = 'Feature coming soon';
+}
+
+// Transaction View and Edit Modal Functions
+function openViewModal(history) {
+    document.getElementById('view-client-name').textContent = history.client_fullname || 'N/A';
+    document.getElementById('view-transaction-id').textContent = `${history.transaction_no || ''}${history.transaction_id || ''}`;
+    document.getElementById('view-transaction-type').textContent = history.transaction_type || 'N/A';
+    document.getElementById('view-status').textContent = history.status || 'N/A';
+    document.getElementById('view-date-resolved').textContent = history.date_resolved ? formatDateTime(history.date_resolved) : 'Not resolved';
+    document.getElementById('view-remarks').textContent = history.remarks || 'No remarks';
+
+    document.getElementById('viewTransactionModal').style.display = 'flex';
+}
+
+function closeViewModal() {
+    document.getElementById('viewTransactionModal').style.display = 'none';
+}
+
+function openEditModal(history) {
+    // Store the current history data for saving
+    window.currentEditHistory = history;
+
+    document.getElementById('edit-status').value = history.status || 'Pending';
+    document.getElementById('edit-remarks').value = history.remarks || '';
+
+    document.getElementById('editTransactionModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+    document.getElementById('editTransactionModal').style.display = 'none';
+    window.currentEditHistory = null;
+}
+
+function saveEditTransaction() {
+    const status = document.getElementById('edit-status').value;
+    const remarks = document.getElementById('edit-remarks').value;
+
+    if (!window.currentEditHistory) return;
+
+    // Here you would send the update to the backend
+    // For now, just log and close
+    console.log('Updating transaction:', {
+        id: window.currentEditHistory.transaction_id,
+        status: status,
+        remarks: remarks
+    });
+
+    // You can add an AJAX call here to save the changes
+    // Example:
+    // fetch('/update-transaction/', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'X-CSRFToken': getCSRFToken()
+    //     },
+    //     body: JSON.stringify({
+    //         transaction_id: window.currentEditHistory.transaction_id,
+    //         status: status,
+    //         remarks: remarks
+    //     })
+    // }).then(response => {
+    //     if (response.ok) {
+    //         closeEditModal();
+    //         // Refresh the transactions
+    //         fetchTransactions();
+    //     }
+    // });
+
+    // For demo, just close the modal
+    closeEditModal();
+    // Optionally refresh
+    fetchTransactions();
 }

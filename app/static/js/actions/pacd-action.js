@@ -55,7 +55,10 @@ function forwardClient(id) {
     })
 }
 
-function approvedClient(cid, pid) {
+function approvedClient(cid) {
+    const year = new Date().getFullYear();
+    const division = document.getElementById('user-division').value;
+    const unit = document.getElementById('user-unit').value;
     const org_name = document.getElementById('org-name').value;
     const transaction_type = document.getElementById('transaction-type').value;
     const transaction_details = document.getElementById('transactions-details');
@@ -119,8 +122,8 @@ function approvedClient(cid, pid) {
     const resolutions = csmChecked ? 'CSM' : 'CSS';
 
     // Get transaction number before closing modal
-    const transactionNoElement = document.getElementById('transaction-no');
-    const transactionNo = transactionNoElement ? transactionNoElement.textContent.trim() : '';
+
+    const transactionNo = `TR-${division}-${unit}-${year}${cid}`;
 
     fetch(updateClientStatusServedUrl, {
         method: 'POST',
@@ -141,10 +144,10 @@ function approvedClient(cid, pid) {
         fetchTransactions();
         closeModal();
 
-        if (transactionNo) {
-            const receiptUrl = `/acknowledgement/${transactionNo}`;
-            window.open(receiptUrl, '_blank');
-        }
+        const receiptUrl = `/acknowledgement/${transactionNo}`;
+        window.open(receiptUrl, '_blank');
+
+        console.log(transactionNo);
     })
 }
 
@@ -332,7 +335,6 @@ function serveClient(tid, cid, pid) {
             const receiptUrl = `/acknowledgement/${transactionNo}`;
             window.open(receiptUrl, '_blank');
         }
-        console.log
     })
 }
 
@@ -349,7 +351,7 @@ function openModal(type, data = {}) {
         <div class="client-info-card">
         <div class="info-row">
                 <span class="label">Transactions No:</span>
-                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}${data.transaction_id || ""}</span>
+                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}</span>
             </div>
             <div class="info-row">
                 <span class="label">Client ID:</span>
@@ -641,7 +643,7 @@ function openModal(type, data = {}) {
         } else if (type === "serving") {
             servingClient(data.transaction_id)
         } else if (type === "approved") {
-            approvedClient(data.client_id, data.public_id);
+            approvedClient(data.client_id);
         } else if (type === "repeat") {
             saveRepeat(data.client_id);
         } else if (type === "skip") {
@@ -755,3 +757,6 @@ function getSrvc() {
         }
     })
 }
+
+
+
