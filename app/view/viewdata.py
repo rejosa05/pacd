@@ -43,7 +43,6 @@ def get_client(request, id):
             'client_forwarded': client.date.isoformat() if client.client_id.client_created_date else None,
             'client_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
             'client_form': client.form,
-            'client_user': client.unit_user,
         }
         return JsonResponse(data)
     except DivisionLog.DoesNotExist:
