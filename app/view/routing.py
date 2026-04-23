@@ -94,8 +94,10 @@ def services_page(request):
 
 def acknowledgement(request, transaction_no):
     context = client_context(transaction_no, request)
+
     if context is None:
         return redirect('login')
+    
     return render(request, "app/acknowledgement.html", context)
 
 def client_transaction(request):

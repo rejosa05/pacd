@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalTransactions = document.getElementById('total-transactions');
     const totalCSM = document.getElementById('total-csm');
     const totalCSS = document.getElementById('total-css');
-    const convertToExcel = document.getElementById('downloadExcel');
+    const convertToExcel = document.getElementById('movs');
     const dateStartInput = document.getElementById('dateStarted');
     const dateEndInput = document.getElementById('dateEnd');
     const searchInput = document.getElementById('searchInput');
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="product">
                         <div class=""><i class="fas fa-box"></i></div>
                         <div>
-                            <div class="transaction-id">${client.transaction_no}</div>
+                            <div class="transaction-id"><a class="transaction-id" href="acknowledgement/${client.transaction_no}">${client.transaction_no}${client.id}</a></div>
                         </div>
                     </div>
                 </td>
@@ -208,14 +208,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Started', 'Date Served'];
+        const headers = ['ID', 'CLIENT DETAILS', 'TRANSACTION NO', 'DIVISION', 'UNIT', 'STATUS', 'DATE'];
         const rows = data.map(client => [
             client.client_id || '',
             client.client_fullname || '',
+            client.transaction_no || '', 
             client.client_division || '',
             client.client_unit || '',
             client.client_status || '',
-            formatDateTime(client.date_started),
+            // formatDateTime(client.date_started),
             formatDateTime(client.date_served)
         ]);
 

@@ -1,6 +1,6 @@
 from ..models import DivisionLog, ClientDetails, AccountDetails, ServicesDetails
 from django.utils import timezone
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 def notify(user, today):
     today = timezone.now()
@@ -23,7 +23,7 @@ def get_clients(unit):
     for client in clients:
         getClients.append({
             'id': client.id,
-            'client_id': f"Client Id: #{client.client_id.id}",
+            'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,
             'client_queue_no': f"Ticket No: #{client.client_id.client_queue_no}",
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
@@ -228,9 +228,12 @@ def client_context(t_no, request):
     user = AccountDetails.objects.filter(user=username).first()
     today = timezone.now().strftime("%B %d, %Y %I:%M %p")
 
-    divisionLog = get_object_or_404(DivisionLog, transaction_no=t_no)
-    clientDetails = divisionLog.client_id  # Get related ClientDetails
+    if user.unit == 'PACD':
+        divisionLog = get_object_or_404(DivisionLog, transaction_no=t_no)
+    else:
+        divisionLog = get_object_or_404(DivisionLog, transaction_no=t_no, unit=user.unit)
 
+    clientDetails = divisionLog.client_id  # Get related ClientDetails
     services = divisionLog.service_id  # Get related ServicesDetails
     account = divisionLog.process_owner_id  # Get related AccountDetails
 
@@ -242,8 +245,6 @@ def client_context(t_no, request):
         'account' : account,
         'user': user
     }
-
-
 
 
 from asgiref.sync import async_to_sync
