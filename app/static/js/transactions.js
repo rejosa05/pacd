@@ -96,7 +96,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col actions">${userunit === 'PACD' ? `
                         <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-paper-plane update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-trash delete" title="Skipped" onclick="openModal("skip", ${JSON.stringify(clientData)})"></i>
+                        <i class="fas fa-trash delete" title="Skipped" onclick='openModal("skip", ${JSON.stringify(clientData)})'></i>
                         ` : `
                         <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
@@ -113,6 +113,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                 'Completed': 'status-green',
                 'Serving': 'status-blue',
                 'Pending': 'status-brown',
+                'Skipped': 'status-red'
             } 
             
             const statusColor = actionColor[history.status] || 'status-default';
@@ -129,8 +130,8 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <div class="email">Assigned to: R. Ejosa</div>
                         </div>
                     </div>
-                    <div class="col transaction-id"><a class="transaction-id" title="click me" href="acknowledgement/${history.transaction_no}">${history.transaction_no}${history.transaction_id}</a></div>
-                    <div class="col type">${history.transaction_type}</div>
+                    <div class="col transaction-id"><a class="transaction-id" title="click me" href="acknowledgement/${history.transaction_no}">${history.transaction_no || '' }</a></div>
+                    <div class="col type">${history.transaction_type || '---'}</div>
                     <div class="col status ${statusColor}"> ${history.status}</div>
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `

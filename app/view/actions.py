@@ -115,18 +115,19 @@ def skipped_client(request):
             user = request.session.get('username')
             today = timezone.now()
 
+            account = AccountDetails.objects.filter(user=user).first()
+
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = 'Skipped'
-            client.user = user
             client.save()
+
+            print(client_id, account.id, user )
 
             DivisionLog.objects.create(
                 client_id_id=client_id,
-                action_type = 'Skipped',
-                transaction_type = type,
-                status= 'Skipped',
-                user=user,
-                date=today
+                pacd_officer_id_id = account.id,
+                status = 'Skipped',
+                date = today
             )
 
             return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})

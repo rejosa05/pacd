@@ -124,7 +124,7 @@ def transaction_history(date, unit):
     for transaction in transactions:
         getTransaction.append({
             'transaction_id': str(transaction.id).zfill(3),
-            'client_id': str(transaction.client_id.id).zfill(3),
+            'client_id': str(transaction.client_id.id).zfill(3) if transaction.client_id else 'none',
             'client_queue_no': str(transaction.client_id.client_queue_no).zfill(2),
             'transaction_no': transaction.transaction_no,
             'client_fullname': f"{transaction.client_id.client_firstname} {transaction.client_id.client_lastname}",

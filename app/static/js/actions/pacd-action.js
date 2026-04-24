@@ -23,10 +23,10 @@ function skipClient(id) {
         .then(response => response.json())
         .then(() => {
             alert('Client skipped successfully!');
+            fetchTransactions();
+            closeModal();
         })
         .catch(error => console.error('Error skipping client:', error));
-    } else {
-        return;
     }
 }
 
@@ -433,7 +433,7 @@ function openModal(type, data = {}) {
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Forward </button>
+                <button type="submit" class="btn-primary"> <i class="fas fa-check"></i> Forward </button>
             </div>
         `;
         setTimeout(initCitizenCharterHandlers, 0);
@@ -616,10 +616,26 @@ function openModal(type, data = {}) {
             <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Repeat </button>
         </div>
         `;
+        divisionUnitSelect('division-select', 'unit-select');
     }
 
-    if (type === "skipped") {
-
+    if (type === "skip") {
+        htmlContent += `
+        <div class="modal-body">
+            <form class="modern-form">
+                <div class="form-group">
+                    <label for="reason">Reason for Skipping:</label>
+                </div>
+                <div class="warning-message">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-trash delete"></i> Skip </button>
+        </div>
+        `;
     }
 
     form.innerHTML = htmlContent;
@@ -647,7 +663,7 @@ function openModal(type, data = {}) {
         } else if (type === "repeat") {
             saveRepeat(data.client_id);
         } else if (type === "skip") {
-            skippedClient(data.client_id);
+            skipClient(data.client_id);
         }
     }
 }

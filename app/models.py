@@ -52,14 +52,13 @@ class ClientDetails(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
     client_firstname = models.CharField(max_length=100, blank=True)
     client_lastname = models.CharField(max_length=100, blank=True)
-    client_org = models.CharField(max_length=100, blank=True)
+    client_org = models.CharField(max_length=100, blank=True, null=True)
     client_queue_no = models.PositiveIntegerField(default=1)
-    client_lane_type = models.CharField(max_length=100)
+    client_lane_type = models.CharField(max_length=100, blank=True, null=True)
     client_contact = models.CharField(max_length=10, null=True)
     client_gender = models.CharField(max_length=10, null=True)
     client_status = models.CharField(max_length=100, default='Pending')
     client_created_date = models.DateTimeField(auto_now_add=True)
-    unit = models.CharField(max_length=100, default='System')
     
     def __str__(self):
         return f"({self.client_firstname} {self.client_lastname})"
@@ -107,11 +106,11 @@ class DivisionLog(models.Model):
     pacd_officer_id = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, null=True, blank=True, related_name='pacd_officer')
     service_id = models.ForeignKey(ServicesDetails, on_delete=models.CASCADE, null=True, blank=True)
     transaction_no = models.CharField(max_length=100, null=True, blank=True)
-    transaction_type = models.CharField(max_length=100, blank=True)
-    division = models.CharField(max_length=100)
+    transaction_type = models.CharField(max_length=100, null=True, blank=True)
+    division = models.CharField(max_length=100, null=True, blank=True)
     transaction_details = models.TextField(null=True)
-    unit = models.CharField(max_length=100)
-    action_type = models.CharField(max_length=100)
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    action_type = models.CharField(max_length=100,  null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     
     date_resolved = models.DateTimeField(null=True, blank=True)
@@ -128,7 +127,7 @@ class DivisionLog(models.Model):
 
 
     def __str__(self):
-        return self.action_type
+        return str(self.action_type) if self.action_type else "No Action"
         
 class HistoryLog(models.Model):
     action = models.CharField(max_length=100)
