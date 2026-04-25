@@ -1,0 +1,73 @@
+{% load static %}
+
+<div class="modal-overlay" id="forwardModal">
+    <div class="modern-modal">
+
+        <!-- CLOSE -->
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+
+        <!-- HEADER -->
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2>Registration Form</h2>
+            <p>Please fill out all required fields</p>
+        </div>
+
+        <!-- BODY -->
+        <div class="modal-body">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Birthday</label>
+                    <input type="date">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="gender"> Male</label>
+                        <label><input type="radio" name="gender"> Female</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Subject</label>
+                <select>
+                    <option>Choose option</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary">Submit</button>
+        </div>
+
+    </div>
+</div>

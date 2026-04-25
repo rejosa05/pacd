@@ -623,9 +623,6 @@ function openModal(type, data = {}) {
         htmlContent += `
         <div class="modal-body">
             <form class="modern-form">
-                <div class="form-group">
-                    <label for="reason">Reason for Skipping:</label>
-                </div>
                 <div class="warning-message">
                     <i class="fas fa-info-circle"></i>
                     <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>

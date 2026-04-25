@@ -129,100 +129,15 @@
     </div>
 
 </main>
-<!-- sample modal -->
+
 <div class="modal-overlay" id="clientModal">
   <div class="modal-view ">
-    <!-- <h3 id="modalTitle"></h3> -->
     <button class="close-btn" onclick="closeModal()">&times;</button>
     <form class="client-details" id="clientForm" novalidate></form>
   </div>
 </div>
-
-<!-- Modern Skip Client Modal -->
-<!-- <div class="modal-overlay" id="skipClientModal">
-    <div class="modal-view modern-modal">
-        <button class="close-btn" aria-label="Close modal" onclick="closeSkipModal()">&times;</button>
-        <div class="modal-header">
-            <div class="modal-icon warning">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h2>Skip Client</h2>
-            <p>Are you sure you want to skip this client? This action cannot be undone.</p>
-        </div>
-        <div class="modal-body">
-            <div class="client-info-card">
-                <div class="info-row">
-                    <span class="label">Client ID:</span>
-                    <span class="value" id="skip-client-id"></span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Full Name:</span>
-                    <span class="value" id="skip-fullname"></span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Queue No:</span>
-                    <span class="value" id="skip-queue-no"></span>
-                </div>
-            </div>
-            <div class="warning-message">
-                <i class="fas fa-info-circle"></i>
-                <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-secondary" onclick="closeSkipModal()">Cancel</button>
-            <button type="button" class="btn-danger" onclick="confirmSkip()">
-                <i class="fas fa-times"></i> Skip Client
-            </button>
-        </div>
-    </div>
-</div> -->
  
 </div>
-
-<!-- Modern View Details Modal with Recent Transactions -->
-<!-- <div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-view modern-modal large-modal" tabindex="-1">
-        <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
-        <div class="modal-header">
-            <div class="modal-icon">
-                <i class="fas fa-user"></i>
-            </div>
-            <h2>Client Information</h2>
-            <p>View client details and transaction history</p>
-        </div>
-        <div class="modal-tabs">
-            <button class="tab-button active" onclick="switchTab('details')">Client Details</button>
-            <button class="tab-button" onclick="switchTab('recent')">Recent Transactions</button>
-        </div>
-        <div class="modal-body">
-            <div id="details-tab" class="tab-content active">
-                <div class="client-info-card">
-                    <dl id="client-details-list">
-                    </dl>
-                </div>
-            </div>
-            <div id="recent-tab" class="tab-content">
-                <div class="recent-transactions">
-                    <div class="transaction-history-header">
-                        <h3>Transaction History</h3>
-                        <span class="transaction-count" id="transaction-count">0 transactions</span>
-                    </div>
-                    <div class="transaction-list" id="client-transaction-history">
-                        <div class="no-transactions">
-                            <i class="fas fa-history"></i>
-                            <p>No recent transactions found</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-primary" onclick="closeViewDetails()">Close</button>
-        </div>
-    </div>
-</div> -->
-
 
 <script>
     const sidebar = document.getElementById('sidebar');
@@ -270,6 +185,5 @@
     window.addEventListener('resize', checkScreenSize);
 </script>
 
-{% include 'modal.html' %}
 
 {% endblock %}
