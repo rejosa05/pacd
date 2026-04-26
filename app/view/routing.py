@@ -7,7 +7,7 @@ from django.utils import timezone
 from ..utils.utils import *
 
 def display_view(request):
-    return render(request, 'app/display.html')
+    return render(request, 'app/pages/display.html')
 
 def client_details(request):
     if request.method == 'POST':
@@ -42,7 +42,7 @@ def login_view(request):
     else:
         form = LoginForm()
     
-    return render(request, "app/login.html", {"form": form})
+    return render(request, "app/pages/login.html", {"form": form})
 
 def logout_view(request):
     username = request.session.get('username')
@@ -63,7 +63,7 @@ def transaction(request):
 
     if not user:
         return redirect('login')
-    return render(request, 'app/transaction.html', {'user':user})
+    return render(request, 'app/pages/transaction.html', {'user':user, 'page_title': 'Clients'})
 
 def dashboard(request):
     username = request.session.get('username')
@@ -72,7 +72,7 @@ def dashboard(request):
     if not user:
         return redirect('login')
     
-    return render(request, 'app/dashboard.html', {'user':user})
+    return render(request, 'app/pages/dashboard.html', {'user':user , 'page_title': 'Dashboard'})
 
 def reports_page(request):
     username = request.session.get('username')
@@ -98,7 +98,7 @@ def acknowledgement(request, transaction_no):
     if context is None:
         return redirect('login')
     
-    return render(request, "app/acknowledgement.html", context)
+    return render(request, "app/pages/acknowledgement.html", context)
 
 def client_transaction(request):
     username = request.session.get('username')

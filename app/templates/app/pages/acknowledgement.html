@@ -1,0 +1,241 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} Acknowledgement Receipt {% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acknowledgement Receipt — AR-CT112</title>
+  <style>
+    :root {
+      --ink: #1f2937;       /* gray-800 */
+      --muted: #6b7280;     /* gray-500 */
+      --line: #e5e7eb;      /* gray-200 */
+      --brand: #065f46;     /* emerald-900 */
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: #f8fafc; /* slate-50 */
+    }
+
+    .page {
+      max-width: 800px; /* ~A4 portrait inner width */
+      margin: 2rem auto;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      overflow: hidden;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(0deg, #ffffff 0%, #f3f4f6 100%);
+    }
+
+    .logo {
+      width: 96px;
+      height: 96px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      overflow: hidden;
+    }
+    .logo img { width: 100%; height: 100%; object-fit: contain; }
+
+    .headings h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: .02em;
+      color: var(--brand);
+      text-transform: uppercase;
+    }
+    .headings h2 {
+      margin: .15rem 0 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+    .subtext { color: var(--muted); font-size: .9rem; }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      padding: .25rem 1.5rem .25rem;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .decoration {
+      border-bottom: none;
+    }
+    .meta .item { font-size: .95rem; }
+    .meta .label { color: var(--muted); display: block; font-size: .8rem; }
+    .meta .value { font-weight: 800; }
+
+    section {
+      padding: 0.50rem 1.5rem 0;
+      
+    }
+    section:last-of-type { border-bottom: 0; }
+    h4 { margin: 0 0; font-size: 1.05rem; letter-spacing: .02em; text-transform: uppercase; color: var(--brand); }
+
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 1.25rem 1.5rem 1.75rem;
+      align-items: end;
+    }
+
+    .signbox {
+      margin-top: 2.25rem;
+      font-style: italic;
+      font-size: x-small;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: .5rem;
+      margin: 1rem auto 0;
+    }
+
+    button.print {
+      appearance: none;
+      border: 1px solid var(--brand);
+      background: white;
+      padding: .6rem .9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .02s ease-in-out, box-shadow .2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+    button.print:hover { 
+      box-shadow: 0 6px 16px rgba(0,0,0,.09); 
+      background: var(--brand);
+      color: white;
+    }
+    button.print:active { transform: translateY(1px); }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; border: none; border-radius: 0; margin: 0; max-width: none; }
+      .toolbar { display: none; }
+      header { border-bottom: 2px solid var(--line); }
+      section { page-break-inside: avoid; }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        display: block;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        padding: 1.25rem 1.5rem 1.75rem;
+        align-items: end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <main class="page" role="document" aria-label="Acknowledgement Receipt">
+    <header>
+      <div class="logo" aria-label="Agency Logo">
+        <!-- You can replace the src below with a local file path if needed -->
+        <img alt="Department of Health (Philippines) logo" src="{% static 'images/logo.png'%}" />
+      </div>
+      <div class="headings">
+        <h1>DOH Center Of HEALTH Development - CARAGA</h1>
+        <h2>Acknowledgement Receipt</h2>
+        <!-- <div class="subtext">Official confirmation of receipt for filed transaction</div> -->
+      </div>
+    </header>
+
+    <div class="meta">
+      <div class="item"><span class="label">Transaction ID</span><span class="value">{{ divisionLog.transaction_no }}</span></div>
+      <div class="item"><span class="label">Date Issued</span><span class="value">{{ divisionLog.date_resolved|date:"F d, Y h:i A"|default:"---" }}</span></div>
+    </div>
+    
+
+    <section>
+      <h4>Client Information</h4>
+      <div class="grid-2">
+        <div class="meta">
+          <div class="item"><span class="label">Full Name</span><span class="value">{{ clientDetails.client_firstname }} {{ clientDetails.client_lastname }}</span></div>
+          <div class="item"><span class="label">Gender</span><span class="value">{{ clientDetails.client_gender }}</span></div>
+          <div class="item"><span class="label">Contact No.</span><span class="value">+63 {{ clientDetails.client_contact }}</span></div>
+          <div class="item"><span class="label">Company Name</span><span class="value">{{ clientDetails.client_org|default:"Personal"}}</span></div>
+          <div class="item"><span class="label">Client Type</span><span class="value">{{ clientDetails.client_lane_type }}</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h4>Transaction Details</h4>
+      <div class="meta decoration">
+        <div class="item"><span class="label">Transaction Type</span><span class="value">{{ divisionLog.transaction_type }}</span></div>
+      </div>
+      <div class="meta">
+        <div class="item"><span class="label">Transaction Details</span><span class="value">{{ divisionLog.transaction_details}}</span></div>
+      </div>
+    </section>
+    
+    <section>
+      {% if divisionLog.service_id_id != None %}
+      <h4>Service Avail</h4>
+        <div class="meta decoration">
+          <div class="item"><span class="label">Service Name</span><span class="value">{{ services.service_name }}</span></div>
+        </div>
+        <div class="meta decoration">
+          <div class="item"><span class="label">Classfication</span><span class="value">{{ services.classification }}</span></div>
+        </div>
+        <div class="meta">
+          <div class="item"><span class="label">Deficiencies</span><span class="value">{{ divisionLog.deficiencies|default:"None" }}</span></div>
+        </div>        
+      {% endif %}
+      <h4>Remarks</h4>
+        <div class="meta decoration">
+          <div class="item"><span class="label">Remarks</span><span class="value">{{ divisionLog.remarks }}</span></div>
+        </div>
+        <div class="meta">
+          <div class="item"><span class="label">Process Owner</span><span class="value">{{ account.first_name }} {{ account.last_name }} - {{ account.position }}</span></div>
+          <div class="item"><span class="label">CSM/CSS</span><span class="value">{{ divisionLog.form }}</span></div>
+        </div>
+    </section>
+
+    <div class="footer">
+        <div class="signbox">
+          Kining dokumento nagserbisyo isip imong opisyal nga resibo. Alang sa tanang mosunod nga komunikasyon kabahin niini nga request. <br><br> Palihug ipakita ang imong Unique Transaction ID alang sa bisan unsang follow-up o pangutana sa PACD.
+        </div>
+        <div class="signbox">
+          This document serves as your official acknowledgement receipt and reference for all subsequent communications regarding this request. <br><br> Kindly present your Unique Transaction ID for any follow-up or inquiry at the PACD.
+        </div>
+    </div>
+  </main>
+</body>
+{% endblock %}

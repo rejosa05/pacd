@@ -6,35 +6,7 @@
 {% block content %}
 
 {% include 'app/partials/sidebar.html' %}
-
-<nav class="navbar">
-    <div class="navbar-left">
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fas fa-bars icon-gray"></i>
-        </button>
-        <h2 class="navbar-title">{{ user.unit }} Reports </h2>
-    </div>
-    
-    <div class="navbar-right">
-        <div class="notification-container">
-            <button class="notification-button">
-                <i class="fas fa-bell icon-gray"></i>
-            </button>
-            <span class="notification-badge" id="notify" style="display:none;"></span>
-        </div>
-        
-        <div class="profile">
-            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/52a9964b-98e3-4213-9b7d-f2a9624b66a7.png" 
-                 alt="User profile picture with neutral background" 
-                 class="profile-img" 
-                 onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93cc de5887/image/0968cd8f-5f55-4551-a912-17f1ca55b782.png'">
-            <span class="profile-name">{{ user.first_name }} {{ user.last_name }} ({{ user.position }})</span>
-            <button class="notification-button">
-                <a class="sign-out" href="{% url 'logout' %}"> <i class="fas fa-sign-out icon-red" title="Log out"></i> </a>
-            </button>
-        </div>
-    </div>
-</nav>
+{% include 'app/partials/navbar.html'%}
 
 <main class="main">
     <div class="transaction-panel">

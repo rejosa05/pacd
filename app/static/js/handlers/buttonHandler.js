@@ -96,14 +96,14 @@ function approvedClient(cid) {
                 return;
             }
         } else if (requirementsValue === "No") {    
-            deficienciesValue = "N/A";
+            deficienciesValue = "";
         } else {
             alert('Please answer Question 2 (Requirements Met)!');
             return;
         }
     } else if (charterCoveredValue === "No") {
         srvc = "not applicable";
-        deficienciesValue = "N/A";
+        deficienciesValue = "";
     } else {
         alert('Please answer Question 1 (Citizen Charter)!');
         return;
