@@ -136,7 +136,6 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
                         <i class="fas fa-pencil edit"></i>
-                        <i class="fas fa-eye view"></i>
                         <i class="fas fa-sync-alt update" onclick='openModal("repeat", ${JSON.stringify(history)})'></i>
                         ` : `
                         <i class="fas fa-pencil edit"></i>

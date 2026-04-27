@@ -29,5 +29,7 @@
                 <a class="sign-out" href="{% url 'logout' %}"> <i class="fas fa-sign-out icon-red" title="Log out"></i> </a>
             </button>
         </div>
+            <input type="hidden" id="user-division" value="{{ user.divisions }}">
+            <input type="hidden" id="user-unit" value="{{ user.unit }}">
     </div>
 </nav>

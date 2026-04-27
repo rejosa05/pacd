@@ -6,7 +6,7 @@ from ..utils.utils import *
     
 def ticket_view(request, client_id):
     client = get_object_or_404(ClientDetails, id=client_id)
-    return render(request, 'app/queue.html', {'client': client})
+    return render(request, 'app/pages/queue.html', {'client': client})
 
 def que_view(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

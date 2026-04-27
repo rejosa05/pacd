@@ -17,7 +17,7 @@ def client_details(request):
             return redirect('client_ticket', client_id=client.id)
     else:
          form = ClientDetailsForm()
-    return render(request, 'app/kiosk.html', {'form': form})
+    return render(request, 'app/pages/kiosk.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":
@@ -81,7 +81,7 @@ def reports_page(request):
     if not username:
         return redirect("login")
 
-    return render(request, "app/reports.html", {'user':user})
+    return render(request, "app/pages/reports.html", {'user':user, 'page_title': 'Transactions'})
 
 def services_page(request):
     username = request.session.get('username')
@@ -90,7 +90,7 @@ def services_page(request):
     if not username:
         return redirect("login")
 
-    return render(request, "app/services.html", {'user':user})
+    return render(request, "app/pages/services.html", {'user':user, 'page_title': 'Services'})
 
 def acknowledgement(request, transaction_no):
     context = client_context(transaction_no, request)
