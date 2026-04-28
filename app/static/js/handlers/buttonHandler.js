@@ -635,6 +635,23 @@ function openModal(type, data = {}) {
         `;
     }
 
+    if (type === "update") {
+        htmlContent += `
+        <div class="modal-body">
+            <form class="modern-form">
+                <div class="warning-message">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-primary"> <i class="fas fa-trash delete"></i> Skip </button>
+        </div>
+        `;
+    }
+
+
     form.innerHTML = htmlContent;
 
     document.getElementById("clientModal").style.display = "flex";
@@ -661,6 +678,8 @@ function openModal(type, data = {}) {
             saveRepeat(data.client_id);
         } else if (type === "skip") {
             skipClient(data.client_id);
+        } else if (type === "update") {
+            updateClient();
         }
     }
 }

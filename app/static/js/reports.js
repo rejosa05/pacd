@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalTransactions = document.getElementById('total-transactions');
     const totalCSM = document.getElementById('total-csm');
     const totalCSS = document.getElementById('total-css');
-    const convertToExcel = document.getElementById('movs');
+    const convertToExcel = document.getElementById('downloadExcel');
     const dateStartInput = document.getElementById('dateStarted');
     const dateEndInput = document.getElementById('dateEnd');
     const searchInput = document.getElementById('searchInput');
@@ -28,6 +28,28 @@ document.addEventListener('DOMContentLoaded', function () {
         return dateString ? new Date(dateString) : null;
     }
 
+    function getDateFilteredClients(data) {
+        const startDate = formatDateOnly(dateStartInput.value);
+        const endDate = formatDateOnly(dateEndInput.value);
+        const endOfDay = endDate ? new Date(endDate.getTime() + 86399999) : null;
+        const allClients = Array.isArray(data.getClients) ? data.getClients : [];
+
+        // If no date filters are set, return all clients
+        if (!startDate && !endDate) {
+            return allClients.filter(client => client.date_served);
+        }
+
+        return allClients.filter(client => {
+            if (!client.date_served) return false;
+            const servedDate = new Date(client.date_served);
+
+            if (startDate && servedDate < startDate) return false;
+            if (endOfDay && servedDate > endOfDay) return false;
+
+            return true;
+        });
+    }
+
     function applyFilters(clients) {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const startDate = formatDateOnly(dateStartInput.value);
@@ -48,11 +70,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Date filter
             if (startDate || endDate) {
-                if (!client.date_served) return false;
-                const servedDate = new Date(client.date_served);
-                if (startDate && servedDate < startDate) return false;
-                if (endOfDay && servedDate > endOfDay) return false;
-            }
+            if (!client.date_served) return false;
+
+            const servedDate = new Date(client.date_served);
+
+            if (startDate && servedDate < startDate) return false;
+            if (endDate && servedDate > endOfDay) return false;
+        }
 
             // Search filter
             if (searchTerm) {
@@ -157,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="product">
                         <div class=""><i class="fas fa-box"></i></div>
                         <div>
-                            <div class="transaction-id"><a class="transaction-id" href="acknowledgement/${client.transaction_no}">${client.transaction_no}${client.id}</a></div>
+                            <div class="transaction-id">${client.transaction_no}</div>
                         </div>
                     </div>
                 </td>
@@ -177,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
                 <td class="date">${client.date_resolved ? formatDateTime(client.date_resolved) : '---'}</td>
                 <td>
-                    <button class="icon-button text-green" title="View details" onclick="viewClientDetails('${client.id}')">
-                        <i class="fa fa-eye view"></i>
-                    </button>
+                    <div class="icons">
+                        <i class="fas fa-pencil edit" title="Update Me" onclick='openModal("update", ${JSON.stringify(client)})'></i>
+                    </div>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -197,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const csmCount = clients.filter(client => client.form === 'CSM').length;
         const cssCount = clients.filter(client => client.form === 'CSS').length;
 
-        if(totalCSM) totalCSM.textContent = csmCount;
-        if(totalCSS) totalCSS.textContent = cssCount;
-        if(totalTransactions) totalTransactions.textContent = clients.length;
+        totalCSM.textContent = csmCount;
+        totalCSS.textContent = cssCount;
+        totalTransactions.textContent = clients.length;
     }
 
     function downloadCSV(data) {
@@ -208,15 +232,14 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const headers = ['ID', 'CLIENT DETAILS', 'TRANSACTION NO', 'DIVISION', 'UNIT', 'STATUS', 'DATE'];
+        const headers = ['Client ID', 'Full Name', 'Division', 'Unit', 'Status', 'Date Started', 'Date Served'];
         const rows = data.map(client => [
             client.client_id || '',
             client.client_fullname || '',
-            client.transaction_no || '', 
             client.client_division || '',
             client.client_unit || '',
             client.client_status || '',
-            // formatDateTime(client.date_started),
+            formatDateTime(client.date_started),
             formatDateTime(client.date_served)
         ]);
 
@@ -245,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
         .then(data => {
+            // Store all clients without date filtering
             allClientsCache = Array.isArray(data.getClients) ? data.getClients : [];
             currentPage = 1;    
             renderFiltered();

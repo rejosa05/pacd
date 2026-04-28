@@ -43,8 +43,13 @@ class ClientDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(TransactionHistory)
 class TransactionHistorys(admin.ModelAdmin):
-    list_display = ('id', 'division_log__transaction_no', 'accounts', 'action', 'date')
-    serach_fields = ('accounts', 'action', 'date')
+    list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date')
+    search_fields = ('accounts', 'action', 'date')
     list_filter = ('division_log', 'accounts', 'action', 'date')
     ordering = ('-date',)
     list_per_page = 10
+
+    def get_transaction_no(self, obj):
+        return obj.division_log.transaction_no if obj.division_log else None
+
+    get_transaction_no.short_description = 'Transaction No'

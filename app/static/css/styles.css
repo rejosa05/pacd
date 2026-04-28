@@ -1277,6 +1277,15 @@ th, td {
     vertical-align: middle;
 }
 
+.custom-table i {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.custom-table i:hover {
+    transform: scale(1.2);
+}
+
 .custom-table tr:hover {
     background: #1c2128;
 }

@@ -1,8 +1,6 @@
 from ...models import TransactionHistory
-from django.utils import timezone
 
 def create_transaction(id, divisionLog, account):
-    today = timezone.now()
     TransactionHistory.objects.create(
         division_log = divisionLog,
         accounts = account,
