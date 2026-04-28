@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from ..models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
+from ..utils.services.transactionHistory_ import create_transaction
 from django.utils import timezone
 
 # pacd resolved
@@ -35,7 +36,7 @@ def update_client_status_served(request):
             client.client_org = org_name
             client.save()
         
-            DivisionLog.objects.create(
+            division_log = DivisionLog.objects.create(
                 client_id_id = client_id,
                 pacd_officer_id_id = account.id,
                 process_owner_id_id = account.id,
@@ -56,6 +57,8 @@ def update_client_status_served(request):
                 requirements_met =  requirements_met,
                 request_catered = request_processed
             )
+
+            create_transaction(client_id, division_log, account)
 
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})

@@ -165,4 +165,18 @@ class SessionHistory(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.login_time}"
+
+class TransactionHistory(models.Model):
+    division_log = models.ForeignKey(DivisionLog, on_delete=models.CASCADE, related_name='division_log', null = True)
+    accounts = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, related_name='account', null = True)
+    action = models.CharField(max_length=20, null=True)  
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'transaction_history'
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.action} - {self.division_log}"
+
     

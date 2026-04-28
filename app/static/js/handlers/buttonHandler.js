@@ -528,7 +528,7 @@ function openModal(type, data = {}) {
             </div>
             <form class="modern-form">
                 <div class="form-group">
-                    <div class="checkbox-group">
+                    <div class="checkbox-group" id="">
                         <label>is transaction covered by Citizen Charter? </label>
                         <label> <input type="radio" name="cc-cover" value="Yes"> Yes </label>
                         <label> <input type="radio" name="cc-cover" value="No"> No </label>
@@ -684,8 +684,11 @@ function initCitizenCharterHandlers() {
     const deficienciesTextarea = document.getElementById('deficiencies-textarea');
     const csmWrapper = document.getElementById('csm-wrapper');
     const cssWrapper = document.getElementById('css-wrapper');
+    const ccWrapper = document.getElementById('cc-wrapper');
 
-    if (!ccYes || !ccNo || !reqYes || !reqNo) return; // stop if not rendered yet
+    if (!ccYes || !ccNo || !reqYes || !reqNo) return; 
+
+    const servcList = getSrvc();
 
     serviceListWrapper.style.display = 'none';
     deficienciesWrapper.style.display = 'none';
@@ -700,7 +703,8 @@ function initCitizenCharterHandlers() {
                 deficienciesWrapper.style.display = 'block';
                 csmWrapper.style.display = 'block';
                 cssWrapper.style.display = 'block';
-                getSrvc();
+                getSrvc()
+                
             } else {
                 serviceListWrapper.style.display = 'none';
                 deficienciesWrapper.style.display = 'none';
@@ -763,6 +767,7 @@ function getSrvc() {
                 selectorList.appendChild(option);
             });
         } else {
+            
             document.getElementById('citizen-charter-wrapper').style.display = 'none';
             document.getElementById('serviceList').style.display = 'none';
             document.getElementById('deficiencies-wrapper').style.display = 'none';
