@@ -74,7 +74,7 @@ class ClientDetails(models.Model):
     def get_queue_no():
         today = timezone.now()
         start_queue = 1
-        last_queue = ClientDetails.objects.filter(client_created_date__date=today).order_by('client_queue_no').last()
+        last_queue = ClientDetails.objects.filter(date_created=today).order_by('client_queue_no').last()
         if last_queue:
             return last_queue.client_queue_no + start_queue
         return start_queue
@@ -169,6 +169,9 @@ class SessionHistory(models.Model):
 class TransactionHistory(models.Model):
     division_log = models.ForeignKey(DivisionLog, on_delete=models.CASCADE, related_name='division_log', null = True)
     accounts = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, related_name='account', null = True)
+    form = models.CharField(max_length=20, null=True)
+    deficiencies = models.TextField(null=True)
+    remarks = models.TextField(null=True)
     action = models.CharField(max_length=20, null=True)  
     date = models.DateTimeField(auto_now_add=True)
 

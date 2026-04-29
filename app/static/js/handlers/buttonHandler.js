@@ -503,6 +503,10 @@ function openModal(type, data = {}) {
                 <label>Transaction Details:</label>
                 <label class="value" type="text" id="transaction-details" placeholder="Transaction Details"> ${data.client_details || "N/A"} </label>
             </div>
+            <div class="warning-message">
+                <i class="fas fa-info-circle"></i>
+                <span>By clicking Serving, you acknowledge that you are now handling this client’s transaction. Please ensure you are ready to assist before proceeding.</span>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn-primary"> <i class="fas fa-paper-plane"></i> Serving </button>

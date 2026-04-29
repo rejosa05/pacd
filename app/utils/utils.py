@@ -1,6 +1,6 @@
 from ..models import DivisionLog, ClientDetails, AccountDetails, ServicesDetails
 from django.utils import timezone
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 
 def notify(user, today):
     today = timezone.now()
@@ -32,6 +32,7 @@ def get_clients(unit):
             'client_status': client.status,
             'date_started': client.date.isoformat() if client.date else None,
             'form': client.form,
+            'cc_cover' : client.cc_cover,
             'date_served': client.date.isoformat() if client.date else None,
             'date_resolved': client.date_resolved.isoformat() if client.date_resolved else None,
         })
@@ -145,7 +146,7 @@ def transaction_history(date, unit):
 def pending_transaction(today, unit):
     pendingTransactions = []
     if unit == 'PACD':
-        pending_clients = ClientDetails.objects.filter(client_status='Pending', date_created__date=today)
+        pending_clients = ClientDetails.objects.filter(client_status='Waiting', date_created__date=today)
         for client in pending_clients:
             pendingTransactions.append({
                 'client_id': str(client.id).zfill(3),
@@ -228,23 +229,3 @@ def client_context(t_no, request):
         'account' : account,
         'user': user
     }
-
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-
-def send_queue_update(client):
-    channel_layer = get_channel_layer()
-
-    async_to_sync(channel_layer.group_send)(
-        "queue_group",
-        {
-            "type": "send_queue",
-            "data": {
-                "name": f"{client.client_firstname} {client.client_lastname}",
-                "queue_no": client.client_queue_no,
-                "lane": client.client_lane_type,
-                "status": client.client_status,
-            }
-        }
-    )

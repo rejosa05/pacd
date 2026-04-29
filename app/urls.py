@@ -6,10 +6,8 @@ from .view.dashboard import *
 from .actions import *
 from .view.services import *
 from .view.notifications import *
-from .view.viewdata import *
 from .view.graph import *
 from .view.account import *
-# from .view.kiosk import create_client
 
 urlpatterns = [
     path('', login_view, name="logins"), 
@@ -23,7 +21,6 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
     
-    
     path('f_transactions/', f_transactions, name='f_transactions'),
     path('f_dashboard', f_dashboard, name='f_dashboard'),
     path('transaction-history/', transaction_history, name="transaction-history"),
@@ -36,10 +33,6 @@ urlpatterns = [
     path('count-type-transaction/', count_type_transaction, name="count-type-transaction"),
 
     path('update-details', update_user_details, name='update-details'),
-
-    path('account/<int:id>/', get_account, name='get-account'),
-    path('dashboard/<int:id>/', get_client, name="get-client"),
-    path('unit-dashboard/<int:id>/', get_client, name="get-client-unit"),
 
     path('update-client-status-served/', update_client_status_served, name='update-client-status-served'), # // served by PACD resolved
     path('update-client-status-served-unit/', update_client_status_served_unit, name='update-client-status-served-unit'), # // served by unit resolved

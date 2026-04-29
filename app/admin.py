@@ -19,7 +19,7 @@ class SessionHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(DivisionLog)
 class TransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form', 'service_id') 
+    list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'cc_cover','form', 'service_id') 
     search_fields = ('action_type', 'transaction_type', 'form')
     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
     ordering = ('-id',)

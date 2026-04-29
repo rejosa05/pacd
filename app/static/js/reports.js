@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (currentStatusFilter !== 'all') {
                 const statusMap = {
                     'pending': 'Pending',
-                    'incomplete': 'Incompleted',
+                    'incompleted': 'Incompleted',
                     'serving': 'Serving',
                     'completed': 'Completed'
                 };
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="product">
                         <div class=""><i class="fas fa-box"></i></div>
                         <div>
-                            <div class="transaction-id">${client.transaction_no}</div>
+                            <a class="transaction-id" title="click me" href="acknowledgement/${client.transaction_no}">${client.transaction_no || '' }</a>
                         </div>
                     </div>
                 </td>
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 </td>
                 <td class="type">${client.client_division || 'N/A'}</td>
-                <td class="type">${client.client_unit || 'N/A'}</td>
+                <td class="type">${client.cc_cover || "---"}</td>
                 <td>
                     <div class="col status ${clientStatus}"> ${client.client_status}</div>
                 </td>

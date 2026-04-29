@@ -211,7 +211,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                             <div class="email">${served.client_org}</div>
                         </div>
                     </div>
-                    <div class="col transaction-id"> ${served.transaction_no}${served.transaction_id}</div>
+                    <div class="col transaction-id"> ${served.transaction_no}</div>
                     <div class="col type"> ${served.transaction_type}</div>
                     <div class="col actions">
                         <i class="fas fa-check accept" title="Served" onclick='openModal("served", ${JSON.stringify(served)})'></i>

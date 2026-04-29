@@ -3,11 +3,11 @@ from ..models import ClientDetails, DivisionLog
 def transaction_status(today, account):
     if account == 'PACD':
         countTransactionStatus = {
-            'totalWaiting' : ClientDetails.objects.filter(date_created__date=today).count(),
+            'totalWaiting' : ClientDetails.objects.filter(client_status='Waiting', date_created__date=today).count(),
             'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
             'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
             'totalServing': DivisionLog.objects.filter(status='Serving', date__date=today).count(),
-            'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
+            'totalSkipped': DivisionLog.objects.filter(status='Incompleted', date__date=today).count()
         }
     else:
         countTransactionStatus= {
