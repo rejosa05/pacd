@@ -14,14 +14,14 @@ def que_view(request):
 
         regular_lane = ClientDetails.objects.filter(
             client_lane_type='Regular',
-            client_status='Pending',
-            client_created_date__date=today
+            client_status='Waiting',
+            date_created__date=today
         ).order_by('client_queue_no').first()
 
         priority_lane = ClientDetails.objects.filter(
             client_lane_type='Priority',
-            client_status='Pending',
-            client_created_date__date=today
+            client_status='Waiting',
+            date_created__date=today
         ).order_by('client_queue_no').first()
 
         return JsonResponse({

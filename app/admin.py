@@ -43,7 +43,7 @@ class ClientDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(TransactionHistory)
 class TransactionHistorys(admin.ModelAdmin):
-    list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date')
+    list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date', 'remarks', 'deficiencies', 'form', 'status')
     search_fields = ('accounts', 'action', 'date')
     list_filter = ('division_log', 'accounts', 'action', 'date')
     ordering = ('-date',)

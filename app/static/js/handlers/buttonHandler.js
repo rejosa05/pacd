@@ -1,7 +1,7 @@
 const {
     updateClientStatusServedUrl, forwardedClientToUnit, skippedClient,
     saveUpdateForwardedClientUrl,
-    updateDetails, repeatTransaction, servingClientUnit,
+    updateDetails, repeatTransaction, updateTransaction, servingClientUnit,
     getServices,
     servicesPage
 } = window.dashboardConfig;
@@ -236,9 +236,7 @@ function servingClient(id) {
     fetch(servingClientUnit, {
         method: 'POST',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': csrfToken,
+            
         },
         body: `transaction-id=${id}`
     })
@@ -335,6 +333,33 @@ function serveClient(tid, cid, pid) {
             const receiptUrl = `/acknowledgement/${transactionNo}`;
             window.open(receiptUrl, '_blank');
         }
+    })
+}
+
+function updateClient(id) {
+    const deficienciesInput = document.getElementById('deficiencies').value;
+    const remarks = document.getElementById('remarks').value;
+    const actionRadio = document.querySelector('input[name="request_processed"]:checked');
+    const actionValue = actionRadio ? actionRadio.value : null; // Q3
+    const csmChecked = document.getElementById('csm-checkbox').checked;
+    const cssChecked = document.getElementById('css-checkbox').checked;
+
+    const form = csmChecked ? 'CSM' : 'CSS';
+
+    fetch(updateTransaction, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: `transaction-id=${id}&deficiencies=${encodeURIComponent(deficienciesInput)}&remarks=${encodeURIComponent(remarks)}&request_processed=${encodeURIComponent(actionValue)}&form=${encodeURIComponent(form)}`
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert('update successfully!!');
+        closeModal();
+        fetchTransactions();
     })
 }
 
@@ -643,16 +668,35 @@ function openModal(type, data = {}) {
         htmlContent += `
         <div class="modal-body">
             <form class="modern-form">
+                <div class="form-group">
+                    <textarea id="deficiencies" class="textarea form-control" placeholder="Deficiencies to comply....." required></textarea>
+                    <textarea id="remarks" class="textarea form-control" placeholder="Remarks....." required=True></textarea>
+                    <div class="checkbox-group">
+                        <label class="form-label">is the transaction request catered and/or resolved? </label>
+                        <label><input type="radio" name="request_processed" value="Yes"> Yes </label>
+                        <label><input type="radio" name="request_processed" value="No"> No </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label class="form-label">CSS/CSM:</label>
+                        <div id="csm-wrapper">
+                            <label><input type="radio" id="csm-checkbox" name="resolution" value="CSM"> CSM </label>
+                        </div> 
+                        <div id="css-wrapper">
+                            <label> <input type="radio" id="css-checkbox" name="resolution" value="CSS"> CSS </label>
+                        </div>
+                    </div>
+                </div>
                 <div class="warning-message">
                     <i class="fas fa-info-circle"></i>
-                    <span>Skipping a client will move them to the end of the queue and mark their current transaction as incomplete.</span>
+                    <span>All transactions here are for updates only, to ensure compliance with service requirements.</span>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn-primary"> <i class="fas fa-trash delete"></i> Skip </button>
+            <button type="submit" class="btn-primary"> <i class="fas fa-pencil update"></i> Update </button>
         </div>
         `;
+        setTimeout(initUpdateTransactions, 0);
     }
 
 
@@ -683,7 +727,7 @@ function openModal(type, data = {}) {
         } else if (type === "skip") {
             skipClient(data.client_id);
         } else if (type === "update") {
-            updateClient();
+            updateClient(data.transaction_id);
         }
     }
 }
@@ -751,6 +795,25 @@ function initCitizenCharterHandlers() {
         });
     });
     
+    [caterYes, caterNo].forEach(input => {
+        input.addEventListener('change', function () {
+            if (this.value === "Yes") {
+                csmWrapper.style.display = 'block';
+                cssWrapper.style.display = 'none';
+            } else {
+                csmWrapper.style.display = 'none';
+                cssWrapper.style.display = 'block';
+            }
+        });
+    });
+}
+
+function initUpdateTransactions() {
+    const caterYes = document.querySelector('input[name="request_processed"][value="Yes"]');
+    const caterNo = document.querySelector('input[name="request_processed"][value="No"]');
+    const csmWrapper = document.getElementById('csm-wrapper');
+    const cssWrapper = document.getElementById('css-wrapper');
+
     [caterYes, caterNo].forEach(input => {
         input.addEventListener('change', function () {
             if (this.value === "Yes") {

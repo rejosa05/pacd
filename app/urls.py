@@ -43,6 +43,7 @@ urlpatterns = [
     
     path('serving_client_unit', serving_client_unit, name='serving-client-unit'),
     path('repeat-transaction', repeat_transactions, name='repeat-transaction'),
+    path('update-transaction', update_transactions, name='update-transaction'),
     
 
     path('reports', reports_page, name='reports'),

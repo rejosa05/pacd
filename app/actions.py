@@ -30,9 +30,16 @@ def update_client_status_served(request):
             deficienciesValue = request.POST.get('deficiencies')
             cc_cover = request.POST.get('cc_cover')
             requirements_met = (request.POST.get('requirements_value') or "").strip()
-            request_processed = request.POST.get('request_processed')   
-            action_type = 'Resolved'
-            status = 'Completed'
+            request_processed = request.POST.get('request_processed')
+            action_type = 'Catered'
+            status = "Completed"
+
+            if requirements_met == "No":
+                srvc_status = 'Resolved'
+            else:
+                srvc_status = 'Unresolved'
+
+            print(requirements_met)
 
             client = ClientDetails.objects.get(id=client_id)
             client.client_status = action_type
@@ -61,7 +68,7 @@ def update_client_status_served(request):
                 request_catered = request_processed
             )
 
-            create_transaction(client_id, division_log, account)
+            create_transaction(division_log, account, deficienciesValue, srvc_status, remarks, resolutions)
 
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
@@ -259,6 +266,41 @@ def serving_client_unit(request):
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+# update client
+def update_transactions(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            transaction_id = request.POST.get('transaction-id')
+            remarks = request.POST.get('remarks')
+            request_process = request.POST.get('request_processed')
+            form = request.POST.get('form')
+
+            print(transaction_id, remarks, form, request_process)
+            # user = request.session.get('username')
+            # account = AccountDetails.objects.filter(user=user).first()
+
+            
+            # if account.unit == "PACD":
+            #     print(user, account.unit, transaction_id)
+            # else:
+                
+            #     client = DivisionLog.objects.get(id=transaction_id)
+            #     client.action_type = 'Processing'
+            #     client.status = 'Serving'
+            #     client.process_owner_id_id = account.id
+            #     client.save()
+
+            return JsonResponse({'message': 'Client serving!!!!'})
+
+        except DivisionLog.DoesNotExist:
+            return JsonResponse({'message': 'Client not found'}, status=404)
+        except Exception as e:
+            print(f"Error in update_client_status_resolved: {e}")
+            return JsonResponse({'message': 'Internal Server Error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
 
 def repeat_transactions(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':

@@ -74,7 +74,7 @@ class ClientDetails(models.Model):
     def get_queue_no():
         today = timezone.now()
         start_queue = 1
-        last_queue = ClientDetails.objects.filter(date_created=today).order_by('client_queue_no').last()
+        last_queue = ClientDetails.objects.filter(date_created__date=today).order_by('client_queue_no').last()
         if last_queue:
             return last_queue.client_queue_no + start_queue
         return start_queue
@@ -172,8 +172,10 @@ class TransactionHistory(models.Model):
     form = models.CharField(max_length=20, null=True)
     deficiencies = models.TextField(null=True)
     remarks = models.TextField(null=True)
-    action = models.CharField(max_length=20, null=True)  
+    action = models.CharField(max_length=20, null=True)
+    status = models.CharField(max_length=20, null=True)
     date = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         db_table = 'transaction_history'

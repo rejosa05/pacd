@@ -8,7 +8,7 @@ def notify(user, today):
     unit = account.unit
 
     if unit == 'PACD':
-        notifications = ClientDetails.objects.filter(client_status='Pending', date_created__date=today).count()
+        notifications = ClientDetails.objects.filter(client_status='Waiting', date_created__date=today).count()
     else:
         notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit, date__date=today).count()
 
@@ -22,7 +22,7 @@ def get_clients(unit):
         clients = DivisionLog.objects.filter(unit=unit).order_by('-client_id')
     for client in clients:
         getClients.append({
-            'id': client.id,
+            'transaction_id': client.id,
             'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,
             'client_queue_no': str(client.client_id.client_queue_no).zfill(3),

@@ -128,7 +128,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                         <div class="avatar">${initials}</div>
                         <div class="info">
                             <div class="name">${history.client_fullname}</div>
-                            <div class="email">Assigned to: R. Ejosa</div>
+                            <div class="email">${history.client_org || 'Individual'}</div>
                         </div>
                     </div>
                     <div class="col transaction-id"><a class="transaction-id" title="click me" href="acknowledgement/${history.transaction_no}">${history.transaction_no || '' }</a></div>
@@ -136,7 +136,6 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col status ${statusColor}"> ${history.status}</div>
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
-                        <i class="fas fa-pencil edit"></i>
                         <i class="fas fa-sync-alt update" onclick='openModal("repeat", ${JSON.stringify(history)})'></i>
                         ` : `
                         <i class="fas fa-pencil edit"></i>
@@ -245,11 +244,6 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
         });
     });
 }
-
-    if (path.includes('transaction')) {
-            fetchTransactions();      
-    }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     if (path.includes('transaction')) {
