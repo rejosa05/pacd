@@ -57,8 +57,8 @@ class ClientDetails(models.Model):
     client_lane_type = models.CharField(max_length=100, blank=True, null=True)
     client_contact = models.CharField(max_length=10, null=True)
     client_gender = models.CharField(max_length=10, null=True)
-    client_status = models.CharField(max_length=100, default='Pending')
-    client_created_date = models.DateTimeField(auto_now_add=True)
+    client_status = models.CharField(max_length=100, default='Waiting')
+    date_created = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"({self.client_firstname} {self.client_lastname})"

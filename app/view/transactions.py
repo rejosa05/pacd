@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from ..models import ClientDetails, DivisionLog, AccountDetails
+from ..models import AccountDetails
 from ..utils.utils import *
+from ..querries.fetchStatistics_ import *
 from django.utils import timezone
 from django.http import JsonResponse
 
@@ -27,7 +28,7 @@ def f_transactions(request):
             'account': account.unit,
             'transactionHistory': transactionHistory,
             'servingClient' : servingClientUnit,
-            'getServices' : getServices
+            'getServices' : getServices,
             })
         
     else:

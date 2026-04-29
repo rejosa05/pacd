@@ -45,6 +45,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
         document.getElementById('total-completed').textContent = counts['totalCompleted'] || 0;
         document.getElementById('total-skipped').textContent = counts['totalSkipped'] || 0;
         document.getElementById('total-serving').textContent = counts['totalServing'] || 0;
+        document.getElementById('total-waiting').textContent = counts['totalWaiting'] || 0;
 
         let priorityClients = data.pending_clients.filter(client => client.client_lane_type === 'Priority');
         let regularClients = data.pending_clients.filter(client => client.client_lane_type !== 'Priority');
@@ -113,7 +114,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                 'Completed': 'status-green',
                 'Serving': 'status-blue',
                 'Pending': 'status-brown',
-                'Skipped': 'status-red'
+                'Incompleted': 'status-red'
             } 
             
             const statusColor = actionColor[history.status] || 'status-default';
@@ -131,7 +132,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                         </div>
                     </div>
                     <div class="col transaction-id"><a class="transaction-id" title="click me" href="acknowledgement/${history.transaction_no}">${history.transaction_no || '' }</a></div>
-                    <div class="col type">${history.transaction_type || '---'}</div>
+                    <div class="col type">${history.transaction_type || '---' }</div>
                     <div class="col status ${statusColor}"> ${history.status}</div>
                     <div class="col date">${history.date_resolved ? formatDateTime(history.date_resolved) : '---'}</div>
                     <div class="col actions"> ${userunit === 'PACD' ? `
@@ -278,64 +279,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Modern Modal Functions
-function openSkipModal(clientId, fullname, queueNo) {
-    document.getElementById('skip-client-id').textContent = clientId;
-    document.getElementById('skip-fullname').textContent = fullname;
-    document.getElementById('skip-queue-no').textContent = queueNo;
-    document.getElementById('skipClientModal').style.display = 'flex';
-}
-
-function closeSkipModal() {
-    document.getElementById('skipClientModal').style.display = 'none';
-}
-
-function confirmSkip() {
-    const clientId = document.getElementById('skip-client-id').textContent;
-    skipClient(clientId);
-    closeSkipModal();
-}
-
-// Tab switching for view modal
-function switchTab(tabName) {
-    // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-
-    // Remove active class from all tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-
-    // Show selected tab content
-    document.getElementById(tabName + '-tab').classList.add('active');
-
-    // Add active class to clicked tab button
-    event.target.classList.add('active');
-
-    // If switching to recent tab, load transaction history
-    if (tabName === 'recent') {
-        loadClientTransactionHistory();
-    }
-}
-
-// Load client transaction history for the view modal
-function loadClientTransactionHistory() {
-    const clientId = document.querySelector('#client-details-list dt:contains("Client ID") + dd')?.textContent ||
-                     document.querySelector('#client-details-list dd:first-child')?.textContent;
-
-    if (!clientId) return;
-
-    // This would need to be implemented with a backend endpoint to get client-specific transactions
-    // For now, show a placeholder
-    const transactionList = document.getElementById('client-transaction-history');
-    transactionList.innerHTML = `
-        <div class="no-transactions">
-            <i class="fas fa-history"></i>
-            <p>Transaction history feature coming soon</p>
-        </div>
-    `;
-    document.getElementById('transaction-count').textContent = 'Feature coming soon';
-}

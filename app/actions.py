@@ -1,16 +1,19 @@
 from django.http import JsonResponse
-from ..models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
-from ..utils.services.transactionHistory_ import create_transaction
+from .models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
+from .utils.services.transactionHistory_ import create_transaction
+from .utils.services.clientDetails_ import update_client_details
 from django.utils import timezone
 
 # pacd resolved
 def update_client_status_served(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
-            today = timezone.now()
-            client_id = request.POST.get('client_id')
             user = request.session.get('username')
             account = AccountDetails.objects.filter(user = user).first()
+
+            today = timezone.now()
+            client_id = request.POST.get('client_id')
+
             org_name = request.POST.get('org_name')
             type = request.POST.get('transactions_type')
             transaction_details = request.POST.get('transaction_details')
@@ -124,14 +127,13 @@ def skipped_client(request):
             client.client_status = 'Skipped'
             client.save()
 
-            print(client_id, account.id, user )
-
             DivisionLog.objects.create(
                 client_id_id=client_id,
                 pacd_officer_id_id = account.id,
-                status = 'Skipped',
+                status = 'Incompleted',
                 date = today
             )
+
 
             return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})
 

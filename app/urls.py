@@ -3,7 +3,7 @@ from .view.routing import *
 from .view.display_view import *
 from .view.transactions import *
 from .view.dashboard import *
-from .view.actions import *
+from .actions import *
 from .view.services import *
 from .view.notifications import *
 from .view.viewdata import *

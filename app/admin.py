@@ -19,7 +19,7 @@ class SessionHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(DivisionLog)
 class TransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form', 'service_id')
+    list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'form', 'service_id') 
     search_fields = ('action_type', 'transaction_type', 'form')
     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
     ordering = ('-id',)
@@ -35,10 +35,10 @@ class ServiceDetails(admin.ModelAdmin):
 
 @admin.register(ClientDetails)
 class ClientDetailsAdmin(admin.ModelAdmin):
-    list_display = ('id','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'client_created_date', 'public_id')
+    list_display = ('id','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'date_created', 'public_id')
     search_fields = ('client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status')
-    list_filter = ('client_lane_type', 'client_status', 'client_created_date')
-    ordering = ('-client_created_date',)
+    list_filter = ('client_lane_type', 'client_status', 'date_created')
+    ordering = ('-date_created',)
     list_per_page = 10
 
 @admin.register(TransactionHistory)

@@ -8,7 +8,7 @@ def notify(user, today):
     unit = account.unit
 
     if unit == 'PACD':
-        notifications = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today).count()
+        notifications = ClientDetails.objects.filter(client_status='Pending', date_created__date=today).count()
     else:
         notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit, date__date=today).count()
 
@@ -25,7 +25,7 @@ def get_clients(unit):
             'id': client.id,
             'client_id': str(client.client_id.id).zfill(3),
             'transaction_no': client.transaction_no,
-            'client_queue_no': f"Ticket No: #{client.client_id.client_queue_no}",
+            'client_queue_no': str(client.client_id.client_queue_no).zfill(3),
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_division': client.division,
             'client_unit': client.unit,
@@ -145,7 +145,7 @@ def transaction_history(date, unit):
 def pending_transaction(today, unit):
     pendingTransactions = []
     if unit == 'PACD':
-        pending_clients = ClientDetails.objects.filter(client_status='Pending', client_created_date__date=today)
+        pending_clients = ClientDetails.objects.filter(client_status='Pending', date_created__date=today)
         for client in pending_clients:
             pendingTransactions.append({
                 'client_id': str(client.id).zfill(3),
@@ -156,7 +156,7 @@ def pending_transaction(today, unit):
                 'client_contact': client.client_contact,
                 'client_status': client.client_status,
                 'client_gender': client.client_gender,
-                'date_created': client.client_created_date.isoformat() if client.client_created_date else None,
+                'date_created': client.date_created.isoformat() if client.date_created else None,
             })
     else:
         pending_clients = DivisionLog.objects.filter(unit=unit, status='Pending', date__date=today)
@@ -202,23 +202,6 @@ def serving_client_unit_list(today, unit, id):
             'date_created': client.date.isoformat() if client.date else None,
         })
     return servingTransaction
-
-def transaction_status(today, account):
-    if account == 'PACD':
-        countTransactionStatus = {
-            'totalTransaction': DivisionLog.objects.filter(date__date=today).count(),
-            'totalCompleted': DivisionLog.objects.filter(status='Completed', date__date=today).count(),
-            'totalServing': DivisionLog.objects.filter(status='Serving', date__date=today).count(),
-            'totalSkipped': DivisionLog.objects.filter(status='Skipped', date__date=today).count()
-        }
-    else:
-        countTransactionStatus= {
-            'totalTransaction': DivisionLog.objects.filter(unit=account, date__date=today).count(),
-            'totalServing': DivisionLog.objects.filter(unit=account, status='Serving', date__date=today).count(),
-            'totalCompleted': DivisionLog.objects.filter(unit=account, status='Completed', date__date=today).count(),
-            'totalSkipped': DivisionLog.objects.filter(unit=account, status='Skipped', date__date=today).count()
-        }
-    return countTransactionStatus
     
 def client_context(t_no, request):
     username = request.session.get('username')

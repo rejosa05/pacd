@@ -14,3 +14,9 @@
     ** waiting - done
     ** pending - serving - complete - skipped
     ** done/resolved
+
+
+# action type
+    ** waiting
+    ** serving
+    ** served

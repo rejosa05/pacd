@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (currentStatusFilter !== 'all') {
                 const statusMap = {
                     'pending': 'Pending',
-                    'skipped': 'Skipped',
+                    'incomplete': 'Incompleted',
                     'serving': 'Serving',
                     'completed': 'Completed'
                 };
@@ -172,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Completed': 'status-green',
                 'Serving': 'status-blue',
                 'Pending': 'status-brown',
+                'Incompleted' : 'status-red'
             } 
             const clientStatus = actionColor[client.client_status] || 'status-default';
             const initials = client.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2);
