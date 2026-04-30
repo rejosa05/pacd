@@ -1,17 +1,14 @@
 from ...models import TransactionHistory
 
-def create_transaction(divisionLog, account, dfciences, status, remarks, forms):
+def transaction_log(divisionLog, account, action):
     TransactionHistory.objects.create(
         division_log = divisionLog,
         accounts = account,
-        action = 'Created',
-        deficiencies = dfciences,
-        status = status,
-        remarks = remarks,
-        form = forms
+        action = action
     )
 
 def update_transaction():
+    TransactionHistory
     print('Update')
 
 def serving_transaction():
@@ -19,4 +16,5 @@ def serving_transaction():
 
 
 def skipped_transaction():
+    
     print('Skipped')

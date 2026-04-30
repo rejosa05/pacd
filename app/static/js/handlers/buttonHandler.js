@@ -390,6 +390,10 @@ function openModal(type, data = {}) {
                 <span class="label">Contact:</span>
                 <span class="value"> ${data.client_contact || "N/A"} </span>
             </div>
+            <div class="info-row">
+                <span class="label">Service Avail:</span>
+                <span class="value"> ${data.service_avail} </span>
+            </div>
         </div>        
     `;
 

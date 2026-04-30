@@ -31,6 +31,7 @@ def get_clients(unit):
             'client_unit': client.unit,
             'client_status': client.status,
             'date_started': client.date.isoformat() if client.date else None,
+            'service_avail' : f"{client.service_id}",
             'form': client.form,
             'cc_cover' : client.cc_cover,
             'date_served': client.date.isoformat() if client.date else None,

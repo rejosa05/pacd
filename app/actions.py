@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from .models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails
-from .utils.services.transactionHistory_ import create_transaction
+from .models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails, TransactionHistory
+from .utils.services.division_log_service import update_transactions
 from .utils.services.clientDetails_ import update_client_details
 from django.utils import timezone
 
@@ -68,7 +68,7 @@ def update_client_status_served(request):
                 request_catered = request_processed
             )
 
-            create_transaction(division_log, account, deficienciesValue, srvc_status, remarks, resolutions)
+            # create_transaction(division_log, account, deficienciesValue, srvc_status, remarks, resolutions)
 
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
@@ -268,35 +268,23 @@ def serving_client_unit(request):
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
 # update client
-def update_transactions(request):
+def update_transactions_btn(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
+            user = request.session.get('username')
             transaction_id = request.POST.get('transaction-id')
+            deficiencies = request.POST.get('deficiencies')
             remarks = request.POST.get('remarks')
-            request_process = request.POST.get('request_processed')
             form = request.POST.get('form')
-
-            print(transaction_id, remarks, form, request_process)
-            # user = request.session.get('username')
-            # account = AccountDetails.objects.filter(user=user).first()
-
             
-            # if account.unit == "PACD":
-            #     print(user, account.unit, transaction_id)
-            # else:
-                
-            #     client = DivisionLog.objects.get(id=transaction_id)
-            #     client.action_type = 'Processing'
-            #     client.status = 'Serving'
-            #     client.process_owner_id_id = account.id
-            #     client.save()
+            update_transactions(transaction_id, user, deficiencies, remarks, form)
 
             return JsonResponse({'message': 'Client serving!!!!'})
 
         except DivisionLog.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:
-            print(f"Error in update_client_status_resolved: {e}")
+            print(f"Error in update_transactions_btn: {e}")
             return JsonResponse({'message': 'Internal Server Error'}, status=500)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)

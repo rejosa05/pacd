@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from ..models import DivisionLog, AccountDetails
+from ..models import DivisionLog
 from django.utils import timezone
 from ..utils.utils import notify
 
