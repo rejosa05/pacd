@@ -3,13 +3,12 @@ const {
 } = window.dashboardConfig;
 
 function fecthServices(page = 1, perPage = 4) {
-    const searchQuery = document.getElementById('serviceSearch')?.value.toLowerCase() || '';
     fetch(serviceListUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
     .then(data => {
-        const selectorList = document.querySelector('#serviceLists');
+        const selectorList = document.querySelector('#serviceListTable tbody');
         const paginationControls = document.getElementById('paginationControls');
         const countDisplay = document.getElementById('accountCount');
         selectorList.innerHTML = '';
@@ -22,64 +21,36 @@ function fecthServices(page = 1, perPage = 4) {
         document.getElementById('srvc-lhsd').textContent = counts['totalSrvcLHSD'] || 0;
         document.getElementById('srvc-rd').textContent = counts['totalSrvcRDARD'] || 0;
 
-        let services = data.serviceList || [];
-
-        service = services.filter(srvc => {
-            return (
-                (srvc.service_name || '').toLowerCase().includes(searchQuery) ||
-                (srvc.service_code || '').toLowerCase().includes(searchQuery) ||
-                (srvc.classification || '').toLowerCase().includes(searchQuery) ||
-                (srvc.division || '').toLowerCase().includes(searchQuery) ||
-                (srvc.unit || '').toLowerCase().includes(searchQuery)                
-            );
-        });
-
-        const totalAccounts = service.length;
-        const totalPages = Math.ceil(service.length / perPage);
+        const services = data.serviceList || [];
+        const totalServices = services.length;
+        const totalPages = Math.ceil(totalServices / perPage);
         const start = (page - 1) * perPage;
-        const paginatedClients = service.slice(start, start + perPage);
+        const paginatedServices = services.slice(start, start + perPage);
 
-        const showingStart = totalAccounts === 0 ? 0 : start + 1;
-        
-        countDisplay.textContent = `Showing ${showingStart} of ${totalAccounts} accounts`;
+        const showingStart = totalServices === 0 ? 0 : start + 1;
+        countDisplay.textContent = `Showing ${showingStart} of ${totalServices} services`;
 
-        function addServiceList(srvc, highlight = false) {
-
-            const typeColor = {
-                'MSD': 'status-green',
-                'LHSD': 'status-orange',
-                'RLED': 'status-purple',
-                'RD/ARD': 'status-cyan',
-            }
-
-            const clssfction = {
-                'Simple': 'status-green',
-                'Complex': 'status-yellow',
-                'Highly Technical': 'status-red'
-            }
-            
-            const diviosionColor = typeColor[srvc.division] || 'status-default';
-            const statColor = clssfction[srvc.classification] || 'status-default';
-            const card = document.createElement('div');
-            card.className = 'client-card';
-            card.innerHTML = `
-                <div class="transaction-card"  >
-                    <div>
-                        <div class="client-status-row">
-                            <span class="transaction-id ">${srvc.service_code}</span>
-                            <span class="status ${statColor}">${srvc.classification}</span>
-                            <span class="status ${diviosionColor}">${srvc.division}</span>
-                            <span class="status ${diviosionColor}">${srvc.unit}</span>
-                        </div>
-                        <p class="transaction-description">Service Name: ${srvc.service_name} </p>
-                    </div>
-                    
-                </div>
+        function addServiceRow(srvc) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${srvc.service_name || '-'}</td>
+                <td>${srvc.category || '-'}</td>
+                <td>${srvc.classification || '-'}</td>
+                <td>${srvc.division || '-'}</td>
+                <td>${srvc.unit || '-'}</td>
+                <td>${srvc.type_transaction || '-'}</td>
+                <td>${srvc.processing_time || '-'}</td>
             `;
-            selectorList.appendChild(card);
+            selectorList.appendChild(row);
         }
-        
-        paginatedClients.forEach(addServiceList);
+
+        if (paginatedServices.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="7" class="text-center">No services found.</td>';
+            selectorList.appendChild(row);
+        } else {
+            paginatedServices.forEach(addServiceRow);
+        }
 
         function renderPagination(currentPage, totalPages) {
             const createBtn = (label, isActive = false, isDisabled = false) => {

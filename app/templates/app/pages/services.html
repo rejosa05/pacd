@@ -58,66 +58,30 @@
         </button>
         {% endif %}
     </div> -->
-    <div class="top-bar">
-        <input type="text" class="search-box" placeholder="Search products...">
-    </div>
-
-    <div class="table">
-
-        <!-- HEADER -->
-        <div class="table-header">
-            <div>Product</div>
-            <div>Category</div>
-            <div>Status</div>
-            <div>Stock</div>
-            <div>Price</div>
-            <div>Created</div>
-            <div></div>
-        </div>
-
-        <!-- ROW -->
-        <div class="table-row">
-            <div class="product">
-                <div class="icon"><i class="fas fa-box"></i></div>
-                <div>
-                    <div class="product-name">Pro Dashboard License</div>
-                    <div class="product-desc">Full-featured admin dashboard template</div>
-                </div>
+    <div class="transaction-panel">
+        <div class="custom-table">
+            <div class="table-container">
+                <table id="serviceListTable">
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Category</th>
+                            <th>Classification</th>
+                            <th>Division</th>
+                            <th>Unit</th>
+                            <th>Transaction Type</th>
+                            <th>Processing Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- data fetch -->
+                    </tbody>
+                </table>
             </div>
-
-            <div><span class="badge template">Templates</span></div>
-            <div><span class="badge active">Active</span></div>
-            <div>999</div>
-            <div class="price">$299.00</div>
-            <div>Jan 15, 2026</div>
-            <div class="actions"><i class="fas fa-ellipsis-h"></i></div>
         </div>
-
-        <!-- ROW -->
-        <div class="table-row">
-            <div class="product">
-                <div class="icon"><i class="fas fa-box"></i></div>
-                <div>
-                    <div class="product-name">CRM Module</div>
-                    <div class="product-desc">Customer relationship management</div>
-                </div>
-            </div>
-
-            <div><span class="badge template">Modules</span></div>
-            <div><span class="badge draft">Draft</span></div>
-            <div>999</div>
-            <div class="price">$349.00</div>
-            <div>Sep 25, 2025</div>
-            <div class="actions"><i class="fas fa-ellipsis-h"></i></div>
-        </div>
-
-    </div>
-    <div class="transaction-list" id="serviceLists" style="height: 490px;">
-        <!-- data fetch -->
-    </div>
-    <div class="panel-footer">
-        <div id="accountCount" class="footer-text"></div>
-        <div class="pagination" id="paginationControls">
+        <div class="panel-footer">
+            <div id="accountCount" class="footer-text"></div>
+            <div class="pagination" id="paginationControls"></div>
         </div>
     </div>
 </div>
@@ -176,9 +140,6 @@
 </div> -->
 
 <script>
-  document.getElementById('serviceSearch').addEventListener('input', () => {
-    fecthServices(1); // Reset to first page on new search
-});
     const sidebar = document.getElementById('sidebar');
     const toggleBtn = document.getElementById('sidebarToggle');
 

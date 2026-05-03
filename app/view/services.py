@@ -11,12 +11,15 @@ def serviceList(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         services = ServicesDetails.objects.all()
         serviceList = [
-            {   
+            {
                 'id': service.id,
                 'service_name': service.service_name,
+                'category': service.category,
                 'division': service.division,
                 'unit': service.unit,
                 'classification': service.classification,
+                'type_transaction': service.type_transaction,
+                'processing_time': str(service.processing_time) if service.processing_time else None,
             }
             for service in services
         ]

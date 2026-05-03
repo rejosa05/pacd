@@ -54,22 +54,33 @@
             <i class="fas fa-user-plus icon-margin-right"></i> Add Account
         </button>
     </div>
-    <div class="transaction-list" id="accountList" style="height: 370px;">
-        <!-- data fetch -->
+    <div class="top-bar">
+        <input id="accountSearch" type="text" class="search-box" placeholder="Search accounts..."/>
     </div>
-    <div class="panel-footer"> <input type="text" id="accountSearch" placeholder="Search account..."/>
-        <div id="accountCount" class="footer-text"></div>
-        <div class="pagination" id="paginationControls">
+    <div class="custom-table">
+        <div class="table-container">
+            <table id="accountTable">
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>Name</th>
+                        <th>Division</th>
+                        <th>Unit</th>
+                        <th>Position</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="accountList">
+                    <!-- data fetch -->
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
-
-<div class="modal-overlay" id="view-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-view" tabindex="-1">
-    <button class="close-btn" aria-label="Close modal" onclick="closeViewDetails()">&times;</button>
-    <h2>User Details</h2>
-    <dl id="user-details-list">
-    </dl>
+    <div class="panel-footer">
+        <div id="accountCount" class="footer-text"></div>
+        <div class="pagination" id="paginationControls"></div>
     </div>
 </div>
 

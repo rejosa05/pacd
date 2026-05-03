@@ -2,7 +2,10 @@ const {
     accountListUrl, addAccountUrl, viewAccount,
 } = window.dashboardConfig;
 
+let currentAccountPage = 1;
+
 function fetchAccount(page = 1, perPage = 3) {
+    currentAccountPage = page;
     const searchQuery = document.getElementById('accountSearch')?.value.toLowerCase() || '';
     fetch(accountListUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -37,53 +40,57 @@ function fetchAccount(page = 1, perPage = 3) {
         const totalAccounts = accounts.length;
         const totalPages = Math.ceil(accounts.length / perPage);
         const start = (page - 1) * perPage;
-        const paginatedClients = accounts.slice(start, start + perPage);
+        const paginatedAccounts = accounts.slice(start, start + perPage);
 
         const showingStart = totalAccounts === 0 ? 0 : start + 1;
         
         countDisplay.textContent = `Showing ${showingStart} of ${totalAccounts} accounts`;
 
-        function addAccount(acc, highlight = false) {
-
+        function addAccount(acc) {
             const typeColor = {
                 'MSD': 'status-green',
                 'LHSD': 'status-orange',
                 'RLED': 'status-purple',
                 'RD/ARD': 'status-cyan',
-            }
+            };
 
             const statusColor = {
                 'Active': 'status-green',
                 'For Approval': 'status-blue',
                 'Inactive': 'status-red',
-            }
+            };
 
-            const diviosionColor = typeColor[acc.divisions] || 'status-default';
+            const divisionColor = typeColor[acc.divisions] || 'status-default';
             const statColor = statusColor[acc.status] || 'status-default';
-            const card = document.createElement('div');
-            card.className = 'client-card' + (highlight ? ' highlight' : '');
-            card.innerHTML = `
-                <div class="transaction-card"  >
-                    <div>
-                        <div class="client-status-row">
-                            <span class="transaction-id ">${acc.acc_id}</span>
-                            <span class="status ${diviosionColor}">${acc.divisions}</span>
-                            <span class="status ${diviosionColor}">${acc.unit}</span>
-                            <span class="status ${statColor}">${acc.status}</span>
-                        </div>
-                        <p class="transaction-description"> ${acc.full_name}, ${acc.position}, ${acc.contact}, ${acc.email} </p>
-                    </div>
-                    <div class="transaction-actions">
-                        <span class="timestamp">${formatDateTime(acc.date_created)}</span>
-                        <button class="icon-button text-green" title="View" onclick="viewDetails('${acc.id}')">
-                        <i class="fa fa-eye"></i></button>
-                    </div>
-                </div>
+            const row = document.createElement('tr');
+            const actionLabel = acc.status === 'Active' ? 'Deactivate' : 'Activate';
+            const actionClass = acc.status === 'Active' ? 'button button-red' : 'button button-blue';
+            const nextStatus = acc.status === 'Active' ? 'Inactive' : 'Active';
+
+            row.innerHTML = `
+                <td>${acc.acc_id}</td>
+                <td>${acc.full_name}</td>
+                <td><span class="status ${divisionColor}">${acc.divisions}</span></td>
+                <td>${acc.unit}</td>
+                <td>${acc.position}</td>
+                <td><span class="status ${statColor}">${acc.status}</span></td>
+                <td>${formatDateTime(acc.date_created)}</td>
+                <td class="action-cell">
+                    <button class="${actionClass}" onclick="toggleAccountStatus('${acc.id}', '${nextStatus}')">${actionLabel}</button>
+                    <button class="icon-button text-green" title="View" onclick="viewDetails('${acc.id}')">
+                    </button>
+                </td>
             `;
-            selectorList.appendChild(card);
+            selectorList.appendChild(row);
         }
-        
-        paginatedClients.forEach(addAccount);
+
+        if (paginatedAccounts.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="8" class="text-center">No accounts found.</td>';
+            selectorList.appendChild(row);
+        } else {
+            paginatedAccounts.forEach(addAccount);
+        }
 
         function renderPagination(currentPage, totalPages) {
             const createBtn = (label, isActive = false, isDisabled = false) => {
@@ -142,7 +149,27 @@ function viewDetails(id) {
         })
 }
 
+function toggleAccountStatus(accountId, status) {
+    const body = new FormData();
+    body.append('account_id', accountId);
+    body.append('status', status);
 
+    fetch(window.dashboardConfig.updateDetails, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': window.dashboardConfig.csrfToken,
+        },
+        body,
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(() => {
+        fetchAccount(currentAccountPage);
+    })
+    .catch(error => {
+        console.error('Account status update failed:', error);
+    });
+}
 
 if (path.includes(accounts)) {
     fetchAccount();

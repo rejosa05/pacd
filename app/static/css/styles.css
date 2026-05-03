@@ -311,6 +311,22 @@ h1, h2, h3 {
     transition: background 0.3s;
 }
 
+.button-red {
+    background-color: #DC2626;
+    color: white;
+    transition: background 0.3s;
+}
+
+.button-red:hover {
+    background-color: #B91C1C;
+}
+
+.action-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 .button-blue:hover {
     background-color: #2563EB;
 }

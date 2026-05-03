@@ -168,20 +168,30 @@ def  update_user_details(request):
             status = request.POST.get('status')
 
             account = AccountDetails.objects.get(id=account_id)
-            account.first_name = first_name
-            account.last_name = last_name
-            account.position = position
-            account.divisions = division
-            account.unit = unit
-            account.user = user
-            account.password = password
-            account.email = email
-            account.contact = contact
-            account.status = status       
+            if first_name is not None:
+                account.first_name = first_name
+            if last_name is not None:
+                account.last_name = last_name
+            if position is not None:
+                account.position = position
+            if division is not None:
+                account.divisions = division
+            if unit is not None:
+                account.unit = unit
+            if user is not None:
+                account.user = user
+            if password is not None:
+                account.password = password
+            if email is not None:
+                account.email = email
+            if contact is not None:
+                account.contact = contact
+            if status is not None:
+                account.status = status
             account.save()
 
             return JsonResponse({'message': 'UPDATE successfully!'})
-        except DivisionLog.DoesNotExist:
+        except AccountDetails.DoesNotExist:
             return JsonResponse({'message': 'Client not found'}, status=404)
         except Exception as e:
             print(f"Error in update_client_status_forwarded: {e}")
