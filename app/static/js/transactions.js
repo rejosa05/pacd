@@ -69,10 +69,11 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
             const initials = client.client_fullname.split(" ").map(n => n[0]).join("").toUpperCase().substring(0,2)
 
             const clientData = {
-                transaction_id: client.tid,
+                transaction_id: client.id,
                 public_id: client.public_id,
                 client_id: client.client_id,
                 client_fullname: client.client_fullname,
+                transaction_no: client.transaction_no,
                 client_queue_no: client.client_queue_no,
                 client_contact: client.client_contact,
                 client_org: client.client_org,
@@ -100,7 +101,6 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                         <i class="fas fa-trash delete" title="Skipped" onclick='openModal("skip", ${JSON.stringify(clientData)})'></i>
                         ` : `
                         <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
-                        <i class="fas fa-trash delete" title="Skipped" onclick="openSkipModal('${client.id}', '${client.client_fullname}', '${client.client_queue_no}')"></i>
                         `}
                     </div>
                 </div>

@@ -233,10 +233,13 @@ function saveRepeat(id) {
 }
 
 function servingClient(id) {
+    console.log(id)
     fetch(servingClientUnit, {
         method: 'POST',
         headers: {
-            
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
         },
         body: `transaction-id=${id}`
     })
@@ -724,6 +727,7 @@ function openModal(type, data = {}) {
             serveClient(data.transaction_id);
         } else if (type === "serving") {
             servingClient(data.transaction_id)
+            console.log(data)
         } else if (type === "approved") {
             approvedClient(data.client_id);
         } else if (type === "repeat") {

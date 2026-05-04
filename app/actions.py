@@ -260,11 +260,10 @@ def serving_client_unit(request):
             if account.unit == "PACD":
                 print(user, account.unit, transaction_id)
             else:
-                
                 client = DivisionLog.objects.get(id=transaction_id)
                 client.action_type = 'Processing'
                 client.status = 'Serving'
-                client.process_owner_id_id = account.id
+                client.process_owner_id_id = account
                 client.save()
 
             return JsonResponse({'message': 'Client serving!!!!'})

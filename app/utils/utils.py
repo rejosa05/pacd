@@ -164,9 +164,10 @@ def pending_transaction(today, unit):
         pending_clients = DivisionLog.objects.filter(unit=unit, status='Pending', date__date=today)
         for client in pending_clients:
             pendingTransactions.append({
-                'tid': client.id,
+                'id': client.id,
                 'client_id': str(client.client_id.id).zfill(3),
                 'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
+                'transaction_no': client.transaction_no,
                 'client_fullname': client.client_id.client_firstname + ' ' + client.client_id.client_lastname,
                 'client_contact': client.client_id.client_contact,
                 'client_lane_type': client.client_id.client_lane_type,
@@ -182,14 +183,15 @@ def pending_transaction(today, unit):
 def serving_client_unit_list(today, unit, id):
     servingTransaction = []
 
-    serving  = DivisionLog.objects.filter(date__date=today, unit = unit , status='Serving', process_owner_id__id = id).order_by('-date')
+    serving  = DivisionLog.objects.filter(date__date=today, unit = unit , status='Serving', process_owner_id = id).order_by('-date')
     
     for client in serving:
         servingTransaction.append({
+            'id': client.id,
             'transaction_id': str(client.id).zfill(3),
             'public_id': client.client_id.public_id,
             'client_id': str(client.client_id.id).zfill(3),
-            'transaction_no': client.transaction_no,
+            'transaction_no': "wewew",
             'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
