@@ -19,9 +19,6 @@ def client_details(request):
          form = ClientDetailsForm()
     return render(request, 'app/pages/kiosk.html', {'form': form})
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 
 def login_view(request):

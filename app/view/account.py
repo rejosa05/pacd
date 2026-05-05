@@ -5,7 +5,6 @@ from ..forms import AuthorizedPersonnelForm
 from ..utils.utils import *
 from django.http import HttpResponseForbidden
 from django.http import JsonResponse
-from django.utils import timezone
 
 
 def accountList(request):

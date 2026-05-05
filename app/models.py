@@ -8,10 +8,10 @@ import uuid
 
 
 class AccountDetails(models.Model):
-    user = models.CharField(max_length=100, null=True, unique=True)
-    password = models.CharField(max_length=100)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    user = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=255, null=True)  # mas taas para safe sa hash
+    first_name = models.CharField(max_length=100, null=True)
+    last_name = models.CharField(max_length=100, null=True)
     divisions = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
     position = models.CharField(max_length=100, null=True, blank=True)
@@ -20,7 +20,6 @@ class AccountDetails(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, default='For Approval', null=True)
     created_by = models.CharField(max_length=100, null=True, blank=True)
-    
 
     def __str__(self):
         return f"{self.user} ({self.first_name} {self.last_name})"
@@ -31,22 +30,7 @@ class AccountDetails(models.Model):
     def save(self, *args, **kwargs):
         self.first_name = self.first_name.title()
         self.last_name = self.last_name.title()
-
-        if not self.pk or (AccountDetails.objects.filter(pk=self.pk).exists() and
-                AccountDetails.objects.get(pk=self.pk).password != self.password):
-            self.password = make_password(self.password)
-
-        super(AccountDetails, self).save(*args, **kwargs)
-
-        self.create_django_user()
-
-    def create_django_user(self):
-        user, created = AccountDetails.objects.get_or_create(user=self.user)
-        if created:
-            user.set_password(self.password)
-            user.first_name = self.first_name
-            user.last_name = self.last_name
-            user.save()
+        super().save(*args, **kwargs)
     
 class ClientDetails(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
