@@ -19,29 +19,46 @@ def client_details(request):
          form = ClientDetailsForm()
     return render(request, 'app/pages/kiosk.html', {'form': form})
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.hashers import check_password
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
             user = AccountDetails.objects.filter(user=username, status='Active').first()
-            if user:
+
+            if user and check_password(password, user.password):
 
                 request.session.flush()
                 request.session.cycle_key()
-                
+
                 request.session['username'] = user.user
 
                 session_key = request.session.session_key or request.session._get_or_create_session_key()
-                SessionHistory.objects.create(user=user.user, login_time=timezone.now(), session_key=session_key)
+
+                SessionHistory.objects.create(
+                    user=user.user,
+                    login_time=timezone.now(),
+                    session_key=session_key
+                )
+
                 return redirect("transactions")
+
             else:
                 messages.error(request, "Invalid credentials. Please try again.")
+
         else:
-            messages.error(request, "Invalid credentials. Please try again.")
+            messages.error(request, "Invalid form input.")
+
     else:
         form = LoginForm()
-    
+
     return render(request, "app/pages/login.html", {"form": form})
 
 def logout_view(request):
