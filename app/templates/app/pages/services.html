@@ -69,7 +69,6 @@
                             <th>Classification</th>
                             <th>Division</th>
                             <th>Unit</th>
-                            <th>Transaction Type</th>
                             <th>Processing Time</th>
                         </tr>
                     </thead>
@@ -94,50 +93,6 @@
     </dl>
     </div>
 </div>
-
-<!-- <div class="modal-overlay" id="add-client">
-    <div class="modal-view">
-        <button class="close-btn" aria-label="Close modal" onclick="closeAddAccount()">&times;</button>
-        <h2> Add Account </h2>
-        <form method="post" action="{% url 'account' %}">
-            {% csrf_token %}
-            <label for="f_name" class="form-label">First Name</label>
-            {{ form.first_name }}
-            <label for="l_name" class="form-label">Last Name</label>
-            {{ form.last_name }}
-            <label for="email" class="form-label">Contact</label>
-            {{ form.contact }}
-            <label for="email" class="form-label">Email</label>
-            {{ form.email }}
-            <label for="username" class="form-label">Username</label>
-            {{ form.user }}
-            <label for="password" class="form-label">Password</label>
-            {{ form.password }}
-
-            <label class="form-label" for="division">Division: </label>
-                <select class="form-option" name="divisions" id="division-select">
-                    <option value="">Select Division</option>   
-                    <option value="MSD">MSD</option>
-                    <option value="LHSD">LHSD</option>
-                    <option value="RD/ARD">RD/ARD</option>
-                    <option value="RLED">RLED</option>
-                </select>
-            <label class="form-label" for="unit">Unit:</label>
-                <select class="form-option" name="unit" id="unit-select" required>
-                    <option value="">Select Unit</option>
-                </select>
-            <label class="form-label" for="division">Position: </label>
-            <select class="form-option" name="position" id="position">
-                <option value="">Select role</option>
-                <option>Administrative Assistant II</option>
-                <option>Administrative Assistant III</option>
-                <option>Administrative Assistant IV</option>
-            </select>
-        
-            <button class="add-user-btn" type="submit">Add User</button>
-        </form>
-    </div>
-</div> -->
 
 <script>
     const sidebar = document.getElementById('sidebar');

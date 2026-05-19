@@ -23,14 +23,14 @@
             <a href="{% url 'reports' %}" class="menu-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
                 <i class="fas fa-file-text icon"></i> Reports
             </a>
-            <a href="{% url 'transactions_history' %}" class="menu-item {% if request.resolver_match.url_name == 'transactions_history' %} active {% endif %}">
-                <i class="fas fa-list icon"></i> Transactions
+            <a href="{% url 'activity-logs' %}" class="menu-item {% if request.resolver_match.url_name == 'activity-logs' %} active {% endif %}">
+                <i class="fas fa-history icon"></i> User Activity
             </a>
         </div>
-        <div class="support-box">
+        <!-- <div class="support-box">
             <h3 class="support-title">Need help?</h3>
             <p class="support-text">Our support team is just a click away.</p>
             <button class="support-button">Contact Support</button>
-        </div>
+        </div> -->
     </div>
 </div>

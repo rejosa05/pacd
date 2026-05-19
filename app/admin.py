@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountDetails, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory
+from .models import AccountDetails, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory, UserActivityLog
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
@@ -16,6 +16,14 @@ class SessionHistoryAdmin(admin.ModelAdmin):
     list_filter = ('user','login_time')
     ordering = ('-login_time',)
     list_per_page = 10
+
+@admin.register(UserActivityLog)
+class UserActivityLogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'action', 'description', 'page', 'ip_address', 'session_key', 'date')
+    search_fields = ('user', 'action', 'description', 'page')
+    list_filter = ('action', 'date')
+    ordering = ('-date',)
+    list_per_page = 20
 
 @admin.register(DivisionLog)
 class TransactionLogAdmin(admin.ModelAdmin):

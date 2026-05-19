@@ -97,7 +97,7 @@ def get_total_services():
         'totalSrvcRLED': srvc.filter(division='RLED').count(),
         'totalSrvcMSD': srvc.filter(division='MSD').count(),
         'totalSrvcLHSD': srvc.filter(division='LHSD').count(),
-        'totalSrvcRDARD': srvc.filter(division='RD/ARD').count()
+        'totalSrvcRDARD': srvc.filter(division='RD_ARD').count()
     }
     return totalServices
 
@@ -191,7 +191,7 @@ def serving_client_unit_list(today, unit, id):
             'transaction_id': str(client.id).zfill(3),
             'public_id': client.client_id.public_id,
             'client_id': str(client.client_id.id).zfill(3),
-            'transaction_no': "wewew",
+            'transaction_no': client.transaction_no,
             'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
             'client_fullname': f"{client.client_id.client_firstname} {client.client_id.client_lastname}",
             'client_lane_type': client.client_id.client_lane_type,
@@ -207,6 +207,28 @@ def serving_client_unit_list(today, unit, id):
         })
     return servingTransaction
     
+def log_user_activity(user, action, description=None, request=None):
+    from ..models import UserActivityLog
+
+    session_key = None
+    ip_address = None
+    page = None
+
+    if request is not None:
+        session_key = request.session.session_key or request.session._get_or_create_session_key()
+        ip_address = request.META.get('REMOTE_ADDR')
+        page = request.path
+
+    UserActivityLog.objects.create(
+        user=user,
+        action=action,
+        description=description,
+        page=page,
+        session_key=session_key,
+        ip_address=ip_address,
+    )
+
+
 def client_context(t_no, request):
     username = request.session.get('username')
     if not username:

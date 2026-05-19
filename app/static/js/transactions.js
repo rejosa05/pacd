@@ -98,6 +98,7 @@ function fetchTransactions(page = 1, perPage = 3, historyPage = 1, historyPerPag
                     <div class="col actions">${userunit === 'PACD' ? `
                         <i class="fas fa-check accept" title="Served" onclick='openModal("approved", ${JSON.stringify(clientData)})'></i>
                         <i class="fas fa-paper-plane update" title="Foward" onclick='openModal("forward", ${JSON.stringify(clientData)})'></i>
+                        <i class="fas fa-trash delete" title="Skip" onclick='openModal("skip", ${JSON.stringify(clientData)})'></i>
                         ` : `
                         <i class="fas fa-edit serving" title="Serving" onclick='openModal("serving", ${JSON.stringify(clientData)})'></i>
                         `}

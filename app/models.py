@@ -150,6 +150,21 @@ class SessionHistory(models.Model):
     def __str__(self):
         return f"{self.user} - {self.login_time}"
 
+class UserActivityLog(models.Model):
+    user = models.CharField(max_length=100)
+    action = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    page = models.CharField(max_length=200, null=True, blank=True)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
+    ip_address = models.CharField(max_length=45, null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.user} - {self.action} at {self.date}"
+
 class TransactionHistory(models.Model):
     division_log = models.ForeignKey(DivisionLog, on_delete=models.CASCADE, related_name='division_log', null = True)
     accounts = models.ForeignKey(AccountDetails, on_delete=models.CASCADE, related_name='account', null = True)

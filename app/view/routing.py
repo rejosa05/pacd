@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib import messages
-from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails, ServicesDetails
+from django.http import JsonResponse
+from ..models import AccountDetails, SessionHistory, DivisionLog, ClientDetails, ServicesDetails, UserActivityLog
 from ..forms import LoginForm, ClientDetailsForm
 from django.utils import timezone
 from ..utils.utils import *
@@ -14,6 +15,13 @@ def client_details(request):
         form = ClientDetailsForm(request.POST)
         if form.is_valid():
             client = form.save()
+            user = request.session.get('username') or 'kiosk'
+            log_user_activity(
+                user,
+                'client_registered',
+                f'New kiosk client {client.id}: {client.client_firstname} {client.client_lastname}',
+                request
+            )
             return redirect('client_ticket', client_id=client.id)
     else:
          form = ClientDetailsForm()
@@ -45,6 +53,8 @@ def login_view(request):
                     session_key=session_key
                 )
 
+                log_user_activity(user.user, 'login', 'User logged in', request)
+
                 return redirect("transactions")
 
             else:
@@ -65,6 +75,9 @@ def logout_view(request):
     SessionHistory.objects.filter(user=username, session_key=session_key, logout_time__isnull=True).update(
         logout_time=timezone.now()
     )
+
+    if username:
+        log_user_activity(username, 'logout', 'User logged out', request)
 
     request.session.flush()
     logout(request)
@@ -124,3 +137,20 @@ def client_transaction(request):
         return redirect("login")
 
     return render(request, "app/clients.html", {'user':user})
+
+
+def activity_logs(request):
+    username = request.session.get('username')
+    user = AccountDetails.objects.filter(user=username).first()
+
+    if not user:
+        return redirect('login')
+
+    return render(request, 'app/pages/activity_logs.html', {'user': user, 'page_title': 'Activity Logs'})
+
+
+def get_activity_logs(request):
+    if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        logs = UserActivityLog.objects.all().values('user', 'action', 'description', 'page', 'ip_address', 'session_key', 'date')[:200]
+        return JsonResponse({'activity_logs': list(logs)})
+    return JsonResponse({'message': 'Invalid request'}, status=400)

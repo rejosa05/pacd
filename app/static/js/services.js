@@ -38,7 +38,6 @@ function fecthServices(page = 1, perPage = 4) {
                 <td>${srvc.classification || '-'}</td>
                 <td>${srvc.division || '-'}</td>
                 <td>${srvc.unit || '-'}</td>
-                <td>${srvc.type_transaction || '-'}</td>
                 <td>${srvc.processing_time || '-'}</td>
             `;
             selectorList.appendChild(row);
@@ -78,35 +77,6 @@ function fecthServices(page = 1, perPage = 4) {
         }
         renderPagination(page, totalPages);
     });
-}
-
-function viewDetails(id) {
-    fetch(`${viewAccount}${id}/`)
-        .then(response => {
-            if (!response.ok) throw new Error('Account not found');
-            return response.json();
-        })
-        
-        .then(account => {
-            const userDetailsList = document.getElementById('user-details-list');
-            const detailsOverlay = document.getElementById('view-details-modal');
-            const modal = detailsOverlay.querySelector('.modal-view');
-
-            userDetailsList.innerHTML = `
-                <dt>ID:</dt><dd> DOHRO13-${account.divisions}-${account.unit}-${account.id}</dd>
-                <dt>Name:</dt><dd>${account.first_name} ${account.last_name}</dd>
-                <dt>Position:</dt><dd>${account.position}</dd>
-                <dt>Division:</dt><dd>${account.divisions}</dd>
-                <dt>Unit:</dt><dd>${account.unit}</dd>
-                <dt>User:</dt><dd>${account.user}</dd>
-                <dt>Email:</dt><dd>${account.email}</dd>
-                <dt>Contact:</dt><dd>${account.contact}</dd>
-                <dt>Status:</dt><dd>${account.status}</dd>
-                <dt>Date Created:</dt><dd>${formatDateTime(account.date_created)}</dd>
-            `;
-            detailsOverlay.style.display = 'flex';
-            modal.focus();
-        })
 }
 
 fecthServices();

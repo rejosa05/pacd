@@ -1,0 +1,48 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+{% include 'app/partials/sidebar.html' %}
+{% include 'app/partials/navbar.html' %}
+
+<main class="main">
+    <div class="page-header">
+        <h2>User Activity Logs</h2>
+        <p>View actions performed by users from login/logout to transaction processing.</p>
+    </div>
+
+    <div class="activity-log-panel">
+        <div class="activity-log-actions">
+            <input type="text" id="activitySearch" placeholder="Search by user, action, page or description" />
+        </div>
+        <div class="activity-log-table-container">
+            <table class="activity-log-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>IP Address</th>
+                        <th>Session</th>
+                        <th>Date / Time</th>
+                    </tr>
+                </thead>
+                <tbody id="activityLogBody">
+                    <tr>
+                        <td colspan="7">Loading activity logs...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    window.activityLogsApi = "{% url 'get-activity-logs' %}";
+</script>
+<script src="{% static 'js/activity_logs.js' %}"></script>
+
+{% endblock %}

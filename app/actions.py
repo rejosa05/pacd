@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from .models import ClientDetails, DivisionLog, AccountDetails, ServicesDetails, TransactionHistory
 from .utils.services.division_log_service import update_transactions
 from .utils.services.clientDetails_ import update_client_details
+from .utils.utils import log_user_activity
 from django.utils import timezone
 
 # pacd resolved
@@ -68,8 +69,7 @@ def update_client_status_served(request):
                 request_catered = request_processed
             )
 
-            # create_transaction(division_log, account, deficienciesValue, srvc_status, remarks, resolutions)
-
+            log_user_activity(user, 'served_transaction', f"Transaction {division_log.transaction_no} marked served", request)
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
         except ClientDetails.DoesNotExist:
@@ -98,7 +98,7 @@ def forwarded_client_to_unit(request):
             client.client_org = org_name
             client.save()
 
-            DivisionLog.objects.create(
+            division_log = DivisionLog.objects.create(
                 client_id_id=client_id,
                 transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{client_id}",
                 pacd_officer_id_id = account.id,
@@ -110,6 +110,8 @@ def forwarded_client_to_unit(request):
                 status= 'Pending',
                 date=today
             )
+
+            log_user_activity(user, 'forwarded_client', f"Client forwarded to {division}/{unit} as {division_log.transaction_no}", request)
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
 
@@ -134,13 +136,14 @@ def skipped_client(request):
             client.client_status = 'Skipped'
             client.save()
 
-            DivisionLog.objects.create(
+            division_log = DivisionLog.objects.create(
                 client_id_id=client_id,
                 pacd_officer_id_id = account.id,
                 status = 'Incompleted',
                 date = today
             )
 
+            log_user_activity(user, 'skipped_client', f"Client {client_id} skipped", request)
 
             return JsonResponse({'message': 'Client skipped successfully!', 'client_queue_no': client.client_queue_no})
 
@@ -189,6 +192,7 @@ def  update_user_details(request):
             if status is not None:
                 account.status = status
             account.save()
+            log_user_activity(account.user, 'update_account', f"Account {account.user} updated", request)
 
             return JsonResponse({'message': 'UPDATE successfully!'})
         except AccountDetails.DoesNotExist:
@@ -236,6 +240,7 @@ def update_client_status_served_unit(request):
             client.service_id_id = srvc.id if srvc else None  # Handle case where service is not found
 
             client.save()
+            log_user_activity(user, 'resolve_transaction', f"Transaction {client.transaction_no} resolved by {user}", request)
 
             return JsonResponse({'message': 'Client resolved successfully!'})
 
@@ -265,6 +270,7 @@ def serving_client_unit(request):
                 client.status = 'Serving'
                 client.process_owner_id_id = account
                 client.save()
+                log_user_activity(user, 'start_serving', f"Transaction {client.transaction_no} set to serving", request)
 
             return JsonResponse({'message': 'Client serving!!!!'})
 
@@ -287,6 +293,7 @@ def update_transactions_btn(request):
             form = request.POST.get('form')
             
             update_transactions(transaction_id, user, deficiencies, remarks, form)
+            log_user_activity(user, 'update_transaction', f"Transaction {transaction_id} updated", request)
 
             return JsonResponse({'message': 'Client serving!!!!'})
 
@@ -319,7 +326,7 @@ def repeat_transactions(request):
             client.client_org = org_name or client.client_org
             client.save()
 
-            DivisionLog.objects.create(
+            division_log = DivisionLog.objects.create(
                 client_id=client,
                 pacd_officer_id=account,
                 transaction_no = f"TR-{division}-{unit}-{today.strftime('%Y')}{str(client_id).zfill(3)}",
@@ -331,6 +338,8 @@ def repeat_transactions(request):
                 status='Pending',
                 date=today
             )
+
+            log_user_activity(username, 'repeat_transaction', f"Transaction {division_log.transaction_no} repeated", request)
 
             return JsonResponse({'message': 'Client forwarded successfully!', 'client_queue_no': client.client_queue_no})
 

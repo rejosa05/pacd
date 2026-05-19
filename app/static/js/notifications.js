@@ -48,7 +48,7 @@ function showNewNotificationAlert(newCount) {
     }
 }
 
-if (["dashboard", "transaction", "reports", "account"].some(keyword => path.includes(keyword))) {
+if (["dashboard", "transaction", "reports", "account", "services"].some(keyword => path.includes(keyword))) {
     fetchPACDNotifications();
     setInterval(fetchPACDNotifications, 3000);
 }
