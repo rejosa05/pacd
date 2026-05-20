@@ -76,6 +76,7 @@ class ServicesDetails(models.Model):
     classification = models.CharField(max_length=100, null=True, blank=True)
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
     processing_time = models.DurationField(default=timedelta(days=1), null=True, blank=True)
+    link = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.service_name}"

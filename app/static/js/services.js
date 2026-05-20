@@ -2,7 +2,7 @@ const {
     serviceListUrl
 } = window.dashboardConfig;
 
-function fecthServices(page = 1, perPage = 4) {
+function fecthServices(page = 1, perPage = 10) {
     fetch(serviceListUrl, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })

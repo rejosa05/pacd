@@ -35,7 +35,7 @@ class TransactionLogAdmin(admin.ModelAdmin):
 
 @admin.register(ServicesDetails)
 class ServiceDetails(admin.ModelAdmin):
-    list_display = ('id', 'service_name', 'division', 'unit', 'classification', 'type_transaction', 'processing_time')
+    list_display = ('id', 'service_name', 'division', 'unit', 'classification', 'type_transaction', 'processing_time', 'link')
     search_fields = ('service_name', 'division', 'unit', 'classification', 'type_transaction')
     list_filter = ('service_name', 'classification', 'type_transaction')
     order = ('-id')

@@ -38,7 +38,7 @@ function fetchServingClient() {
             clientBox.classList.add('client-card'); // Add styling class if needed
             clientBox.innerHTML = `
             <div class="queue-text">
-                <i class="fas fa-check-circle queue-icon"></i> ${client.client_unit} - ${client.client_queue_no}
+                <i class="fas fa-check-circle queue-icon"></i>  Client ${client.client_queue_no} Proceed to ${client.client_unit} 
             </div>
             `;
             return clientBox;

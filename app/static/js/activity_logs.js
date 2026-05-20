@@ -29,9 +29,7 @@ function renderActivityLogs(logs) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${log.user || ''}</td>
-            <td>${log.action || ''}</td>
             <td>${log.description || ''}</td>
-            <td>${log.ip_address || ''}</td>
             <td>${log.session_key || ''}</td>
             <td>${formatDateTime(log.date)}</td>
         `;
