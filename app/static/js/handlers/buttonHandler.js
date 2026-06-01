@@ -379,7 +379,7 @@ function openModal(type, data = {}) {
         <div class="client-info-card">
         <div class="info-row">
                 <span class="label">Transactions No:</span>
-                <span class="value" id="transaction-no"> ${data.transaction_no || "---"}</span>
+                <span class="value" id="transaction-no"> ${data.transaction_no || "-"}</span>
             </div>
             <div class="info-row">
                 <span class="label">Client ID:</span>
@@ -395,7 +395,7 @@ function openModal(type, data = {}) {
             </div>
             <div class="info-row">
                 <span class="label">Service Avail:</span>
-                <span class="value"> ${data.service_avail} </span>
+                <span class="value"> ${data.service_avail || "-"} </span>
             </div>
         </div>        
     `;
@@ -423,7 +423,7 @@ function openModal(type, data = {}) {
                     <textarea id="transactions-details" class="textarea form-control" placeholder="Transactions Details....." required=True></textarea>
                     <div class="form-group">
                         <div class="checkbox-group">
-                            <label>is transaction covered by Citizen Charter? </label>
+                            <label>is the transaction covered by Citizen Charter? </label>
                             <label>
                                 <input type="radio" name="cc-cover" value="Yes"> Yes
                             </label>
@@ -450,7 +450,7 @@ function openModal(type, data = {}) {
                         </div>
                         <textarea id="remarks" class="textarea form-control" placeholder="Remarks....." required=True></textarea>
                         <div class="checkbox-group">
-                            <label class="form-label">is the transaction request catered and/or resolved? </label>
+                            <label class="form-label">has the request been attended to/resolved? </label>
                             <label><input type="radio" name="request_processed" value="Yes"> Yes </label>
                             <label><input type="radio" name="request_processed" value="No"> No </label>
                         </div>
