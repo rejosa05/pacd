@@ -25,8 +25,8 @@ def que_view(request):
         ).order_by('client_queue_no').first()
 
         return JsonResponse({
-            'regular_lane': { 'client_queue_no': regular_lane.client_queue_no if regular_lane else "00"},
-            'priority_lane': {'client_queue_no': priority_lane.client_queue_no if priority_lane else "00"},
+            'regular_lane': { 'client_queue_no': f"CLIENT: {str(regular_lane.client_queue_no).zfill(2)}" if regular_lane else "00"},
+            'priority_lane': {'client_queue_no': f"CLIENT: {str(priority_lane.client_queue_no).zfill(2)}" if priority_lane else "00"},
         })
     
 def serving_client(request):
@@ -41,7 +41,7 @@ def serving_client(request):
             serving_clients.append({
                 'id': client.id,
                 'client_id': client.client_id.id,
-                'client_queue_no': client.client_id.client_queue_no,
+                'client_queue_no': str(client.client_id.client_queue_no).zfill(2),
                 'client_division': client.division,
                 'client_unit': client.unit,
             })

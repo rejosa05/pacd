@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalTransactions = document.getElementById('total-transactions');
     const totalCSM = document.getElementById('total-csm');
     const totalCSS = document.getElementById('total-css');
-    const convertToExcel = document.getElementById('downloadExcel');
+    const convertToExcel = document.getElementById('movs');
     const dateStartInput = document.getElementById('dateStarted');
     const dateEndInput = document.getElementById('dateEnd');
     const searchInput = document.getElementById('searchInput');
