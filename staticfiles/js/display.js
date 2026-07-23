@@ -1,0 +1,64 @@
+const {
+    queViewUrl, servingList
+} = window.dashboardConfig;
+
+function displayQue() {
+    fetch(queViewUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        const regularNo = data.regular_lane.client_queue_no || "00";
+        const priorityNo = data.priority_lane.client_queue_no || "00";
+
+        document.getElementById('regularCurrent').innerText = regularNo;
+        document.getElementById('fastCurrent').innerText = priorityNo;
+
+        window.currentQueueNumbers = {
+            regular: regularNo,
+            priority: priorityNo
+        };
+    })  
+}
+
+function fetchServingClient() {
+    fetch(servingList, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+        // Clear all existing content from each division box
+        document.querySelectorAll('.clients-list').forEach(div => div.innerHTML = '');
+
+        let priorityClients = data.serving_clients.filter(client => client.client_lane_type === 'Priority');
+        let regularClients = data.serving_clients.filter(client => client.client_lane_type !== 'Priority');
+
+        function createClientBox(client) {
+            const clientBox = document.createElement('div');
+            clientBox.classList.add('client-card'); // Add styling class if needed
+            clientBox.innerHTML = `
+            <div class="queue-text">
+                <i class="fas fa-check-circle queue-icon"></i>  Client ${client.client_queue_no} Proceed to ${client.client_unit} 
+            </div>
+            `;
+            return clientBox;
+        }
+
+        function insertClient(client) {
+            const divisionContainer = document.querySelector(`[id="${client.client_division}"] .clients-list`);
+            if (divisionContainer) {
+                divisionContainer.appendChild(createClientBox(client));
+            }
+        }
+
+        priorityClients.forEach(client => insertClient(client));
+        regularClients.forEach(client => insertClient(client));
+    })
+}
+
+if (path.includes(displayQueUrl)) { 
+    displayQue();
+    fetchServingClient();
+    setInterval(displayQue, 2000);
+    setInterval(fetchServingClient, 2000);
+}

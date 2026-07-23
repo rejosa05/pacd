@@ -6,107 +6,127 @@
 
 {% block content %}
 <style>
+    :root{
+      --content-max: 900px;
+      --gutter: 1rem;
+      --radius: 8px;
+      --bg: #fff;
+      --muted: #555;
+    }
+
+    /* Use a responsive, fluid base font that scales slightly with viewport */
     body {
-      font-size: 17px;
+      font-size: clamp(14px, 1.6vw, 18px);
       line-height: 1.6;
-      align-items: center;
       padding: .5rem 1rem;
       font-family: Arial, sans-serif;
-    }
-
-    h3 {
-        margin: 1px 0;
-    }
-
-    h5 {
-      font-size: 14px;
-      color: #555;
       margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: #f5f7fa;
     }
-    
 
+    h3 { margin: 0.25rem 0; }
+    h5 { font-size: .9rem; color: var(--muted); margin: 0 0 0.5rem 0; }
 
+    /* Centered card for form */
     main.login {
-      max-width: 500px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 1.5rem auto;
+      background: var(--bg);
+      padding: calc(1rem + 1vh);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      box-sizing: border-box;
+    }
+
+    /* Make form controls full width and touch friendly */
+    main.login form input,
+    main.login form select,
+    main.login form textarea {
+      width: 100%;
+      padding: .6rem .75rem;
+      margin: .4rem 0 1rem 0;
+      border: 1px solid #dcdcdc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
     }
 
     .login-btn {
       background: #007bff;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 18px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 1rem;
+      display: inline-block;
+      width: 100%;
+      max-width: 320px;
     }
-    .login-btn:hover {
-      background: #0056b3;
-    }
+    .login-btn:hover { background: #0056b3; }
 
     /* Modal styles */
     .modal {
       display: none; 
       position: fixed; 
       z-index: 1000; 
-      left: 0;
-      top: 0;
-      width: 100%; 
-      height: 100%; 
+      inset: 0;
       overflow: auto;
-      background-color: rgba(0,0,0,0.5); 
+      background-color: rgba(0,0,0,0.55); 
+      padding: 1rem;
     }
     .modal-content {
-      background: #fff;
-      margin: 5% auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 80%;
+      background: var(--bg);
+      margin: 5vh auto;
+      padding: 1rem;
+      border-radius: var(--radius);
+      width: 100%;
       max-width: 1000px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      box-sizing: border-box;
+      max-height: 90vh;
+      overflow: auto;
     }
-    .modal h2 {
-      margin-top: 0;
-      text-align: center;
-    }
+    .modal h2 { margin-top: 0; text-align: center; }
 
     .modal-body {
       display: flex;
-      gap: 20px;
+      gap: 1rem;
+      align-items: flex-start;
     }
     .modal-col {
-      flex: 1;
-      border: 1px solid #ddd;
-      padding: 15px;
+      flex: 1 1 0;
+      border: 1px solid #e6e6e6;
+      padding: .85rem;
       border-radius: 6px;
       background: #fafafa;
       overflow-y: auto;
-      max-height: 500px;
+      max-height: 60vh;
       text-align: justify;
     }
 
-    .modal-footer {
-      text-align: right;
-      margin-top: 20px;
+    .modal-footer { text-align: right; margin-top: 1rem; }
+    .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: .95rem; }
+    .btn-agree { background: #28a745; color: white; }
+    .btn-decline { background: #dc3545; color: white; }
+
+    /* SMALL SCREENS */
+    @media (max-width: 767px) {
+      .modal-body { flex-direction: column; }
+      .modal-col { max-height: 40vh; }
+      main.login { padding: 1rem; margin: 0.75rem; }
+      .login-btn { font-size: 1rem; padding: 12px; }
     }
-    .btn {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn-agree {
-      background: #28a745;
-      color: white;
-    }
-    .btn-decline {
-      background: #dc3545;
-      color: white;
+
+    /* Extra small (phones) - ensure comfortable tap targets */
+    @media (max-width: 479px) {
+      body { padding: .5rem; }
+      .modal-content { padding: .75rem; }
+      .modal-col { padding: .6rem; }
+      h1 { font-size: 1.2rem; margin-bottom: .5rem; }
     }
 </style>
 
@@ -191,11 +211,11 @@
     <main class="login" aria-labelledby="form-title" role="main">    
         <h1>Welcome Client</h1>
         <span class="subtitle">Fill in the client information</span>
-        <form method="post">        
-                {% csrf_token %}
-                {{ message }}
-                {{ form.as_p }}
-                <button class="login-btn" type="submit">Submit</button>
+        <form method="post" id="client-form">        
+          {% csrf_token %}
+          <div id="message">{{ message }}</div>
+          {{ form.as_p }}
+          <button class="login-btn" type="submit">Submit</button>
         </form>
      </main>
     <script>

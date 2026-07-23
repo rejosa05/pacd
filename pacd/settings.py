@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'rest_framework',
+    'compressor',
     'app',
 ]
 
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'PACD_Project.urls'
+ROOT_URLCONF = 'pacd.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'PACD_Project.asgi.application'
+ASGI_APPLICATION = 'pacd.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {

@@ -1,24 +1,27 @@
-# Ignore compiled Python files
+# Python
 __pycache__/
-*.pyc
-*.pyo
-
-# Ignore environment settings
-env/
-venv/
+*.py[cod]
 *.sqlite3
-db.sqlite3
-*.db
 
-# Ignore Django secret key files (if applicable)
-*.env
+# Virtual Environment
+venv/
+env/
 
-# Ignore static and media files (if applicable)
-staticfiles/
-media/
+# Node
+node_modules/
+
+# Static build (optional)
+static/src/output.css
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Environment
 .env
 
-# VSCode
-.vscode/
+#prettier
+*.pyc

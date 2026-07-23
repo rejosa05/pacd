@@ -1,0 +1,72 @@
+const {
+    pacdTransactions, transactionHistory, transactionCount, viewCLient,
+    pendingClientsUrl, pacdReports, fetchCateredTransactionsUrl, displayQueUrl, fetchResolvedDataUnitUrl,
+    forwardedClientUrl, csrfToken,
+    f_dashboard, dashboard,
+    f_transactions, transaction, accounts, updateCLientStatusServedUnitUrl,
+    reports, urlHistory
+} = window.dashboardConfig;
+
+
+
+const path = window.location.pathname;
+function formatDateTime(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
+function getColorFromName(name) {
+    const colors = ["#f87171", "#60a5fa", "#34d399", "#fbbf24", "#a78bfa", "#fb7185"];
+    
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
+}
+
+function divisionUnitSelect(divisionID, unitID) {
+    const divisionSelect = document.getElementById(divisionID);
+    const unitSelect = document.getElementById(unitID);
+
+    const unitOptions = {
+        'MSD': ['HRMDU', 'Cashier', 'Finance', 'BAC', 'Procurement', 'Accounting', 'Supply'],
+        'LHSD': ['MAIP', 'LHS Chief', 'Pharmacy', 'Clinic', 'EOH'],
+        'RD/ARD': ['Research', 'Legal', 'PACD', 'RD', 'ARD'],
+        'RLED': ['RLED'],
+        'SUPER': ['Super Admin'],
+    };
+
+    if (!divisionSelect || !unitSelect) return;
+
+    divisionSelect.addEventListener("change", function () {
+        const selectedDivision = divisionSelect.value;
+        const units = unitOptions[selectedDivision] || [];
+
+        // Clear existing options
+        unitSelect.innerHTML = "";
+
+        // Add a placeholder option
+        const placeholderOption = document.createElement("option");
+        placeholderOption.textContent = "Select Unit";
+        placeholderOption.value = "";
+        unitSelect.appendChild(placeholderOption);
+
+        // Populate new options
+        units.forEach(unit => {
+            const option = document.createElement("option");
+            option.textContent = unit;
+            option.value = unit;
+            unitSelect.appendChild(option);
+        });
+    });
+}
