@@ -1,0 +1,189 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="flex h-screen overflow-hidden">
+  {% include 'includes/sidebar.html' %}
+
+<!-- Overlay for mobile -->
+<div id="overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- templates/includes/navbar.html -->
+         {% include 'includes/navbar.html' %}
+
+<script>
+    (function () {
+        const themeToggle = document.getElementById('theme-toggle');
+        const knob = document.getElementById('toggle-knob');
+        const knobSun = document.getElementById('knob-sun');
+        const knobMoon = document.getElementById('knob-moon');
+        const html = document.documentElement;
+
+        function applyTheme(isDark) {
+            if (isDark) {
+                html.classList.add('dark');
+                knob.style.transform = 'translateX(28px)';
+                knobSun.classList.add('hidden');
+                knobMoon.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                knob.style.transform = 'translateX(0px)';
+                knobSun.classList.remove('hidden');
+                knobMoon.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Respect saved preference, fall back to system preference
+        const saved = localStorage.getItem('theme');
+        let isDark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        applyTheme(isDark);
+
+        themeToggle.addEventListener('click', function () {
+            isDark = !isDark;
+            applyTheme(isDark);
+        });
+    })();
+</script>
+
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900">
+
+            <!-- Page header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Process Transactions</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Call, serve, and close out client transactions in real time.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Available
+                    </span>
+                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option>Window 2</option>
+                        <option>Window 1</option>
+                        <option>Window 3</option>
+                        <option>Window 4</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                <!-- Waiting queue -->
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Waiting Queue</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Priority clients are shown first</p>
+                        </div>
+                        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">14 waiting</span>
+                    </div>
+
+                    <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+
+                        <li class="flex items-center justify-between gap-4 px-5 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-11 h-11 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-sm font-bold">P-014</span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">New application &middot; Waiting 6 min</p>
+                                </div>
+                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 shrink-0">Priority</span>
+                            </div>
+                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 bg-blue-700 text-white text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-blue-800">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                                Call
+                            </button>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-4 px-5 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-11 h-11 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-sm font-bold">P-015</span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Rosa Fernandez</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Claiming of documents &middot; Waiting 4 min</p>
+                                </div>
+                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 shrink-0">Priority</span>
+                            </div>
+                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                                Call
+                            </button>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-4 px-5 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-11 h-11 shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-sm font-bold">R-041</span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Juan Dela Cruz</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Renewal &middot; Waiting 3 min</p>
+                                </div>
+                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">Regular</span>
+                            </div>
+                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                                Call
+                            </button>
+                        </li>
+
+                        <li class="flex items-center justify-between gap-4 px-5 py-4">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-11 h-11 shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-sm font-bold">R-042</span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Pedro Bautista</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Inquiry &middot; Waiting 1 min</p>
+                                </div>
+                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">Regular</span>
+                            </div>
+                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                                Call
+                            </button>
+                        </li>
+
+                    </ul>
+
+                    <div class="px-5 py-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="#" class="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">View full queue &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Now serving panel -->
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex flex-col">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Now Serving</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">Window 2</p>
+
+                    <div class="flex-1 flex flex-col items-center justify-center text-center bg-blue-50 dark:bg-blue-900/20 rounded-xl py-8 mb-5">
+                        <p class="text-4xl font-bold text-blue-700 dark:text-blue-400 tracking-tight">A-042</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white mt-2">Ana Reyes</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Claiming of documents</p>
+                        <span class="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority lane</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button type="button" class="w-full inline-flex items-center justify-center gap-2 bg-green-700 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-green-800">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                            Mark as Completed
+                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" class="inline-flex items-center justify-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs font-medium py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Transfer
+                            </button>
+                            <button type="button" class="inline-flex items-center justify-center gap-1.5 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-medium py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+                                No Show
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+{% endblock %}
