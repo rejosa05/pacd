@@ -12,3 +12,12 @@ def dashboard(request):
 
 def transaction(request):
     return render(request, 'pages/transaction.html')
+
+def user(request):
+    return render(request, 'pages/users.html')
+
+def logs(request):
+    return render(request, 'pages/logs.html')
+
+def display(request):
+    return render(request, 'pages/display.html')

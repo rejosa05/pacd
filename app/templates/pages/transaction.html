@@ -12,177 +12,254 @@
         <!-- templates/includes/navbar.html -->
          {% include 'includes/navbar.html' %}
 
-<script>
-    (function () {
-        const themeToggle = document.getElementById('theme-toggle');
-        const knob = document.getElementById('toggle-knob');
-        const knobSun = document.getElementById('knob-sun');
-        const knobMoon = document.getElementById('knob-moon');
-        const html = document.documentElement;
-
-        function applyTheme(isDark) {
-            if (isDark) {
-                html.classList.add('dark');
-                knob.style.transform = 'translateX(28px)';
-                knobSun.classList.add('hidden');
-                knobMoon.classList.remove('hidden');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.classList.remove('dark');
-                knob.style.transform = 'translateX(0px)';
-                knobSun.classList.remove('hidden');
-                knobMoon.classList.add('hidden');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-        // Respect saved preference, fall back to system preference
-        const saved = localStorage.getItem('theme');
-        let isDark = saved
-            ? saved === 'dark'
-            : window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        applyTheme(isDark);
-
-        themeToggle.addEventListener('click', function () {
-            isDark = !isDark;
-            applyTheme(isDark);
-        });
-    })();
-</script>
-
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900">
 
             <!-- Page header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Process Transactions</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Call, serve, and close out client transactions in real time.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Available
-                    </span>
-                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        <option>Window 2</option>
-                        <option>Window 1</option>
-                        <option>Window 3</option>
-                        <option>Window 4</option>
-                    </select>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Client Transactions</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Review, approve, skip, or forward client transactions to the right office.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Filters + table card -->
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
 
-                <!-- Waiting queue -->
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Waiting Queue</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Priority clients are shown first</p>
-                        </div>
-                        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">14 waiting</span>
+                <!-- Filter bar -->
+                <div class="flex flex-col lg:flex-row lg:items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="relative flex-1">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M18.75 10.5a8.25 8.25 0 11-16.5 0 8.25 8.25 0 0116.5 0z"/></svg>
+                        <input type="text" placeholder="Search by name or queue number"
+                            class="w-full pl-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     </div>
-
-                    <ul class="divide-y divide-gray-100 dark:divide-gray-700">
-
-                        <li class="flex items-center justify-between gap-4 px-5 py-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="w-11 h-11 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-sm font-bold">P-014</span>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">New application &middot; Waiting 6 min</p>
-                                </div>
-                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 shrink-0">Priority</span>
-                            </div>
-                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 bg-blue-700 text-white text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-blue-800">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                                Call
-                            </button>
-                        </li>
-
-                        <li class="flex items-center justify-between gap-4 px-5 py-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="w-11 h-11 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-sm font-bold">P-015</span>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Rosa Fernandez</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Claiming of documents &middot; Waiting 4 min</p>
-                                </div>
-                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 shrink-0">Priority</span>
-                            </div>
-                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                                Call
-                            </button>
-                        </li>
-
-                        <li class="flex items-center justify-between gap-4 px-5 py-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="w-11 h-11 shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-sm font-bold">R-041</span>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Juan Dela Cruz</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Renewal &middot; Waiting 3 min</p>
-                                </div>
-                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">Regular</span>
-                            </div>
-                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                                Call
-                            </button>
-                        </li>
-
-                        <li class="flex items-center justify-between gap-4 px-5 py-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="w-11 h-11 shrink-0 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center text-sm font-bold">R-042</span>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Pedro Bautista</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Inquiry &middot; Waiting 1 min</p>
-                                </div>
-                                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">Regular</span>
-                            </div>
-                            <button type="button" class="shrink-0 inline-flex items-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                                Call
-                            </button>
-                        </li>
-
-                    </ul>
-
-                    <div class="px-5 py-3 border-t border-gray-100 dark:border-gray-700">
-                        <a href="#" class="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">View full queue &rarr;</a>
-                    </div>
+                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="">All statuses</option>
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Skipped</option>
+                        <option>Forwarded</option>
+                    </select>
+                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="">All offices</option>
+                        <option>Records Section</option>
+                        <option>Legal Division</option>
+                        <option>Cashier</option>
+                        <option>Compliance Office</option>
+                        <option>Director's Office</option>
+                    </select>
+                    <input type="date" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                 </div>
 
-                <!-- Now serving panel -->
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex flex-col">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Now Serving</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">Window 2</p>
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-500 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">Queue No.</th>
+                                <th class="px-4 py-3 font-medium">Client</th>
+                                <th class="px-4 py-3 font-medium">Lane</th>
+                                <th class="px-4 py-3 font-medium">Transaction</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium">Office</th>
+                                <th class="px-4 py-3 font-medium">Time In</th>
+                                <th class="px-4 py-3 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
 
-                    <div class="flex-1 flex flex-col items-center justify-center text-center bg-blue-50 dark:bg-blue-900/20 rounded-xl py-8 mb-5">
-                        <p class="text-4xl font-bold text-blue-700 dark:text-blue-400 tracking-tight">A-042</p>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white mt-2">Ana Reyes</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Claiming of documents</p>
-                        <span class="inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority lane</span>
-                    </div>
+                            <!-- Row 1: Pending -->
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">P-014</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Maria Santos</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority</span></td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">New application</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Pending</span></td>
+                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
+                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:14 AM</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <button type="button" title="Approve"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                        </button>
+                                        <button type="button" title="Skip"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+                                        </button>
+                                        <button type="button" data-modal-target="forwardModal" data-modal-toggle="forwardModal" title="Forward"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-cyan-700 hover:bg-cyan-50 dark:hover:bg-cyan-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
 
-                    <div class="space-y-2">
-                        <button type="button" class="w-full inline-flex items-center justify-center gap-2 bg-green-700 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-green-800">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                            Mark as Completed
-                        </button>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" class="inline-flex items-center justify-center gap-1.5 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs font-medium py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                Transfer
-                            </button>
-                            <button type="button" class="inline-flex items-center justify-center gap-1.5 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-medium py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
-                                No Show
-                            </button>
-                        </div>
+                            <!-- Row 2: Approved -->
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">R-041</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Juan Dela Cruz</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">Regular</span></td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Renewal</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>Approved</span></td>
+                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
+                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:21 AM</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <span class="w-8 h-8 flex items-center justify-center text-gray-300 dark:text-gray-600">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 3: Skipped -->
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">P-013</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Ana Reyes</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority</span></td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Claiming of documents</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Skipped</span></td>
+                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
+                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:02 AM</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <button type="button" title="Recall to queue"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Row 4: Forwarded -->
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">R-040</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Pedro Bautista</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">Regular</span></td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Inquiry</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Forwarded</span></td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Legal Division</td>
+                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">8:55 AM</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Showing <span class="font-medium text-gray-700 dark:text-gray-300">1–4</span> of <span class="font-medium text-gray-700 dark:text-gray-300">128</span> clients</p>
+                    <div class="flex items-center gap-1">
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40" disabled>Previous</button>
+                        <button class="px-3 py-1.5 rounded-lg bg-blue-700 text-white text-xs font-medium">1</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">2</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">3</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">Next</button>
                     </div>
                 </div>
             </div>
 
         </main>
+    </div>
+</div>
+
+<!-- Edit Client Modal -->
+<div id="editModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit client details</h3>
+            <button type="button" data-modal-hide="editModal"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <form class="px-6 py-5 space-y-4" onsubmit="event.preventDefault();">
+            <div class="grid grid-cols-2 gap-3">
+                <input type="text" value="Maria" placeholder="First name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <input type="text" value="Santos" placeholder="Last name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            </div>
+            <input type="tel" value="0917 123 4567" placeholder="Contact number" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <input type="text" value="Purok 3, Brgy. San Isidro" placeholder="Address" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <div class="grid grid-cols-2 gap-3">
+                <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option>Female</option>
+                    <option>Male</option>
+                </select>
+                <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option>Priority</option>
+                    <option>Regular</option>
+                </select>
+            </div>
+            <select class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <option>New application</option>
+                <option>Renewal</option>
+                <option>Claiming of documents</option>
+                <option>Inquiry</option>
+                <option>Other</option>
+            </select>
+            <div class="flex gap-3 pt-1">
+                <button type="button" data-modal-hide="editModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-blue-700 text-white text-sm font-medium hover:bg-blue-800">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Forward to Office Modal -->
+<div id="forwardModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Forward transaction</h3>
+            <button type="button" data-modal-hide="forwardModal"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <form class="px-6 py-5 space-y-4" onsubmit="event.preventDefault();">
+            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
+                <span class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
+                <div class="min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">New application</p>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Destination office</label>
+                <select required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option value="" disabled selected>Select office</option>
+                    <option>Records Section</option>
+                    <option>Legal Division</option>
+                    <option>Cashier</option>
+                    <option>Compliance Office</option>
+                    <option>Director's Office</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Remarks <span class="text-gray-400 font-normal">(optional)</span></label>
+                <textarea rows="3" placeholder="Reason for forwarding, missing requirements, etc."
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button type="button" data-modal-hide="forwardModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-800">Forward</button>
+            </div>
+        </form>
     </div>
 </div>
 

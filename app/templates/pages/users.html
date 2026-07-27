@@ -1,0 +1,347 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="flex h-screen overflow-hidden">
+  {% include 'includes/sidebar.html' %}
+
+<!-- Overlay for mobile -->
+<div id="overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden"></div>
+
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <!-- templates/includes/navbar.html -->
+         {% include 'includes/navbar.html' %}
+
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900">
+
+            <!-- Page header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Add staff accounts and manage positions, divisions, and units.</p>
+                </div>
+                <button type="button" data-modal-target="userModal" data-modal-toggle="userModal" onclick="openAddUser()"
+                    class="inline-flex items-center gap-2 bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-800">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    Add User
+                </button>
+            </div>
+
+            <!-- Filters + table card -->
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+
+                <!-- Filter bar -->
+                <div class="flex flex-col lg:flex-row lg:items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="relative flex-1">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M18.75 10.5a8.25 8.25 0 11-16.5 0 8.25 8.25 0 0116.5 0z"/></svg>
+                        <input type="text" placeholder="Search by name or username"
+                            class="w-full pl-9 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    </div>
+                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="">All divisions</option>
+                        <option>Front Desk Division</option>
+                        <option>Records Section</option>
+                        <option>Legal Division</option>
+                    </select>
+                    <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="">All statuses</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-500 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3 font-medium">User</th>
+                                <th class="px-4 py-3 font-medium">Position</th>
+                                <th class="px-4 py-3 font-medium">Division</th>
+                                <th class="px-4 py-3 font-medium">Unit</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                                <th class="px-4 py-3 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody" class="divide-y divide-gray-100 dark:divide-gray-700">
+
+                            <tr data-status="Active">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center text-xs font-bold">JR</span>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Juan Reyes</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">juan.reyes</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Window Officer</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Front Desk Division</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Registration Unit</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>Active</span></td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" title="Edit" data-modal-target="userModal" data-modal-toggle="userModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <button type="button" title="Deactivate" onclick="toggleStatus(this)"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                        </button>
+                                        <button type="button" title="Delete" data-modal-target="deleteModal" data-modal-toggle="deleteModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-status="Active">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-9 h-9 shrink-0 rounded-full bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 flex items-center justify-center text-xs font-bold">MS</span>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Maricel Santos</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">maricel.santos</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Records Officer</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Records Section</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Documents Unit</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>Active</span></td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" title="Edit" data-modal-target="userModal" data-modal-toggle="userModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <button type="button" title="Deactivate" onclick="toggleStatus(this)"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                        </button>
+                                        <button type="button" title="Delete" data-modal-target="deleteModal" data-modal-toggle="deleteModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-status="Inactive">
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-9 h-9 shrink-0 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 flex items-center justify-center text-xs font-bold">PB</span>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Pedro Bautista</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">pedro.bautista</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Legal Assistant</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Legal Division</td>
+                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Compliance Unit</td>
+                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Inactive</span></td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" title="Edit" data-modal-target="userModal" data-modal-toggle="userModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
+                                        </button>
+                                        <button type="button" title="Activate" onclick="toggleStatus(this)"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        </button>
+                                        <button type="button" title="Delete" data-modal-target="deleteModal" data-modal-toggle="deleteModal"
+                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Showing <span class="font-medium text-gray-700 dark:text-gray-300">1–3</span> of <span class="font-medium text-gray-700 dark:text-gray-300">18</span> users</p>
+                    <div class="flex items-center gap-1">
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40" disabled>Previous</button>
+                        <button class="px-3 py-1.5 rounded-lg bg-blue-700 text-white text-xs font-medium">1</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">2</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">Next</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Add / Edit User Modal -->
+<div id="userModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-lg max-h-[90vh] bg-white dark:bg-gray-800 rounded-lg shadow-xl flex flex-col">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 id="userModalTitle" class="text-lg font-bold text-gray-900 dark:text-white">Add user</h3>
+            <button type="button" data-modal-hide="userModal"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <form class="px-6 py-5 space-y-4 overflow-y-auto" onsubmit="event.preventDefault();">
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">First name</label>
+                    <input type="text" placeholder="Juan" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Last name</label>
+                    <input type="text" placeholder="Reyes" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Username</label>
+                <input type="text" placeholder="juan.reyes" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                <input type="email" placeholder="juan.reyes@office.gov.ph" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Temporary password</label>
+                <input type="password" placeholder="••••••••" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            </div>
+
+            <hr class="border-gray-100 dark:border-gray-700">
+
+            <!-- Position combobox -->
+            <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Position</label>
+                <input id="positionInput" type="text" autocomplete="off" placeholder="Search or add a position"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <div id="positionList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+            </div>
+
+            <!-- Division combobox -->
+            <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Division</label>
+                <input id="divisionInput" type="text" autocomplete="off" placeholder="Search or add a division"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <div id="divisionList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+            </div>
+
+            <!-- Unit combobox -->
+            <div class="relative">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
+                <input id="unitInput" type="text" autocomplete="off" placeholder="Search or add a unit"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <div id="unitList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+                <p class="text-xs text-gray-400 mt-1.5">Type a name that doesn't exist yet and choose "Add" to create it.</p>
+            </div>
+
+            <div class="flex gap-3 pt-1">
+                <button type="button" data-modal-hide="userModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-blue-700 text-white text-sm font-medium hover:bg-blue-800">Save user</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 text-center">
+        <span class="mx-auto w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        </span>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Delete this user?</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">This will permanently remove the account. Consider deactivating instead if you may need it again.</p>
+        <div class="flex gap-3">
+            <button type="button" data-modal-hide="deleteModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+            <button type="button" data-modal-hide="deleteModal" class="flex-1 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Editable tag data — in production this would come from the backend
+    const tagData = {
+        position: ["Window Officer", "Records Officer", "Legal Assistant", "Cashier", "Compliance Reviewer", "Division Chief"],
+        division: ["Front Desk Division", "Records Section", "Legal Division", "Cashier", "Compliance Office", "Director's Office"],
+        unit: ["Registration Unit", "Documents Unit", "Compliance Unit", "Releasing Unit", "Verification Unit"]
+    };
+
+    function setupCombobox(inputId, listId, dataKey) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+
+        function render(filter) {
+            const term = (filter || "").trim().toLowerCase();
+            const matches = tagData[dataKey].filter(item => item.toLowerCase().includes(term));
+            list.innerHTML = "";
+
+            matches.forEach(item => {
+                const opt = document.createElement("button");
+                opt.type = "button";
+                opt.className = "w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30";
+                opt.textContent = item;
+                opt.onclick = () => { input.value = item; list.classList.add("hidden"); };
+                list.appendChild(opt);
+            });
+
+            const exactMatch = tagData[dataKey].some(item => item.toLowerCase() === term);
+            if (term && !exactMatch) {
+                const addBtn = document.createElement("button");
+                addBtn.type = "button";
+                addBtn.className = "w-full text-left px-3 py-2 text-sm font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-t border-gray-100 dark:border-gray-700 flex items-center gap-1.5";
+                addBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Add "' + filter + '"';
+                addBtn.onclick = () => {
+                    tagData[dataKey].push(filter);
+                    input.value = filter;
+                    list.classList.add("hidden");
+                };
+                list.appendChild(addBtn);
+            }
+
+            list.classList.toggle("hidden", matches.length === 0 && !(term && !exactMatch));
+        }
+
+        input.addEventListener("focus", () => render(input.value));
+        input.addEventListener("input", () => render(input.value));
+        document.addEventListener("click", (e) => {
+            if (!input.contains(e.target) && !list.contains(e.target)) list.classList.add("hidden");
+        });
+    }
+
+    setupCombobox("positionInput", "positionList", "position");
+    setupCombobox("divisionInput", "divisionList", "division");
+    setupCombobox("unitInput", "unitList", "unit");
+
+    function openAddUser() {
+        document.getElementById("userModalTitle").textContent = "Add user";
+    }
+
+    function toggleStatus(btn) {
+        const row = btn.closest("tr");
+        const badge = row.querySelector("td:nth-child(5) span");
+        const isActive = row.dataset.status === "Active";
+
+        if (isActive) {
+            row.dataset.status = "Inactive";
+            badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400";
+            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Inactive';
+            btn.title = "Activate";
+        } else {
+            row.dataset.status = "Active";
+            badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>Active';
+            btn.title = "Deactivate";
+        }
+    }
+</script>
+
+{% endblock %}
