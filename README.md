@@ -1,5 +1,7 @@
 # pacd queueing system
 
+Django
+Alpine.js
 
 # database
     ** client ✅

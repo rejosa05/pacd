@@ -18,3 +18,6 @@ def logs(request):
 
 def display(request):
     return render(request, 'pages/display.html')
+
+def services(request):
+    return render(request, 'pages/services.html')
