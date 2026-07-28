@@ -1,8 +1,5 @@
 from django.shortcuts import render
-
-
-def index(request):
-    return render(request, 'index.html')
+from django.contrib.auth.decorators import login_required
 
 def kiosk(request):
     return render(request, 'pages/kiosk.html')

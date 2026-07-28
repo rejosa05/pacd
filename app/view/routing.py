@@ -29,44 +29,44 @@ def client_details(request):
 
 from django.contrib.auth.hashers import check_password
 
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
+# def login_view(request):
+#     if request.method == "POST":
+#         form = LoginForm(request.POST)
 
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = AccountDetails.objects.filter(user=username, status='Active').first()
+#         if form.is_valid():
+#             username = form.cleaned_data.get("username")
+#             password = form.cleaned_data.get("password")
+#             user = AccountDetails.objects.filter(user=username, status='Active').first()
 
-            if user and check_password(password, user.password):
+#             if user and check_password(password, user.password):
 
-                request.session.flush()
-                request.session.cycle_key()
+#                 request.session.flush()
+#                 request.session.cycle_key()
 
-                request.session['username'] = user.user
+#                 request.session['username'] = user.user
 
-                session_key = request.session.session_key or request.session._get_or_create_session_key()
+#                 session_key = request.session.session_key or request.session._get_or_create_session_key()
 
-                SessionHistory.objects.create(
-                    user=user.user,
-                    login_time=timezone.now(),
-                    session_key=session_key
-                )
+#                 SessionHistory.objects.create(
+#                     user=user.user,
+#                     login_time=timezone.now(),
+#                     session_key=session_key
+#                 )
 
-                log_user_activity(user.user, 'login', 'User logged in', request)
+#                 log_user_activity(user.user, 'login', 'User logged in', request)
 
-                return redirect("transactions")
+#                 return redirect("transactions")
 
-            else:
-                messages.error(request, "Invalid credentials. Please try again.")
+#             else:
+#                 messages.error(request, "Invalid credentials. Please try again.")
 
-        else:
-            messages.error(request, "Invalid form input.")
+#         else:
+#             messages.error(request, "Invalid form input.")
 
-    else:
-        form = LoginForm()
+#     else:
+#         form = LoginForm()
 
-    return render(request, "app/pages/login.html", {"form": form})
+#     return render(request, "app/pages/login.html", {"form": form})
 
 def logout_view(request):
     username = request.session.get('username')

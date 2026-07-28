@@ -10,7 +10,7 @@ from .view.graph import *
 from .view.account import *
 
 urlpatterns = [
-    path('', login_view, name="logins"), 
+    # path('', login_view, name="logins"), 
 
     path('display/', display_view, name="display-page"),
     path('que-view/', que_view, name="que-view"),
@@ -18,14 +18,13 @@ urlpatterns = [
     path('kiosk/', client_details, name="client-page"),
     path('serving-list', serving_client, name='serving-list'),
 
-    path('login/', login_view, name="login"),
+    # path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
     
     path('f_transactions/', f_transactions, name='f_transactions'),
     path('f_dashboard', f_dashboard, name='f_dashboard'),
     path('transaction-history/', transaction_history, name="transaction-history"),
-    path('activity-logs/', activity_logs, name='activity-logs'),
-    path('get-activity-logs/', get_activity_logs, name='get-activity-logs'),
+
 
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
     path('skipped-client/', skipped_client, name='skipped-client'),
