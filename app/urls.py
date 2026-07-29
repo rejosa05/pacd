@@ -49,6 +49,7 @@ urlpatterns = [
     path('reports', reports_page, name='reports'),
     path('transactions_history', client_transaction, name='transactions_history'),
     path('accountList', accountList, name="accountList"),
+    path('account/create/', create_account, name="create_account"),
     path('service-list', serviceList, name="service-list"),
     path('transactions', transaction, name="transactions"),
     path('dashboard', dashboard, name="dashboard"),

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from ..account.form.loginForm import LoginForm
 
-def login_view(request):
+def loginView(request):
     # Kung naka-login na ang user, i-redirect diretso sa dashboard
     # if request.user.is_authenticated:
     #     return redirect('dashboard')
