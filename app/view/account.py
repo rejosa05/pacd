@@ -11,7 +11,7 @@ from django.http import JsonResponse
 
 def accountList(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        account = AccountDetails.objects.all().order_by('-date_created')
+        account = AccountDetails.objects.all().order_by('-created_at')
         accountList = [serialize_account(accounts) for accounts in account]
 
         totalAccounts  = get_total_accounts()

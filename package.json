@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./app/static/src/input.css -o ./app/static/css/output.css --minify",
+    "watch:css": "npx @tailwindcss/cli -i ./app/static/src/input.css -o ./app/static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.2",
+    "tailwindcss": "^4.3.2"
+  },
+  "dependencies": {
+    "flowbite": "^4.0.2"
+  }
+}
