@@ -18,7 +18,7 @@ urlpatterns = [
     path('kiosk/', client_details, name="client-page"),
     path('serving-list', serving_client, name='serving-list'),
 
-    # path('login/', login_view, name="login"),
+    path('login/', login_view, name="login"),
     path('logout/', logout_view, name ="logout"),
     
     path('f_transactions/', f_transactions, name='f_transactions'),

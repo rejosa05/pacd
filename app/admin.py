@@ -3,10 +3,10 @@ from .models import AccountDetails, SessionHistory, DivisionLog, ServicesDetails
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'first_name', 'last_name', 'status', 'divisions', 'unit', 'position', 'email', 'contact', 'date_created')
+    list_display = ('user', 'first_name', 'last_name', 'status', 'divisions', 'unit', 'position', 'email', 'contact_number', 'created_at')
     search_fields = ('user', 'first_name', 'last_name')
     list_filter = ('divisions', 'unit')
-    ordering = ('-date_created',)
+    ordering = ('-created_at',)
     list_per_page = 10
 
 @admin.register(SessionHistory)

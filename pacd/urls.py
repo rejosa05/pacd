@@ -1,17 +1,20 @@
 from django.contrib import admin
 from django.urls import include, re_path as path
 from app.views import dashboard, kiosk, transaction, logs, display, services
-from app.views_.loginViews import loginView
+from app.views_ import loginViews
 from app.views_.userViews import userView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
-    
 
+    # Index
+    path('login_', loginViews.loginView, name="login_"),
+    path('logout_', loginViews.logout_view, name="logout_"),
+    path('home', loginViews.loginView, name="index"),
 
     # Pages
-    path('index', loginView, name="index"),
+    
     path('kiosk_', kiosk, name="kiosk_"),
     path('dashboard_', dashboard, name="dashboard_"),
     path('transaction_', transaction, name="transaction_"),
