@@ -6,6 +6,8 @@ from datetime import timedelta
 from django.contrib.auth.hashers import make_password
 import uuid
 
+from .account.models.accountProfile import AccountProfile
+
 
 class AccountDetails(models.Model):
     user = models.CharField(max_length=100, unique=True)

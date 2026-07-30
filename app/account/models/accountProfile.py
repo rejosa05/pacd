@@ -51,4 +51,6 @@ class AccountProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.get_full_name() or self.user.username} - {self.status}"
+        # Avoid referencing possibly-missing user/status fields (they are commented out above).
+        # Use the available name fields instead so __str__ doesn't raise when Django inspects the model.
+        return f"{(self.first_name or '').strip()} {(self.last_name or '').strip()}"
