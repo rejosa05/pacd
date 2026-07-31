@@ -1,27 +1,23 @@
+# Database
+*.db
+*.sqlite3
+
 # Python
 __pycache__/
 *.py[cod]
-*.sqlite3
+*.pyo
 
 # Virtual Environment
 venv/
-env/
+.env
 
-# Node
-node_modules/
-
-# Static build (optional)
-static/src/output.css
+# Static files
+staticfiles/
+static/CACHE/
 
 # VS Code
 .vscode/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-
-#prettier
-*.pyc
