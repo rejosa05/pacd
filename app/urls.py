@@ -1,5 +1,5 @@
 from django.urls import path
-from .view.routing import *
+from .view.route import *
 from .view.display_view import *
 from .view.transactions import *
 from .view.dashboard import *
@@ -8,6 +8,8 @@ from .view.services import *
 from .view.notifications import *
 from .view.graph import *
 from .view.account import *
+
+from .views_ import user_management
 
 urlpatterns = [
     # path('', login_view, name="logins"), 
@@ -48,8 +50,8 @@ urlpatterns = [
 
     path('reports', reports_page, name='reports'),
     path('transactions_history', client_transaction, name='transactions_history'),
-    path('accountList', accountList, name="accountList"),
-    path('account/create/', create_account, name="create_account"),
+    # path('accountList', accountList, name="accountList"),
+    # path('account/create/', create_account, name="create_account"),
     path('service-list', serviceList, name="service-list"),
     path('transactions', transaction, name="transactions"),
     path('dashboard', dashboard, name="dashboard"),
@@ -58,4 +60,5 @@ urlpatterns = [
     path('acknowledgement/<str:transaction_no>', acknowledgement, name="acknowledgement"),
 
     # path('api/clients/', create_client, name='create_client'),
+    path('user_management', user_management.user_management_page, name='user_management')
 ]

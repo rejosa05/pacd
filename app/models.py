@@ -1,26 +1,41 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.db.models.signals import pre_save, post_save, post_delete
+
 from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.hashers import make_password
 import uuid
 
+class Unit(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.name
+
+class Division(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Position(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
 class AccountDetails(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
-    # position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-
-    user = models.CharField(max_length=20, blank=True, null=True)
-    password = models.CharField(max_length=50, blank=True, null=True)
-    first_name = models.CharField(max_length=20, blank=True, null=True)
-    last_name = models.CharField(max_length=20, blank=True, null=True)
-    divisions = models.CharField(max_length=100, null=True, blank=True)
-    unit = models.CharField(max_length=100, null=True, blank=True)
-    position = models.CharField(max_length=100, null=True, blank=True)
-    email = models.CharField(max_length=50, blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account_profile')
+    position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
+    division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
+    unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, default='Active')
@@ -186,55 +201,6 @@ class TransactionHistory(models.Model):
 
 
 
-class Unit(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.name
-
-class Division(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Position(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-
-# class AccountProfile(models.Model):
-#     """
-#     Extension sa Django's built-in auth.User. Ang username, email, ug
-#     password sa user kay naa sa auth_user table (Django default) —
-#     dinhi ra naka-store ang PACD-specific info: position, division,
-#     unit, ug status.
-#     """
-
-#     # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account_profile')
-#     # position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-#     # division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-#     # unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
-    # username = models.CharField(max_length=20, blank=True, null=True)
-    # password = models.CharField(max_length=50, blank=True, null=True)
-    # first_name = models.CharField(max_length=20, blank=True, null=True)
-    # last_name = models.CharField(max_length=20, blank=True, null=True)
-    # email = models.CharField(max_length=50, blank=True, null=True)
-    # contact_number = models.CharField(max_length=20, blank=True, null=True)
-    # position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name='profiles')
-    # status = models.CharField(max_length=10, default='Active')
-    # created_at = models.DateTimeField(auto_now_add=True)
-
-    # def __str__(self):
-    #     return f"{(self.first_name or '').strip()} {(self.last_name or '').strip()}"
 
     

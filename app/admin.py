@@ -1,13 +1,13 @@
 from django.contrib import admin
 from .models import AccountDetails, Division, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory, UserActivityLog
 
-@admin.register(AccountDetails)
-class AccountDetailsAdmin(admin.ModelAdmin):
-    list_display = ('uid','user', 'first_name', 'last_name', 'status', 'divisions', 'unit', 'position', 'email', 'contact_number', 'created_at')
-    search_fields = ('user', 'first_name', 'last_name')
-    list_filter = ('divisions', 'unit')
-    ordering = ('-created_at',)
-    list_per_page = 10
+# @admin.register(AccountDetails)
+# class AccountDetailsAdmin(admin.ModelAdmin):
+#     list_display = ('uid','user', 'first_name', 'last_name', 'status', 'division', 'unit', 'position', 'email', 'contact_number', 'created_at')
+#     search_fields = ('user', 'first_name', 'last_name')
+#     list_filter = ('division', 'unit')
+#     ordering = ('-created_at',)
+#     list_per_page = 10
 
 @admin.register(SessionHistory)
 class SessionHistoryAdmin(admin.ModelAdmin):

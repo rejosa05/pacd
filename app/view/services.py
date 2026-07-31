@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from ..models import ServicesDetails
-from ..forms import AuthorizedPersonnelForm
+# from ..forms import AuthorizedPersonnelForm
 from ..utils.utils import *
 from django.http import HttpResponseForbidden
 from django.http import JsonResponse
