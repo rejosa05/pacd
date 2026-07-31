@@ -1,5 +1,5 @@
 from django.urls import path
-from .views_ import user_management as views # User Management
+from .views_ import user_management as views
    
 
 urlpatterns  = [   
