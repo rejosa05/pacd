@@ -66,7 +66,8 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Get your queue number</h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-8">Fill in your details to register for today's queue.</p>
 
-            <form id="clientForm" class="space-y-5" onsubmit="event.preventDefault();">
+            <form id="clientForm" class="space-y-5" method="post" action="{% url 'client_kiosk_register' %}">
+                {% csrf_token %}
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -245,8 +246,69 @@
         }
     });
 
-    document.getElementById('clientForm').addEventListener('submit', function () {
-        submitBtn.innerHTML = 'Queue number issued &#10003;';
+    document.getElementById('clientForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Saving...';
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Unable to save queue request.');
+            }
+
+            const queueNo = result.data.queue_no;
+            submitBtn.innerHTML = 'Queue number issued &#10003;';
+            const printTicket = window.open('', '_blank', 'width=420,height=620');
+            printTicket.document.write(`
+                <html>
+                    <head>
+                        <title>Queue Slip</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f3f4f6; }
+                            .ticket { width: 320px; border: 2px solid #166534; border-radius: 14px; background: white; padding: 20px; text-align:center; }
+                            .label { font-size:12px; text-transform: uppercase; letter-spacing: 1px; color:#4b5563; }
+                            .number { font-size: 54px; font-weight: 700; color:#166534; margin: 12px 0; }
+                            .name { font-size: 18px; font-weight:600; margin-bottom:10px; }
+                            .meta { font-size: 13px; color:#374151; margin: 4px 0; }
+                            .btn { margin-top: 18px; display:inline-block; padding:10px 16px; background:#166534; color:white; border-radius:8px; text-decoration:none; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="ticket">
+                            <div class="label">PACD Queuing System</div>
+                            <div class="number">${queueNo}</div>
+                            <div class="name">${result.data.full_name}</div>
+                            <div class="meta">Lane: ${result.data.lane_type}</div>
+                            <div class="meta">Queue Code: ${result.data.queue_code}</div>
+                            <div class="meta">${result.data.date_created}</div>
+                            <a class="btn" href="javascript:window.print();">Print</a>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printTicket.document.close();
+            form.reset();
+            agree.checked = false;
+            syncSubmit();
+        } catch (error) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Get Queue Number';
+            alert(error.message);
+        }
     });
 </script>
 

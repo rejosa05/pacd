@@ -16,7 +16,6 @@ urlpatterns = [
 
     # Pages
     
-    path('kiosk_', kiosk, name="kiosk_"),
     path('dashboard_', dashboard, name="dashboard_"),
     path('transaction_', transaction, name="transaction_"),
     path('logs_', logs, name="logs_"),

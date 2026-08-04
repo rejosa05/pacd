@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import AccountDetails, Division, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory, UserActivityLog
+from .models import AccountDetails,Unit, Division, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory, UserActivityLog
 
-# @admin.register(AccountDetails)
-# class AccountDetailsAdmin(admin.ModelAdmin):
-#     list_display = ('uid','user', 'first_name', 'last_name', 'status', 'division', 'unit', 'position', 'email', 'contact_number', 'created_at')
-#     search_fields = ('user', 'first_name', 'last_name')
-#     list_filter = ('division', 'unit')
-#     ordering = ('-created_at',)
-#     list_per_page = 10
+@admin.register(AccountDetails)
+class AccountDetailsAdmin(admin.ModelAdmin):
+    list_display = ('uid','user', 'status', 'division', 'unit', 'position', 'contact_number', 'created_at')
+    search_fields = ('user', 'status')
+    list_filter = ('division', 'unit')
+    ordering = ('-created_at',)
+    list_per_page = 10
 
 @admin.register(SessionHistory)
 class SessionHistoryAdmin(admin.ModelAdmin):
@@ -43,7 +43,7 @@ class ServiceDetails(admin.ModelAdmin):
 
 @admin.register(ClientDetails)
 class ClientDetailsAdmin(admin.ModelAdmin):
-    list_display = ('id','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'date_created', 'public_id')
+    list_display = ('uid','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'date_created')
     search_fields = ('client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status')
     list_filter = ('client_lane_type', 'client_status', 'date_created')
     ordering = ('-date_created',)
@@ -62,5 +62,5 @@ class TransactionHistorys(admin.ModelAdmin):
 
     get_transaction_no.short_description = 'Transaction No'
 
-
 admin.site.register(Division)
+admin.site.register(Unit)

@@ -9,7 +9,7 @@ from .view.notifications import *
 from .view.graph import *
 from .view.account import *
 
-from .views_ import user_management
+from .views_ import client_transactions, user_management, client_kiosk
 
 urlpatterns = [
     # path('', login_view, name="logins"), 
@@ -49,7 +49,7 @@ urlpatterns = [
     
 
     path('reports', reports_page, name='reports'),
-    path('transactions_history', client_transaction, name='transactions_history'),
+    # path('transactions_history', client_transaction, name='transactions_history'),
     # path('accountList', accountList, name="accountList"),
     # path('account/create/', create_account, name="create_account"),
     path('service-list', serviceList, name="service-list"),
@@ -60,5 +60,8 @@ urlpatterns = [
     path('acknowledgement/<str:transaction_no>', acknowledgement, name="acknowledgement"),
 
     # path('api/clients/', create_client, name='create_client'),
-    path('user_management', user_management.user_management_page, name='user_management')
+    path('user_management', user_management.user_management_page, name='user_management'),
+    path('cliet_transactions', client_transactions.client_transaction_page, name='client_transactions'),
+    path('client_kiosk', client_kiosk.client_register_page, name='client_kiosk'),
+    path('client_kiosk/register/', client_kiosk.register_client, name='client_kiosk_register')
 ]

@@ -10,5 +10,4 @@ urlpatterns  = [
     path('api/users/<int:profile_id>/edit/', views.edit_user, name='api_edit_user'),
     path('api/users/<int:profile_id>/toggle-status/', views.toggle_status, name='api_toggle_status'),
     path('api/users/<int:profile_id>/delete/', views.delete_user, name='api_delete_user'),
-
 ]

@@ -13,7 +13,7 @@ from channels.layers import get_channel_layer
 from ..models import AccountDetails, Position, Division, Unit
 
 
-# @login_required
+@login_required
 def user_management_page(request):
     """Ipakita ang HTML page — ang data mismo kuhaon sa JS via Fetch API."""
     return render(request, 'pages/user_management.html')
@@ -48,7 +48,7 @@ def _serialize_profile(profile):
     }
 
 
-# @login_required
+@login_required
 @require_http_methods(["GET"])
 def list_users(request):
     profiles = AccountDetails.objects.select_related('user', 'position', 'division', 'unit').order_by('-created_at')
@@ -58,7 +58,7 @@ def list_users(request):
     })
 
 
-# @login_required
+@login_required
 @require_http_methods(["GET"])
 def list_options(request):
     return JsonResponse({
@@ -69,7 +69,7 @@ def list_options(request):
     })
 
 
-# @login_required
+@login_required
 @require_http_methods(["GET"])
 def get_user(request, profile_id):
     try:
@@ -79,7 +79,7 @@ def get_user(request, profile_id):
         return JsonResponse({'success': False, 'error': 'Wala nakit-i ang user.'}, status=404)
 
 
-# @login_required
+@login_required
 @require_http_methods(["POST"])
 def add_user(request):
     first_name = request.POST.get('first_name', '').strip()

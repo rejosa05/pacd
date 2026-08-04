@@ -1,6 +1,7 @@
 {% extends '_base.html' %}
 
 {% block content %}
+<div id="transactionNotification" class="hidden fixed top-4 right-4 z-50 rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800 shadow-lg"></div>
 <div class="flex h-screen overflow-hidden">
   {% include 'includes/sidebar.html' %}
 
@@ -65,103 +66,10 @@
                                 <th class="px-4 py-3 font-medium text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-
-                            <!-- Row 1: Pending -->
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">P-014</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Maria Santos</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority</span></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">New application</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Pending</span></td>
-                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:14 AM</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
-                                        </button>
-                                        <button type="button" title="Approve"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                        </button>
-                                        <button type="button" title="Skip"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
-                                        </button>
-                                        <button type="button" data-modal-target="forwardModal" data-modal-toggle="forwardModal" title="Forward"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-cyan-700 hover:bg-cyan-50 dark:hover:bg-cyan-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>
-                                        </button>
-                                    </div>
-                                </td>
+                        <tbody id="liveTransactionTable" class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tr>
+                                <td colspan="8" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">Loading clients...</td>
                             </tr>
-
-                            <!-- Row 2: Approved -->
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">R-041</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Juan Dela Cruz</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">Regular</span></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Renewal</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>Approved</span></td>
-                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:21 AM</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
-                                        </button>
-                                        <span class="w-8 h-8 flex items-center justify-center text-gray-300 dark:text-gray-600">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Row 3: Skipped -->
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">P-013</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Ana Reyes</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Priority</span></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Claiming of documents</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Skipped</span></td>
-                                <td class="px-4 py-3 text-gray-400 dark:text-gray-500">—</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">9:02 AM</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
-                                        </button>
-                                        <button type="button" title="Recall to queue"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Row 4: Forwarded -->
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">R-040</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Pedro Bautista</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">Regular</span></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Inquiry</td>
-                                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Forwarded</span></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">Legal Division</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">8:55 AM</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1.5">
-                                        <button type="button" data-modal-target="editModal" data-modal-toggle="editModal" title="Edit"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"/></svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -264,3 +172,111 @@
 </div>
 
 {% endblock %}
+
+<script>
+  const transactionApiUrl = '{% url "f_transactions" %}';
+
+  function renderTransactionRows(clients) {
+    const tbody = document.getElementById('liveTransactionTable');
+    if (!tbody) return;
+
+    if (!clients || clients.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            Wala pa’y mga client sa queue karong adlawa.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = clients.map(client => {
+      const queueNo = client.client_queue_no || '---';
+      const name = client.client_fullname || 'Unknown Client';
+      const lane = client.client_lane_type || 'Regular';
+      const laneClass = lane === 'Priority'
+        ? 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+        : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+      const status = client.client_status || 'Waiting';
+      const statusClass = status === 'Waiting'
+        ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+        : 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      const office = client.client_unit || '—';
+      const time = client.date_created ? new Date(client.date_created).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '—';
+
+      return `
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
+            <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${queueNo}</td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${name}</td>
+            <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${laneClass}">${lane}</span></td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.client_transaction_type || 'General'}</td>
+            <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}"><span class="w-1.5 h-1.5 rounded-full bg-current"></span>${status}</span></td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${office}</td>
+            <td class="px-4 py-3 text-gray-500 dark:text-gray-400">${time}</td>
+            <td class="px-4 py-3">
+                <div class="flex items-center justify-end gap-1.5">
+                    <button type="button" title="Process" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                    </button>
+                    <button type="button" title="Forward" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-cyan-700 hover:bg-cyan-50 dark:hover:bg-cyan-900/30">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function fetchTransactions() {
+    fetch(transactionApiUrl, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+    .then(data => {
+      const clients = Array.isArray(data.pending_clients) ? data.pending_clients : [];
+      renderTransactionRows(clients);
+    })
+    .catch(() => {
+      const tbody = document.getElementById('liveTransactionTable');
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="px-4 py-6 text-center text-sm text-red-500">Wala ma-load ang data sa queue.</td>
+          </tr>
+        `;
+      }
+    });
+  }
+
+  function connectQueueSocket() {
+    if (!('WebSocket' in window)) return;
+
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const socket = new WebSocket(protocol + window.location.host + '/ws/queue/');
+
+    socket.onmessage = function (event) {
+      const payload = JSON.parse(event.data);
+      if (payload.action === 'queue_update') {
+        const notification = document.getElementById('transactionNotification');
+        const client = payload.client || {};
+        if (notification) {
+          notification.textContent = `Bag-ong client: ${client.name || 'Unknown'} - ${client.queue_no || ''}`;
+          notification.classList.remove('hidden');
+          setTimeout(() => notification.classList.add('hidden'), 4000);
+        }
+        fetchTransactions();
+      }
+    };
+
+    socket.onclose = function () {
+      setTimeout(connectQueueSocket, 3000);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchTransactions();
+    connectQueueSocket();
+  });
+</script>
