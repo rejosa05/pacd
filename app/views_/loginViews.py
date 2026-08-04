@@ -6,8 +6,8 @@ from ..form.loginForm import LoginForm
 
 def loginView(request):
     # # Kung naka-login na ang user, i-redirect diretso sa dashboard
-    if request.user.is_authenticated:
-        return redirect('dashboard')
+    # if request.user.is_authenticated:
+    #     return redirect('dashboard')
 
     form = LoginForm(request.POST or None)
 

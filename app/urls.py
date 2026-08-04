@@ -26,7 +26,7 @@ urlpatterns = [
     path('f_transactions/', f_transactions, name='f_transactions'),
     path('f_dashboard', f_dashboard, name='f_dashboard'),
     path('transaction-history/', transaction_history, name="transaction-history"),
-
+    path('transactions_history/', transaction_history, name='transactions_history'),
 
     path('forwarded-client-to-unit/', forwarded_client_to_unit, name='forwarded-client-to-unit'),
     path('skipped-client/', skipped_client, name='skipped-client'),
@@ -49,6 +49,8 @@ urlpatterns = [
     
 
     path('reports', reports_page, name='reports'),
+    path('activity-logs/', activity_logs, name='activity-logs'),
+    path('get-activity-logs/', get_activity_logs, name='get-activity-logs'),
     # path('transactions_history', client_transaction, name='transactions_history'),
     # path('accountList', accountList, name="accountList"),
     # path('account/create/', create_account, name="create_account"),
@@ -56,6 +58,7 @@ urlpatterns = [
     path('transactions', transaction, name="transactions"),
     path('dashboard', dashboard, name="dashboard"),
     path('account', accounts, name="account"),
+    path('accountList', accounts, name="accountList"),
     path('services', services_page, name="services"),
     path('acknowledgement/<str:transaction_no>', acknowledgement, name="acknowledgement"),
 

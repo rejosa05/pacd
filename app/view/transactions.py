@@ -8,10 +8,11 @@ from django.http import JsonResponse
 def f_transactions(request):
     if request.method == 'GET' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         today = timezone.now()
-        user = request.session.get('username')
-        account = AccountDetails.objects.filter(user=user).first()
-        accUnit = account.unit
-        accDiv = account.divisions
+        username = request.session.get('username')
+        user = username
+        account = AccountDetails.objects.filter(user__username=username).first() if username else None
+        accUnit = account.unit.name if account and getattr(account.unit, 'name', None) else (str(account.unit) if account else '')
+        accDiv = account.division.name if account and account.division else ''
 
         if not account:
             return JsonResponse({'message':'User not Found'}, status=404)

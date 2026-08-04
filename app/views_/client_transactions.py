@@ -2,59 +2,58 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-from ..models import AccountDetails, Position, Division, Unit
+from ..models import ClientDetails
 
 
-@login_required
+# @login_required
 def client_transaction_page(request):
     """Ipakita ang HTML page — ang data mismo kuhaon sa JS via Fetch API."""
     return render(request, 'pages/client_transaction.html')
 
 
-# def _broadcast(action, actor, profile_id=None):
-#     """I-notify ang tanan connected WebSocket clients nga naay pagbag-o."""
-#     channel_layer = get_channel_layer()
-#     async_to_sync(channel_layer.group_send)(
-#         'user_management',
-#         {
-#             'type': 'user_list_changed',
-#             'action': action,
-#             'actor': actor,
-#             'profile_id': profile_id,
-#         }
-#     )
+def _broadcast(action, actor, profile_id=None):
+    """I-notify ang tanan connected WebSocket clients nga naay pagbag-o."""
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'user_management',
+        {
+            'type': 'user_list_changed',
+            'action': action,
+            'actor': actor,
+            'profile_id': profile_id,
+        }
+    )
 
-# def _serialize_profile(profile):
-#     return {
-#         'id': profile.id,
-#         'full_name': profile.user.get_full_name() or profile.user.username,
-#         'first_name': profile.user.first_name,
-#         'last_name': profile.user.last_name,
-#         'username': profile.user.username,
-#         'email': profile.user.email,
-#         'contact_number': profile.contact_number or '',
-#         'position': profile.position.name if profile.position else '',
-#         'division': profile.division.name if profile.division else '',
-#         'unit': profile.unit.name if profile.unit else '',
-#         'status': profile.status,
-#     }
+def _serialize_client(client):
+    return {
+        'id': client.id,
+        'queue_no': client.client_queue_no,
+        'full_name': f"{client.client_firstname} {client.client_lastname}".strip(),
+        'lane': client.client_lane_type,
+        'transaction_type': 'General',
+        'status': client.client_status,
+        'contact_number': client.client_contact,
+        'address': client.client_address,
+        'gender': client.client_gender,
+        'organization': client.client_org,
+        'date_created': client.date_created.isoformat() if client.date_created else None,
+    }
 
 
 # @login_required
-# @require_http_methods(["GET"])
-# def list_users(request):
-#     profiles = AccountDetails.objects.select_related('user', 'position', 'division', 'unit').order_by('-created_at')
-#     return JsonResponse({
-#         'success': True,
-#         'users': [_serialize_profile(p) for p in profiles],
-#     })
+@require_http_methods(["GET"])
+def list_clients(request):
+    clients = ClientDetails.objects.all().order_by('-date_created')
+    return JsonResponse({
+        'success': True,
+        'clients': [_serialize_client(c) for c in clients],
+    })
 
 
 # @login_required

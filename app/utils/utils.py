@@ -3,14 +3,21 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 def notify(user, today):
-    today = timezone.now()
-    account = AccountDetails.objects.filter(user=user).first()
-    unit = account.unit
+    if not user:
+        return 0
 
-    if unit == 'PACD':
+    username_value = user.username if hasattr(user, 'username') else str(user)
+    account = AccountDetails.objects.filter(user__username=username_value).first()
+    if not account:
+        return 0
+
+    unit_name = account.unit.name if getattr(account.unit, 'name', None) else str(account.unit)
+    today = timezone.localdate()
+
+    if unit_name == 'PACD':
         notifications = ClientDetails.objects.filter(client_status='Waiting', date_created__date=today).count()
     else:
-        notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit, date__date=today).count()
+        notifications = DivisionLog.objects.filter(action_type='Pending', unit=unit_name, date__date=today).count()
 
     return notifications
 

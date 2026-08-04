@@ -7,8 +7,8 @@ def kiosk(request):
 def dashboard(request):
     return render(request, 'pages/dashboard.html')
 
-def transaction(request):
-    return render(request, 'pages/transaction.html')
+# def transaction(request):
+#     return render(request, 'pages/transaction.html')
 
 def logs(request):
     return render(request, 'pages/logs.html')

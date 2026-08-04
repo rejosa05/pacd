@@ -43,7 +43,7 @@ def login_view(request):
                 request.session.flush()
                 request.session.cycle_key()
 
-                request.session['username'] = user.user
+                request.session['username'] = user.user.username
 
                 session_key = request.session.session_key or request.session._get_or_create_session_key()
 
@@ -84,17 +84,24 @@ def logout_view(request):
     return redirect('login')
 
 
-def transaction(request):
+def _get_account_from_session(request):
     username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    if not username:
+        return None
+
+    username_value = username.username if hasattr(username, 'username') else str(username)
+    return AccountDetails.objects.filter(user__username=username_value).first()
+
+
+def transaction(request):
+    user = _get_account_from_session(request)
 
     if not user:
         return redirect('login')
     return render(request, 'app/pages/transaction.html', {'user':user, 'page_title': 'Clients'})
 
 def dashboard(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    user = _get_account_from_session(request)
 
     if not user:
         return redirect('login')
@@ -102,19 +109,17 @@ def dashboard(request):
     return render(request, 'app/pages/dashboard.html', {'user':user , 'page_title': 'Dashboard'})
 
 def reports_page(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    user = _get_account_from_session(request)
 
-    if not username:
+    if not user:
         return redirect("login")
 
     return render(request, "app/pages/reports.html", {'user':user, 'page_title': 'Transactions'})
 
 def services_page(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    user = _get_account_from_session(request)
 
-    if not username:
+    if not user:
         return redirect("login")
 
     return render(request, "app/pages/services.html", {'user':user, 'page_title': 'Services'})
@@ -128,20 +133,16 @@ def acknowledgement(request, transaction_no):
     return render(request, "app/pages/acknowledgement.html", context)
 
 def client_transaction(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    user = _get_account_from_session(request)
 
-    print("test")
-
-    if not username:
+    if not user:
         return redirect("login")
 
     return render(request, "app/clients.html", {'user':user})
 
 
 def activity_logs(request):
-    username = request.session.get('username')
-    user = AccountDetails.objects.filter(user=username).first()
+    user = _get_account_from_session(request)
 
     if not user:
         return redirect('login')
