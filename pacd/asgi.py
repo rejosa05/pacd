@@ -18,15 +18,17 @@ from app.routing import websocket_urlpatterns
 # bisan unsa nga naga-touch sa models (sama sa consumers/routing)
 django_asgi_app = get_asgi_application()
 
-application = ProtocolTypeRouter({
-    'http': django_asgi_app,
+from django.conf import settings  # noqa: E402
 
-    # AuthMiddlewareStack: gamiton ang session cookie (Django Auth) para
-    # ma-identify kung kinsa ang naka-connect sa WebSocket
-    'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter(websocket_urlpatterns)
-        )
-    ),
-})
+websocket_app = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+if not settings.DEBUG:
+    websocket_app = AllowedHostsOriginValidator(websocket_app)
+
+application = ProtocolTypeRouter(
+    {
+        "http": django_asgi_app,
+        "websocket": websocket_app,
+    }
+)
+
 
