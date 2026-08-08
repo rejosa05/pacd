@@ -27,8 +27,6 @@ def register_client(request):
     lane = request.POST.get('lane', '').strip()
     org = request.POST.get('client_org', '').strip()
 
-    if not all([first_name, last_name, contact_number, address, sex, lane]):
-        return JsonResponse({'success': False, 'error': 'Palihug e-fill up ang tanan required fields.'}, status=400)
 
     normalized_sex = {'male': 'Male', 'female': 'Female'}.get(sex.lower(), sex.title())
     normalized_lane = {'priority': 'Priority', 'regular': 'Regular'}.get(lane.lower(), lane.title())

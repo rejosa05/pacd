@@ -17,6 +17,7 @@ def client_transaction_page(request):
     return render(request, 'pages/client_transaction.html')
 
 
+
 def _broadcast(action, actor, profile_id=None):
     """I-notify ang tanan connected WebSocket clients nga naay pagbag-o."""
     channel_layer = get_channel_layer()

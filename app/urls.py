@@ -63,8 +63,10 @@ urlpatterns = [
     path('acknowledgement/<str:transaction_no>', acknowledgement, name="acknowledgement"),
 
     # path('api/clients/', create_client, name='create_client'),
+    path('client_transactions', client_transactions.client_transaction_page, name="client_transactions"),
     path('user_management', user_management.user_management_page, name='user_management'),
-    path('cliet_transactions', client_transactions.client_transaction_page, name='client_transactions'),
+
+    
     path('client_kiosk', client_kiosk.client_register_page, name='client_kiosk'),
     path('client_kiosk/register/', client_kiosk.register_client, name='client_kiosk_register')
 ]

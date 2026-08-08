@@ -1,4 +1,6 @@
 {% extends "_base.html" %}
+{% load static %}
+{% block title %} Client Registration Form {% endblock %}
 
 {% block content %}
 
@@ -293,7 +295,7 @@
                             <div class="number">${queueNo}</div>
                             <div class="name">${result.data.full_name}</div>
                             <div class="meta">Lane: ${result.data.lane_type}</div>
-                            <div class="meta">Queue Code: ${result.data.queue_code}</div>
+                            <div class="meta">Queue Number: ${result.data.queue_code}</div>
                             <div class="meta">${result.data.date_created}</div>
                             <a class="btn" href="javascript:window.print();">Print</a>
                         </div>
