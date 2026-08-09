@@ -12,8 +12,4 @@ urlpatterns  = [
     path('api/users/<int:profile_id>/delete/', user_management.delete_user, name='api_delete_user'),
 
 
-    path('api/clients/', client_transactions.list_clients, name='api_list_clients'),
-
-
-    path( "api/display-queue/", que_display.display_queue_api , name="display_queue_api"),
 ]

@@ -10,10 +10,10 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
     clients para mag-refresh sa ilang table — walay page reload.
     """
 
-    GROUP_NAME = 'user_management'
+    GROUP_NAME = "user_management"
 
     async def connect(self):
-        user = self.scope.get('user')
+        user = self.scope.get("user")
 
         if user is None or not user.is_authenticated:
             await self.close()
@@ -26,48 +26,84 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
     async def user_list_changed(self, event):
-        await self.send(text_data=json.dumps({
-            'action': event.get('action', 'changed'),
-            'actor': event.get('actor', ''),
-            'profile_id': event.get('profile_id'),
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "action": event.get("action", "changed"),
+                    "actor": event.get("actor", ""),
+                    "profile_id": event.get("profile_id"),
+                }
+            )
+        )
 
 
 class QueueConsumer(AsyncWebsocketConsumer):
-    GROUP_NAME = 'queue_display'
+
+    GROUP_NAME = "queue_display"
 
     async def connect(self):
 
-        # Join queue display group
-        await self.channel_layer.group_add(
-            "queue_display",
-            self.channel_name
-        )
+        # Join the common queue group
+        await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
 
-        # Accept WebSocket connection
         await self.accept()
+
+        print("✅ WebSocket connected:", self.channel_name)
 
     async def disconnect(self, close_code):
 
-        # Leave group
-        await self.channel_layer.group_discard(
-            "queue_display",
-            self.channel_name
-        )
+        # Leave the common queue group
+        await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
+
+        print("❌ WebSocket disconnected:", self.channel_name)
 
     async def queue_update(self, event):
+        """
+        Receives events from channel_layer.group_send()
+        and sends them to the browser.
+        """
 
-        # Send event to browser
+        print("📨 Queue event:", event)
+
         await self.send(
-            text_data=json.dumps({
-                "event": event["event"],
-                "queue_number":
-                    event.get("queue_number"),
-                "lane":
-                    event.get("lane"),
-                "status":
-                    event.get("status"),
-            })
+            text_data=json.dumps(
+                {
+                    "event": event.get("event"),
+                    "queue_number": event.get("queue_number"),
+                    "lane": event.get("lane"),
+                    "status": event.get("status"),
+                    "client": event.get("client"),
+                }
+            )
         )
 
-    #test
+
+# class QueueConsumer(AsyncWebsocketConsumer):
+
+#     GROUP_NAME = "queue_display"
+
+#     async def connect(self):
+
+#         await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
+
+#         await self.accept()
+
+#         print("✅ WebSocket connected:", self.channel_name)
+
+#     async def disconnect(self, close_code):
+
+#         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
+
+#         print("❌ WebSocket disconnected")
+
+#     async def queue_update(self, event):
+
+#         await self.send(
+#             text_data=json.dumps(
+#                 {
+#                     "action": "queue_update",
+#                     "event": event.get("event"),
+#                     "client": event.get("client", {}),
+#                 }
+#             )
+#         )

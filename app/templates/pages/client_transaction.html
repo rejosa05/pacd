@@ -2,21 +2,16 @@
 
 {% load static %}
 
-<script>
-    window.dashboardConfig = window.dashboardConfig || {};
-    window.dashboardConfig.notification = '{% url "notifications" %}';
-</script>
-
 {% block content %}
 <div id="transactionNotification" class="hidden fixed right-4 top-4 z-50 rounded-xl border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-800 shadow-lg dark:border-green-900/70 dark:bg-green-900/20 dark:text-green-300"></div>
 <div class="flex h-screen overflow-hidden">
   {% include 'includes/sidebar.html' %}
-
+ 
   <div id="overlay" class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
-
+ 
   <div class="flex min-w-0 flex-1 flex-col">
     {% include 'includes/navbar.html' %}
-
+ 
     <main class="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6 dark:bg-gray-900">
       <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -24,7 +19,7 @@
           <h1 class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">Client Transactions</h1>
         </div>
       </div>
-
+ 
       <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <p class="text-sm text-gray-500 dark:text-gray-400">Total in queue</p>
@@ -55,15 +50,15 @@
           </div>
         </div>
       </div>
-
+ 
       <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <div class="flex flex-col gap-3 border-b border-gray-200 p-4 dark:border-gray-700 lg:flex-row lg:items-center lg:justify-between">
           <div class="relative w-full max-w-md">
             <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M18.75 10.5a8.25 8.25 0 11-16.5 0 8.25 8.25 0 0116.5 0z"/></svg>
-            <input type="text" placeholder="Search client or queue number" class="w-full rounded-lg border border-gray-300 bg-gray-50 pl-9 pr-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
+            <input id="searchInput" type="text" placeholder="Search client or queue number" class="w-full rounded-lg border border-gray-300 bg-gray-50 pl-9 pr-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
           </div>
           <div class="flex items-center gap-2">
-            <select class="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
+            <select id="statusFilter" class="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
               <option value="">All status</option>
               <option value="Waiting">Waiting</option>
               <option value="Serving">Serving</option>
@@ -71,14 +66,14 @@
               <option value="Skipped">Skipped</option>
               <option value="Forwarded">Forwarded</option>
             </select>
-            <select class="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
+            <select id="laneFilter" class="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800">
               <option value="">All lane</option>
               <option value="Priority">Priority</option>
               <option value="Regular">Regular</option>
             </select>
           </div>
         </div>
-
+ 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-gray-700 dark:text-gray-300">
             <thead class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500 dark:bg-gray-700/60 dark:text-gray-400">
@@ -103,7 +98,7 @@
     </main>
   </div>
 </div>
-
+ 
 <!-- Edit Client Modal -->
 <div id="editModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
@@ -112,24 +107,25 @@
             <button type="button" data-modal-hide="editModal"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
-        <form class="px-6 py-5 space-y-4" onsubmit="event.preventDefault();">
+        <form id="editForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveEditClient();">
+            <input type="hidden" id="editQueueNo">
             <div class="grid grid-cols-2 gap-3">
-                <input type="text" value="Maria" placeholder="First name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                <input type="text" value="Santos" placeholder="Last name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <input id="editFirstName" type="text" placeholder="First name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <input id="editLastName" type="text" placeholder="Last name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
             </div>
-            <input type="tel" value="0917 123 4567" placeholder="Contact number" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-            <input type="text" value="Purok 3, Brgy. San Isidro" placeholder="Address" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <input id="editContact" type="tel" placeholder="Contact number" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <input id="editAddress" type="text" placeholder="Address" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
             <div class="grid grid-cols-2 gap-3">
-                <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <select id="editGender" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     <option>Female</option>
                     <option>Male</option>
                 </select>
-                <select class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <select id="editLane" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     <option>Priority</option>
                     <option>Regular</option>
                 </select>
             </div>
-            <select class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <select id="editTransaction" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                 <option>New application</option>
                 <option>Renewal</option>
                 <option>Claiming of documents</option>
@@ -143,7 +139,7 @@
         </form>
     </div>
 </div>
-
+ 
 <!-- Forward to Office Modal -->
 <div id="forwardModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
@@ -152,17 +148,18 @@
             <button type="button" data-modal-hide="forwardModal"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
-        <form class="px-6 py-5 space-y-4" onsubmit="event.preventDefault();">
+        <form id="forwardForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveForwardClient();">
+            <input type="hidden" id="forwardQueueNo">
             <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
-                <span class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
+                <span id="forwardQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
                 <div class="min-w-0">
-                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">New application</p>
+                    <p id="forwardClientName" class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
+                    <p id="forwardClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
                 </div>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Destination office</label>
-                <select required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                <select id="forwardOffice" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                     <option value="" disabled selected>Select office</option>
                     <option>Records Section</option>
                     <option>Legal Division</option>
@@ -173,7 +170,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Remarks <span class="text-gray-400 font-normal">(optional)</span></label>
-                <textarea rows="3" placeholder="Reason for forwarding, missing requirements, etc."
+                <textarea id="forwardRemarks" rows="3" placeholder="Reason for forwarding, missing requirements, etc."
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
             </div>
             <div class="flex gap-3 pt-1">
@@ -183,125 +180,257 @@
         </form>
     </div>
 </div>
-
+ 
+<!-- Serve Transaction Modal -->
+<div id="serveModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Serve transaction</h3>
+            <button type="button" data-modal-hide="serveModal"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <form id="serveForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveServeClient();">
+            <input type="hidden" id="serveQueueNo">
+            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
+                <span id="serveQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
+                <div class="min-w-0">
+                    <p id="serveClientName" class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
+                    <p id="serveClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+                <textarea id="serveDescription" rows="3" placeholder="Notes about this transaction..."
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Service</label>
+                <select id="serveService" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option value="" disabled selected>Select service</option>
+                    <option>Business Permit</option>
+                    <option>Barangay Clearance</option>
+                    <option>Certificate of Residency</option>
+                    <option>Health Certificate</option>
+                    <option>ID Application</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Service Availed?</label>
+                <div class="flex items-center gap-6">
+                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <input type="radio" name="serveAvailed" value="Yes" checked class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
+                        Yes
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <input type="radio" name="serveAvailed" value="No" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
+                        No
+                    </label>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button type="button" data-modal-hide="serveModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-emerald-700 text-white text-sm font-medium hover:bg-emerald-800">Serve</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% load static %}
 <script src="{% static 'js/main/client_transactions.js' %}"></script>
+<!-- <script>
+  // ---------- Sample data (simulates clients registered from the kiosk) ----------
+  // let clientQueue = [
+  //   { queueNo: 'P-014', firstName: 'Maria', lastName: 'Santos', contact: '0917 123 4567', address: 'Purok 3, Brgy. San Isidro', gender: 'Female', lane: 'Priority', transaction: 'New application', status: 'Waiting', office: 'Front Desk' },
+  //   { queueNo: 'R-045', firstName: 'Juan', lastName: 'Dela Cruz', contact: '0918 234 5678', address: 'Purok 1, Brgy. Poblacion', gender: 'Male', lane: 'Regular', transaction: 'Renewal', status: 'Waiting', office: 'Front Desk' },
+  //   { queueNo: 'P-015', firstName: 'Rosa', lastName: 'Manalo', contact: '0919 345 6789', address: 'Purok 7, Brgy. Libertad', gender: 'Female', lane: 'Priority', transaction: 'Claiming of documents', status: 'Serving', office: 'Records Section' },
+  //   { queueNo: 'R-046', firstName: 'Pedro', lastName: 'Reyes', contact: '0920 456 7890', address: 'Purok 2, Brgy. San Isidro', gender: 'Male', lane: 'Regular', transaction: 'Inquiry', status: 'Waiting', office: 'Front Desk' },
+  //   { queueNo: 'R-047', firstName: 'Ana', lastName: 'Villanueva', contact: '0921 567 8901', address: 'Purok 5, Brgy. Poblacion', gender: 'Female', lane: 'Regular', transaction: 'New application', status: 'Approved', office: 'Cashier' },
+  //   { queueNo: 'P-016', firstName: 'Ramon', lastName: 'Torres', contact: '0922 678 9012', address: 'Purok 4, Brgy. Libertad', gender: 'Male', lane: 'Priority', transaction: 'Other', status: 'Skipped', office: 'Front Desk' },
+  //   { queueNo: 'R-048', firstName: 'Liza', lastName: 'Fernandez', contact: '0923 789 0123', address: 'Purok 6, Brgy. San Isidro', gender: 'Female', lane: 'Regular', transaction: 'Renewal', status: 'Forwarded', office: 'Legal Division' },
+  // ];
 
+  const statusStyles = {
+    Waiting: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    Serving: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    Approved: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    Skipped: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+    Forwarded: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
+  };
+
+  const laneStyles = {
+    Priority: 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+    Regular: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+  };
+
+  function findClient(queueNo) {
+    return clientQueue.find(c => c.queueNo === queueNo);
+  }
+
+  function iconEdit() {
+    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zM19.5 19.5H4.5"/></svg>';
+  }
+  function iconServe() {
+    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75V6a2.25 2.25 0 00-4.5 0v3.75m-.75 8.25h6a2.25 2.25 0 002.25-2.25V9.75a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 9.75v6a2.25 2.25 0 002.25 2.25h.75"/></svg>';
+  }
+  function iconForward() {
+    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>';
+  }
+  function iconSkip() {
+    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.75 5.25v13.5"/></svg>';
+  }
+
+  function actionButton(icon, label, colorClasses, onclick) {
+    return `<button type="button" title="${label}" onclick="${onclick}"
+      class="inline-flex h-8 w-8 items-center justify-center rounded-lg ${colorClasses} transition-colors">${icon}</button>`;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('clientTablebody');
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+    const statusVal = document.getElementById('statusFilter').value;
+    const laneVal = document.getElementById('laneFilter').value;
+
+    const filtered = clientQueue.filter(c => {
+      const fullName = `${c.firstName} ${c.lastName}`.toLowerCase();
+      const matchesSearch = !search || fullName.includes(search) || c.queueNo.toLowerCase().includes(search);
+      const matchesStatus = !statusVal || c.status === statusVal;
+      const matchesLane = !laneVal || c.lane === laneVal;
+      return matchesSearch && matchesStatus && matchesLane;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No clients match your search.</td></tr>`;
+    } else {
+      tbody.innerHTML = filtered.map(c => `
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+          <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${c.queueNo}</td>
+          <td class="px-4 py-3">${c.firstName} ${c.lastName}</td>
+          <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${laneStyles[c.lane]}">${c.lane}</span></td>
+          <td class="px-4 py-3">${c.transaction}</td>
+          <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${statusStyles[c.status] || ''}">${c.status}</span></td>
+          <td class="px-4 py-3">${c.office}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center justify-end gap-1.5">
+              ${actionButton(iconEdit(), 'Edit', 'text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30', `openEditModal('${c.queueNo}')`)}
+              ${actionButton(iconServe(), 'Serve', 'text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30', `serveClient('${c.queueNo}')`)}
+              ${actionButton(iconForward(), 'Forward', 'text-cyan-600 hover:bg-cyan-50 dark:text-cyan-400 dark:hover:bg-cyan-900/30', `openForwardModal('${c.queueNo}')`)}
+              ${actionButton(iconSkip(), 'Skip', 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700', `skipClient('${c.queueNo}')`)}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    updateStats();
+  }
+
+  function updateStats() {
+    document.getElementById('statTotalClients').textContent = clientQueue.length;
+    document.getElementById('statWaiting').textContent = clientQueue.filter(c => c.status === 'Waiting').length;
+    document.getElementById('statPriority').textContent = clientQueue.filter(c => c.lane === 'Priority').length;
+    const serving = clientQueue.find(c => c.status === 'Serving');
+    document.getElementById('statStatus').textContent = serving ? `Serving ${serving.queueNo}` : 'Idle';
+  }
+
+  // ---------- Modal helpers ----------
+  function showModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+  }
+  function hideModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+  document.querySelectorAll('[data-modal-hide]').forEach(btn => {
+    btn.addEventListener('click', () => hideModal(btn.getAttribute('data-modal-hide')));
+  });
+
+  function notify(message) {
+    const el = document.getElementById('transactionNotification');
+    el.textContent = message;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 2500);
+  }
+
+  // ---------- Edit ----------
+  function openEditModal(queueNo) {
+    const c = findClient(queueNo);
+    if (!c) return;
+    document.getElementById('editQueueNo').value = c.queueNo;
+    document.getElementById('editFirstName').value = c.firstName;
+    document.getElementById('editLastName').value = c.lastName;
+    document.getElementById('editContact').value = c.contact;
+    document.getElementById('editAddress').value = c.address;
+    document.getElementById('editGender').value = c.gender;
+    document.getElementById('editLane').value = c.lane;
+    document.getElementById('editTransaction').value = c.transaction;
+    showModal('editModal');
+  }
+
+  function saveEditClient() {
+    const queueNo = document.getElementById('editQueueNo').value;
+    const c = findClient(queueNo);
+    if (!c) return;
+    c.firstName = document.getElementById('editFirstName').value;
+    c.lastName = document.getElementById('editLastName').value;
+    c.contact = document.getElementById('editContact').value;
+    c.address = document.getElementById('editAddress').value;
+    c.gender = document.getElementById('editGender').value;
+    c.lane = document.getElementById('editLane').value;
+    c.transaction = document.getElementById('editTransaction').value;
+    hideModal('editModal');
+    renderTable();
+    notify(`Client ${c.queueNo} details updated.`);
+  }
+
+  // ---------- Serve ----------
+  function serveClient(queueNo) {
+    const c = findClient(queueNo);
+    if (!c) return;
+    c.status = 'Serving';
+    renderTable();
+    notify(`Now serving ${c.queueNo} — ${c.firstName} ${c.lastName}.`);
+  }
+
+  // ---------- Forward ----------
+  function openForwardModal(queueNo) {
+    const c = findClient(queueNo);
+    if (!c) return;
+    document.getElementById('forwardQueueNo').value = c.queueNo;
+    document.getElementById('forwardQueueBadge').textContent = c.queueNo;
+    document.getElementById('forwardClientName').textContent = `${c.firstName} ${c.lastName}`;
+    document.getElementById('forwardClientTransaction').textContent = c.transaction;
+    document.getElementById('forwardOffice').value = '';
+    document.getElementById('forwardRemarks').value = '';
+    showModal('forwardModal');
+  }
+
+  function saveForwardClient() {
+    const queueNo = document.getElementById('forwardQueueNo').value;
+    const c = findClient(queueNo);
+    if (!c) return;
+    const office = document.getElementById('forwardOffice').value;
+    if (!office) return;
+    c.status = 'Forwarded';
+    c.office = office;
+    hideModal('forwardModal');
+    renderTable();
+    notify(`${c.queueNo} forwarded to ${office}.`);
+  }
+
+  // ---------- Skip ----------
+  function skipClient(queueNo) {
+    const c = findClient(queueNo);
+    if (!c) return;
+    c.status = 'Skipped';
+    renderTable();
+    notify(`${c.queueNo} — ${c.firstName} ${c.lastName} marked as skipped.`);
+  }
+
+  // ---------- Filters ----------
+  document.getElementById('searchInput').addEventListener('input', renderTable);
+  document.getElementById('statusFilter').addEventListener('change', renderTable);
+  document.getElementById('laneFilter').addEventListener('change', renderTable);
+
+  // ---------- Init ----------
+  renderTable();
+</script> -->
 {% endblock %}
-
-<script src="{% static 'js/notifications.js' %}"></script>
-<script>
-
-
-//   const transactionApiUrl = '{% url "f_transactions" %}';
-
-//   function renderTransactionRows(clients) {
-//     const tbody = document.getElementById('liveTransactionTable');
-//     if (!tbody) return;
-
-//     if (!clients || clients.length === 0) {
-//       tbody.innerHTML = `
-//         <tr>
-//           <td colspan="8" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-//             Wala pa’y mga client sa queue karong adlawa.
-//           </td>
-//         </tr>
-//       `;
-//       return;
-//     }
-
-//     tbody.innerHTML = clients.map(client => {
-//       const queueNo = client.client_queue_no || '---';
-//       const name = client.client_fullname || 'Unknown Client';
-//       const lane = client.client_lane_type || 'Regular';
-//       const laneClass = lane === 'Priority'
-//         ? 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
-//         : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
-//       const status = client.client_status || 'Waiting';
-//       const statusClass = status === 'Waiting'
-//         ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-//         : 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-//       const office = client.client_unit || '—';
-//       const time = client.date_created ? new Date(client.date_created).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '—';
-
-//       return `
-//         <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
-//             <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${queueNo}</td>
-//             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${name}</td>
-//             <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${laneClass}">${lane}</span></td>
-//             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.client_transaction_type || 'General'}</td>
-//             <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}"><span class="w-1.5 h-1.5 rounded-full bg-current"></span>${status}</span></td>
-//             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${office}</td>
-//             <td class="px-4 py-3 text-gray-500 dark:text-gray-400">${time}</td>
-//             <td class="px-4 py-3">
-//                 <div class="flex items-center justify-end gap-1.5">
-//                     <button type="button" title="Process" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30">
-//                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-//                     </button>
-//                     <button type="button" title="Forward" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-cyan-700 hover:bg-cyan-50 dark:hover:bg-cyan-900/30">
-//                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>
-//                     </button>
-//                 </div>
-//             </td>
-//         </tr>
-//       `;
-//     }).join('');
-//   }
-
-//   function fetchTransactions() {
-//     fetch(transactionApiUrl, {
-//       headers: { 'X-Requested-With': 'XMLHttpRequest' }
-//     })
-//     .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
-//     .then(data => {
-//       const clients = Array.isArray(data.pending_clients) ? data.pending_clients : [];
-//       renderTransactionRows(clients);
-//     })
-//     .catch(() => {
-//       const tbody = document.getElementById('liveTransactionTable');
-//       if (tbody) {
-//         tbody.innerHTML = `
-//           <tr>
-//             <td colspan="8" class="px-4 py-6 text-center text-sm text-red-500">Wala ma-load ang data sa queue.</td>
-//           </tr>
-//         `;
-//       }
-//     });
-//   }
-
-//   function connectQueueSocket() {
-//     if (!('WebSocket' in window)) return;
-
-//     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-//     const socket = new WebSocket(protocol + window.location.host + '/ws/queue/');
-
-//     socket.onmessage = function (event) {
-//       const payload = JSON.parse(event.data);
-//       if (payload.action === 'queue_update') {
-//         const notification = document.getElementById('transactionNotification');
-//         const client = payload.client || {};
-//         if (notification) {
-//           notification.textContent = `Bag-ong client: ${client.name || 'Unknown'} - ${client.queue_no || ''}`;
-//           notification.classList.remove('hidden');
-//           setTimeout(() => notification.classList.add('hidden'), 4000);
-//         }
-//         if (typeof fetchPACDNotifications === 'function') {
-//           fetchPACDNotifications();
-//         }
-//         fetchTransactions();
-//       }
-//     };
-
-//     socket.onclose = function () {
-//       setTimeout(connectQueueSocket, 3000);
-//     };
-//   }
-
-//   document.addEventListener('DOMContentLoaded', () => {
-//     if (typeof fetchPACDNotifications === 'function') {
-//       fetchPACDNotifications();
-//     }
-//     fetchTransactions();
-//     connectQueueSocket();
-//   });
-</script>

@@ -9,13 +9,6 @@ function updateTime() {
 setInterval( updateTime, 1000);
 updateTime();
 
-
-
-/* =====================================================
-   REST API
-   GET EXISTING WAITING CLIENTS
-===================================================== */
-
 async function loadWaitingQueue() {
     try {
         const response = await fetch("/api/display-queue/", {
@@ -50,11 +43,6 @@ async function loadWaitingQueue() {
     }
 }
 
-
-
-/* =====================================================
-   DISPLAY WAITING QUEUE
-===================================================== */
 
 function displayWaitingQueue(
     queues,
@@ -102,8 +90,6 @@ const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
 const socket = new WebSocket( protocol + window.location.host + "/ws/queue-display/" );
 
-
-
 /* =====================================================
    WEBSOCKET CONNECTED
 ===================================================== */
@@ -115,7 +101,6 @@ socket.onopen = function () {
     );
 
 };
-
 
 
 /* =====================================================
@@ -130,8 +115,6 @@ socket.onclose = function () {
 
 };
 
-
-
 /* =====================================================
    WEBSOCKET ERROR
 ===================================================== */
@@ -144,7 +127,6 @@ socket.onerror = function (error) {
     );
 
 };
-
 
 
 /* =====================================================

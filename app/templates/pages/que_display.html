@@ -1,4 +1,4 @@
-{% extends 'app/base.html' %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %} Display Board {% endblock %}
 {% block content %}
@@ -99,6 +99,14 @@
         margin-top: 8px;
         letter-spacing: normal;
         flex-wrap: wrap;
+        font-size: 2vw;
+    }
+
+    .next-numbers span {
+        background-color: white;
+        padding:  0 20px;
+        opacity: 60%;
+        border-radius: 5px;
     }
 
     .next-chip {
@@ -167,13 +175,13 @@
         justify-content: center;
     }
 
-    /* Container */
+    /* Container
     .client-card {
         margin: 10px 0;
     }
 
     /* Text */
-    .queue-text {
+    /* .queue-text {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -181,14 +189,14 @@
         font-weight: bold;
         color: #000000;
         gap: 20px;
-    }
+    } */
 
     /* ICON STYLE */
-    .queue-icon {
+    /* .queue-icon {
         font-size: 1.5vw;
         color: #ac0000;
         animation: popIn 0.3s ease;
-    }
+    } */
 
     /* ANIMATION */
     @keyframes popIn {
@@ -308,112 +316,6 @@
 </div>
 
 {% load static %}
-<script src={% static 'js/main/que_display.js' %}></script>
+<script src="{% static 'js/main/que_display.js' %}"></script>
 
-<!-- <script>
-function updateTime() {
-    const now = new Date();
-    document.getElementById("time").innerHTML =
-        now.toLocaleTimeString();
-}
-setInterval(updateTime, 1000);
-updateTime();
-</script>
-
-<script>
-    /*
-      Renders the "NEXT" chips below each lane's current queue number.
-      Replace fastNextNumbers / regularNextNumbers with the real upcoming
-      queue numbers from your backend (e.g. via the same data source /
-      polling / websocket that already feeds fastCurrent and regularCurrent).
-    */
-    function renderNextNumbers(containerId, numbers) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        container.innerHTML = "";
-
-        if (!numbers || numbers.length === 0) {
-            const empty = document.createElement("span");
-            empty.className = "next-chip empty";
-            empty.textContent = "No one waiting";
-            container.appendChild(empty);
-            return;
-        }
-
-        numbers.forEach((num) => {
-            const chip = document.createElement("span");
-            chip.className = "next-chip";
-            chip.textContent = num;
-            container.appendChild(chip);
-        });
-    }
-
-    // TODO: replace with live data from your queue source
-    // let fastNextNumbers = ["P-016", "P-017"];
-    // let regularNextNumbers = ["R-043", "R-044", "R-045"];
-
-    renderNextNumbers("fastNext", fastNextNumbers);
-    renderNextNumbers("regularNext", regularNextNumbers);
-</script>
-
-  
-        </script>
-        <audio id="queue-audio" preload="auto">
-            <source src="{% static 'audio/ding.mp3' %}" type="audio/mpeg">
-          </audio>
-          
-          <script>
-            let audioUnlocked = false;
-          
-            document.addEventListener("click", () => {
-              if (!audioUnlocked) {
-                const audio = document.getElementById("queue-audio");
-                audio.play().then(() => {
-                  audio.pause(); // pause right after to avoid sound
-                  audioUnlocked = true;
-                }).catch((err) => console.warn("Audio not unlocked yet", err));
-              }
-            });
-          
-            function callQueue(queueNumber) {
-              if (!audioUnlocked) return;
-          
-              const audio = document.getElementById("queue-audio");
-              const synth = window.speechSynthesis;
-          
-              if (queueNumber === "00") {
-                const emptyQueueAudio = document.getElementById("no-queue-audio");
-                if (emptyQueueAudio) {
-                  emptyQueueAudio.play();
-                } 
-                return;
-              }
-          
-              audio.play();
-              const message = new SpeechSynthesisUtterance("Proceed to front desk for screening number " + queueNumber);
-              synth.speak(message);
-                 
-            }
-            
-            function observeQueueChange(queueId) {
-              const target = document.getElementById(queueId);
-              let lastValue = target.textContent;
-          
-              const observer = new MutationObserver(() => {
-                const currentValue = target.textContent.trim();
-                if (currentValue && currentValue !== lastValue) {
-                  callQueue(currentValue);
-                  lastValue = currentValue;
-                }
-              });
-          
-              observer.observe(target, { childList: true, subtree: true });
-            }
-          
-            document.addEventListener("DOMContentLoaded", () => {
-              observeQueueChange("regularCurrent");
-              observeQueueChange("fastCurrent");
-            });
-          </script> -->
 {% endblock %}

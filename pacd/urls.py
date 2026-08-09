@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, re_path as path
-from app.views import dashboard, kiosk, logs, display, services
+from app.views import dashboard, logs, display, services
 from app.views_ import loginViews
 
 urlpatterns = [
