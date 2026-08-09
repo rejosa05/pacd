@@ -1,64 +1,195 @@
-import json
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.utils import timezone
+from django.views.decorators.http import require_POST
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from ..models import ClientDetails
-from ..utils.websocket import send_queue_update
 
 
 def client_register_page(request):
-    """Ipakita ang registration form."""
     return render(request, 'pages/client_kiosk.html')
 
-
-@require_http_methods(["POST"])
+@require_POST
 def register_client(request):
-    """
-    Mag-save sa client details ug mo-return sa queue number info
-    nga gamiton sa frontend para i-print/ipakita ang queue slip.
-    """
-    first_name = request.POST.get('first_name', '').strip()
-    last_name = request.POST.get('last_name', '').strip()
-    contact_number = request.POST.get('contact_number', '').strip()
-    address = request.POST.get('address', '').strip()
-    sex = request.POST.get('sex', '').strip()
-    lane = request.POST.get('lane', '').strip()
-    org = request.POST.get('client_org', '').strip()
+
+    # =========================
+    # GET FORM DATA
+    # =========================
+
+    first_name = request.POST.get(
+        "first_name",
+        ""
+    ).strip()
+
+    last_name = request.POST.get(
+        "last_name",
+        ""
+    ).strip()
+
+    contact_number = request.POST.get(
+        "contact_number",
+        ""
+    ).strip()
+
+    address = request.POST.get(
+        "address",
+        ""
+    ).strip()
+
+    sex = request.POST.get(
+        "sex",
+        ""
+    ).strip()
+
+    lane = request.POST.get(
+        "lane",
+        ""
+    ).strip()
+
+    org = request.POST.get(
+        "client_org",
+        ""
+    ).strip()
 
 
-    normalized_sex = {'male': 'Male', 'female': 'Female'}.get(sex.lower(), sex.title())
-    normalized_lane = {'priority': 'Priority', 'regular': 'Regular'}.get(lane.lower(), lane.title())
+    # =========================
+    # NORMALIZE DATA
+    # =========================
+
+    normalized_sex = {
+        "male": "Male",
+        "female": "Female",
+    }.get(
+        sex.lower(),
+        sex.title()
+    )
+
+
+    normalized_lane = {
+        "priority": "Priority",
+        "regular": "Regular",
+    }.get(
+        lane.lower(),
+        lane.title()
+    )
+
 
     try:
+
+        # =========================
+        # SAVE CLIENT
+        # =========================
+
         client = ClientDetails.objects.create(
+
             client_firstname=first_name,
+
             client_lastname=last_name,
+
             client_contact=contact_number,
+
             client_address=address,
+
             client_gender=normalized_sex,
+
             client_lane_type=normalized_lane,
+
             client_org=org,
-            client_status='Waiting',
+
+            client_status="Waiting",
+
         )
 
-        send_queue_update(client)
 
-        lane_prefix = 'P' if client.client_lane_type.lower() == 'priority' else 'R'
-        queue_code = f"{lane_prefix}-{client.client_queue_no:03d}"
+        # =========================
+        # CREATE QUEUE CODE
+        # =========================
+
+        if normalized_lane == "Priority":
+
+            queue_number = (
+                f"P-{client.client_queue_no:03d}"
+            )
+
+        else:
+
+            queue_number = (
+                f"R-{client.client_queue_no:03d}"
+            )
+
+
+        # =========================
+        # SEND CHANNELS EVENT
+        # =========================
+
+        channel_layer = get_channel_layer()
+
+        print("")
+        async_to_sync(
+            channel_layer.group_send
+        )(
+            "queue_display",
+            {
+                "type":
+                    "queue_update",
+
+                "event":
+                    "CLIENT_REGISTERED",
+
+                "queue_number":
+                    queue_number,
+
+                "lane":
+                    normalized_lane,
+
+                "status":
+                    client.client_status,
+            }
+        )
+
+
+        # =========================
+        # RETURN RESPONSE
+        # =========================
 
         return JsonResponse({
-            'success': True,
-            'message': 'Malampuson nga na-register. Ania ang imong queue number.',
-            'data': {
-                'queue_code': queue_code,
-                'queue_no': client.client_queue_no,
-                'lane_type': client.client_lane_type,
-                'full_name': f"{client.client_firstname} {client.client_lastname}",
-                'date_created': client.date_created.strftime('%B %d, %Y %I:%M %p'),
+
+            "success": True,
+
+            "message":
+                "Malampuson nga na-register.",
+
+            "data": {
+
+                "queue_code":
+                    queue_number,
+
+                "queue_no":
+                    client.client_queue_no,
+
+                "lane_type":
+                    client.client_lane_type,
+
+                "full_name":
+                    f"{client.client_firstname} "
+                    f"{client.client_lastname}",
+
+                "date_created":
+                    client.date_created.strftime(
+                        "%B %d, %Y %I:%M %p"
+                    ),
             }
+
         })
 
+
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+        return JsonResponse({
+
+            "success": False,
+
+            "error": str(e)
+
+        }, status=500)

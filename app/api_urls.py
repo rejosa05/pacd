@@ -1,5 +1,5 @@
 from django.urls import path
-from .views_ import user_management, client_transactions
+from .views_ import user_management, client_transactions, que_display
    
 
 urlpatterns  = [   
@@ -13,4 +13,7 @@ urlpatterns  = [
 
 
     path('api/clients/', client_transactions.list_clients, name='api_list_clients'),
+
+
+    path( "api/display-queue/", que_display.display_queue_api , name="display_queue_api"),
 ]

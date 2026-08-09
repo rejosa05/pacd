@@ -9,7 +9,7 @@ from .view.notifications import *
 from .view.graph import *
 from .view.account import *
 
-from .views_ import client_transactions, user_management, client_kiosk
+from .views_ import client_transactions, user_management, client_kiosk, que_display
 
 urlpatterns = [
     # path('', login_view, name="logins"), 
@@ -68,5 +68,7 @@ urlpatterns = [
 
     
     path('client_kiosk', client_kiosk.client_register_page, name='client_kiosk'),
-    path('client_kiosk/register/', client_kiosk.register_client, name='client_kiosk_register')
+    path('client_kiosk/register/', client_kiosk.register_client, name='client_kiosk_register'),
+
+    path( "api/display-queue/", que_display.display_queue_api , name="display_queue_api"),
 ]

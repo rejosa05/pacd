@@ -14,7 +14,7 @@ def logs(request):
     return render(request, 'pages/logs.html')
 
 def display(request):
-    return render(request, 'pages/display.html')
+    return render(request, 'pages/que_display.html')
 
 def services(request):
     return render(request, 'pages/services.html')

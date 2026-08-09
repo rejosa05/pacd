@@ -34,24 +34,40 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
 
 
 class QueueConsumer(AsyncWebsocketConsumer):
-    GROUP_NAME = 'queue'
+    GROUP_NAME = 'queue_display'
 
     async def connect(self):
-        user = self.scope.get('user')
-        if user is None or not user.is_authenticated:
-            await self.close()
-            return
 
-        await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
+        # Join queue display group
+        await self.channel_layer.group_add(
+            "queue_display",
+            self.channel_name
+        )
+
+        # Accept WebSocket connection
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
+
+        # Leave group
+        await self.channel_layer.group_discard(
+            "queue_display",
+            self.channel_name
+        )
 
     async def queue_update(self, event):
-        await self.send(text_data=json.dumps({
-            'action': 'queue_update',
-            'client': event.get('data', {}),
-        }))
+
+        # Send event to browser
+        await self.send(
+            text_data=json.dumps({
+                "event": event["event"],
+                "queue_number":
+                    event.get("queue_number"),
+                "lane":
+                    event.get("lane"),
+                "status":
+                    event.get("status"),
+            })
+        )
 
     #test
