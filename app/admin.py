@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountDetails,Unit, Division, SessionHistory, DivisionLog, ServicesDetails, ClientDetails, TransactionHistory, UserActivityLog
+from .models import AccountDetails,Unit, Division, SessionHistory, ServicesDetails, ClientDetails
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
@@ -17,21 +17,21 @@ class SessionHistoryAdmin(admin.ModelAdmin):
     ordering = ('-login_time',)
     list_per_page = 10
 
-@admin.register(UserActivityLog)
-class UserActivityLogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'action', 'description', 'page', 'ip_address', 'session_key', 'date')
-    search_fields = ('user', 'action', 'description', 'page')
-    list_filter = ('action', 'date')
-    ordering = ('-date',)
-    list_per_page = 20
+# @admin.register(UserActivityLog)
+# class UserActivityLogAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'action', 'description', 'page', 'ip_address', 'session_key', 'date')
+#     search_fields = ('user', 'action', 'description', 'page')
+#     list_filter = ('action', 'date')
+#     ordering = ('-date',)
+#     list_per_page = 20
 
-@admin.register(DivisionLog)
-class TransactionLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'cc_cover','form', 'service_id') 
-    search_fields = ('action_type', 'transaction_type', 'form')
-    list_filter = ('action_type', 'transaction_type', 'unit', 'status')
-    ordering = ('-id',)
-    list_per_page = 10
+# @admin.register(DivisionLog)
+# class TransactionLogAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'cc_cover','form', 'service_id') 
+#     search_fields = ('action_type', 'transaction_type', 'form')
+#     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
+#     ordering = ('-id',)
+#     list_per_page = 10
 
 @admin.register(ServicesDetails)
 class ServiceDetails(admin.ModelAdmin):
@@ -49,18 +49,18 @@ class ClientDetailsAdmin(admin.ModelAdmin):
     ordering = ('-date_created',)
     list_per_page = 10
 
-@admin.register(TransactionHistory)
-class TransactionHistorys(admin.ModelAdmin):
-    list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date', 'remarks', 'deficiencies', 'form', 'status')
-    search_fields = ('accounts', 'action', 'date')
-    list_filter = ('division_log', 'accounts', 'action', 'date')
-    ordering = ('-date',)
-    list_per_page = 10
+# @admin.register(TransactionHistory)
+# class TransactionHistorys(admin.ModelAdmin):
+#     list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date', 'remarks', 'deficiencies', 'form', 'status')
+#     search_fields = ('accounts', 'action', 'date')
+#     list_filter = ('division_log', 'accounts', 'action', 'date')
+#     ordering = ('-date',)
+#     list_per_page = 10
 
-    def get_transaction_no(self, obj):
-        return obj.division_log.transaction_no if obj.division_log else None
+#     def get_transaction_no(self, obj):
+#         return obj.division_log.transaction_no if obj.division_log else None
 
-    get_transaction_no.short_description = 'Transaction No'
+#     get_transaction_no.short_description = 'Transaction No'
 
 admin.site.register(Division)
 admin.site.register(Unit)

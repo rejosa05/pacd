@@ -3,6 +3,19 @@ let pageSize = 10;
 let currentPage = 1;
 
 /* =====================================================
+   CSRF TOKEN (required by Django for POST/PUT/DELETE)
+===================================================== */
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+}
+
+const CSRF_TOKEN = getCookie("csrftoken");
+
+/* =====================================================
    INITIALS
 ===================================================== */
 
@@ -126,13 +139,13 @@ function renderClientTable() {
                     <button type="button" title="Edit" onclick="openEditModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/><circle cx="12" cy="12" r="2.25"/></svg>
                     </button>
-                    <button type="button" title="Serve" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300">
+                    <button type="button" title="Serve" onclick="openServeModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                     </button>
-                    <button type="button" title="Forward" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300">
+                    <button type="button" title="Forward" onclick="openForwardModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>
                     </button>
-                    <button type="button" title="Skipped" onclick="skipClient(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-300">
+                    <button type="button" title="Skip" onclick="openSkipModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-300">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
                     </button>
                 </div>
@@ -146,81 +159,340 @@ function renderClientTable() {
 }
 
 // ---------- Modal helpers ----------
-  function showModal(id) {
-    document.getElementById(id).classList.remove('hidden');
+// NOTE: these modals are shown/hidden purely with the "hidden" class.
+// We intentionally do NOT use Flowbite's data-modal-toggle/data-modal-hide
+// system here, because those modals were never registered as Flowbite
+// instances (they weren't opened via data-modal-target). Mixing the two
+// causes: "Flowbite: Instance with ID ... does not exist." in the console.
+// All open/close calls go through these two functions instead.
+function showModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove("hidden");
+}
+function hideModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add("hidden");
+}
+
+function notify(message) {
+  const el = document.getElementById("transactionNotification");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.remove("hidden");
+  setTimeout(() => el.classList.add("hidden"), 2500);
+}
+
+// ---------- Edit ----------
+async function openEditModal(clientId) {
+  const res = await fetch(`api/client/${clientId}`);
+  const data = await res.json();
+  if (!data.success) return;
+
+  const _client = data.data;
+  document.getElementById("editQueueNo").value = clientId;
+  document.getElementById("editFirstName").value = _client.first_name;
+  document.getElementById("editLastName").value = _client.last_name;
+  document.getElementById("editContact").value = _client.contact;
+  document.getElementById("editAddress").value = _client.address;
+  if (_client.gender) document.getElementById("editGender").value = _client.gender;
+  if (_client.lane) document.getElementById("editLane").value = _client.lane;
+  if (_client.transaction_type) document.getElementById("editTransaction").value = _client.transaction_type;
+  showModal("editModal");
+}
+
+async function saveEditClient() {
+  const clientId = document.getElementById("editQueueNo").value;
+  const payload = {
+    first_name: document.getElementById("editFirstName").value,
+    last_name: document.getElementById("editLastName").value,
+    contact: document.getElementById("editContact").value,
+    address: document.getElementById("editAddress").value,
+    gender: document.getElementById("editGender").value,
+    lane: document.getElementById("editLane").value,
+    transaction_type: document.getElementById("editTransaction").value,
+  };
+
+  try {
+    const res = await fetch(`api/client/${clientId}/update/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Update failed");
+
+    hideModal("editModal");
+    notify("Client details updated.");
+    loadClients();
+  } catch (error) {
+    console.error("❌ Save edit error:", error);
+    notify("Unable to update client. Please try again.");
   }
-  function hideModal(id) {
-    document.getElementById(id).classList.add('hidden');
+}
+
+async function openForwardModal(clientId) {
+  const res = await fetch(`api/client/${clientId}`);
+  const data = await res.json();
+  if (!data.success) return;
+
+  const _client = data.data;
+  document.getElementById("forwardQueueNo").value = clientId;
+  document.getElementById("forwardQueueBadge").textContent = _client.queue_no || "---";
+  document.getElementById("forwardClientFullName").textContent = _client.full_name;
+  document.getElementById("forwardClientTransaction").textContent = _client.transaction_type || "---";
+  document.getElementById("forwardRemarks").value = "";
+
+  resetForwardDropdowns();
+  await loadForwardDivisions();
+
+  showModal("forwardModal");
+}
+
+function resetForwardDropdowns() {
+  const divisionSelect = document.getElementById("forwardDivision");
+  const unitSelect = document.getElementById("forwardUnit");
+  divisionSelect.innerHTML = '<option value="" disabled selected>Loading divisions...</option>';
+  unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
+  unitSelect.disabled = true;
+}
+
+async function loadForwardDivisions() {
+  const divisionSelect = document.getElementById("forwardDivision");
+  try {
+    const res = await fetch("api/divisions/");
+    const data = await res.json();
+    if (!data.success || !data.divisions.length) {
+      divisionSelect.innerHTML = '<option value="" disabled selected>No divisions available</option>';
+      return;
+    }
+    divisionSelect.innerHTML =
+      '<option value="" disabled selected>Select division</option>' +
+      data.divisions.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
+  } catch (error) {
+    console.error("❌ Load divisions error:", error);
+    divisionSelect.innerHTML = '<option value="" disabled selected>Unable to load divisions</option>';
   }
-  document.querySelectorAll('[data-modal-hide]').forEach(btn => {
-    btn.addEventListener('click', () => hideModal(btn.getAttribute('data-modal-hide')));
+}
+
+async function onForwardDivisionChange() {
+  const divisionId = document.getElementById("forwardDivision").value;
+  const unitSelect = document.getElementById("forwardUnit");
+
+  unitSelect.disabled = true;
+  unitSelect.innerHTML = '<option value="" disabled selected>Loading units...</option>';
+
+  if (!divisionId) {
+    unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
+    return;
+  }
+
+  try {
+    const res = await fetch(`api/units/?division_id=${divisionId}`);
+    const data = await res.json();
+
+    if (!data.success || !data.units.length) {
+      unitSelect.innerHTML = '<option value="" disabled selected>No units under this division</option>';
+      return;
+    }
+
+    unitSelect.innerHTML =
+      '<option value="" disabled selected>Select unit</option>' +
+      data.units.map((u) => `<option value="${u.id}">${u.name}</option>`).join("");
+    unitSelect.disabled = false;
+  } catch (error) {
+    console.error("❌ Load units error:", error);
+    unitSelect.innerHTML = '<option value="" disabled selected>Unable to load units</option>';
+  }
+}
+
+async function saveForwardClient() {
+  const clientId = document.getElementById("forwardQueueNo").value;
+  const divisionId = document.getElementById("forwardDivision").value;
+  const unitId = document.getElementById("forwardUnit").value;
+  if (!divisionId || !unitId) {
+    notify("Please select both a division and a unit.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`api/client/${clientId}/forward/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+      body: JSON.stringify({
+        division_id: divisionId,
+        unit_id: unitId,
+        remarks: document.getElementById("forwardRemarks").value,
+      }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Forward failed");
+
+    hideModal("forwardModal");
+    notify(data.message || "Client forwarded.");
+    loadClients();
+  } catch (error) {
+    console.error("❌ Forward error:", error);
+    notify("Unable to forward client. Please try again.");
+  }
+}
+
+async function openServeModal(clientId) {
+  const res = await fetch(`api/client/${clientId}`);
+  const data = await res.json();
+  if (!data.success) return;
+
+  const _client = data.data;
+  document.getElementById("serveQueueNo").value = clientId;
+  document.getElementById("serveQueueBadge").textContent = _client.queue_no || "---";
+  document.getElementById("serveClientName").textContent = _client.full_name;
+  document.getElementById("serveClientTransaction").textContent = _client.transaction_type || "---";
+
+  resetServeForm();
+  showModal("serveModal");
+}
+
+/* =====================================================
+   SERVE MODAL — CONDITIONAL FLOW
+   Citizen's Charter -> Services -> Deficiencies -> Resolved -> CSM / CSS
+===================================================== */
+
+function resetServeForm() {
+  document.getElementById("serveForm").reset();
+  ["serveServiceSection", "serveDeficiencyQuestion", "serveDeficiencyDetailsSection",
+   "serveResolvedQuestion", "serveCSMSection", "serveCSSSection"].forEach((id) => {
+    document.getElementById(id).classList.add("hidden");
   });
+}
 
-  function notify(message) {
-    const el = document.getElementById('transactionNotification');
-    el.textContent = message;
-    el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 2500);
+function updateServeFlow() {
+  const charter = document.querySelector('input[name="serveCharter"]:checked')?.value;
+  const service = document.getElementById("serveService").value;
+  const deficiency = document.querySelector('input[name="serveDeficiency"]:checked')?.value;
+  const resolved = document.querySelector('input[name="serveResolved"]:checked')?.value;
+
+  const serviceSection = document.getElementById("serveServiceSection");
+  const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
+  const deficiencyDetails = document.getElementById("serveDeficiencyDetailsSection");
+  const resolvedQuestion = document.getElementById("serveResolvedQuestion");
+  const csmSection = document.getElementById("serveCSMSection");
+  const cssSection = document.getElementById("serveCSSSection");
+
+  // Step 2: Services — shown only if Charter = Yes
+  serviceSection.classList.toggle("hidden", charter !== "Yes");
+  if (charter !== "Yes") {
+    document.getElementById("serveService").value = "";
   }
 
-  // ---------- Edit ----------
-  function openEditModal(queueNo) {
-    showModal('editModal');
+  // Step 3: Deficiency question — shown once a service is picked (Charter path),
+  // or once Charter = No is answered (no service needed).
+  const hasService = charter === "Yes" && !!service;
+  const skippedService = charter === "No";
+  deficiencyQuestion.classList.toggle("hidden", !hasService);
+  if (!hasService) {
+    deficiencyQuestion.querySelectorAll('input[name="serveDeficiency"]').forEach((r) => (r.checked = false));
+    deficiencyDetails.classList.add("hidden");
   }
 
-//   function saveEditClient() {
-//     const queueNo = document.getElementById('editQueueNo').value;
-//     c.firstName = document.getElementById('editFirstName').value;
-//     c.lastName = document.getElementById('editLastName').value;
-//     c.contact = document.getElementById('editContact').value;
-//     c.address = document.getElementById('editAddress').value;
-//     c.gender = document.getElementById('editGender').value;
-//     c.lane = document.getElementById('editLane').value;
-//     c.transaction = document.getElementById('editTransaction').value;
-//     hideModal('editModal');
-//     renderTable();
-//     notify(`Client ${c.queueNo} details updated.`);
-//   }
+  // Step 4: Deficiency details textarea — shown if deficiency = Yes
+  deficiencyDetails.classList.toggle("hidden", !(hasService && deficiency === "Yes"));
 
-//   // ---------- Serve ----------
-//   function serveClient(queueNo) {
-//     const c = findClient(queueNo);
-//     if (!c) return;
-//     c.status = 'Serving';
-//     renderTable();
-//     notify(`Now serving ${c.queueNo} — ${c.firstName} ${c.lastName}.`);
-//   }
-
-//   // ---------- Forward ----------
-//   function openForwardModal(queueNo) {
-//     const c = findClient(queueNo);
-//     if (!c) return;
-//     document.getElementById('forwardQueueNo').value = c.queueNo;
-//     document.getElementById('forwardQueueBadge').textContent = c.queueNo;
-//     document.getElementById('forwardClientName').textContent = `${c.firstName} ${c.lastName}`;
-//     document.getElementById('forwardClientTransaction').textContent = c.transaction;
-//     document.getElementById('forwardOffice').value = '';
-//     document.getElementById('forwardRemarks').value = '';
-//     showModal('forwardModal');
-//   }
-
-//   function saveForwardClient() {
-//     const queueNo = document.getElementById('forwardQueueNo').value;
-//     const c = findClient(queueNo);
-//     if (!c) return;
-//     const office = document.getElementById('forwardOffice').value;
-//     if (!office) return;
-//     c.status = 'Forwarded';
-//     c.office = office;
-//     hideModal('forwardModal');
-//     renderTable();
-//     notify(`${c.queueNo} forwarded to ${office}.`);
-//   }
-
-  // ---------- Skip ----------
-  function skipClient(queueNo) {
-    notify(`marked as skipped.`);
+  // Step 5: Resolved question — shown once the deficiency branch is complete,
+  // or immediately if Charter = No (nothing else to answer first)
+  const deficiencyBranchDone = hasService && !!deficiency;
+  const showResolved = skippedService || deficiencyBranchDone;
+  resolvedQuestion.classList.toggle("hidden", !showResolved);
+  if (!showResolved) {
+    resolvedQuestion.querySelectorAll('input[name="serveResolved"]').forEach((r) => (r.checked = false));
+    csmSection.classList.add("hidden");
+    cssSection.classList.add("hidden");
   }
+
+  // Step 6: CSM (service was selected) or CSS (no service) — shown if Resolved = Yes
+  if (showResolved && resolved === "Yes") {
+    csmSection.classList.toggle("hidden", !hasService);
+    cssSection.classList.toggle("hidden", hasService);
+  } else {
+    csmSection.classList.add("hidden");
+    cssSection.classList.add("hidden");
+  }
+}
+
+async function saveServeClient() {
+  const clientId = document.getElementById("serveQueueNo").value;
+  const hasService = !!document.getElementById("serveService").value;
+
+  const payload = {
+    description: document.getElementById("serveDescription").value,
+    citizen_charter: document.querySelector('input[name="serveCharter"]:checked')?.value || null,
+    service: document.getElementById("serveService").value || null,
+    has_deficiency: document.querySelector('input[name="serveDeficiency"]:checked')?.value || null,
+    deficiency_details: document.getElementById("serveDeficiencyDetails").value || null,
+    resolved: document.querySelector('input[name="serveResolved"]:checked')?.value || null,
+    csm_rating: hasService ? (document.getElementById("serveCSMRating").value || null) : null,
+    deficiency_status: hasService ? (document.getElementById("serveDeficiencyStatus").value || null) : null,
+    css_rating: !hasService ? (document.getElementById("serveCSSRating").value || null) : null,
+  };
+
+  try {
+    const res = await fetch(`api/client/${clientId}/serve/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Serve failed");
+
+    hideModal("serveModal");
+    notify("Transaction served.");
+    loadClients();
+  } catch (error) {
+    console.error("❌ Serve error:", error);
+    notify("Unable to serve client. Please try again.");
+  }
+}
+
+// ---------- Skip ----------
+function openSkipModal(clientId) {
+  document.getElementById("skipQueueNo").value = clientId;
+  showModal("skipModal");
+}
+
+async function confirmSkipClient() {
+  const clientId = document.getElementById("skipQueueNo").value;
+
+  try {
+    const res = await fetch(`api/client/${clientId}/skip/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Skip failed");
+
+    hideModal("skipModal");
+    notify("Client marked as skipped.");
+    loadClients();
+  } catch (error) {
+    console.error("❌ Skip error:", error);
+    hideModal("skipModal");
+    notify("Unable to skip client. Please try again.");
+  }
+}
 
 /* =====================================================
    REST API
@@ -339,23 +611,11 @@ function connectQueueSocket() {
 
       console.log("📦 Parsed payload:", payload);
 
-      /* =================================
-                   CHECK EVENT
-
-                   IMPORTANT:
-                   Backend uses "event"
-                   NOT "action"
-                ================================= */
-
       if (payload.event !== "CLIENT_REGISTERED") {
         console.log("ℹ️ Ignored event:", payload.event);
 
         return;
       }
-
-      /* =================================
-                   GET CLIENT
-                ================================= */
 
       const client = payload.client;
 
@@ -369,10 +629,6 @@ function connectQueueSocket() {
 
       console.log("🟢 NEW CLIENT:", client);
 
-      /* =================================
-                   PREVENT DUPLICATE
-                ================================= */
-
       const existingIndex = allClient.findIndex(
         (item) => String(item.id) === String(client.id),
       );
@@ -381,29 +637,11 @@ function connectQueueSocket() {
         allClient.splice(existingIndex, 1);
       }
 
-      /* =================================
-                   ADD NEW CLIENT
-                   TO TOP OF ARRAY
-                ================================= */
-
       allClient.unshift(client);
-
-      /* =================================
-                   FIRST PAGE
-                ================================= */
 
       currentPage = 1;
 
-      /* =================================
-                   UPDATE TABLE
-                   WITHOUT REFRESH
-                ================================= */
-
       renderClientTable();
-
-      /* =================================
-                   NOTIFICATION
-                ================================= */
 
       notifyNavbarBell(client.full_name || "New client");
 
@@ -413,17 +651,9 @@ function connectQueueSocket() {
     }
   };
 
-  /* =========================================
-       ERROR
-    ========================================= */
-
   socket.onerror = function (error) {
     console.error("❌ WebSocket error:", error);
   };
-
-  /* =========================================
-       DISCONNECTED
-    ========================================= */
 
   socket.onclose = function () {
     console.log("❌ WebSocket disconnected");
@@ -439,25 +669,7 @@ function connectQueueSocket() {
 ===================================================== */
 
 (function init() {
-  console.log("🚀 Initializing dashboard...");
-
-  /*
-   * Load existing clients
-   * through REST API
-   */
-
   loadClients();
-
-  /*
-   * Connect WebSocket
-   * for realtime updates
-   */
-
   connectQueueSocket();
-
-  /*
-   * Update statistics
-   */
-
   updateSummaryStats();
 })();

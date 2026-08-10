@@ -103,8 +103,8 @@
 <div id="editModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit client details</h3>
-            <button type="button" data-modal-hide="editModal"
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit Details</h3>
+            <button type="button" onclick="hideModal('editModal')"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="editForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveEditClient();">
@@ -133,7 +133,7 @@
                 <option>Other</option>
             </select>
             <div class="flex gap-3 pt-1">
-                <button type="button" data-modal-hide="editModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="button" onclick="hideModal('editModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
                 <button type="submit" class="flex-1 py-2.5 rounded-lg bg-blue-700 text-white text-sm font-medium hover:bg-blue-800">Save changes</button>
             </div>
         </form>
@@ -145,7 +145,7 @@
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Forward transaction</h3>
-            <button type="button" data-modal-hide="forwardModal"
+            <button type="button" onclick="hideModal('forwardModal')"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="forwardForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveForwardClient();">
@@ -153,20 +153,25 @@
             <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
                 <span id="forwardQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
                 <div class="min-w-0">
-                    <p id="forwardClientName" class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
+                    <p id="forwardClientFullName" class="text-sm font-medium text-gray-900 dark:text-white truncate"></p>
                     <p id="forwardClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Destination office</label>
-                <select id="forwardOffice" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    <option value="" disabled selected>Select office</option>
-                    <option>Records Section</option>
-                    <option>Legal Division</option>
-                    <option>Cashier</option>
-                    <option>Compliance Office</option>
-                    <option>Director's Office</option>
-                </select>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Division</label>
+                    <select id="forwardDivision" required onchange="onForwardDivisionChange()"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="" disabled selected>Select division</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
+                    <select id="forwardUnit" required disabled
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 disabled:opacity-60 disabled:cursor-not-allowed">
+                        <option value="" disabled selected>Select division first</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Remarks <span class="text-gray-400 font-normal">(optional)</span></label>
@@ -174,7 +179,7 @@
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
             </div>
             <div class="flex gap-3 pt-1">
-                <button type="button" data-modal-hide="forwardModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="button" onclick="hideModal('forwardModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
                 <button type="submit" class="flex-1 py-2.5 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-800">Forward</button>
             </div>
         </form>
@@ -183,14 +188,15 @@
  
 <!-- Serve Transaction Modal -->
 <div id="serveModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
-    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
-        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Serve transaction</h3>
-            <button type="button" data-modal-hide="serveModal"
+            <button type="button" onclick="hideModal('serveModal')"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
-        <form id="serveForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveServeClient();">
+        <form id="serveForm" class="px-6 py-5 space-y-5" onsubmit="event.preventDefault(); saveServeClient();">
             <input type="hidden" id="serveQueueNo">
+
             <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
                 <span id="serveQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
                 <div class="min-w-0">
@@ -198,15 +204,33 @@
                     <p id="serveClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
                 </div>
             </div>
+
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
-                <textarea id="serveDescription" rows="3" placeholder="Notes about this transaction..."
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description <span class="text-gray-400 font-normal">(optional)</span></label>
+                <textarea id="serveDescription" rows="2" placeholder="Notes about this transaction..."
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
             </div>
+
+            <!-- Q1: Citizen's Charter -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Service</label>
-                <select id="serveService" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    <option value="" disabled selected>Select service</option>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Is this transaction covered by the Citizen's Charter?</label>
+                <div class="flex gap-3">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveCharter" value="Yes" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Yes</div>
+                    </label>
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveCharter" value="No" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Services (shown if Charter = Yes) -->
+            <div id="serveServiceSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Which service was availed?</label>
+                <select id="serveService" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" onchange="updateServeFlow()">
+                    <option value="" selected>Select service</option>
                     <option>Business Permit</option>
                     <option>Barangay Clearance</option>
                     <option>Certificate of Residency</option>
@@ -215,222 +239,116 @@
                     <option>Other</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Service Availed?</label>
-                <div class="flex items-center gap-6">
-                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                        <input type="radio" name="serveAvailed" value="Yes" checked class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
-                        Yes
+
+            <!-- Q2: Deficiencies (shown once a service is selected) -->
+            <div id="serveDeficiencyQuestion" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Were there any deficiencies noted?</label>
+                <div class="flex gap-3">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveDeficiency" value="Yes" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:border-amber-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Yes</div>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                        <input type="radio" name="serveAvailed" value="No" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
-                        No
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveDeficiency" value="No" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
                     </label>
                 </div>
             </div>
+
+            <!-- Deficiency details input (shown if Yes) -->
+            <div id="serveDeficiencyDetailsSection" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Where / what are the deficiencies?</label>
+                <textarea id="serveDeficiencyDetails" rows="2" placeholder="e.g. Missing barangay ID, incomplete signature on form 2..."
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"></textarea>
+            </div>
+
+            <!-- Q3: Catered / Resolved -->
+            <div id="serveResolvedQuestion" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Was the transaction catered / resolved?</label>
+                <div class="flex gap-3">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveResolved" value="Yes" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Yes</div>
+                    </label>
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveResolved" value="No" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- CSM section: shown when Resolved = Yes AND a service was selected -->
+            <div id="serveCSMSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4 space-y-4">
+                <div class="flex items-center gap-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400 text-xs rounded-lg p-2.5">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                    Client Satisfaction Measurement (CSM) — required for Citizen's Charter transactions
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overall satisfaction rating</label>
+                    <select id="serveCSMRating" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="" selected>Select rating</option>
+                        <option>Very Satisfied</option>
+                        <option>Satisfied</option>
+                        <option>Neutral</option>
+                        <option>Dissatisfied</option>
+                        <option>Very Dissatisfied</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deficiency status</label>
+                    <select id="serveDeficiencyStatus" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="" selected>Select status</option>
+                        <option>Has Deficiencies</option>
+                        <option>Not Yet Completed</option>
+                        <option>Unresolved — Escalate to CSS</option>
+                        <option>None / Not applicable</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CSS section: shown when Resolved = Yes AND no service was selected -->
+            <div id="serveCSSSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4 space-y-4">
+                <div class="flex items-center gap-2 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-xs rounded-lg p-2.5">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                    No Citizen's Charter service selected — Client Satisfaction Survey (CSS) applies instead
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overall satisfaction rating</label>
+                    <select id="serveCSSRating" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="" selected>Select rating</option>
+                        <option>Very Satisfied</option>
+                        <option>Satisfied</option>
+                        <option>Neutral</option>
+                        <option>Dissatisfied</option>
+                        <option>Very Dissatisfied</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="flex gap-3 pt-1">
-                <button type="button" data-modal-hide="serveModal" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                <button type="button" onclick="hideModal('serveModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
                 <button type="submit" class="flex-1 py-2.5 rounded-lg bg-emerald-700 text-white text-sm font-medium hover:bg-emerald-800">Serve</button>
             </div>
         </form>
     </div>
 </div>
-{% load static %}
+
+<!-- Skip Confirmation Modal -->
+<div id="skipModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 text-center">
+        <div class="mx-auto flex items-center justify-center w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 mb-4">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        </div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Skip this client?</h3>
+        <p id="skipMessage" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            This client will be marked as skipped and moved to the end of the queue. They may need to re-register at the kiosk if they don't return in time.
+        </p>
+        <input type="hidden" id="skipQueueNo">
+        <div class="flex gap-3 mt-6">
+            <button type="button" onclick="hideModal('skipModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+            <button type="button" onclick="confirmSkipClient()" class="flex-1 py-2.5 rounded-lg bg-rose-600 text-white text-sm font-medium hover:bg-rose-700">Yes, Skip</button>
+        </div>
+    </div>
+</div>
 <script src="{% static 'js/main/client_transactions.js' %}"></script>
-<!-- <script>
-  // ---------- Sample data (simulates clients registered from the kiosk) ----------
-  // let clientQueue = [
-  //   { queueNo: 'P-014', firstName: 'Maria', lastName: 'Santos', contact: '0917 123 4567', address: 'Purok 3, Brgy. San Isidro', gender: 'Female', lane: 'Priority', transaction: 'New application', status: 'Waiting', office: 'Front Desk' },
-  //   { queueNo: 'R-045', firstName: 'Juan', lastName: 'Dela Cruz', contact: '0918 234 5678', address: 'Purok 1, Brgy. Poblacion', gender: 'Male', lane: 'Regular', transaction: 'Renewal', status: 'Waiting', office: 'Front Desk' },
-  //   { queueNo: 'P-015', firstName: 'Rosa', lastName: 'Manalo', contact: '0919 345 6789', address: 'Purok 7, Brgy. Libertad', gender: 'Female', lane: 'Priority', transaction: 'Claiming of documents', status: 'Serving', office: 'Records Section' },
-  //   { queueNo: 'R-046', firstName: 'Pedro', lastName: 'Reyes', contact: '0920 456 7890', address: 'Purok 2, Brgy. San Isidro', gender: 'Male', lane: 'Regular', transaction: 'Inquiry', status: 'Waiting', office: 'Front Desk' },
-  //   { queueNo: 'R-047', firstName: 'Ana', lastName: 'Villanueva', contact: '0921 567 8901', address: 'Purok 5, Brgy. Poblacion', gender: 'Female', lane: 'Regular', transaction: 'New application', status: 'Approved', office: 'Cashier' },
-  //   { queueNo: 'P-016', firstName: 'Ramon', lastName: 'Torres', contact: '0922 678 9012', address: 'Purok 4, Brgy. Libertad', gender: 'Male', lane: 'Priority', transaction: 'Other', status: 'Skipped', office: 'Front Desk' },
-  //   { queueNo: 'R-048', firstName: 'Liza', lastName: 'Fernandez', contact: '0923 789 0123', address: 'Purok 6, Brgy. San Isidro', gender: 'Female', lane: 'Regular', transaction: 'Renewal', status: 'Forwarded', office: 'Legal Division' },
-  // ];
-
-  const statusStyles = {
-    Waiting: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-    Serving: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-    Approved: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-    Skipped: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
-    Forwarded: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
-  };
-
-  const laneStyles = {
-    Priority: 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-    Regular: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
-  };
-
-  function findClient(queueNo) {
-    return clientQueue.find(c => c.queueNo === queueNo);
-  }
-
-  function iconEdit() {
-    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zM19.5 19.5H4.5"/></svg>';
-  }
-  function iconServe() {
-    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75V6a2.25 2.25 0 00-4.5 0v3.75m-.75 8.25h6a2.25 2.25 0 002.25-2.25V9.75a2.25 2.25 0 00-2.25-2.25H7.5A2.25 2.25 0 005.25 9.75v6a2.25 2.25 0 002.25 2.25h.75"/></svg>';
-  }
-  function iconForward() {
-    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>';
-  }
-  function iconSkip() {
-    return '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.75 5.25v13.5"/></svg>';
-  }
-
-  function actionButton(icon, label, colorClasses, onclick) {
-    return `<button type="button" title="${label}" onclick="${onclick}"
-      class="inline-flex h-8 w-8 items-center justify-center rounded-lg ${colorClasses} transition-colors">${icon}</button>`;
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('clientTablebody');
-    const search = document.getElementById('searchInput').value.trim().toLowerCase();
-    const statusVal = document.getElementById('statusFilter').value;
-    const laneVal = document.getElementById('laneFilter').value;
-
-    const filtered = clientQueue.filter(c => {
-      const fullName = `${c.firstName} ${c.lastName}`.toLowerCase();
-      const matchesSearch = !search || fullName.includes(search) || c.queueNo.toLowerCase().includes(search);
-      const matchesStatus = !statusVal || c.status === statusVal;
-      const matchesLane = !laneVal || c.lane === laneVal;
-      return matchesSearch && matchesStatus && matchesLane;
-    });
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No clients match your search.</td></tr>`;
-    } else {
-      tbody.innerHTML = filtered.map(c => `
-        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
-          <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${c.queueNo}</td>
-          <td class="px-4 py-3">${c.firstName} ${c.lastName}</td>
-          <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${laneStyles[c.lane]}">${c.lane}</span></td>
-          <td class="px-4 py-3">${c.transaction}</td>
-          <td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${statusStyles[c.status] || ''}">${c.status}</span></td>
-          <td class="px-4 py-3">${c.office}</td>
-          <td class="px-4 py-3">
-            <div class="flex items-center justify-end gap-1.5">
-              ${actionButton(iconEdit(), 'Edit', 'text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30', `openEditModal('${c.queueNo}')`)}
-              ${actionButton(iconServe(), 'Serve', 'text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30', `serveClient('${c.queueNo}')`)}
-              ${actionButton(iconForward(), 'Forward', 'text-cyan-600 hover:bg-cyan-50 dark:text-cyan-400 dark:hover:bg-cyan-900/30', `openForwardModal('${c.queueNo}')`)}
-              ${actionButton(iconSkip(), 'Skip', 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700', `skipClient('${c.queueNo}')`)}
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    updateStats();
-  }
-
-  function updateStats() {
-    document.getElementById('statTotalClients').textContent = clientQueue.length;
-    document.getElementById('statWaiting').textContent = clientQueue.filter(c => c.status === 'Waiting').length;
-    document.getElementById('statPriority').textContent = clientQueue.filter(c => c.lane === 'Priority').length;
-    const serving = clientQueue.find(c => c.status === 'Serving');
-    document.getElementById('statStatus').textContent = serving ? `Serving ${serving.queueNo}` : 'Idle';
-  }
-
-  // ---------- Modal helpers ----------
-  function showModal(id) {
-    document.getElementById(id).classList.remove('hidden');
-  }
-  function hideModal(id) {
-    document.getElementById(id).classList.add('hidden');
-  }
-  document.querySelectorAll('[data-modal-hide]').forEach(btn => {
-    btn.addEventListener('click', () => hideModal(btn.getAttribute('data-modal-hide')));
-  });
-
-  function notify(message) {
-    const el = document.getElementById('transactionNotification');
-    el.textContent = message;
-    el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 2500);
-  }
-
-  // ---------- Edit ----------
-  function openEditModal(queueNo) {
-    const c = findClient(queueNo);
-    if (!c) return;
-    document.getElementById('editQueueNo').value = c.queueNo;
-    document.getElementById('editFirstName').value = c.firstName;
-    document.getElementById('editLastName').value = c.lastName;
-    document.getElementById('editContact').value = c.contact;
-    document.getElementById('editAddress').value = c.address;
-    document.getElementById('editGender').value = c.gender;
-    document.getElementById('editLane').value = c.lane;
-    document.getElementById('editTransaction').value = c.transaction;
-    showModal('editModal');
-  }
-
-  function saveEditClient() {
-    const queueNo = document.getElementById('editQueueNo').value;
-    const c = findClient(queueNo);
-    if (!c) return;
-    c.firstName = document.getElementById('editFirstName').value;
-    c.lastName = document.getElementById('editLastName').value;
-    c.contact = document.getElementById('editContact').value;
-    c.address = document.getElementById('editAddress').value;
-    c.gender = document.getElementById('editGender').value;
-    c.lane = document.getElementById('editLane').value;
-    c.transaction = document.getElementById('editTransaction').value;
-    hideModal('editModal');
-    renderTable();
-    notify(`Client ${c.queueNo} details updated.`);
-  }
-
-  // ---------- Serve ----------
-  function serveClient(queueNo) {
-    const c = findClient(queueNo);
-    if (!c) return;
-    c.status = 'Serving';
-    renderTable();
-    notify(`Now serving ${c.queueNo} — ${c.firstName} ${c.lastName}.`);
-  }
-
-  // ---------- Forward ----------
-  function openForwardModal(queueNo) {
-    const c = findClient(queueNo);
-    if (!c) return;
-    document.getElementById('forwardQueueNo').value = c.queueNo;
-    document.getElementById('forwardQueueBadge').textContent = c.queueNo;
-    document.getElementById('forwardClientName').textContent = `${c.firstName} ${c.lastName}`;
-    document.getElementById('forwardClientTransaction').textContent = c.transaction;
-    document.getElementById('forwardOffice').value = '';
-    document.getElementById('forwardRemarks').value = '';
-    showModal('forwardModal');
-  }
-
-  function saveForwardClient() {
-    const queueNo = document.getElementById('forwardQueueNo').value;
-    const c = findClient(queueNo);
-    if (!c) return;
-    const office = document.getElementById('forwardOffice').value;
-    if (!office) return;
-    c.status = 'Forwarded';
-    c.office = office;
-    hideModal('forwardModal');
-    renderTable();
-    notify(`${c.queueNo} forwarded to ${office}.`);
-  }
-
-  // ---------- Skip ----------
-  function skipClient(queueNo) {
-    const c = findClient(queueNo);
-    if (!c) return;
-    c.status = 'Skipped';
-    renderTable();
-    notify(`${c.queueNo} — ${c.firstName} ${c.lastName} marked as skipped.`);
-  }
-
-  // ---------- Filters ----------
-  document.getElementById('searchInput').addEventListener('input', renderTable);
-  document.getElementById('statusFilter').addEventListener('change', renderTable);
-  document.getElementById('laneFilter').addEventListener('change', renderTable);
-
-  // ---------- Init ----------
-  renderTable();
-</script> -->
 {% endblock %}

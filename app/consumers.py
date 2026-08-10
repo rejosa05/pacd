@@ -63,8 +63,6 @@ class QueueConsumer(AsyncWebsocketConsumer):
         and sends them to the browser.
         """
 
-        print("📨 Queue event:", event)
-
         await self.send(
             text_data=json.dumps(
                 {
