@@ -9,8 +9,7 @@ def que_display_page(request):
 
 
 def display_queue_api(request):
-
-    today = timezone.now().date()
+    today = timezone.localtime().date()
 
     # Get ONLY today's Waiting clients
     clients = ClientDetails.objects.filter(

@@ -11,7 +11,8 @@ urlpatterns = [
     
     path('client_kiosk', client_kiosk.client_register_page, name='client_kiosk'),
     path('client_kiosk/register/', client_kiosk.register_client, name='client_kiosk_register'),
-    
+
+    path("display", que_display.que_display_page , name="display"),
     path("api/display-queue/", que_display.display_queue_api , name="display_queue_api"),
     path("api/clients-list/", client_transactions.clients_list_api, name="clients_list_api"),
     path("api/client/<int:client_id>",client_transactions.get_client, name="api_get_client"),

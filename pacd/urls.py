@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, re_path as path
-from app.views import dashboard, logs, display, services
+from app.views import dashboard, logs, services
 from app.views_ import loginViews
 
 urlpatterns = [
@@ -18,6 +18,6 @@ urlpatterns = [
     
     path('dashboard_', dashboard, name="dashboard_"),
     path('logs_', logs, name="logs_"),
-    path('display_', display, name="display_"),
+    
     path('services_', services, name="services_")
 ]

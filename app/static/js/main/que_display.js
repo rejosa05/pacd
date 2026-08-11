@@ -3,120 +3,212 @@
 // =====================================================
 
 function updateTime() {
-  const now = new Date();
+    const now = new Date();
+    const timeElement = document.getElementById("time");
 
-  const timeElement = document.getElementById("time");
-
-  if (timeElement) {
-    timeElement.textContent = now.toLocaleTimeString();
-  }
+    if (timeElement) {
+        timeElement.textContent = now.toLocaleTimeString();
+    }
 }
 
 setInterval(updateTime, 1000);
-
 updateTime();
+
 
 // =====================================================
 // LOAD WAITING QUEUE FROM REST API
 // =====================================================
 
 async function loadWaitingQueue() {
-  try {
-    const response = await fetch("/api/display-queue/", {
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
-    });
+    try {
+        const response = await fetch("/api/display-queue/", {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
 
-    if (!response.ok) {
-      throw new Error("API request failed: " + response.status);
+        if (!response.ok) {
+            throw new Error("API request failed: " + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log("📦 Queue data:", data);
+
+        // REGULAR
+        displayWaitingQueue(
+            data.regular || [],
+            "regularCurrent",
+            "regularNext"
+        );
+
+        // PRIORITY
+        displayWaitingQueue(
+            data.priority || [],
+            "fastCurrent",
+            "fastNext"
+        );
+
+    } catch (error) {
+        console.error("❌ REST API error:", error);
     }
-
-    const data = await response.json();
-
-    console.log("📦 Queue data:", data);
-
-    // =================================================
-    // REGULAR
-    // =================================================
-
-    displayWaitingQueue(data.regular || [], "regularCurrent", "regularNext");
-
-    // =================================================
-    // PRIORITY
-    // =================================================
-
-    displayWaitingQueue(data.priority || [], "fastCurrent", "fastNext");
-  } catch (error) {
-    console.error("❌ REST API error:", error);
-  }
 }
+
 
 // =====================================================
 // DISPLAY QUEUE
-// ONE FUNCTION ONLY
 // =====================================================
 
 function displayWaitingQueue(queues, currentId, nextId) {
-  const current = document.getElementById(currentId);
 
-  const next = document.getElementById(nextId);
+    const current = document.getElementById(currentId);
+    const next = document.getElementById(nextId);
 
-  if (!current || !next) {
-    console.error("❌ Queue elements not found:", currentId, nextId);
+    if (!current || !next) {
+        console.error(
+            "❌ Queue elements not found:",
+            currentId,
+            nextId
+        );
+        return;
+    }
 
-    return;
-  }
+    // RESET
+    current.textContent = "00";
+    next.innerHTML = "";
 
-  // =================================================
-  // RESET DISPLAY
-  // =================================================
+    if (!Array.isArray(queues) || queues.length === 0) {
+        return;
+    }
 
-  current.textContent = "00";
+    // CURRENT
+    current.textContent = queues[0];
 
-  next.innerHTML = "";
+    // NEXT 5
+    const nextQueues = queues.slice(1, 6);
 
-  // =================================================
-  // NO WAITING CLIENT
-  // =================================================
+    nextQueues.forEach(function (queueNumber) {
 
-  if (!Array.isArray(queues) || queues.length === 0) {
-    return;
-  }
+        const span = document.createElement("span");
 
-  // =================================================
-  // FIRST CLIENT = MAIN
-  // =================================================
+        span.textContent = queueNumber;
 
-  current.textContent = queues[0];
-
-  // =================================================
-  // NEXT CLIENTS
-  // MAXIMUM 5
-  //
-  // queues[0] = MAIN
-  // queues[1] = NEXT #1
-  // queues[2] = NEXT #2
-  // queues[3] = NEXT #3
-  // queues[4] = NEXT #4
-  // queues[5] = NEXT #5
-  // =================================================
-
-  const nextQueues = queues.slice(1, 6);
-
-  nextQueues.forEach(function (queueNumber) {
-    const span = document.createElement("span");
-
-    span.textContent = queueNumber;
-
-    next.appendChild(span);
-  });
+        next.appendChild(span);
+    });
 }
 
+
 // =====================================================
-// PAGE LOAD
+// WEBSOCKET
 // =====================================================
 
-document.addEventListener("DOMContentLoaded", function () {
-  loadWaitingQueue();
-});
+function connectQueueSocket() {
+
+    if (!("WebSocket" in window)) {
+        console.error("❌ WebSocket not supported");
+        return;
+    }
+
+    const protocol =
+        window.location.protocol === "https:"
+            ? "wss://"
+            : "ws://";
+
+    const socket = new WebSocket(
+        protocol +
+        window.location.host +
+        "/ws/queue-display/"
+    );
+
+
+    // =================================================
+    // CONNECTED
+    // =================================================
+
+    socket.onopen = function () {
+        console.log("✅ Queue Display WebSocket connected");
+    };
+
+
+    // =================================================
+    // RECEIVE MESSAGE
+    // =================================================
+
+    socket.onmessage = function (event) {
+
+        console.log("📡 WebSocket received:", event.data);
+
+        try {
+
+            const payload = JSON.parse(event.data);
+
+            console.log("📦 Parsed payload:", payload);
+
+
+            // IMPORTANT:
+            // Check what event your Django Consumer sends
+            console.log("🔔 Event:", payload.event);
+
+
+            // Whenever queue changes,
+            // reload current queue from REST API
+            loadWaitingQueue();
+
+        } catch (error) {
+
+            console.error(
+                "❌ WebSocket JSON error:",
+                error
+            );
+
+        }
+    };
+
+
+    // =================================================
+    // ERROR
+    // =================================================
+
+    socket.onerror = function (error) {
+
+        console.error(
+            "❌ Queue Display WebSocket error:",
+            error
+        );
+
+    };
+
+
+    // =================================================
+    // DISCONNECTED
+    // =================================================
+
+    socket.onclose = function () {
+
+        console.log(
+            "❌ Queue Display WebSocket disconnected"
+        );
+
+        console.log(
+            "🔄 Reconnecting in 3 seconds..."
+        );
+
+        setTimeout(connectQueueSocket, 3000);
+
+    };
+}
+
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+
+(function init() {
+
+    // Initial queue
+    loadWaitingQueue();
+
+    // WebSocket
+    connectQueueSocket();
+
+})();

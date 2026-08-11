@@ -86,7 +86,7 @@ def add_user(request):
     last_name = request.POST.get('last_name', '').strip()
     username = request.POST.get('user', '').strip()          # name="user" sa form
     email = request.POST.get('email', '').strip()
-    contact = request.POST.get('contact', '').strip()
+    contact = request.POST.get('contact ', '').strip()
     password = request.POST.get('password', '')
     position_name = request.POST.get('position', '').strip()
     division_name = request.POST.get('divisions', '').strip()  # name="divisions" sa form
