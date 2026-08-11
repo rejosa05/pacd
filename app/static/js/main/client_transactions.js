@@ -194,9 +194,11 @@ async function openEditModal(clientId) {
   document.getElementById("editLastName").value = _client.last_name;
   document.getElementById("editContact").value = _client.contact;
   document.getElementById("editAddress").value = _client.address;
-  if (_client.gender) document.getElementById("editGender").value = _client.gender;
+  if (_client.gender)
+    document.getElementById("editGender").value = _client.gender;
   if (_client.lane) document.getElementById("editLane").value = _client.lane;
-  if (_client.transaction_type) document.getElementById("editTransaction").value = _client.transaction_type;
+  if (_client.transaction_type)
+    document.getElementById("editTransaction").value = _client.transaction_type;
   showModal("editModal");
 }
 
@@ -241,9 +243,12 @@ async function openForwardModal(clientId) {
 
   const _client = data.data;
   document.getElementById("forwardQueueNo").value = clientId;
-  document.getElementById("forwardQueueBadge").textContent = _client.queue_no || "---";
-  document.getElementById("forwardClientFullName").textContent = _client.full_name;
-  document.getElementById("forwardClientTransaction").textContent = _client.transaction_type || "---";
+  document.getElementById("forwardQueueBadge").textContent =
+    _client.queue_no || "---";
+  document.getElementById("forwardClientFullName").textContent =
+    _client.full_name;
+  document.getElementById("forwardClientTransaction").textContent =
+    _client.transaction_type || "---";
   document.getElementById("forwardRemarks").value = "";
 
   resetForwardDropdowns();
@@ -255,8 +260,10 @@ async function openForwardModal(clientId) {
 function resetForwardDropdowns() {
   const divisionSelect = document.getElementById("forwardDivision");
   const unitSelect = document.getElementById("forwardUnit");
-  divisionSelect.innerHTML = '<option value="" disabled selected>Loading divisions...</option>';
-  unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
+  divisionSelect.innerHTML =
+    '<option value="" disabled selected>Loading divisions...</option>';
+  unitSelect.innerHTML =
+    '<option value="" disabled selected>Select division first</option>';
   unitSelect.disabled = true;
 }
 
@@ -266,15 +273,19 @@ async function loadForwardDivisions() {
     const res = await fetch("api/divisions/");
     const data = await res.json();
     if (!data.success || !data.divisions.length) {
-      divisionSelect.innerHTML = '<option value="" disabled selected>No divisions available</option>';
+      divisionSelect.innerHTML =
+        '<option value="" disabled selected>No divisions available</option>';
       return;
     }
     divisionSelect.innerHTML =
       '<option value="" disabled selected>Select division</option>' +
-      data.divisions.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
+      data.divisions
+        .map((d) => `<option value="${d.id}">${d.name}</option>`)
+        .join("");
   } catch (error) {
     console.error("❌ Load divisions error:", error);
-    divisionSelect.innerHTML = '<option value="" disabled selected>Unable to load divisions</option>';
+    divisionSelect.innerHTML =
+      '<option value="" disabled selected>Unable to load divisions</option>';
   }
 }
 
@@ -283,10 +294,12 @@ async function onForwardDivisionChange() {
   const unitSelect = document.getElementById("forwardUnit");
 
   unitSelect.disabled = true;
-  unitSelect.innerHTML = '<option value="" disabled selected>Loading units...</option>';
+  unitSelect.innerHTML =
+    '<option value="" disabled selected>Loading units...</option>';
 
   if (!divisionId) {
-    unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
+    unitSelect.innerHTML =
+      '<option value="" disabled selected>Select division first</option>';
     return;
   }
 
@@ -295,17 +308,21 @@ async function onForwardDivisionChange() {
     const data = await res.json();
 
     if (!data.success || !data.units.length) {
-      unitSelect.innerHTML = '<option value="" disabled selected>No units under this division</option>';
+      unitSelect.innerHTML =
+        '<option value="" disabled selected>No units under this division</option>';
       return;
     }
 
     unitSelect.innerHTML =
       '<option value="" disabled selected>Select unit</option>' +
-      data.units.map((u) => `<option value="${u.id}">${u.name}</option>`).join("");
+      data.units
+        .map((u) => `<option value="${u.id}">${u.name}</option>`)
+        .join("");
     unitSelect.disabled = false;
   } catch (error) {
     console.error("❌ Load units error:", error);
-    unitSelect.innerHTML = '<option value="" disabled selected>Unable to load units</option>';
+    unitSelect.innerHTML =
+      '<option value="" disabled selected>Unable to load units</option>';
   }
 }
 
@@ -351,9 +368,11 @@ async function openServeModal(clientId) {
 
   const _client = data.data;
   document.getElementById("serveQueueNo").value = clientId;
-  document.getElementById("serveQueueBadge").textContent = _client.queue_no || "---";
+  document.getElementById("serveQueueBadge").textContent =
+    _client.queue_no || "---";
   document.getElementById("serveClientName").textContent = _client.full_name;
-  document.getElementById("serveClientTransaction").textContent = _client.transaction_type || "---";
+  document.getElementById("serveClientTransaction").textContent =
+    _client.transaction_type || "---";
 
   resetServeForm();
   showModal("serveModal");
@@ -366,21 +385,35 @@ async function openServeModal(clientId) {
 
 function resetServeForm() {
   document.getElementById("serveForm").reset();
-  ["serveServiceSection", "serveDeficiencyQuestion", "serveDeficiencyDetailsSection",
-   "serveResolvedQuestion", "serveCSMSection", "serveCSSSection"].forEach((id) => {
+  [
+    "serveServiceSection",
+    "serveDeficiencyQuestion",
+    "serveDeficiencyDetailsSection",
+    "serveResolvedQuestion",
+    "serveCSMSection",
+    "serveCSSSection",
+  ].forEach((id) => {
     document.getElementById(id).classList.add("hidden");
   });
 }
 
 function updateServeFlow() {
-  const charter = document.querySelector('input[name="serveCharter"]:checked')?.value;
+  const charter = document.querySelector(
+    'input[name="serveCharter"]:checked',
+  )?.value;
   const service = document.getElementById("serveService").value;
-  const deficiency = document.querySelector('input[name="serveDeficiency"]:checked')?.value;
-  const resolved = document.querySelector('input[name="serveResolved"]:checked')?.value;
+  const deficiency = document.querySelector(
+    'input[name="serveDeficiency"]:checked',
+  )?.value;
+  const resolved = document.querySelector(
+    'input[name="serveResolved"]:checked',
+  )?.value;
 
   const serviceSection = document.getElementById("serveServiceSection");
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
-  const deficiencyDetails = document.getElementById("serveDeficiencyDetailsSection");
+  const deficiencyDetails = document.getElementById(
+    "serveDeficiencyDetailsSection",
+  );
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
   const csmSection = document.getElementById("serveCSMSection");
   const cssSection = document.getElementById("serveCSSSection");
@@ -397,12 +430,17 @@ function updateServeFlow() {
   const skippedService = charter === "No";
   deficiencyQuestion.classList.toggle("hidden", !hasService);
   if (!hasService) {
-    deficiencyQuestion.querySelectorAll('input[name="serveDeficiency"]').forEach((r) => (r.checked = false));
+    deficiencyQuestion
+      .querySelectorAll('input[name="serveDeficiency"]')
+      .forEach((r) => (r.checked = false));
     deficiencyDetails.classList.add("hidden");
   }
 
   // Step 4: Deficiency details textarea — shown if deficiency = Yes
-  deficiencyDetails.classList.toggle("hidden", !(hasService && deficiency === "Yes"));
+  deficiencyDetails.classList.toggle(
+    "hidden",
+    !(hasService && deficiency === "Yes"),
+  );
 
   // Step 5: Resolved question — shown once the deficiency branch is complete,
   // or immediately if Charter = No (nothing else to answer first)
@@ -410,7 +448,9 @@ function updateServeFlow() {
   const showResolved = skippedService || deficiencyBranchDone;
   resolvedQuestion.classList.toggle("hidden", !showResolved);
   if (!showResolved) {
-    resolvedQuestion.querySelectorAll('input[name="serveResolved"]').forEach((r) => (r.checked = false));
+    resolvedQuestion
+      .querySelectorAll('input[name="serveResolved"]')
+      .forEach((r) => (r.checked = false));
     csmSection.classList.add("hidden");
     cssSection.classList.add("hidden");
   }
@@ -431,14 +471,27 @@ async function saveServeClient() {
 
   const payload = {
     description: document.getElementById("serveDescription").value,
-    citizen_charter: document.querySelector('input[name="serveCharter"]:checked')?.value || null,
+    citizen_charter:
+      document.querySelector('input[name="serveCharter"]:checked')?.value ||
+      null,
     service: document.getElementById("serveService").value || null,
-    has_deficiency: document.querySelector('input[name="serveDeficiency"]:checked')?.value || null,
-    deficiency_details: document.getElementById("serveDeficiencyDetails").value || null,
-    resolved: document.querySelector('input[name="serveResolved"]:checked')?.value || null,
-    csm_rating: hasService ? (document.getElementById("serveCSMRating").value || null) : null,
-    deficiency_status: hasService ? (document.getElementById("serveDeficiencyStatus").value || null) : null,
-    css_rating: !hasService ? (document.getElementById("serveCSSRating").value || null) : null,
+    has_deficiency:
+      document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
+      null,
+    deficiency_details:
+      document.getElementById("serveDeficiencyDetails").value || null,
+    resolved:
+      document.querySelector('input[name="serveResolved"]:checked')?.value ||
+      null,
+    csm_rating: hasService
+      ? document.getElementById("serveCSMRating").value || null
+      : null,
+    deficiency_status: hasService
+      ? document.getElementById("serveDeficiencyStatus").value || null
+      : null,
+    css_rating: !hasService
+      ? document.getElementById("serveCSSRating").value || null
+      : null,
   };
 
   try {

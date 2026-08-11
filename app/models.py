@@ -141,6 +141,7 @@ class TransactionLog(models.Model):
     ]
 
     YES_NO_CHOICES = [("Yes", "Yes"), ("No", "No")]
+    uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
 
     client = models.ForeignKey(
         ClientDetails, on_delete=models.CASCADE, related_name="transactions"

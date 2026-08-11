@@ -78,7 +78,7 @@ def register_client(request):
                 },
             },
         )
-        
+
         return JsonResponse(
             {
                 "success": True,
