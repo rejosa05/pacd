@@ -115,12 +115,22 @@
                 <input id="passwordInput" name="password" type="password" placeholder="••••••••" required class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
             </div>
 
-            <div id="statusField" class="hidden">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
-                <select id="statusInput" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                </select>
+            <div class="grid grid-cols-2 gap-3">
+                <div id="roleField">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Role</label>
+                    <select id="roleInput" name="role" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="Super_Admin">Super Admin</option>
+                        <option value="Sub_Admin">Sub Admin</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                <div id="statusField">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+                    <select id="statusInput" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
             </div>
 
             <hr class="border-gray-100 dark:border-gray-700">
@@ -132,20 +142,22 @@
                 <div id="positionList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
             </div>
 
-            <div class="relative">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Division</label>
-                <input id="divisionInput" name="divisions" type="text" autocomplete="off" placeholder="Search or add a division"
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                <div id="divisionList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Division</label>
+                    <input id="divisionInput" name="divisions" type="text" autocomplete="off" placeholder="Search or add a division"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <div id="divisionList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
+                    <input id="unitInput" name="unit" type="text" autocomplete="off" placeholder="Search or add a unit"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <div id="unitList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
+                </div>
             </div>
-
-            <div class="relative">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
-                <input id="unitInput" name="unit" type="text" autocomplete="off" placeholder="Search or add a unit"
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                <div id="unitList" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
-                <p class="text-xs text-gray-400 mt-1.5">Type a name that doesn't exist yet and choose "Add" to create it.</p>
-            </div>
+            <p class="text-xs text-gray-400 mt-1.5">Type a name that doesn't exist yet and choose "Add" to create it.</p>
+            
 
             <div class="flex gap-3 pt-1">
                 <button type="button" onclick="closeUserModal()" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>

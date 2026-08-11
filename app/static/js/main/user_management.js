@@ -135,7 +135,15 @@ let allUsers = [];
                     </div>
                 </div>
             </td>
-            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${u.position || '—'}</td>
+            <td class="px-4 py-3">
+
+                <div class="flex items-center gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm  text-gray-700 dark:text-white truncate">${u.position}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${u.role}</p>
+                    </div>
+                </div>
+            </td>
             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${u.division || '—'}</td>
             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${u.unit || '—'}</td>
             <td class="px-4 py-3">${statusBadge}</td>

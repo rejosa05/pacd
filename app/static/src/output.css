@@ -863,6 +863,9 @@
   .bg-cyan-500 {
     background-color: var(--color-cyan-500);
   }
+  .bg-cyan-600 {
+    background-color: var(--color-cyan-600);
+  }
   .bg-cyan-700 {
     background-color: var(--color-cyan-700);
   }
@@ -1877,6 +1880,11 @@
   .dark\:text-blue-400 {
     @media (prefers-color-scheme: dark) {
       color: var(--color-blue-400);
+    }
+  }
+  .dark\:text-cyan-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-cyan-300);
     }
   }
   .dark\:text-cyan-400 {

@@ -23,7 +23,7 @@ def clients_list_api(request):
     """
     today = timezone.localdate()
     clients = ClientDetails.objects.filter(date_created__date=today).order_by(
-        "-date_created"
+        "-client_queue_no","client_lane_type"
     )
 
     client_data = []

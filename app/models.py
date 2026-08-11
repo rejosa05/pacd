@@ -35,37 +35,26 @@ class Position(models.Model):
 
 
 class AccountDetails(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="account_profile"
-    )
-    position = models.ForeignKey(
-        Position,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="profiles",
-    )
-    division = models.ForeignKey(
-        Division,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="profiles",
-    )
-    unit = models.ForeignKey(
-        Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles"
-    )
+
+    ROLE_CHOICES = [
+        ("SUPER_ADMIN", "Super Admin"),
+        ("SUB_ADMIN", "Sub-Admin"),
+        ("STAFF", "Staff"),
+    ]
+
+    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account_profile")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="STAFF")
+    position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles",)
+    division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles",)
+    unit = models.ForeignKey( Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles")
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, default="Active")
     created_by = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return f"{(self.user)}"
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+        return f"{self.user} - {self.get_role_display()}"
 
 
 class ClientDetails(models.Model):

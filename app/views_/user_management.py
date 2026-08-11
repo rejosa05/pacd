@@ -41,6 +41,7 @@ def _serialize_profile(profile):
         'username': profile.user.username,
         'email': profile.user.email,
         'contact_number': profile.contact_number or '',
+        'role': profile.role,
         'position': profile.position.name if profile.position else '',
         'division': profile.division.name if profile.division else '',
         'unit': profile.unit.name if profile.unit else '',
@@ -86,6 +87,7 @@ def add_user(request):
     last_name = request.POST.get('last_name', '').strip()
     username = request.POST.get('user', '').strip()          # name="user" sa form
     email = request.POST.get('email', '').strip()
+    role = request.POST.get("role", "").strip().upper()
     contact = request.POST.get('contact ', '').strip()
     password = request.POST.get('password', '')
     position_name = request.POST.get('position', '').strip()
@@ -109,6 +111,7 @@ def add_user(request):
 
         profile = AccountDetails.objects.create(
             user=user,
+            role=role,
             contact_number=contact,
             position=_get_or_create(Position, position_name),
             division=_get_or_create(Division, division_name),

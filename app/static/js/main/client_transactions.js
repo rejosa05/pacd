@@ -75,10 +75,19 @@ function statusBadge(status) {
                 `;
   }
 
-  if (status === "Skipped" || status === "Forwarded") {
+  if (status === "Skipped") {
     return `
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">
                         <span class="h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                        ${status}
+                    </span>
+                `;
+  }
+
+  if (status === "Forwarded") {
+    return `
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-medium text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
+                        <span class="h-1.5 w-1.5 rounded-full bg-cyan-600"></span>
                         ${status}
                     </span>
                 `;
@@ -133,7 +142,7 @@ function renderClientTable() {
             </td>
             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.transaction_type || "---"}</td>
             <td class="px-4 py-3">${statusBadge(client.status || "Waiting")}</td>
-            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.organization || "---"}</td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.unit || "---"}</td>
             <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-1.5">
                     <button type="button" title="Edit" onclick="openEditModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300">
