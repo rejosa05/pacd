@@ -411,11 +411,11 @@
 
 <!--
     Injects the current user's role for role-based button visibility in client_transactions.js.
-    Adjust the field path below to match your actual AccountDetails -> Position relationship
-    (e.g. request.user.account_profile.position.name).
+    This mirrors exactly what role_required() checks: request.user.account_profile.role
+    (see decorators.py) — output must be one of "SUPER_ADMIN", "SUB_ADMIN", "STAFF".
 -->
 <script>
-  window.CURRENT_USER_ROLE = "{{ request.user.account_profile.position.name|default:'' }}";
+  window.CURRENT_USER_ROLE = "{{ request.user.account_profile.role|default:'' }}";
 </script>
 <script src="{% static 'js/main/client_transactions.js' %}"></script>
 {% endblock %}

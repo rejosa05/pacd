@@ -17,14 +17,23 @@ const CSRF_TOKEN = getCookie("csrftoken");
 
 /* =====================================================
    ROLE-BASED ACCESS
-   Sub-Admin: initial interview — View, Serve, Skip
-   Staff: handles forwarded transactions — View, Edit, Forward, Repeat
+   Matches the strings used in @role_required("SUPER_ADMIN", "SUB_ADMIN", "STAFF")
+
+   SUPER_ADMIN — sees every button, on every status, no restrictions.
+
+   SUB_ADMIN — initial interview:
+     status = Waiting   -> View, Serve, Forward, Skip, Edit
+     any other status   -> View, Repeat, Edit  (once acted on, only these remain)
+
+   STAFF — handles what was forwarded to them:
+     status = Forwarded or Serving -> View, Serve, Skip
+     any other status              -> View only
 ===================================================== */
 
 const CURRENT_ROLE = window.CURRENT_USER_ROLE || "";
-const IS_SUPER_ADMIN = CURRENT_ROLE === "Super-Admin";
-const IS_SUB_ADMIN = CURRENT_ROLE === "Sub-Admin";
-const IS_STAFF = CURRENT_ROLE === "Staff";
+const IS_SUPER_ADMIN = CURRENT_ROLE === "SUPER_ADMIN";
+const IS_SUB_ADMIN = CURRENT_ROLE === "SUB_ADMIN";
+const IS_STAFF = CURRENT_ROLE === "STAFF";
 
 /* =====================================================
    INITIALS
@@ -205,44 +214,47 @@ function actionBtn(type, clientId) {
 
 /* =====================================================
    ROLE + STATUS AWARE ACTION BUTTONS
-
-   Sub-Admin (initial interview):
-     Waiting            -> View, Serve, Skip
-     Serving / Forwarded
-     / Approved / Skipped -> View only (Serve/Skip disappear once acted on)
-
-   Staff (handles what Sub-Admin forwarded to them):
-     Waiting / Serving  -> View, Edit, Forward
-     Forwarded          -> View, Edit, Repeat  (route the client onward again,
-                             e.g. Cashier done -> forward to next office)
-     Skipped / Approved -> View only
+   See the ROLE-BASED ACCESS block above for the exact matrix.
 ===================================================== */
 
 function buildActionButtons(client) {
   const status = client.status || "Waiting";
-  const buttons = [actionBtn("view", client.id)];
+  const buttons = [actionBtn("view", client.id)]; // View is always visible, all roles, all statuses
 
-  if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
+  if (IS_SUPER_ADMIN) {
+    // Super Admin: every button, every status — no restrictions
+    buttons.push(actionBtn("edit", client.id));
+    buttons.push(actionBtn("serve", client.id));
+    buttons.push(actionBtn("forward", client.id));
+    buttons.push(actionBtn("repeat", client.id));
+    buttons.push(actionBtn("skip", client.id));
+    return buttons.join("");
+  }
+
+  if (IS_SUB_ADMIN) {
     if (status === "Waiting") {
       buttons.push(actionBtn("serve", client.id));
+      buttons.push(actionBtn("forward", client.id));
       buttons.push(actionBtn("skip", client.id));
-    }
-    else if (status === "Forwarded") {
+      buttons.push(actionBtn("edit", client.id));
+    } else {
+      // Once the status has moved on (Serving / Forwarded / Skipped / Approved)
       buttons.push(actionBtn("repeat", client.id));
+      buttons.push(actionBtn("edit", client.id));
     }
+    return buttons.join("");
   }
 
   if (IS_STAFF) {
-    if (status !== "Skipped" && status !== "Approved") {
-      buttons.push(actionBtn("edit", client.id));
+    if (status === "Forwarded" || status === "Serving") {
+      buttons.push(actionBtn("serve", client.id));
+      buttons.push(actionBtn("skip", client.id));
     }
-    if (status === "Waiting" || status === "Serving") {
-      buttons.push(actionBtn("forward", client.id));
-    } else if (status === "Forwarded") {
-      buttons.push(actionBtn("repeat", client.id));
-    }
+    // Any other status (Waiting / Skipped / Approved) -> View only
+    return buttons.join("");
   }
 
+  // Unknown/unset role -> View only, safest default
   return buttons.join("");
 }
 

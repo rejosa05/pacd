@@ -153,7 +153,7 @@ class TransactionLog(models.Model):
     )
     action = models.CharField(max_length=20, choices=ACTION_CHOICES)
     description = models.TextField(blank=True, null=True)
-    transaction_type = models.CharField(max_length=100, choices=YES_NO_CHOICES, blank=True, null=True)
+    transaction_type = models.CharField(max_length=100, blank=True, null=True)
 
     # ---- Serve: Citizen's Charter / CSM-CSS flow ----
     citizen_charter = models.CharField(
