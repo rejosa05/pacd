@@ -9,13 +9,13 @@ from django.views.decorators.http import require_http_methods
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from ..decorators import role_required
+from ..decorators import role_required, format_contact_number
 
 from ..models import AccountDetails, Position, Division, Unit
 
 
 @login_required
-@role_required("SUPER_ADMIN", "SUB_ADMIN", "STAFF")
+@role_required("SUPER_ADMIN")
 def user_management_page(request):
     """Ipakita ang HTML page — ang data mismo kuhaon sa JS via Fetch API."""
     return render(request, "pages/user_management.html")
@@ -96,12 +96,12 @@ def get_user(request, profile_id):
 @login_required
 @require_http_methods(["POST"])
 def add_user(request):
-    first_name = request.POST.get("first_name", "").strip()
-    last_name = request.POST.get("last_name", "").strip()
+    first_name = request.POST.get("first_name", "").strip().title()
+    last_name = request.POST.get("last_name", "").strip().title()
     username = request.POST.get("user", "").strip()  # name="user" sa form
     email = request.POST.get("email", "").strip()
     role = request.POST.get("role", "").strip().upper()
-    contact = request.POST.get("contact ", "").strip()
+    contact = request.POST.get("contact", "").strip()
     password = request.POST.get("password", "")
     position_name = request.POST.get("position", "").strip()
     division_name = request.POST.get(
@@ -133,7 +133,7 @@ def add_user(request):
         profile = AccountDetails.objects.create(
             user=user,
             role=role,
-            contact_number=contact,
+            contact_number=format_contact_number(contact),
             position=_get_or_create(Position, position_name),
             division=_get_or_create(Division, division_name),
             unit=_get_or_create_unit(unit_name),
@@ -141,7 +141,7 @@ def add_user(request):
         )
 
         _broadcast("added", request.user.username, profile.id)
-
+        
         return JsonResponse(
             {
                 "success": True,
@@ -154,15 +154,28 @@ def add_user(request):
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
-# @login_required
+@login_required
 @require_http_methods(["POST"])
 def edit_user(request, profile_id):
     try:
         profile = AccountDetails.objects.select_related("user").get(pk=profile_id)
         user = profile.user
 
-        user.first_name = request.POST.get("first_name", user.first_name).strip()
-        user.last_name = request.POST.get("last_name", user.last_name).strip()
+        user.first_name = (
+            request.POST.get("first_name", user.first_name).strip().title()
+        )
+        user.last_name = request.POST.get("last_name", user.last_name).strip().title()
+
+        username = request.POST.get("user", user.username).strip()
+        if User.objects.filter(username=username).exclude(pk=user.pk).exists():
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": f"Username '{username}' is already in use.",
+                },
+                status=400,
+            )
+        user.username = username
         user.email = request.POST.get("email", "").strip()
 
         new_password = request.POST.get("password", "").strip()
@@ -170,9 +183,9 @@ def edit_user(request, profile_id):
             user.password = make_password(new_password)
         user.save()
 
-        profile.contact_number = request.POST.get(
-            "contact", profile.contact_number
-        ).strip()
+        profile.contact_number = format_contact_number(
+            request.POST.get("contact", profile.contact_number).strip()
+        )
         profile.position = _get_or_create(
             Position, request.POST.get("position", "").strip()
         )

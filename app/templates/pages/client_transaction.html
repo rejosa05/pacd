@@ -144,7 +144,7 @@
 <div id="forwardModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Forward transaction</h3>
+            <h3 id="forwardModalTitle" class="text-lg font-bold text-gray-900 dark:text-white">Forward transaction</h3>
             <button type="button" onclick="hideModal('forwardModal')"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
@@ -350,5 +350,72 @@
         </div>
     </div>
 </div>
+<!-- View Client Modal -->
+<div id="viewModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Client Details</h3>
+            <button type="button" onclick="hideModal('viewModal')"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="flex items-center gap-4">
+                <span id="viewAvatar" class="w-14 h-14 shrink-0 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 flex items-center justify-center text-base font-bold"></span>
+                <div class="min-w-0">
+                    <p id="viewFullName" class="text-base font-semibold text-gray-900 dark:text-white truncate"></p>
+                    <p id="viewContact" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"></p>
+                </div>
+            </div>
+
+            <dl class="grid grid-cols-2 gap-4 text-sm border-t border-gray-100 dark:border-gray-700 pt-4">
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Queue No.</dt>
+                    <dd id="viewQueueNo" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Lane</dt>
+                    <dd id="viewLane" class="mt-1"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Transaction</dt>
+                    <dd id="viewTransaction" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Status</dt>
+                    <dd id="viewStatus" class="mt-1"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Gender</dt>
+                    <dd id="viewGender" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Office</dt>
+                    <dd id="viewOffice" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div class="col-span-2">
+                    <dt class="text-gray-500 dark:text-gray-400">Address</dt>
+                    <dd id="viewAddress" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+            </dl>
+
+            <div id="viewHistorySection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Transaction History</p>
+                <ol id="viewHistoryList" class="relative border-s border-gray-200 dark:border-gray-700 ms-2 space-y-4"></ol>
+            </div>
+        </div>
+        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+            <button type="button" onclick="hideModal('viewModal')" class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">Close</button>
+        </div>
+    </div>
+</div>
+
+<!--
+    Injects the current user's role for role-based button visibility in client_transactions.js.
+    Adjust the field path below to match your actual AccountDetails -> Position relationship
+    (e.g. request.user.account_profile.position.name).
+-->
+<script>
+  window.CURRENT_USER_ROLE = "{{ request.user.account_profile.position.name|default:'' }}";
+</script>
 <script src="{% static 'js/main/client_transactions.js' %}"></script>
 {% endblock %}

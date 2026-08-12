@@ -43,11 +43,27 @@ class AccountDetails(models.Model):
     ]
 
     uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account_profile")
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="account_profile"
+    )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="STAFF")
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles",)
-    division = models.ForeignKey(Division, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles",)
-    unit = models.ForeignKey( Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles")
+    position = models.ForeignKey(
+        Position,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="profiles",
+    )
+    division = models.ForeignKey(
+        Division,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="profiles",
+    )
+    unit = models.ForeignKey(
+        Unit, on_delete=models.SET_NULL, blank=True, null=True, related_name="profiles"
+    )
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=100, default="Active")
@@ -137,6 +153,7 @@ class TransactionLog(models.Model):
     )
     action = models.CharField(max_length=20, choices=ACTION_CHOICES)
     description = models.TextField(blank=True, null=True)
+    transaction_type = models.CharField(max_length=100, choices=YES_NO_CHOICES, blank=True, null=True)
 
     # ---- Serve: Citizen's Charter / CSM-CSS flow ----
     citizen_charter = models.CharField(

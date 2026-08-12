@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccountDetails,Unit, Division, SessionHistory, ServicesDetails, ClientDetails
+from .models import AccountDetails,Unit, Division, SessionHistory, ServicesDetails, ClientDetails, TransactionLog
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
@@ -49,18 +49,18 @@ class ClientDetailsAdmin(admin.ModelAdmin):
     ordering = ('-date_created',)
     list_per_page = 10
 
-# @admin.register(TransactionHistory)
-# class TransactionHistorys(admin.ModelAdmin):
-#     list_display = ('id', 'get_transaction_no', 'accounts', 'action', 'date', 'remarks', 'deficiencies', 'form', 'status')
-#     search_fields = ('accounts', 'action', 'date')
-#     list_filter = ('division_log', 'accounts', 'action', 'date')
-#     ordering = ('-date',)
-#     list_per_page = 10
+@admin.register(TransactionLog)
+class TransactionHistorys(admin.ModelAdmin):
+    list_display = ('uid', 'client', 'action', 'service', 'resolved')
+    search_fields = ('client', 'action', 'created_at')
+    list_filter = ('forwarded_division', 'forwarded_unit')
+    ordering = ('-created_at',)
+    list_per_page = 10
 
-#     def get_transaction_no(self, obj):
-#         return obj.division_log.transaction_no if obj.division_log else None
+    def get_transaction_no(self, obj):
+        return obj.division_log.transaction_no if obj.division_log else None
 
-#     get_transaction_no.short_description = 'Transaction No'
+    get_transaction_no.short_description = 'Transaction No'
 
 admin.site.register(Division)
 admin.site.register(Unit)

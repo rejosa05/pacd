@@ -29,3 +29,12 @@ def role_required(*allowed_roles):
         return wrapper
 
     return decorator
+
+
+def format_contact_number(value):
+    digits = "".join(filter(str.isdigit, value or ""))
+
+    if len(digits) == 11:
+        return f"{digits[:4]}-{digits[4:8]}-{digits[8:]}"
+
+    return value.strip()

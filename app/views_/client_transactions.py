@@ -6,13 +6,16 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from ..decorators import role_required
 
 from ..models import ClientDetails, TransactionLog, AccountDetails, Division, Unit
 
 
 @login_required
+@role_required("SUPER_ADMIN", "SUB_ADMIN", "STAFF")
 def client_transaction_page(request):
     """Ipakita ang HTML page — ang data mismo kuhaon sa JS via Fetch API."""
+
     return render(request, "pages/client_transaction.html")
 
 
@@ -22,11 +25,10 @@ def clients_list_api(request):
     Return today's clients for the dashboard table.
     """
     today = timezone.localdate()
-    clients = ClientDetails.objects.filter(date_created__date=today).order_by(
-        "-client_queue_no","client_lane_type"
-    )
+    clients = ClientDetails.objects.filter(date_created__date=today).order_by("-client_queue_no", "client_lane_type", "date_created")
 
     client_data = []
+    transaction_data = []
 
     for client in clients:
 
@@ -40,9 +42,7 @@ def clients_list_api(request):
             {
                 "id": client.id,
                 "queue_no": queue_number,
-                "full_name": (
-                    f"{client.client_firstname} " f"{client.client_lastname}"
-                ).strip(),
+                "full_name": (f"{client.client_firstname} " f"{client.client_lastname}").strip(),
                 "contact_number": client.client_contact or "",
                 "lane": client.client_lane_type or "Regular",
                 "status": client.client_status or "Waiting",
@@ -194,7 +194,7 @@ def forward_client(request, client_id):
     print(client.id)
     division_id = payload.get("division_id")
     unit_id = payload.get("unit_id")
-    remarks = payload.get("remarks")
+    discription = payload.get("discription")
 
     if not division_id or not unit_id:
         return JsonResponse(
@@ -204,7 +204,9 @@ def forward_client(request, client_id):
     TransactionLog.objects.create(
         client=client,
         action="Forwarded",
-        remarks=remarks,
+        remarks=discription,
+        forwarded_division=division_id,
+        forwarded_unit=unit_id,
         # handled_by=request.user,
     )
 

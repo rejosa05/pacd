@@ -16,6 +16,17 @@ function getCookie(name) {
 const CSRF_TOKEN = getCookie("csrftoken");
 
 /* =====================================================
+   ROLE-BASED ACCESS
+   Sub-Admin: initial interview — View, Serve, Skip
+   Staff: handles forwarded transactions — View, Edit, Forward, Repeat
+===================================================== */
+
+const CURRENT_ROLE = window.CURRENT_USER_ROLE || "";
+const IS_SUPER_ADMIN = CURRENT_ROLE === "Super-Admin";
+const IS_SUB_ADMIN = CURRENT_ROLE === "Sub-Admin";
+const IS_STAFF = CURRENT_ROLE === "Staff";
+
+/* =====================================================
    INITIALS
 ===================================================== */
 
@@ -75,19 +86,10 @@ function statusBadge(status) {
                 `;
   }
 
-  if (status === "Skipped") {
+  if (status === "Skipped" || status === "Forwarded") {
     return `
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">
                         <span class="h-1.5 w-1.5 rounded-full bg-red-600"></span>
-                        ${status}
-                    </span>
-                `;
-  }
-
-  if (status === "Forwarded") {
-    return `
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-2.5 py-1 text-xs font-medium text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
-                        <span class="h-1.5 w-1.5 rounded-full bg-cyan-600"></span>
                         ${status}
                     </span>
                 `;
@@ -142,21 +144,10 @@ function renderClientTable() {
             </td>
             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.transaction_type || "---"}</td>
             <td class="px-4 py-3">${statusBadge(client.status || "Waiting")}</td>
-            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.unit || "---"}</td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${client.organization || "---"}</td>
             <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" title="Edit" onclick="openEditModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/><circle cx="12" cy="12" r="2.25"/></svg>
-                    </button>
-                    <button type="button" title="Serve" onclick="openServeModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-                    </button>
-                    <button type="button" title="Forward" onclick="openForwardModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>
-                    </button>
-                    <button type="button" title="Skip" onclick="openSkipModal(${client.id})" class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-300">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
-                    </button>
+                    ${buildActionButtons(client)}
                 </div>
             </td>
         </tr>
@@ -165,6 +156,94 @@ function renderClientTable() {
     .join("");
 
   updateSummaryStats();
+}
+
+/* =====================================================
+   ACTION BUTTON ICONS
+===================================================== */
+
+const ACTION_ICONS = {
+  view: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+  edit: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/><circle cx="12" cy="12" r="2.25"/></svg>',
+  serve: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
+  forward: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>',
+  repeat: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>',
+  skip: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>',
+};
+
+const ACTION_STYLES = {
+  view: "hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300",
+  edit: "hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-900/30 dark:hover:text-amber-300",
+  serve: "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
+  forward: "hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300",
+  repeat: "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-300",
+  skip: "hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-300",
+};
+
+const ACTION_HANDLERS = {
+  view: (id) => `openViewModal(${id})`,
+  edit: (id) => `openEditModal(${id})`,
+  serve: (id) => `openServeModal(${id})`,
+  forward: (id) => `openForwardModal(${id})`,
+  repeat: (id) => `openRepeatModal(${id})`,
+  skip: (id) => `openSkipModal(${id})`,
+};
+
+const ACTION_LABELS = {
+  view: "View",
+  edit: "Edit",
+  serve: "Serve",
+  forward: "Forward",
+  repeat: "Repeat / Route again",
+  skip: "Skip",
+};
+
+function actionBtn(type, clientId) {
+  return `<button type="button" title="${ACTION_LABELS[type]}" onclick="${ACTION_HANDLERS[type](clientId)}"
+      class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition ${ACTION_STYLES[type]}">${ACTION_ICONS[type]}</button>`;
+}
+
+/* =====================================================
+   ROLE + STATUS AWARE ACTION BUTTONS
+
+   Sub-Admin (initial interview):
+     Waiting            -> View, Serve, Skip
+     Serving / Forwarded
+     / Approved / Skipped -> View only (Serve/Skip disappear once acted on)
+
+   Staff (handles what Sub-Admin forwarded to them):
+     Waiting / Serving  -> View, Edit, Forward
+     Forwarded          -> View, Edit, Repeat  (route the client onward again,
+                             e.g. Cashier done -> forward to next office)
+     Skipped / Approved -> View only
+===================================================== */
+
+function buildActionButtons(client) {
+  const status = client.status || "Waiting";
+  const buttons = [actionBtn("view", client.id)];
+
+  if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
+    if (status === "Waiting") {
+      buttons.push(actionBtn("serve", client.id));
+      buttons.push(actionBtn("skip", client.id));
+    }
+    else if (status === "Forwarded") {
+      buttons.push(actionBtn("repeat", client.id));
+    }
+  }
+
+  if (IS_STAFF) {
+    if (status !== "Skipped" && status !== "Approved") {
+      buttons.push(actionBtn("edit", client.id));
+    }
+    if (status === "Waiting" || status === "Serving") {
+      buttons.push(actionBtn("forward", client.id));
+    } else if (status === "Forwarded") {
+      buttons.push(actionBtn("repeat", client.id));
+    }
+  }
+
+  return buttons.join("");
 }
 
 // ---------- Modal helpers ----------
@@ -191,6 +270,55 @@ function notify(message) {
   setTimeout(() => el.classList.add("hidden"), 2500);
 }
 
+// ---------- View ----------
+async function openViewModal(clientId) {
+  const res = await fetch(`api/client/${clientId}`);
+  const data = await res.json();
+  if (!data.success) return;
+
+  const c = data.data;
+
+  document.getElementById("viewAvatar").textContent = initials(c.full_name);
+  document.getElementById("viewFullName").textContent = c.full_name || "Unknown Client";
+  document.getElementById("viewContact").textContent = c.contact || "No contact";
+  document.getElementById("viewQueueNo").textContent = c.queue_no || "---";
+  document.getElementById("viewTransaction").textContent = c.transaction_type || "---";
+  document.getElementById("viewGender").textContent = c.gender || "---";
+  document.getElementById("viewOffice").textContent = c.organization || "---";
+  document.getElementById("viewAddress").textContent = c.address || "---";
+
+  document.getElementById("viewLane").innerHTML =
+    `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${c.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">${c.lane || "Regular"}</span>`;
+  document.getElementById("viewStatus").innerHTML = statusBadge(c.status || "Waiting");
+
+  // Optional: transaction history, if your get_client API includes it as c.history
+  const historySection = document.getElementById("viewHistorySection");
+  const historyList = document.getElementById("viewHistoryList");
+  if (Array.isArray(c.history) && c.history.length) {
+    historyList.innerHTML = c.history
+      .map(
+        (h) => `
+        <li class="ms-4">
+          <div class="absolute w-2 h-2 bg-blue-500 rounded-full -start-[4.5px] mt-1.5"></div>
+          <p class="text-xs text-gray-400">${h.date || ""}</p>
+          <p class="text-sm text-gray-700 dark:text-gray-300">${h.action || ""}${h.detail ? " — " + h.detail : ""}</p>
+        </li>`,
+      )
+      .join("");
+    historySection.classList.remove("hidden");
+  } else {
+    historySection.classList.add("hidden");
+  }
+
+  showModal("viewModal");
+}
+
+// ---------- Repeat (route an already-forwarded client onward again) ----------
+async function openRepeatModal(clientId) {
+  await openForwardModal(clientId);
+  document.getElementById("forwardModalTitle").textContent = "Route to next office";
+}
+
 // ---------- Edit ----------
 async function openEditModal(clientId) {
   const res = await fetch(`api/client/${clientId}`);
@@ -203,11 +331,9 @@ async function openEditModal(clientId) {
   document.getElementById("editLastName").value = _client.last_name;
   document.getElementById("editContact").value = _client.contact;
   document.getElementById("editAddress").value = _client.address;
-  if (_client.gender)
-    document.getElementById("editGender").value = _client.gender;
+  if (_client.gender) document.getElementById("editGender").value = _client.gender;
   if (_client.lane) document.getElementById("editLane").value = _client.lane;
-  if (_client.transaction_type)
-    document.getElementById("editTransaction").value = _client.transaction_type;
+  if (_client.transaction_type) document.getElementById("editTransaction").value = _client.transaction_type;
   showModal("editModal");
 }
 
@@ -251,13 +377,11 @@ async function openForwardModal(clientId) {
   if (!data.success) return;
 
   const _client = data.data;
+  document.getElementById("forwardModalTitle").textContent = "Forward transaction";
   document.getElementById("forwardQueueNo").value = clientId;
-  document.getElementById("forwardQueueBadge").textContent =
-    _client.queue_no || "---";
-  document.getElementById("forwardClientFullName").textContent =
-    _client.full_name;
-  document.getElementById("forwardClientTransaction").textContent =
-    _client.transaction_type || "---";
+  document.getElementById("forwardQueueBadge").textContent = _client.queue_no || "---";
+  document.getElementById("forwardClientFullName").textContent = _client.full_name;
+  document.getElementById("forwardClientTransaction").textContent = _client.transaction_type || "---";
   document.getElementById("forwardRemarks").value = "";
 
   resetForwardDropdowns();
@@ -269,10 +393,8 @@ async function openForwardModal(clientId) {
 function resetForwardDropdowns() {
   const divisionSelect = document.getElementById("forwardDivision");
   const unitSelect = document.getElementById("forwardUnit");
-  divisionSelect.innerHTML =
-    '<option value="" disabled selected>Loading divisions...</option>';
-  unitSelect.innerHTML =
-    '<option value="" disabled selected>Select division first</option>';
+  divisionSelect.innerHTML = '<option value="" disabled selected>Loading divisions...</option>';
+  unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
   unitSelect.disabled = true;
 }
 
@@ -282,19 +404,15 @@ async function loadForwardDivisions() {
     const res = await fetch("api/divisions/");
     const data = await res.json();
     if (!data.success || !data.divisions.length) {
-      divisionSelect.innerHTML =
-        '<option value="" disabled selected>No divisions available</option>';
+      divisionSelect.innerHTML = '<option value="" disabled selected>No divisions available</option>';
       return;
     }
     divisionSelect.innerHTML =
       '<option value="" disabled selected>Select division</option>' +
-      data.divisions
-        .map((d) => `<option value="${d.id}">${d.name}</option>`)
-        .join("");
+      data.divisions.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
   } catch (error) {
     console.error("❌ Load divisions error:", error);
-    divisionSelect.innerHTML =
-      '<option value="" disabled selected>Unable to load divisions</option>';
+    divisionSelect.innerHTML = '<option value="" disabled selected>Unable to load divisions</option>';
   }
 }
 
@@ -303,12 +421,10 @@ async function onForwardDivisionChange() {
   const unitSelect = document.getElementById("forwardUnit");
 
   unitSelect.disabled = true;
-  unitSelect.innerHTML =
-    '<option value="" disabled selected>Loading units...</option>';
+  unitSelect.innerHTML = '<option value="" disabled selected>Loading units...</option>';
 
   if (!divisionId) {
-    unitSelect.innerHTML =
-      '<option value="" disabled selected>Select division first</option>';
+    unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
     return;
   }
 
@@ -317,21 +433,17 @@ async function onForwardDivisionChange() {
     const data = await res.json();
 
     if (!data.success || !data.units.length) {
-      unitSelect.innerHTML =
-        '<option value="" disabled selected>No units under this division</option>';
+      unitSelect.innerHTML = '<option value="" disabled selected>No units under this division</option>';
       return;
     }
 
     unitSelect.innerHTML =
       '<option value="" disabled selected>Select unit</option>' +
-      data.units
-        .map((u) => `<option value="${u.id}">${u.name}</option>`)
-        .join("");
+      data.units.map((u) => `<option value="${u.id}">${u.name}</option>`).join("");
     unitSelect.disabled = false;
   } catch (error) {
     console.error("❌ Load units error:", error);
-    unitSelect.innerHTML =
-      '<option value="" disabled selected>Unable to load units</option>';
+    unitSelect.innerHTML = '<option value="" disabled selected>Unable to load units</option>';
   }
 }
 
@@ -377,11 +489,9 @@ async function openServeModal(clientId) {
 
   const _client = data.data;
   document.getElementById("serveQueueNo").value = clientId;
-  document.getElementById("serveQueueBadge").textContent =
-    _client.queue_no || "---";
+  document.getElementById("serveQueueBadge").textContent = _client.queue_no || "---";
   document.getElementById("serveClientName").textContent = _client.full_name;
-  document.getElementById("serveClientTransaction").textContent =
-    _client.transaction_type || "---";
+  document.getElementById("serveClientTransaction").textContent = _client.transaction_type || "---";
 
   resetServeForm();
   showModal("serveModal");
@@ -394,35 +504,21 @@ async function openServeModal(clientId) {
 
 function resetServeForm() {
   document.getElementById("serveForm").reset();
-  [
-    "serveServiceSection",
-    "serveDeficiencyQuestion",
-    "serveDeficiencyDetailsSection",
-    "serveResolvedQuestion",
-    "serveCSMSection",
-    "serveCSSSection",
-  ].forEach((id) => {
+  ["serveServiceSection", "serveDeficiencyQuestion", "serveDeficiencyDetailsSection",
+   "serveResolvedQuestion", "serveCSMSection", "serveCSSSection"].forEach((id) => {
     document.getElementById(id).classList.add("hidden");
   });
 }
 
 function updateServeFlow() {
-  const charter = document.querySelector(
-    'input[name="serveCharter"]:checked',
-  )?.value;
+  const charter = document.querySelector('input[name="serveCharter"]:checked')?.value;
   const service = document.getElementById("serveService").value;
-  const deficiency = document.querySelector(
-    'input[name="serveDeficiency"]:checked',
-  )?.value;
-  const resolved = document.querySelector(
-    'input[name="serveResolved"]:checked',
-  )?.value;
+  const deficiency = document.querySelector('input[name="serveDeficiency"]:checked')?.value;
+  const resolved = document.querySelector('input[name="serveResolved"]:checked')?.value;
 
   const serviceSection = document.getElementById("serveServiceSection");
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
-  const deficiencyDetails = document.getElementById(
-    "serveDeficiencyDetailsSection",
-  );
+  const deficiencyDetails = document.getElementById("serveDeficiencyDetailsSection");
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
   const csmSection = document.getElementById("serveCSMSection");
   const cssSection = document.getElementById("serveCSSSection");
@@ -439,17 +535,12 @@ function updateServeFlow() {
   const skippedService = charter === "No";
   deficiencyQuestion.classList.toggle("hidden", !hasService);
   if (!hasService) {
-    deficiencyQuestion
-      .querySelectorAll('input[name="serveDeficiency"]')
-      .forEach((r) => (r.checked = false));
+    deficiencyQuestion.querySelectorAll('input[name="serveDeficiency"]').forEach((r) => (r.checked = false));
     deficiencyDetails.classList.add("hidden");
   }
 
   // Step 4: Deficiency details textarea — shown if deficiency = Yes
-  deficiencyDetails.classList.toggle(
-    "hidden",
-    !(hasService && deficiency === "Yes"),
-  );
+  deficiencyDetails.classList.toggle("hidden", !(hasService && deficiency === "Yes"));
 
   // Step 5: Resolved question — shown once the deficiency branch is complete,
   // or immediately if Charter = No (nothing else to answer first)
@@ -457,9 +548,7 @@ function updateServeFlow() {
   const showResolved = skippedService || deficiencyBranchDone;
   resolvedQuestion.classList.toggle("hidden", !showResolved);
   if (!showResolved) {
-    resolvedQuestion
-      .querySelectorAll('input[name="serveResolved"]')
-      .forEach((r) => (r.checked = false));
+    resolvedQuestion.querySelectorAll('input[name="serveResolved"]').forEach((r) => (r.checked = false));
     csmSection.classList.add("hidden");
     cssSection.classList.add("hidden");
   }
@@ -480,27 +569,14 @@ async function saveServeClient() {
 
   const payload = {
     description: document.getElementById("serveDescription").value,
-    citizen_charter:
-      document.querySelector('input[name="serveCharter"]:checked')?.value ||
-      null,
+    citizen_charter: document.querySelector('input[name="serveCharter"]:checked')?.value || null,
     service: document.getElementById("serveService").value || null,
-    has_deficiency:
-      document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
-      null,
-    deficiency_details:
-      document.getElementById("serveDeficiencyDetails").value || null,
-    resolved:
-      document.querySelector('input[name="serveResolved"]:checked')?.value ||
-      null,
-    csm_rating: hasService
-      ? document.getElementById("serveCSMRating").value || null
-      : null,
-    deficiency_status: hasService
-      ? document.getElementById("serveDeficiencyStatus").value || null
-      : null,
-    css_rating: !hasService
-      ? document.getElementById("serveCSSRating").value || null
-      : null,
+    has_deficiency: document.querySelector('input[name="serveDeficiency"]:checked')?.value || null,
+    deficiency_details: document.getElementById("serveDeficiencyDetails").value || null,
+    resolved: document.querySelector('input[name="serveResolved"]:checked')?.value || null,
+    csm_rating: hasService ? (document.getElementById("serveCSMRating").value || null) : null,
+    deficiency_status: hasService ? (document.getElementById("serveDeficiencyStatus").value || null) : null,
+    css_rating: !hasService ? (document.getElementById("serveCSSRating").value || null) : null,
   };
 
   try {

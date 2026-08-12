@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from ..decorators import format_contact_number
 
 from ..models import ClientDetails
 
@@ -39,7 +40,7 @@ def register_client(request):
         client = ClientDetails.objects.create(
             client_firstname=first_name,
             client_lastname=last_name,
-            client_contact=contact_number,
+            client_contact=format_contact_number(contact_number),
             client_address=address,
             client_gender=normalized_sex,
             client_lane_type=normalized_lane,
