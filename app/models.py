@@ -152,7 +152,7 @@ class TransactionLog(models.Model):
         ClientDetails, on_delete=models.CASCADE, related_name="transactions"
     )
     action = models.CharField(max_length=20, choices=ACTION_CHOICES)
-    description = models.TextField(blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
     transaction_type = models.CharField(max_length=100, blank=True, null=True)
 
     # ---- Serve: Citizen's Charter / CSM-CSS flow ----

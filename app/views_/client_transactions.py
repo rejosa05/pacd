@@ -22,17 +22,62 @@ def client_transaction_page(request):
 @login_required
 def clients_list_api(request):
     """
-    Return today's clients for the dashboard table.
+    Return today's clients and transactions based on user role.
     """
+
     today = timezone.localdate()
-    clients = ClientDetails.objects.filter(date_created__date=today).order_by("-client_queue_no", "client_lane_type", "date_created")
+
+    # Get logged-in user's AccountDetails
+    profile = request.user.account_profile
+
+    # --------------------------------------------------
+    # CLIENTS
+    # --------------------------------------------------
+    clients = ClientDetails.objects.filter(date_created__date=today).order_by(
+        "-client_queue_no", "client_lane_type", "date_created"
+    )
+
+    # --------------------------------------------------
+    # TRANSACTIONS
+    # --------------------------------------------------
+    transactions = TransactionLog.objects.select_related(
+        "forwarded_unit",
+        "forwarded_division",
+        "client",
+        "handled_by",
+    ).filter(created_at__date=today)
+
+    # --------------------------------------------------
+    # ROLE-BASED FILTER
+    # --------------------------------------------------
+
+    if profile.role.lower() == "staff":
+
+        transactions = transactions.filter(
+            forwarded_division=profile.division,
+            forwarded_unit=profile.unit,
+        )
+
+        client_ids = transactions.values_list(
+            "client_id",
+            flat=True
+        )
+
+        clients = clients.filter(
+            id__in=client_ids
+        )
+    # super_admin and sub-admin
+    # → no filter, therefore ALL transactions
 
     client_data = []
     transaction_data = []
 
+    # --------------------------------------------------
+    # CLIENT DATA
+    # --------------------------------------------------
+
     for client in clients:
 
-        # Queue display number
         if client.client_lane_type == "Priority":
             queue_number = f"P-{client.client_queue_no:03d}"
         else:
@@ -42,17 +87,56 @@ def clients_list_api(request):
             {
                 "id": client.id,
                 "queue_no": queue_number,
-                "full_name": (f"{client.client_firstname} " f"{client.client_lastname}").strip(),
+                "full_name": (
+                    f"{client.client_firstname} " f"{client.client_lastname}"
+                ).strip(),
                 "contact_number": client.client_contact or "",
-                "lane": client.client_lane_type or "Regular",
-                "status": client.client_status or "Waiting",
+                "lane": (client.client_lane_type or "Regular"),
+                "status": (client.client_status or "Waiting"),
                 "organization": client.client_org or "",
                 "address": client.client_address or "",
                 "gender": client.client_gender or "",
                 "date_created": client.date_created.strftime("%Y-%m-%d %I:%M %p"),
             }
         )
-    return JsonResponse({"success": True, "clients": client_data})
+
+    # --------------------------------------------------
+    # TRANSACTION DATA
+    # --------------------------------------------------
+
+    for transaction in transactions:
+
+        transaction_data.append(
+            {
+                "id": transaction.id,
+                "client_id": transaction.client_id,
+                "action": transaction.action or "",
+                "details": transaction.details or "",
+                "type": transaction.transaction_type or "",
+                "unit": (
+                    transaction.forwarded_unit.name
+                    if transaction.forwarded_unit
+                    else ""
+                ),
+                "division": (
+                    transaction.forwarded_division.name
+                    if transaction.forwarded_division
+                    else ""
+                ),
+                "remarks": transaction.remarks or "",
+                "handled_by": (
+                    transaction.handled_by.username if transaction.handled_by else ""
+                ),
+            }
+        )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "clients": client_data,
+            "transactions": transaction_data,
+        }
+    )
 
 
 def _serialize_profile(profile):
@@ -194,7 +278,8 @@ def forward_client(request, client_id):
     print(client.id)
     division_id = payload.get("division_id")
     unit_id = payload.get("unit_id")
-    discription = payload.get("discription")
+    details = payload.get("details")
+    type = payload.get("type")
 
     if not division_id or not unit_id:
         return JsonResponse(
@@ -204,10 +289,11 @@ def forward_client(request, client_id):
     TransactionLog.objects.create(
         client=client,
         action="Forwarded",
-        remarks=discription,
-        forwarded_division=division_id,
-        forwarded_unit=unit_id,
-        # handled_by=request.user,
+        transaction_type=type,
+        details=details,
+        forwarded_division_id=division_id,
+        forwarded_unit_id=unit_id,
+        handled_by=request.user,
     )
 
     client.client_status = "Forwarded"
