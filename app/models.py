@@ -145,6 +145,12 @@ class TransactionLog(models.Model):
         ("Skipped", "Skipped"),
     ]
 
+    STATUS_CHOICES = [
+        ("Serving", "Serving"),
+        ("Served", "Served"),
+    ]
+
+    CSM_CSS_CHOICES = [("CSM", "CSM"), ("CSS", "CSS")]
     YES_NO_CHOICES = [("Yes", "Yes"), ("No", "No")]
     uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
 
@@ -159,7 +165,9 @@ class TransactionLog(models.Model):
     citizen_charter = models.CharField(
         max_length=3, choices=YES_NO_CHOICES, blank=True, null=True
     )
-    service = models.CharField(max_length=100, blank=True, null=True)
+    service = models.ForeignKey(
+            ServicesDetails , on_delete=models.SET_NULL, null=True, blank=True, related_name="service"
+        )
     has_deficiency = models.CharField(
         max_length=3, choices=YES_NO_CHOICES, blank=True, null=True
     )
@@ -167,9 +175,7 @@ class TransactionLog(models.Model):
     resolved = models.CharField(
         max_length=3, choices=YES_NO_CHOICES, blank=True, null=True
     )
-    csm_rating = models.CharField(max_length=30, blank=True, null=True)
     deficiency_status = models.CharField(max_length=50, blank=True, null=True)
-    css_rating = models.CharField(max_length=30, blank=True, null=True)
 
     # ---- Forward ----
     forwarded_division = models.ForeignKey(
@@ -178,9 +184,14 @@ class TransactionLog(models.Model):
     forwarded_unit = models.ForeignKey(
         Unit, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
+    status = models.CharField(
+                max_length=20, choices=STATUS_CHOICES , blank=True, null=True
+            )
     remarks = models.TextField(blank=True, null=True)
-
-    handled_by = models.ForeignKey(
+    survey_form = models.CharField(
+            max_length=3, choices=CSM_CSS_CHOICES , blank=True, null=True
+        )
+    process_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)

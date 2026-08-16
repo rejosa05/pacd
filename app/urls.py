@@ -17,10 +17,17 @@ urlpatterns = [
     path("api/clients-list/", client_transactions.clients_list_api, name="clients_list_api"),
     path("api/client/<int:client_id>",client_transactions.get_client, name="api_get_client"),
     path('api/client/<int:client_id>/update/', client_transactions.update_client, name='update_client'),
-    path('api/client/<int:client_id>/serve/', client_transactions.serve_client, name='serve_client'),
+    path('api/client/<int:client_id>/serve/', client_transactions.serve_client, name='serve_client'), #admin 
+    # Staff
+    path(
+        "api/transaction/<int:transaction_id>/serve/",
+        client_transactions.serve_transaction,
+        name="serve_transaction",
+    ),
     path('api/client/<int:client_id>/forward/', client_transactions.forward_client, name='forward_client'),
     path('api/client/<int:client_id>/skip/', client_transactions.skip_client, name='skip_client'),
 
     path('api/divisions/', client_transactions.divisions_api, name='divisions_api'),
     path('api/units/', client_transactions.units_api, name='units_api'),
+    path( "api/services/available/", client_transactions.available_services_api, name="available_services_api"),
 ]

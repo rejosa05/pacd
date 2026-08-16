@@ -108,6 +108,7 @@
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="editForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveEditClient();">
+            <input type="hidden" id="serveTransactionId">
             <input type="hidden" id="editQueueNo">
             <div class="grid grid-cols-2 gap-3">
                 <input id="editFirstName" type="text" placeholder="First name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
@@ -218,6 +219,8 @@
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" required></textarea>
             </div>
 
+        
+
             <!-- Q1: Citizen's Charter -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Is this transaction covered by the Citizen's Charter?</label>
@@ -231,6 +234,27 @@
                         <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
                     </label>
                 </div>
+            </div>
+
+            <!-- Services -->
+            <div id="serveServiceSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Which service was availed?
+                </label>
+
+                <select
+                    id="serveService"
+                    class="w-full border border-gray-300 dark:border-gray-600
+                        dark:bg-gray-900 dark:text-white rounded-lg
+                        px-3 py-2.5 text-sm
+                        focus:ring-2 focus:ring-blue-600
+                        focus:border-blue-600"
+                    onchange="updateServeFlow()"
+                >
+                    <option value="" selected>
+                        Select service
+                    </option>
+                </select>
             </div>
 
             <!-- Services (shown if Charter = Yes) -->
@@ -283,55 +307,38 @@
                     </label>
                 </div>
             </div>
-
-            <!-- CSM section: shown when Resolved = Yes AND a service was selected -->
-            <div id="serveCSMSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4 space-y-4">
+            <!-- CSS/CSM -->
+            <div id="serveCSMSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
                 <div class="flex items-center gap-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400 text-xs rounded-lg p-2.5">
                     <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
                     Client Satisfaction Measurement (CSM) — required for Citizen's Charter transactions
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overall satisfaction rating</label>
-                    <select id="serveCSMRating" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        <option value="" selected>Select rating</option>
-                        <option>Very Satisfied</option>
-                        <option>Satisfied</option>
-                        <option>Neutral</option>
-                        <option>Dissatisfied</option>
-                        <option>Very Dissatisfied</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deficiency status</label>
-                    <select id="serveDeficiencyStatus" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        <option value="" selected>Select status</option>
-                        <option>Has Deficiencies</option>
-                        <option>Not Yet Completed</option>
-                        <option>Unresolved — Escalate to CSS</option>
-                        <option>None / Not applicable</option>
-                    </select>
+                <div class="flex gap-3">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveResolved" value="Yes" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">CSM</div>
+                    </label>
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveResolved" value="No" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">CSS</div>
+                    </label>
                 </div>
             </div>
 
-            <!-- CSS section: shown when Resolved = Yes AND no service was selected -->
-            <div id="serveCSSSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4 space-y-4">
-                <div class="flex items-center gap-2 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-xs rounded-lg p-2.5">
+            <!-- CSS/CSM -->
+            <div id="serveCSSSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <div class="flex items-center gap-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400 text-xs rounded-lg p-2.5">
                     <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
-                    No Citizen's Charter service selected — Client Satisfaction Survey (CSS) applies instead
+                    Client Satisfaction Measurement (CSM) — required for Citizen's Charter transactions
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Overall satisfaction rating</label>
-                    <select id="serveCSSRating" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        <option value="" selected>Select rating</option>
-                        <option>Very Satisfied</option>
-                        <option>Satisfied</option>
-                        <option>Neutral</option>
-                        <option>Dissatisfied</option>
-                        <option>Very Dissatisfied</option>
-                    </select>
+                <div class="flex gap-3">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="serveResolved" value="No" class="peer hidden" onchange="updateServeFlow()">
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">CSS</div>
+                    </label>
                 </div>
             </div>
-
+            
             <div class="flex gap-3 pt-1">
                 <button type="button" onclick="hideModal('serveModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
                 <button type="submit" class="flex-1 py-2.5 rounded-lg bg-emerald-700 text-white text-sm font-medium hover:bg-emerald-800">Serve</button>
