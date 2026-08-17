@@ -74,6 +74,14 @@ class AccountDetails(models.Model):
 
 
 class ClientDetails(models.Model):
+    STATUS_CHOICES = [
+                ("Served", "Served"),
+                ("Serving", "Serving"),
+                ("Forwarded", "Forwarded"),
+                ("Skipped", "Skipped"),
+                ("Waiting", "Waiting"),
+            ]
+        
     uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)
     client_firstname = models.CharField(max_length=100, blank=True)
     client_lastname = models.CharField(max_length=100, blank=True)
@@ -83,7 +91,7 @@ class ClientDetails(models.Model):
     client_lane_type = models.CharField(max_length=100, blank=True, null=True)
     client_contact = models.CharField(max_length=20, null=True)
     client_gender = models.CharField(max_length=10, null=True)
-    client_status = models.CharField(max_length=100, default="Waiting")
+    client_status = models.CharField(max_length=100, default="Waiting", choices=STATUS_CHOICES)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -141,13 +149,9 @@ class ServicesDetails(models.Model):
 class TransactionLog(models.Model):
     ACTION_CHOICES = [
         ("Served", "Served"),
+        ("Serving", "Serving"),
         ("Forwarded", "Forwarded"),
         ("Skipped", "Skipped"),
-    ]
-
-    STATUS_CHOICES = [
-        ("Serving", "Serving"),
-        ("Served", "Served"),
     ]
 
     CSM_CSS_CHOICES = [("CSM", "CSM"), ("CSS", "CSS")]
@@ -184,9 +188,6 @@ class TransactionLog(models.Model):
     forwarded_unit = models.ForeignKey(
         Unit, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
-    status = models.CharField(
-                max_length=20, choices=STATUS_CHOICES , blank=True, null=True
-            )
     remarks = models.TextField(blank=True, null=True)
     survey_form = models.CharField(
             max_length=3, choices=CSM_CSS_CHOICES , blank=True, null=True

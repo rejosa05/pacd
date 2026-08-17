@@ -179,6 +179,8 @@ const ACTION_ICONS = {
   edit: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/><circle cx="12" cy="12" r="2.25"/></svg>',
   serve:
     '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
+  serving:
+    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
   forward:
     '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>',
   repeat:
@@ -191,6 +193,8 @@ const ACTION_STYLES = {
   edit: "hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-900/30 dark:hover:text-amber-300",
   serve:
     "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
+  serving:
+    "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
   forward:
     "hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300",
   repeat:
@@ -202,6 +206,7 @@ const ACTION_HANDLERS = {
   view: (id) => `openViewModal(${id})`,
   edit: (id) => `openEditModal(${id})`,
   serve: (id) => `openServeModal(${id})`,
+  serving: (id) => `openServingModal(${id})`,
   forward: (id) => `openForwardModal(${id})`,
   repeat: (id) => `openRepeatModal(${id})`,
   skip: (id) => `openSkipModal(${id})`,
@@ -211,6 +216,7 @@ const ACTION_LABELS = {
   view: "View",
   edit: "Edit",
   serve: "Serve",
+  serving: "Serving",
   forward: "Forward",
   repeat: "Repeat / Route again",
   skip: "Skip",
@@ -228,12 +234,14 @@ function actionBtn(type, clientId) {
 
 function buildActionButtons(client, transaction_id) {
   const status = client.status || "Waiting";
-  const buttons = [actionBtn("view", client.id)]; // View is always visible, all roles, all statuses
+  const buttons = []; // View is always visible, all roles, all statuses
 
   if (IS_SUPER_ADMIN) {
     // Super Admin: every button, every status — no restrictions
+    buttons.push(actionBtn("view", client.id));
     buttons.push(actionBtn("edit", client.id));
     buttons.push(actionBtn("serve", client.id));
+    buttons.push(actionBtn("serving", client.id));
     buttons.push(actionBtn("forward", client.id));
     buttons.push(actionBtn("repeat", client.id));
     buttons.push(actionBtn("skip", client.id));
@@ -255,7 +263,10 @@ function buildActionButtons(client, transaction_id) {
   }
 
   if (IS_STAFF) {
-    if (status === "Forwarded" || status === "Serving") {
+    if (status === "Forwarded") {
+      buttons.push(actionBtn("serving", transaction_id));
+      buttons.push(actionBtn("skip", client.id));
+    } else {
       buttons.push(actionBtn("serve", transaction_id));
       buttons.push(actionBtn("skip", client.id));
     }
@@ -399,6 +410,42 @@ async function saveEditClient() {
   }
 }
 
+async function openServingModal(transactionId) {
+  const transaction = allTransaction.find(
+    (t) => Number(t.transaction_id) === Number(transactionId),
+  );
+
+  const clientId = transaction.client_id;
+
+  const res = await fetch(`/api/client/${clientId}`);
+  const data = await res.json();
+
+  const _client = data.data;
+  document.getElementById("viewAvatar").textContent = initials(
+    _client.full_name,
+  );
+  document.getElementById("viewFullName").textContent =
+    _client.full_name || "Unknown Client";
+  document.getElementById("viewContact").textContent =
+    _client.contact || "No contact";
+  document.getElementById("viewQueueNo").textContent =
+    _client.queue_no || "---";
+  document.getElementById("viewLane").innerHTML =
+    `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${_client.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">${_client.lane || "Regular"}</span>`;
+  document.getElementById("viewStatus").innerHTML = statusBadge(
+    _client.status || "Waiting",
+  );
+  document.getElementById("viewTransaction").textContent =
+    transaction?.type || "---";
+  document.getElementById("viewGender").textContent = _client.gender || "---";
+  document.getElementById("viewOffice").textContent =
+    _client.organization || "---";
+  document.getElementById("viewAddress").textContent = _client.address || "---";
+
+  showModal("viewModal");
+  return;
+}
+
 async function openForwardModal(clientId) {
   const res = await fetch(`api/client/${clientId}`);
   const data = await res.json();
@@ -491,6 +538,7 @@ async function onForwardDivisionChange() {
   }
 }
 
+// fixed nani
 async function saveForwardClient() {
   const clientId = document.getElementById("forwardQueueNo").value;
   const divisionId = document.getElementById("forwardDivision").value;
@@ -527,6 +575,9 @@ async function saveForwardClient() {
   }
 }
 
+async function saveServingClient() {
+  
+}
 async function openServeModal(transactionId) {
   console.log("Transaction ID:", transactionId);
 

@@ -153,6 +153,7 @@ def _serialize_profile(profile):
         "last_name": profile.client_lastname,
         "contact": profile.client_contact,
         "address": profile.client_address,
+        "gender": profile.client_gender,
     }
 
 
