@@ -108,7 +108,7 @@
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="editForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveEditClient();">
-            <input type="hidden" id="serveTransactionId">
+
             <input type="hidden" id="editQueueNo">
             <div class="grid grid-cols-2 gap-3">
                 <input id="editFirstName" type="text" placeholder="First name" class="border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
@@ -203,8 +203,8 @@
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="serveForm" class="px-6 py-5 space-y-5" onsubmit="event.preventDefault(); saveServeClient();">
-            <input type="hidden" id="serveQueueNo">
-
+            <input type="hidden" id="serveClientId">
+            <input type="hidden" id="serveTransactionId">
             <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
                 <span id="serveQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
                 <div class="min-w-0">
@@ -218,8 +218,6 @@
                 <textarea id="serveDescription" rows="2" placeholder="Notes about this transaction..."
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" required></textarea>
             </div>
-
-        
 
             <!-- Q1: Citizen's Charter -->
             <div>

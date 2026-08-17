@@ -154,8 +154,8 @@ function renderClientTable() {
                       ${client.lane || "Regular"}
                   </span>
               </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.transaction_id || "---"}</td>
-              <td class="px-4 py-3">${statusBadge(client.status || "Waiting")}</td>
+              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.type || "---"}</td>
+              <td class="px-4 py-3">${statusBadge(client.status || transaction?.status)}</td>
               <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.unit || "---"}</td>
               <td class="px-4 py-3">
                   <div class="flex items-center justify-center gap-1.5">
@@ -544,10 +544,7 @@ async function openServeModal(transactionId) {
         return;
       }
 
-      // Get CLIENT ID from transaction
-      const clientId = transaction.clientId;
-
-      console.log("Client ID:", clientId);
+      const clientId = transaction.client_id;
 
       if (!clientId) {
         notify("Client ID not found in transaction.");
@@ -565,34 +562,23 @@ async function openServeModal(transactionId) {
 
       const _client = data.data;
 
-      // Reset form
       resetServeForm();
+      document.getElementById("serveTransactionId").value =
+        transaction?.transaction_id;
 
-      // Store transaction ID
-      document.getElementById("serveTransactionId").value = transaction.id;
-
-      // Store client ID
+      // // Store client ID
       document.getElementById("serveClientId").value = clientId;
 
-      // Display client
+      // // Display client
       document.getElementById("serveClientName").textContent =
         _client.full_name || "---";
 
-      // Display transaction
+      // // Display transaction
       document.getElementById("serveClientTransaction").textContent =
         transaction.type || "---";
 
-      // Staff cannot change transaction type
-      document
-        .getElementById("serveTransactionTypeSection")
-        .classList.add("hidden");
-
-      // Load services
       await loadAvailableServices();
-
-      // Open modal
       showModal("serveModal");
-
       return;
     }
   } catch (error) {
@@ -873,25 +859,10 @@ function updateServeFlow() {
 }
 
 async function saveServeClient() {
-  // =====================================================
-  // GET IDS
-  // =====================================================
-
-  const clientId = document.getElementById("serveQueueNo").value;
-
+  const clientId = document.getElementById("serveClientId").value;
   const transactionId = document.getElementById("serveTransactionId").value;
-
-  // =====================================================
-  // SERVICE
-  // =====================================================
-
   const service = document.getElementById("serveService").value;
-
   const hasService = !!service;
-
-  // =====================================================
-  // TRANSACTION TYPE
-  // =====================================================
 
   const transactionTypeElement = document.getElementById(
     "serveTransactionType",

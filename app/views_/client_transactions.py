@@ -540,7 +540,7 @@ def serve_transaction(request, transaction_id):
 
 
 # ============================================================
-# FORWARD  -> writes to TransactionLog
+# FORWARD  -> writes to TransactionLog ----- Fixed
 # ============================================================
 @login_required
 @require_http_methods(["POST"])
@@ -556,10 +556,11 @@ def forward_client(request, client_id):
 
     if error:
         return error
-    print(client.id)
+
     division_id = payload.get("division_id")
     unit_id = payload.get("unit_id")
-    discription = payload.get("discription")
+    details = payload.get("details")
+    type = payload.get("type")
 
     if not division_id or not unit_id:
         return JsonResponse(
@@ -569,9 +570,10 @@ def forward_client(request, client_id):
     TransactionLog.objects.create(
         client=client,
         action="Forwarded",
-        remarks=discription,
-        forwarded_division=division_id,
-        forwarded_unit=unit_id,
+        details=details,
+        transaction_type=type,
+        forwarded_division_id=division_id,
+        forwarded_unit_id=unit_id,
         # process_owner=request.user,
     )
 
