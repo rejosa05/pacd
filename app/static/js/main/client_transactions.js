@@ -145,7 +145,7 @@ function renderClientTable() {
                       <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${initials(client.full_name)}</span>
                       <div class="min-w-0">
                           <p class="truncate text-sm font-medium text-gray-900 dark:text-white">${client.full_name || "Unknown Client"}</p>
-                          <p class="truncate text-xs text-gray-500 dark:text-gray-400">${client.contact_number || "No contact"}</p>
+                          <p class="truncate text-xs text-gray-500 dark:text-gray-400">${transaction?.type || "New Application"}</p>
                       </div>
                   </div>
               </td>
@@ -251,12 +251,14 @@ function buildActionButtons(client, transaction) {
 
   if (IS_SUB_ADMIN) {
     if (status === "Waiting") {
+      buttons.push(actionBtn("view", client.id));
       buttons.push(actionBtn("edit", client.id));
       buttons.push(actionBtn("serve", client.id));
       buttons.push(actionBtn("forward", client.id));
       buttons.push(actionBtn("skip", client.id));
     } else {
       // Once the status has moved on (Serving / Forwarded / Skipped / Approved)
+      buttons.push(actionBtn("view", client.id));
       buttons.push(actionBtn("repeat", client.id));
       buttons.push(actionBtn("edit", client.id));
     }
@@ -611,14 +613,29 @@ async function saveForwardClient() {
   }
 }
 
-async function openServeModal(transactionId) {
-  console.log("Transaction ID:", transactionId);
-
+async function openServeModal(id) {
   try {
+    if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
+      const clientId = id;
+
+      const res = await fetch(`/api/client/${clientId}`);
+      const data = await res.json();
+
+      const _client = data.data;
+
+      console.log(_client);
+      // resetServeForm();
+      // document.getElementById("serveClientId").value = clientId;
+      document.getElementById("serveClientName").textContent =
+        _client.full_name || "---";
+      document.getElementById("serveQueueBadge").textContent =
+        _client.queue_no || "---";
+    }
+
     if (IS_STAFF) {
       // Find existing transaction
       const transaction = allTransaction.find(
-        (t) => Number(t.transaction_id) === Number(transactionId),
+        (t) => Number(t.transaction_id) === Number(id),
       );
 
       console.log("Found transaction:", transaction);
@@ -646,139 +663,25 @@ async function openServeModal(transactionId) {
 
       const _client = data.data;
 
-      resetServeForm();
       document.getElementById("serveTransactionId").value =
         transaction?.transaction_id;
-
-      // // Store client ID
       document.getElementById("serveClientId").value = clientId;
-
-      // // Display client
+      document.getElementById("serveQueueBadge").textContent =
+        _client.queue_no || "---";
       document.getElementById("serveClientName").textContent =
         _client.full_name || "---";
-
-      // // Display transaction
       document.getElementById("serveClientTransaction").textContent =
         transaction.type || "---";
-
-      await loadAvailableServices();
-      showModal("serveModal");
-      return;
     }
+    resetServeForm();
+    await loadAvailableServices();
+    showModal("serveModal");
+    return;
   } catch (error) {
     console.error("❌ Open serve transaction error:", error);
     notify("Unable to open serve transaction.");
   }
 }
-
-// try {
-//   let clientId;
-//   let transaction = null;
-
-//   if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
-//     clientId = id;
-
-//     const res = await fetch(`api/client/${clientId}`);
-//     const data = await res.json();
-
-//     if (!data.success) {
-//       notify("Unable to load client.");
-//       return;
-//     }
-
-//     const _client = data.data;
-
-//     // Reset first
-//     resetServeForm();
-//     document.getElementById("serveQueueNo").value = clientId;
-//     document.getElementById("serveQueueBadge").textContent =
-//       _client.queue_no || "---";
-
-//     document.getElementById("serveClientName").textContent =
-//       _client.full_name || "---";
-
-//     document.getElementById("serveClientTransaction").textContent = "---";
-
-//     document
-//       .getElementById("serveTransactionTypeSection")
-//       .classList.remove("hidden");
-
-//     document.getElementById("serveServiceSection").classList.add("hidden");
-
-//     await loadAvailableServices();
-
-//     showModal("serveModal");
-
-//     return;
-//   }
-
-//   if (IS_STAFF) {
-//     const transactionId = id;
-
-//     transaction = allTransaction.find(
-//       (t) => Number(t.id) === Number(transactionId),
-//     );
-
-//     if (!transaction) {
-//       notify("Transaction not found.");
-//       return;
-//     }
-
-//     clientId = transaction.client_id;
-
-//     const res = await fetch(`api/client/${clientId}`);
-//     const data = await res.json();
-
-//     if (!data.success) {
-//       notify("Unable to load client.");
-//       return;
-//     }
-
-//     const _client = data.data;
-
-//     // Reset first
-//     resetServeForm();
-
-//     // Store TRANSACTION ID
-//     document.getElementById("serveTransactionId").value = transaction.id;
-
-//     // Store CLIENT ID
-//     document.getElementById("serveQueueNo").value = clientId;
-
-//     // Client information
-//     document.getElementById("serveQueueBadge").textContent =
-//       _client.queue_no || "---";
-
-//     document.getElementById("serveClientName").textContent =
-//       _client.full_name || "---";
-
-//     // Existing transaction type
-//     document.getElementById("serveClientTransaction").textContent =
-//       transaction.type || "---";
-
-//     // Hide transaction type selection
-//     document
-//       .getElementById("serveTransactionTypeSection")
-//       .classList.add("hidden");
-
-//     // IMPORTANT:
-//     // Staff should see the service section
-//     document.getElementById("serveServiceSection").classList.add("hidden");
-
-//     // Load services
-//   await loadAvailableServices();
-
-//   showModal("serveModal");
-
-//   //     return;
-//   //   }
-
-//   //   notify("Invalid user role.");
-//   // } catch (error) {
-//   //   console.error("❌ Open serve modal error:", error);
-//   //   notify("Unable to open serve transaction.");
-//   // }
-// }
 
 /* =====================================================
    SERVE MODAL — CONDITIONAL FLOW
@@ -793,78 +696,52 @@ function resetServeForm() {
     "serveDeficiencyDetailsSection",
     "serveResolvedQuestion",
     "serveCSMSection",
-    "serveCSSSection",
   ].forEach((id) => {
     document.getElementById(id).classList.add("hidden");
   });
 }
 
 function updateServeFlow() {
+  //Is this transaction covered by the Citizen's Charter?
   const charter = document.querySelector(
     'input[name="serveCharter"]:checked',
   )?.value;
-
   const service = document.getElementById("serveService").value;
-
+  //quest sa kung naa deficiency
   const deficiency = document.querySelector(
     'input[name="serveDeficiency"]:checked',
   )?.value;
-
+  //Was the transaction catered / resolved?
   const resolved = document.querySelector(
     'input[name="serveResolved"]:checked',
   )?.value;
 
+  console.log(resolved)
+
   const serviceSection = document.getElementById("serveServiceSection");
-
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
-
   const deficiencyDetails = document.getElementById(
     "serveDeficiencyDetailsSection",
   );
 
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
-
   const csmSection = document.getElementById("serveCSMSection");
 
-  const cssSection = document.getElementById("serveCSSSection");
-
-  // =====================================================
-  // STEP 2: SERVICE
-  // =====================================================
+  // const cssSection = document.getElementById("serveCSSSection");
 
   const isCharter = charter === "Yes";
-
   serviceSection.classList.toggle("hidden", !isCharter);
-
-  // =====================================================
-  // STEP 3: SERVICE / DEFICIENCY
-  // =====================================================
 
   const hasService = charter === "Yes" && !!service;
 
   deficiencyQuestion.classList.toggle("hidden", !hasService);
 
-  if (!hasService) {
-    deficiencyQuestion
-      .querySelectorAll('input[name="serveDeficiency"]')
-      .forEach((radio) => {
-        radio.checked = false;
-      });
-
-    deficiencyDetails.classList.add("hidden");
-  }
-
-  // =====================================================
-  // STEP 4: DEFICIENCY DETAILS
-  // =====================================================
-
   const hasDeficiency = hasService && deficiency === "Yes";
-
   deficiencyDetails.classList.toggle("hidden", !hasDeficiency);
 
-  // =====================================================
-  // STEP 5: RESOLVED
-  // =====================================================
+  // // =====================================================
+  // // STEP 5: RESOLVED
+  // // =====================================================
 
   const noService = charter === "No" || (charter === "Yes" && !service);
 
@@ -874,41 +751,46 @@ function updateServeFlow() {
 
   resolvedQuestion.classList.toggle("hidden", !showResolved);
 
-  // =====================================================
-  // IMPORTANT
-  // Do NOT clear the Resolved radio here.
-  // This keeps Yes/No active.
-  // =====================================================
+  // // =====================================================
+  // // IMPORTANT
+  // // Do NOT clear the Resolved radio here.
+  // // This keeps Yes/No active.
+  // // =====================================================
 
   if (!showResolved) {
     csmSection.classList.add("hidden");
-    cssSection.classList.add("hidden");
     return;
   }
 
-  // =====================================================
-  // STEP 6: CSM / CSS
-  // =====================================================
+  // // =====================================================
+  // // STEP 6: CSM / CSS
+  // // =====================================================
 
   if (resolved === "Yes") {
-    if (hasService) {
-      // Service exists
+    if(hasService) {
       csmSection.classList.remove("hidden");
-      cssSection.classList.add("hidden");
-    } else {
-      // No service
-      csmSection.classList.add("hidden");
-      cssSection.classList.remove("hidden");
     }
-  } else if (resolved === "No") {
-    // Not resolved
-    csmSection.classList.add("hidden");
-    cssSection.classList.remove("hidden");
-  } else {
-    // No resolved answer yet
-    csmSection.classList.add("hidden");
-    cssSection.classList.add("hidden");
   }
+
+  // if (resolved === "Yes") {
+  //   if (hasService) {
+  //     // Service exists
+  //     csmSection.classList.remove("hidden");
+  //     cssSection.classList.add("hidden");
+  //   } else {
+  //     // No service
+  //     csmSection.classList.add("hidden");
+  //     cssSection.classList.remove("hidden");
+  //   }
+  // } else if (resolved === "No") {
+  //   // Not resolved
+  //   csmSection.classList.add("hidden");
+  //   cssSection.classList.remove("hidden");
+  // } else {
+  //   // No resolved answer yet
+  //   csmSection.classList.add("hidden");
+  //   cssSection.classList.add("hidden");
+  // }
 }
 
 async function saveServeClient() {

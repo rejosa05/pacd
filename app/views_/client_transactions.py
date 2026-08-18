@@ -351,7 +351,7 @@ def serve_client(request, client_id):
 
 @login_required
 @require_http_methods(["POST"])
-def serve_transaction(request, transaction_id):
+def serve_transaction(request, client_id):
 
     profile = request.user.account_profile
 
@@ -564,6 +564,7 @@ def forward_client(request, client_id):
         client=client,
         action="Forwarded",
         details=details,
+        transaction_status="Forwarded",
         transaction_type=type,
         forwarded_division_id=division_id,
         forwarded_unit_id=unit_id,
