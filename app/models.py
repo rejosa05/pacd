@@ -129,11 +129,22 @@ def set_queue_no(sender, instance, **kwargs):
 
 
 class ServicesDetails(models.Model):
+    CATEGORY_CHOICES = [
+        ("External", "External"),
+        ("Internal", "Internal"),
+    ]
+
+    CLASSIFICATION_CHOICES = [
+            ("Simple", "Simple"),
+            ("Complex", "Complex"),
+            ("Highly Technical", "Highly Technical")
+        ]
+
     service_name = models.TextField()
-    category = models.CharField(max_length=100, null=True, blank=True)
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
-    classification = models.CharField(max_length=100, null=True, blank=True)
+    classification = models.CharField(max_length=100, choices=CLASSIFICATION_CHOICES)
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
     processing_time = models.DurationField(
         default=timedelta(days=1), null=True, blank=True
@@ -163,7 +174,7 @@ class TransactionLog(models.Model):
         ("Skipped", "Skipped"),
         ("Waiting", "Waiting"),
     ]
-    
+
     CSM_CSS_CHOICES = [("CSM", "CSM"), ("CSS", "CSS")]
     YES_NO_CHOICES = [("Yes", "Yes"), ("No", "No")]
     uid = models.UUIDField(default=uuid.uuid4, editable=False, null=True, blank=True)

@@ -188,7 +188,6 @@ const ACTION_ICONS = {
   skip: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>',
 };
 
-
 const ACTION_STYLES = {
   view: "hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300",
   edit: "hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-900/30 dark:hover:text-amber-300",
@@ -235,7 +234,7 @@ function actionBtn(type, clientId) {
 
 function buildActionButtons(client, transaction) {
   const status = transaction?.status || "Waiting";
-  console.log(status)
+  console.log(status);
   const buttons = []; // View is always visible, all roles, all statuses
 
   if (IS_SUPER_ADMIN) {
@@ -269,7 +268,7 @@ function buildActionButtons(client, transaction) {
       buttons.push(actionBtn("serving", transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));
     } else if (status === "Serving") {
-      buttons.push(actionBtn("serve",  transaction?.transaction_id));
+      buttons.push(actionBtn("serve", transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));
     }
     // Any other status (Waiting / Skipped / Approved) -> View only
@@ -423,11 +422,11 @@ async function openServingModal(transactionId) {
   const data = await res.json();
 
   const _client = data.data;
-  document.getElementById("servingClientId").value = clientId,
-  document.getElementById("servingTransactionId").value = transactionId,
-  document.getElementById("servingClientFullName").textContent = initials(
-    _client.full_name,
-  );
+  ((document.getElementById("servingClientId").value = clientId),
+    (document.getElementById("servingTransactionId").value = transactionId),
+    (document.getElementById("servingClientFullName").textContent = initials(
+      _client.full_name,
+    )));
   document.getElementById("servingClientFullName").textContent =
     _client.full_name || "Unknown Client";
 
@@ -440,20 +439,24 @@ async function openServingModal(transactionId) {
   );
   document.getElementById("servingClientTransaction").textContent =
     transaction?.type || "---";
-  document.getElementById("servingGender").textContent = _client.gender || "---";
+  document.getElementById("servingGender").textContent =
+    _client.gender || "---";
   document.getElementById("servingOrg").textContent =
     _client.organization || "Personal";
-  document.getElementById("servingAddress").textContent = _client.address || "---";
-  document.getElementById("servingDetails").textContent = transaction?.details || "---";
+  document.getElementById("servingAddress").textContent =
+    _client.address || "---";
+  document.getElementById("servingDetails").textContent =
+    transaction?.details || "---";
 
-  console.log(_client.status)
+  console.log(_client.status);
   showModal("servingModal");
   return;
 }
 
+// SERVING fixed
 async function saveServingClient() {
   const transactionId = document.getElementById("servingTransactionId").value;
-  console.log(transactionId)
+  console.log(transactionId);
   const clientId = document.getElementById("servingClientId").value;
   try {
     const res = await fetch(`api/client/${clientId}/serving/`, {
@@ -478,7 +481,6 @@ async function saveServingClient() {
     notify("Unable to serving client. Please try again.");
   }
 }
-
 
 async function openForwardModal(clientId) {
   const res = await fetch(`api/client/${clientId}`);
@@ -828,7 +830,6 @@ function updateServeFlow() {
 
   // =====================================================
   // STEP 2: SERVICE
-  // Only show service selection if Charter = YES
   // =====================================================
 
   const isCharter = charter === "Yes";
@@ -837,22 +838,12 @@ function updateServeFlow() {
 
   // =====================================================
   // STEP 3: SERVICE / DEFICIENCY
-  //
-  // Charter YES + Service selected
-  //     → show deficiency question
-  //
-  // Charter YES + Service = NO / empty
-  //     → skip deficiency
-  //
-  // Charter NO
-  //     → skip service and deficiency
   // =====================================================
 
   const hasService = charter === "Yes" && !!service;
 
   deficiencyQuestion.classList.toggle("hidden", !hasService);
 
-  // If there is no service, clear deficiency
   if (!hasService) {
     deficiencyQuestion
       .querySelectorAll('input[name="serveDeficiency"]')
@@ -865,25 +856,14 @@ function updateServeFlow() {
 
   // =====================================================
   // STEP 4: DEFICIENCY DETAILS
-  // Only show if Service exists AND Deficiency = YES
   // =====================================================
 
-  deficiencyDetails.classList.toggle(
-    "hidden",
-    !(hasService && deficiency === "Yes"),
-  );
+  const hasDeficiency = hasService && deficiency === "Yes";
+
+  deficiencyDetails.classList.toggle("hidden", !hasDeficiency);
 
   // =====================================================
   // STEP 5: RESOLVED
-  //
-  // Show if:
-  //
-  // 1. Charter = NO
-  // OR
-  // 2. Charter = YES but NO service selected
-  // OR
-  // 3. Charter = YES + service selected
-  //    + deficiency answered
   // =====================================================
 
   const noService = charter === "No" || (charter === "Yes" && !service);
@@ -894,29 +874,20 @@ function updateServeFlow() {
 
   resolvedQuestion.classList.toggle("hidden", !showResolved);
 
-  // Clear resolved when it should not be visible
-  if (!showResolved) {
-    resolvedQuestion
-      .querySelectorAll('input[name="serveResolved"]')
-      .forEach((radio) => {
-        radio.checked = false;
-      });
+  // =====================================================
+  // IMPORTANT
+  // Do NOT clear the Resolved radio here.
+  // This keeps Yes/No active.
+  // =====================================================
 
+  if (!showResolved) {
     csmSection.classList.add("hidden");
     cssSection.classList.add("hidden");
-
     return;
   }
 
   // =====================================================
   // STEP 6: CSM / CSS
-  //
-  // Resolved = YES
-  //     → CSM if service exists
-  //     → CSS if NO service
-  //
-  // Resolved = NO
-  //     → CSS
   // =====================================================
 
   if (resolved === "Yes") {
@@ -930,11 +901,11 @@ function updateServeFlow() {
       cssSection.classList.remove("hidden");
     }
   } else if (resolved === "No") {
-    // Not resolved → CSS
+    // Not resolved
     csmSection.classList.add("hidden");
     cssSection.classList.remove("hidden");
   } else {
-    // No answer yet
+    // No resolved answer yet
     csmSection.classList.add("hidden");
     cssSection.classList.add("hidden");
   }
@@ -960,13 +931,9 @@ async function saveServeClient() {
 
   const payload = {
     transaction_type: transactionType,
-
-    description: document.getElementById("serveDescription").value || null,
-
     citizen_charter:
       document.querySelector('input[name="serveCharter"]:checked')?.value ||
       null,
-
     service: service || null,
 
     has_deficiency:
@@ -982,14 +949,6 @@ async function saveServeClient() {
 
     deficiency_status: hasService
       ? document.getElementById("serveDeficiencyStatus")?.value || null
-      : null,
-
-    csm_rating: hasService
-      ? document.getElementById("serveCSMRating")?.value || null
-      : null,
-
-    css_rating: !hasService
-      ? document.getElementById("serveCSSRating")?.value || null
       : null,
   };
 
