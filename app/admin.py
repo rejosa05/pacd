@@ -51,7 +51,7 @@ class ClientDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(TransactionLog)
 class TransactionHistorys(admin.ModelAdmin):
-    list_display = ('uid', 'client', 'action', 'service', 'resolved', 'details')
+    list_display = ('uid', 'client', 'transaction_status', 'service', 'resolved', 'details')
     search_fields = ('client', 'action', 'created_at')
     list_filter = ('forwarded_division', 'forwarded_unit')
     ordering = ('-created_at',)

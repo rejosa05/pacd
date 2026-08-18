@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -56,15 +56,9 @@ def clients_list_api(request):
         client_ids = transactions.values_list("client_id", flat=True)
 
         clients = clients.filter(id__in=client_ids)
-    # super_admin and sub-admin
-    # → no filter, therefore ALL transactions
 
     client_data = []
     transaction_data = []
-
-    # --------------------------------------------------
-    # CLIENT DATA
-    # --------------------------------------------------
 
     for client in clients:
 
@@ -90,10 +84,6 @@ def clients_list_api(request):
             }
         )
 
-    # --------------------------------------------------
-    # TRANSACTION DATA
-    # --------------------------------------------------
-
     for transaction in transactions:
 
         transaction_data.append(
@@ -102,6 +92,7 @@ def clients_list_api(request):
                 "client_id": transaction.client_id,
                 "action": transaction.action or "",
                 "details": transaction.details or "",
+                "status": transaction.transaction_status or "",
                 "type": transaction.transaction_type or "",
                 "unit": (
                     transaction.forwarded_unit.name
@@ -154,6 +145,7 @@ def _serialize_profile(profile):
         "contact": profile.client_contact,
         "address": profile.client_address,
         "gender": profile.client_gender,
+        "status": profile.client_status,
     }
 
 
@@ -595,7 +587,74 @@ def forward_client(request, client_id):
 
 
 # ============================================================
-# SKIP  -> writes to TransactionLog
+# SERVING  -> fixed
+# ============================================================
+@login_required
+@require_http_methods(["POST"])
+def serving_client(request, client_id):
+    try:
+        client = ClientDetails.objects.get(pk=client_id)
+    except ClientDetails.DoesNotExist:
+        return JsonResponse(
+            {"success": False, "error": "Wala nakit-i ang client."},
+            status=404,
+        )
+
+    payload, error = _parse_json(request)
+    if error:
+        return error
+
+    transaction_id = payload.get("transactionId")
+
+    if not transaction_id:
+        return JsonResponse(
+            {"success": False, "error": "Transaction ID is required."},
+            status=400,
+        )
+
+    try:
+        transaction = TransactionLog.objects.get(
+            id=transaction_id,
+            client_id=client.id,
+        )
+    except TransactionLog.DoesNotExist:
+        return JsonResponse(
+            {"success": False, "error": "Transaction not found for this client."},
+            status=404,
+        )
+
+    transaction.action = "Serving"
+    transaction.transaction_status = "Serving"
+    transaction.process_owner = request.user
+
+    transaction.save()
+
+    client.client_status = "Serving"
+    client.save(update_fields=["client_status"])
+
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        "queue_display",
+        {
+            "type": "queue_update",
+            "event": "QUEUE_UPDATED",
+            "queue_number": client.id,
+        },
+    )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Transaction updated successfully.",
+            "client_id": client.id,
+            "transaction_id": transaction.id,
+        }
+    )
+
+
+# ============================================================
+# SKIP  -> writes to TransactionLog - partial fixed
 # ============================================================
 @login_required
 @require_http_methods(["POST"])

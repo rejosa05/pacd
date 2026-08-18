@@ -362,6 +362,7 @@
         </div>
     </div>
 </div>
+
 <!-- View Client Modal -->
 <div id="viewModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
@@ -415,10 +416,60 @@
                 <ol id="viewHistoryList" class="relative border-s border-gray-200 dark:border-gray-700 ms-2 space-y-4"></ol>
             </div>
         </div>
-        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-            <button type="button" onclick="hideModal('viewModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+    </div>
+</div>
+
+<!-- Serving transactions -->
+<div id="servingModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+            <h3 id="forwardModalTitle" class="text-lg font-bold text-gray-900 dark:text-white">Serving transaction</h3>
+            <button type="button" onclick="hideModal('servingModal')"
+                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
+        </div>
+        <form id="servingForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveServingClient();">
+            <input type="hidden" id="servingClientId">
+            <input type="hidden" id="servingTransactionId">
+            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
+                <span id="servingQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
+                <div class="min-w-0">
+                    <p id="servingClientFullName" class="text-sm font-medium text-gray-900 dark:text-white truncate"></p>
+                    <p id="servingClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
+                </div>
+            </div>
+            <div class="px-6 py-5 space-y-4">
+            <dl class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Lane</dt>
+                    <dd id="servingLane" class="mt-1"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Status</dt>
+                    <dd id="servingStatus" class="mt-1"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Gender</dt>
+                    <dd id="servingGender" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500 dark:text-gray-400">Organization</dt>
+                    <dd id="servingOrg" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div class="col-span-2">
+                    <dt class="text-gray-500 dark:text-gray-400">Address</dt>
+                    <dd id="servingAddress" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+                <div class="col-span-2">
+                    <dt class="text-gray-500 dark:text-gray-400">Transaction Details</dt>
+                    <dd id="servingDetails" class="font-medium text-gray-900 dark:text-white mt-0.5"></dd>
+                </div>
+            </dl>
+        </div>
+        <div class="flex gap-3 pt-1">
+            <button type="button" onclick="hideModal('servingModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
             <button type="submit" class="flex-1 py-2.5 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-800">Serving</button>
         </div>
+        </form>
     </div>
 </div>
 

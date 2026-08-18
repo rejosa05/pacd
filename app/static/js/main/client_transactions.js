@@ -155,11 +155,11 @@ function renderClientTable() {
                   </span>
               </td>
               <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.type || "---"}</td>
-              <td class="px-4 py-3">${statusBadge(client.status || transaction?.status)}</td>
+              <td class="px-4 py-3">${statusBadge(transaction?.status || "Waiting")}</td>
               <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.unit || "---"}</td>
               <td class="px-4 py-3">
                   <div class="flex items-center justify-center gap-1.5">
-                      ${buildActionButtons(client, transaction?.transaction_id)}
+                      ${buildActionButtons(client, transaction)}
                   </div>
               </td>
           </tr>
@@ -177,9 +177,9 @@ function renderClientTable() {
 const ACTION_ICONS = {
   view: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
   edit: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/><circle cx="12" cy="12" r="2.25"/></svg>',
-  serve:
-    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
   serving:
+    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m8.032 12 1.984 1.984 4.96-4.96m4.55 5.272.893-.893a1.984 1.984 0 0 0 0-2.806l-.893-.893a1.984 1.984 0 0 1-.581-1.403V7.04a1.984 1.984 0 0 0-1.984-1.984h-1.262a1.983 1.983 0 0 1-1.403-.581l-.893-.893a1.984 1.984 0 0 0-2.806 0l-.893.893a1.984 1.984 0 0 1-1.403.581H7.04A1.984 1.984 0 0 0 5.055 7.04v1.262c0 .527-.209 1.031-.581 1.403l-.893.893a1.984 1.984 0 0 0 0 2.806l.893.893c.372.372.581.876.581 1.403v1.262a1.984 1.984 0 0 0 1.984 1.984h1.262c.527 0 1.031.209 1.403.581l.893.893a1.984 1.984 0 0 0 2.806 0l.893-.893a1.985 1.985 0 0 1 1.403-.581h1.262a1.984 1.984 0 0 0 1.984-1.984V15.7c0-.527.209-1.031.581-1.403Z"/></svg>',
+  serve:
     '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
   forward:
     '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>',
@@ -187,6 +187,7 @@ const ACTION_ICONS = {
     '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>',
   skip: '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>',
 };
+
 
 const ACTION_STYLES = {
   view: "hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300",
@@ -232,8 +233,9 @@ function actionBtn(type, clientId) {
    See the ROLE-BASED ACCESS block above for the exact matrix.
 ===================================================== */
 
-function buildActionButtons(client, transaction_id) {
-  const status = client.status || "Waiting";
+function buildActionButtons(client, transaction) {
+  const status = transaction?.status || "Waiting";
+  console.log(status)
   const buttons = []; // View is always visible, all roles, all statuses
 
   if (IS_SUPER_ADMIN) {
@@ -264,10 +266,10 @@ function buildActionButtons(client, transaction_id) {
 
   if (IS_STAFF) {
     if (status === "Forwarded") {
-      buttons.push(actionBtn("serving", transaction_id));
+      buttons.push(actionBtn("serving", transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));
-    } else {
-      buttons.push(actionBtn("serve", transaction_id));
+    } else if (status === "Serving") {
+      buttons.push(actionBtn("serve",  transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));
     }
     // Any other status (Waiting / Skipped / Approved) -> View only
@@ -421,30 +423,62 @@ async function openServingModal(transactionId) {
   const data = await res.json();
 
   const _client = data.data;
-  document.getElementById("viewAvatar").textContent = initials(
+  document.getElementById("servingClientId").value = clientId,
+  document.getElementById("servingTransactionId").value = transactionId,
+  document.getElementById("servingClientFullName").textContent = initials(
     _client.full_name,
   );
-  document.getElementById("viewFullName").textContent =
+  document.getElementById("servingClientFullName").textContent =
     _client.full_name || "Unknown Client";
-  document.getElementById("viewContact").textContent =
-    _client.contact || "No contact";
-  document.getElementById("viewQueueNo").textContent =
+
+  document.getElementById("servingQueueBadge").textContent =
     _client.queue_no || "---";
-  document.getElementById("viewLane").innerHTML =
+  document.getElementById("servingLane").innerHTML =
     `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${_client.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">${_client.lane || "Regular"}</span>`;
-  document.getElementById("viewStatus").innerHTML = statusBadge(
+  document.getElementById("servingStatus").innerHTML = statusBadge(
     _client.status || "Waiting",
   );
-  document.getElementById("viewTransaction").textContent =
+  document.getElementById("servingClientTransaction").textContent =
     transaction?.type || "---";
-  document.getElementById("viewGender").textContent = _client.gender || "---";
-  document.getElementById("viewOffice").textContent =
-    _client.organization || "---";
-  document.getElementById("viewAddress").textContent = _client.address || "---";
+  document.getElementById("servingGender").textContent = _client.gender || "---";
+  document.getElementById("servingOrg").textContent =
+    _client.organization || "Personal";
+  document.getElementById("servingAddress").textContent = _client.address || "---";
+  document.getElementById("servingDetails").textContent = transaction?.details || "---";
 
-  showModal("viewModal");
+  console.log(_client.status)
+  showModal("servingModal");
   return;
 }
+
+async function saveServingClient() {
+  const transactionId = document.getElementById("servingTransactionId").value;
+  console.log(transactionId)
+  const clientId = document.getElementById("servingClientId").value;
+  try {
+    const res = await fetch(`api/client/${clientId}/serving/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+      body: JSON.stringify({
+        transactionId: transactionId,
+      }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Serving failed");
+
+    hideModal("servingModal");
+    notify(data.message || "Client Serving.");
+    loadClients();
+  } catch (error) {
+    console.error("❌ Serving error:", error);
+    notify("Unable to serving client. Please try again.");
+  }
+}
+
 
 async function openForwardModal(clientId) {
   const res = await fetch(`api/client/${clientId}`);
@@ -575,9 +609,6 @@ async function saveForwardClient() {
   }
 }
 
-async function saveServingClient() {
-  
-}
 async function openServeModal(transactionId) {
   console.log("Transaction ID:", transactionId);
 
