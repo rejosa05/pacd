@@ -37,31 +37,75 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
         )
 
 
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+import json
+
+
 class QueueConsumer(AsyncWebsocketConsumer):
 
     GROUP_NAME = "queue_display"
 
     async def connect(self):
 
-        # Join the common queue group
+        self.user = self.scope["user"]
+
         await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
 
         await self.accept()
 
-        print("✅ WebSocket connected:", self.channel_name)
+        print("✅ WebSocket connected:", self.channel_name, self.user)
 
     async def disconnect(self, close_code):
 
-        # Leave the common queue group
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
         print("❌ WebSocket disconnected:", self.channel_name)
 
     async def queue_update(self, event):
-        """
-        Receives events from channel_layer.group_send()
-        and sends them to the browser.
-        """
+
+        # ==========================================
+        # GET USER PROFILE
+        # ==========================================
+
+        profile = await self.get_user_profile()
+
+        if not profile:
+            return
+
+        role = (profile.role or "").lower()
+
+        # ==========================================
+        # EVENT CLIENT
+        # ==========================================
+
+        client = event.get("client")
+
+        if not client:
+            return
+
+        # ==========================================
+        # STAFF FILTER
+        # ==========================================
+
+        if role == "staff":
+
+            forwarded_unit = event.get("forwarded_unit")
+            forwarded_division = event.get("forwarded_division")
+
+            staff_unit = profile.unit.name if profile.unit else None
+
+            staff_division = profile.division.name if profile.division else None
+
+            # Staff only receives matching transactions
+            if forwarded_unit != staff_unit or forwarded_division != staff_division:
+                print("🚫 WebSocket blocked for STAFF:", client.get("full_name"))
+
+                return
+
+        # ==========================================
+        # SEND TO BROWSER
+        # ==========================================
 
         await self.send(
             text_data=json.dumps(
@@ -70,10 +114,21 @@ class QueueConsumer(AsyncWebsocketConsumer):
                     "queue_number": event.get("queue_number"),
                     "lane": event.get("lane"),
                     "status": event.get("status"),
-                    "client": event.get("client"),
+                    "client": client,
+                    "forwarded_unit": event.get("forwarded_unit"),
+                    "forwarded_division": event.get("forwarded_division"),
                 }
             )
         )
+
+    @database_sync_to_async
+    def get_user_profile(self):
+
+        try:
+            return self.user.account_profile
+
+        except Exception:
+            return None
 
 
 # class QueueConsumer(AsyncWebsocketConsumer):
@@ -82,6 +137,7 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
 #     async def connect(self):
 
+#         # Join the common queue group
 #         await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
 
 #         await self.accept()
@@ -90,18 +146,25 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
 #     async def disconnect(self, close_code):
 
+#         # Leave the common queue group
 #         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
-#         print("❌ WebSocket disconnected")
+#         print("❌ WebSocket disconnected:", self.channel_name)
 
 #     async def queue_update(self, event):
+#         """
+#         Receives events from channel_layer.group_send()
+#         and sends them to the browser.
+#         """
 
 #         await self.send(
 #             text_data=json.dumps(
 #                 {
-#                     "action": "queue_update",
 #                     "event": event.get("event"),
-#                     "client": event.get("client", {}),
+#                     "queue_number": event.get("queue_number"),
+#                     "lane": event.get("lane"),
+#                     "status": event.get("status"),
+#                     "client": event.get("client"),
 #                 }
 #             )
 #         )

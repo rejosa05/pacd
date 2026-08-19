@@ -218,18 +218,6 @@
                     <p id="serveClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
                 </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Type <span class="text-gray-400 font-normal"></span></label>
-                <select id="serveTransactionType" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                    <option>Submit Documents</option>
-                    <option>Request</option>
-                    <option>Claiming of Documents</option>
-                    <option>Inquiry</option>
-                    <option>Other</option>
-                </select>
-            </div>
- 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Details <span class="text-gray-400 font-normal">(optional)</span></label>
                 <textarea id="serveDetails" rows="2" placeholder="Notes about this transaction..."
@@ -250,7 +238,18 @@
                     </label>
                 </div>
             </div>
- 
+            
+            <div id="serveTypeSelection" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Type <span class="text-gray-400 font-normal"></span></label>
+                <select id="serveTransactionType" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option>Submit Documents</option>
+                    <option>Request</option>
+                    <option>Claiming of Documents</option>
+                    <option>Inquiry</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            
             <!-- Services (shown if Charter = Yes) — options are loaded dynamically from
                  api/services/available/, scoped to the logged-in user's division/unit. -->
             <div id="serveServiceSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">

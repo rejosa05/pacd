@@ -308,8 +308,8 @@ function notify(message) {
 // ---------- View ----------
 async function openViewModal(clientId) {
   const transaction = allTransaction.find(
-        (t) => Number(t.client_id) === Number(clientId),
-      );
+    (t) => Number(t.client_id) === Number(clientId),
+  );
   const res = await fetch(`api/client/${clientId}`);
   const data = await res.json();
   if (!data.success) return;
@@ -608,8 +608,9 @@ async function saveForwardClient() {
     if (!data.success) throw new Error(data.error || "Forward failed");
 
     hideModal("forwardModal");
-    notify(data.message || "Client forwarded.");
+    
     loadClients();
+    notify(data.message || "Client forwarded.");
   } catch (error) {
     console.error("❌ Forward error:", error);
     notify("Unable to forward client. Please try again.");
@@ -628,6 +629,7 @@ async function openServeModal(id) {
 
       console.log(_client);
       // resetServeForm();
+
       document.getElementById("serveClientId").value = clientId;
       document.getElementById("serveClientName").textContent =
         _client.full_name || "---";
@@ -665,7 +667,6 @@ async function openServeModal(id) {
       }
 
       const _client = data.data;
-
       document.getElementById("serveTransactionId").value =
         transaction?.transaction_id;
       document.getElementById("serveClientId").value = clientId;
@@ -699,6 +700,7 @@ function resetServeForm() {
     "serveDeficiencyDetailsSection",
     "serveResolvedQuestion",
     "serveRemarksSection",
+    "serveTypeSelection",
     "serveButton",
     "CSMForm",
     "CSSForm",
@@ -725,6 +727,7 @@ function updateServeFlow() {
   const deficiencyDetails = document.getElementById(
     "serveDeficiencyDetailsSection",
   );
+  const type = document.getElementById("serveClientTransaction").value;
   const isService = document.getElementById("serveService").value;
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
   const remarks = document.getElementById("serveRemarksSection");
@@ -733,8 +736,11 @@ function updateServeFlow() {
   const csm = document.getElementById("CSMForm");
   const css = document.getElementById("CSSForm");
   const form = document.querySelector('input[name="serveForm"]:checked')?.value;
+  const typeSelection = document.getElementById("serveTypeSelection");
+  
 
   if (charter === "Yes") {
+    typeSelection.classList.remove("hidden");
     serveBtn.classList.remove("hidden");
     serviceSection.classList.remove("hidden");
     if (isService) {
@@ -775,6 +781,7 @@ function updateServeFlow() {
 
 async function saveServeClient() {
   const clientId = document.getElementById("serveClientId").value;
+  const transactionId = document.getElementById("serveTransactionId").value;
   const details = document.getElementById("serveDetails").value;
   const type = document.getElementById("serveTransactionType").value;
   const remarks = document.getElementById("serveRemarks").value;
@@ -784,9 +791,12 @@ async function saveServeClient() {
   const deficiency =
     document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
     null;
-  const deficiencyDetails = document.getElementById("serveDeficiencyDetails").value;
+  const deficiencyDetails = document.getElementById(
+    "serveDeficiencyDetails",
+  ).value;
   const resolved =
-    document.querySelector('input[name="serveResolved"]:checked')?.value || null;
+    document.querySelector('input[name="serveResolved"]:checked')?.value ||
+    null;
   const surveyForm =
     document.querySelector('input[name="serveForm"]:checked')?.value || null;
   console.log(clientId);
@@ -800,6 +810,7 @@ async function saveServeClient() {
         "X-CSRFToken": CSRF_TOKEN,
       },
       body: JSON.stringify({
+        transactionId: transactionId,
         type: type,
         details: details,
         remarks: remarks,

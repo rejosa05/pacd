@@ -25,7 +25,6 @@ def client_transaction_page(request):
 
     return render(request, "pages/client_transaction.html")
 
-
 @login_required
 def clients_list_api(request):
     """
@@ -34,10 +33,11 @@ def clients_list_api(request):
 
     today = timezone.localdate()
     profile = request.user.account_profile
+    role = profile.role.lower()
 
-    clients = ClientDetails.objects.filter(date_created__date=today).order_by(
-        "-client_queue_no", "client_lane_type", "date_created"
-    )
+    # =========================================================
+    # BASE TRANSACTIONS
+    # =========================================================
 
     transactions = TransactionLog.objects.select_related(
         "forwarded_unit",
@@ -46,19 +46,68 @@ def clients_list_api(request):
         "process_owner",
     ).filter(created_at__date=today)
 
-    if profile.role.lower() == "staff":
+    # =========================================================
+    # STAFF
+    # =========================================================
 
-        transactions = transactions.filter(
-            forwarded_division=profile.division,
-            forwarded_unit=profile.unit,
+    if role == "staff":
+
+        # A staff account with no division/unit assigned yet must not see
+        # anything — otherwise Django's ORM turns
+        # filter(forwarded_division=profile.division) into
+        # "forwarded_division_id IS NULL" when profile.division is None,
+        # which then matches every client that hasn't been forwarded to
+        # anyone yet (their forwarded_division/forwarded_unit are also
+        # still NULL right after registration). That mismatch is what was
+        # letting freshly added clients show up for STAFF.
+        if not profile.division_id or not profile.unit_id:
+            transactions = transactions.none()
+            clients = ClientDetails.objects.none()
+        else:
+            # STAFF ONLY sees transactions actually forwarded
+            # to their own division + unit — explicitly excluding
+            # not-yet-forwarded (NULL) transactions guards against the
+            # NULL == NULL case above even if profile.division/unit is set.
+            transactions = transactions.filter(
+                forwarded_division=profile.division,
+                forwarded_unit=profile.unit,
+            ).exclude(
+                forwarded_division__isnull=True,
+            ).exclude(
+                forwarded_unit__isnull=True,
+            )
+
+            # Only clients belonging to those transactions
+            client_ids = transactions.values_list("client_id", flat=True)
+
+            clients = ClientDetails.objects.filter(
+                date_created__date=today,
+                id__in=client_ids,
+            ).order_by(
+                "-client_queue_no",
+                "client_lane_type",
+                "date_created",
+            )
+
+    # =========================================================
+    # SUPER ADMIN / SUB ADMIN
+    # =========================================================
+
+    else:
+
+        # SUPER_ADMIN and SUB_ADMIN
+        # can see all today's clients
+        clients = ClientDetails.objects.filter(date_created__date=today).order_by(
+            "-client_queue_no",
+            "client_lane_type",
+            "date_created",
         )
 
-        client_ids = transactions.values_list("client_id", flat=True)
-
-        clients = clients.filter(id__in=client_ids)
+    # =========================================================
+    # CLIENT DATA
+    # =========================================================
 
     client_data = []
-    transaction_data = []
 
     for client in clients:
 
@@ -75,14 +124,20 @@ def clients_list_api(request):
                     f"{client.client_firstname} " f"{client.client_lastname}"
                 ).strip(),
                 "contact_number": client.client_contact or "",
-                "lane": (client.client_lane_type or "Regular"),
-                "status": (client.client_status or "Waiting"),
+                "lane": client.client_lane_type or "Regular",
+                "status": client.client_status or "Waiting",
                 "organization": client.client_org or "",
                 "address": client.client_address or "",
                 "gender": client.client_gender or "",
                 "date_created": client.date_created.strftime("%Y-%m-%d %I:%M %p"),
             }
         )
+
+    # =========================================================
+    # TRANSACTION DATA
+    # =========================================================
+
+    transaction_data = []
 
     for transaction in transactions:
 
@@ -120,6 +175,153 @@ def clients_list_api(request):
             "transactions": transaction_data,
         }
     )
+# @login_required
+# def clients_list_api(request):
+#     """
+#     Return today's clients and transactions based on user role.
+#     """
+
+#     today = timezone.localdate()
+#     profile = request.user.account_profile
+#     role = profile.role.lower()
+
+#     # =========================================================
+#     # BASE TRANSACTIONS
+#     # =========================================================
+
+#     transactions = TransactionLog.objects.select_related(
+#         "forwarded_unit",
+#         "forwarded_division",
+#         "client",
+#         "process_owner",
+#     ).filter(
+#         created_at__date=today
+#     )
+
+
+#     # =========================================================
+#     # STAFF
+#     # =========================================================
+
+#     if role == "staff":
+
+#         # STAFF ONLY sees transactions forwarded
+#         # to their own division + unit
+#         transactions = transactions.filter(
+#             forwarded_division=profile.division,
+#             forwarded_unit=profile.unit,
+#         )
+
+#         # Only clients belonging to those transactions
+#         client_ids = transactions.values_list(
+#             "client_id",
+#             flat=True
+#         )
+
+#         clients = ClientDetails.objects.filter(
+#             date_created__date=today,
+#             id__in=client_ids,
+#         ).order_by(
+#             "-client_queue_no",
+#             "client_lane_type",
+#             "date_created",
+#         )
+
+
+#     # =========================================================
+#     # SUPER ADMIN / SUB ADMIN
+#     # =========================================================
+
+#     else:
+
+#         # SUPER_ADMIN and SUB_ADMIN
+#         # can see all today's clients
+#         clients = ClientDetails.objects.filter(
+#             date_created__date=today
+#         ).order_by(
+#             "-client_queue_no",
+#             "client_lane_type",
+#             "date_created",
+#         )
+
+
+#     # =========================================================
+#     # CLIENT DATA
+#     # =========================================================
+
+#     client_data = []
+
+#     for client in clients:
+
+#         if client.client_lane_type == "Priority":
+#             queue_number = f"P-{client.client_queue_no:03d}"
+#         else:
+#             queue_number = f"R-{client.client_queue_no:03d}"
+
+#         client_data.append(
+#             {
+#                 "id": client.id,
+#                 "queue_no": queue_number,
+#                 "full_name": (
+#                     f"{client.client_firstname} "
+#                     f"{client.client_lastname}"
+#                 ).strip(),
+#                 "contact_number": client.client_contact or "",
+#                 "lane": client.client_lane_type or "Regular",
+#                 "status": client.client_status or "Waiting",
+#                 "organization": client.client_org or "",
+#                 "address": client.client_address or "",
+#                 "gender": client.client_gender or "",
+#                 "date_created": client.date_created.strftime(
+#                     "%Y-%m-%d %I:%M %p"
+#                 ),
+#             }
+#         )
+
+
+#     # =========================================================
+#     # TRANSACTION DATA
+#     # =========================================================
+
+#     transaction_data = []
+
+#     for transaction in transactions:
+
+#         transaction_data.append(
+#             {
+#                 "transaction_id": transaction.id,
+#                 "client_id": transaction.client_id,
+#                 "action": transaction.action or "",
+#                 "details": transaction.details or "",
+#                 "status": transaction.transaction_status or "",
+#                 "type": transaction.transaction_type or "",
+#                 "unit": (
+#                     transaction.forwarded_unit.name
+#                     if transaction.forwarded_unit
+#                     else ""
+#                 ),
+#                 "division": (
+#                     transaction.forwarded_division.name
+#                     if transaction.forwarded_division
+#                     else ""
+#                 ),
+#                 "remarks": transaction.remarks or "",
+#                 "process_owner": (
+#                     transaction.process_owner.username
+#                     if transaction.process_owner
+#                     else ""
+#                 ),
+#             }
+#         )
+
+
+#     return JsonResponse(
+#         {
+#             "success": True,
+#             "clients": client_data,
+#             "transactions": transaction_data,
+#         }
+#     )
 
 
 def _serialize_profile(profile):
@@ -210,6 +412,9 @@ def update_client(request, client_id):
 @login_required
 @require_http_methods(["POST"])
 def serve_client(request, client_id):
+
+    profile = request.user.account_profile
+
     try:
         client = ClientDetails.objects.get(pk=client_id)
     except ClientDetails.DoesNotExist:
@@ -221,7 +426,8 @@ def serve_client(request, client_id):
 
     if error:
         return error
-
+    
+    transactionId = payload.get("transactionId")
     type = payload.get("type")
     details = payload.get("details")
     remarks = payload.get("remarks")
@@ -232,10 +438,6 @@ def serve_client(request, client_id):
     resolved = payload.get("resolved")
     form = payload.get("form")
     profile = request.user.account_profile
-
-    print(profile.division, profile.unit)
-
-    print(charter, service, form, deficiency, resolved, details, remarks)
 
     TransactionLog.objects.create(
         client=client,
@@ -255,14 +457,42 @@ def serve_client(request, client_id):
         process_owner=request.user,
     )
 
-    # =====================================================
-    # CLIENT STATUS
-    # =====================================================
+    if profile.role.lower() == "staff":
+        transaction = (
+            TransactionLog.objects
+            .filter(client=client, id=transactionId)
+            .order_by("-id")
+            .first()
+        )
 
+        if not transaction:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "Wala nakit-i ang existing transaction para sa client.",
+                },
+                status=404,
+            )
+
+        transaction.action = "Served"
+        transaction.details = details
+        transaction.citizen_charter = charter
+        transaction.service_id = service
+        transaction.has_deficiency = deficiency
+        transaction.deficiency_details = deficiencyDetails
+        transaction.deficiency_status = payload.get("deficiency_status")
+        transaction.transaction_status = "Served"
+        transaction.resolved = resolved
+        transaction.survey_form = form
+        transaction.process_owner = request.user
+
+        transaction.save()
     client.client_status = "Approved" if resolved == "Yes" else "Serving"
 
     client.save(update_fields=["client_status"])
-    # role = profile.role.lower().replace("_", "-")
+
+    role = profile.role.lower().replace("_", "-")
+    
 
     # # =====================================================
     # # ALLOWED ROLES
