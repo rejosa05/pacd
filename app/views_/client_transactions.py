@@ -210,120 +210,54 @@ def update_client(request, client_id):
 @login_required
 @require_http_methods(["POST"])
 def serve_client(request, client_id):
-
-    profile = request.user.account_profile
-    role = profile.role.lower()
-
-    # Only Sub-admin / Super Admin
-    if role not in [
-        "sub-admin",
-        "sub_admin",
-        "super-admin",
-        "super_admin",
-    ]:
-        return JsonResponse(
-            {
-                "success": False,
-                "error": "You are not authorized to create a transaction.",
-            },
-            status=403,
-        )
-
-    # =====================================================
-    # CLIENT
-    # =====================================================
-
     try:
         client = ClientDetails.objects.get(pk=client_id)
-
     except ClientDetails.DoesNotExist:
         return JsonResponse(
-            {"success": False, "error": "Client not found."}, status=404
+            {"success": False, "error": "Wala nakit-i ang client."}, status=404
         )
-
-    # =====================================================
-    # PAYLOAD
-    # =====================================================
 
     payload, error = _parse_json(request)
 
     if error:
         return error
 
-    transaction_type = payload.get("transaction_type")
-
-    if not transaction_type:
-        return JsonResponse(
-            {"success": False, "error": "Please select a transaction type."}, status=400
-        )
-
-    # =====================================================
-    # SERVICE
-    # =====================================================
-
-    service_id = payload.get("service")
-
-    service = None
-
-    if service_id:
-
-        service = ServicesDetails.objects.filter(
-            id=service_id,
-            division=profile.division,
-            unit=profile.unit,
-        ).first()
-
-        if not service:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": (
-                        "This service is not available " "for your division/unit."
-                    ),
-                },
-                status=403,
-            )
-
-    # =====================================================
-    # RESOLVED
-    # =====================================================
-
+    type = payload.get("type")
+    details = payload.get("details")
+    remarks = payload.get("remarks")
+    charter = payload.get("charter")
+    service = payload.get("service")
+    deficiency = payload.get("deficiency")
+    deficiencyDetails = payload.get("deficiencyDetails")
     resolved = payload.get("resolved")
+    form = payload.get("form")
+    profile = request.user.account_profile
 
-    # =====================================================
-    # CSM / CSS
-    # =====================================================
+    print(profile.division, profile.unit)
 
-    if resolved == "Yes":
+    print(charter, service, form, deficiency, resolved, details, remarks)
 
-        survey_form = "CSM" if service else "CSS"
-
-    elif resolved == "No":
-
-        survey_form = "CSS"
-
-    else:
-
-        survey_form = None
-
-    # =====================================================
-    # CREATE TRANSACTION
-    # =====================================================
-
-    transaction = TransactionLog.objects.create(
+    TransactionLog.objects.create(
         client=client,
         action="Served",
-        details=payload.get("description"),
-        transaction_type=transaction_type,
-        citizen_charter=payload.get("citizen_charter"),
-        service=service,
-        has_deficiency=payload.get("has_deficiency"),
-        deficiency_details=payload.get("deficiency_details"),
+        details=details,
+        transaction_type=type,
+        citizen_charter=charter,
+        service_id=service,
+        has_deficiency=deficiency,
+        deficiency_details=deficiencyDetails,
         deficiency_status=payload.get("deficiency_status"),
+        forwarded_division=profile.division,
+        forwarded_unit=profile.unit,
+        transaction_status="Served",
         resolved=resolved,
-        survey_form=survey_form,
+        survey_form=form,
         process_owner=request.user,
     )
+
+    client.client_status = "Approved" if resolved == "Yes" else "Serving"
+
+    client.save(update_fields=["client_status"])
 
     # =====================================================
     # CLIENT STATUS
@@ -332,204 +266,429 @@ def serve_client(request, client_id):
     client.client_status = "Approved" if resolved == "Yes" else "Serving"
 
     client.save(update_fields=["client_status"])
+    # role = profile.role.lower().replace("_", "-")
+
+    # # =====================================================
+    # # ALLOWED ROLES
+    # # =====================================================
+
+    # if role not in [
+    #     "sub-admin",
+    #     "super-admin",
+    #     "staff",
+    # ]:
+    #     return JsonResponse(
+    #         {
+    #             "success": False,
+    #             "error": "You are not authorized to serve this transaction.",
+    #         },
+    #         status=403,
+    #     )
+
+    # # =====================================================
+    # # CLIENT
+    # # =====================================================
+
+    # try:
+    #     client = ClientDetails.objects.get(pk=client_id)
+
+    # except ClientDetails.DoesNotExist:
+    #     return JsonResponse(
+    #         {
+    #             "success": False,
+    #             "error": "Client not found.",
+    #         },
+    #         status=404,
+    #     )
+
+    # # =====================================================
+    # # PAYLOAD
+    # # =====================================================
+
+    # payload, error = _parse_json(request)
+
+    # if error:
+    #     return error
+
+    # transaction_type = payload.get("transaction_type")
+
+    # # =====================================================
+    # # TRANSACTION TYPE
+    # # Only required when SUB-ADMIN / SUPER-ADMIN
+    # # =====================================================
+
+    # if role in ["sub-admin", "super-admin"]:
+
+    #     if not transaction_type:
+    #         return JsonResponse(
+    #             {
+    #                 "success": False,
+    #                 "error": "Please select a transaction type.",
+    #             },
+    #             status=400,
+    #         )
+
+    # # =====================================================
+    # # SERVICE
+    # # =====================================================
+
+    # service_id = payload.get("service")
+
+    # service = None
+
+    # if service_id:
+
+    #     service = ServicesDetails.objects.filter(
+    #         id=service_id,
+    #         division=profile.division,
+    #         unit=profile.unit,
+    #     ).first()
+
+    #     if not service:
+    #         return JsonResponse(
+    #             {
+    #                 "success": False,
+    #                 "error": (
+    #                     "This service is not available "
+    #                     "for your division/unit."
+    #                 ),
+    #             },
+    #             status=403,
+    #         )
+
+    # # =====================================================
+    # # RESOLVED
+    # # =====================================================
+
+    # resolved = payload.get("resolved")
+
+    # if resolved == "Yes":
+    #     survey_form = "CSM" if service else "CSS"
+
+    # elif resolved == "No":
+    #     survey_form = "CSS"
+
+    # else:
+    #     survey_form = None
+
+    # # =====================================================
+    # # STAFF
+    # # UPDATE EXISTING TRANSACTION
+    # # =====================================================
+
+    # if role == "staff":
+
+    #     transaction = (
+    #         TransactionLog.objects
+    #         .filter(client=client)
+    #         .order_by("-id")
+    #         .first()
+    #     )
+
+    #     if not transaction:
+    #         return JsonResponse(
+    #             {
+    #                 "success": False,
+    #                 "error": "No existing transaction found for this client.",
+    #             },
+    #             status=404,
+    #         )
+
+    #     # ---------------------------------------------
+    #     # UPDATE EXISTING TRANSACTION
+    #     # ---------------------------------------------
+
+    #     transaction.action = "Served"
+    #     transaction.details = payload.get("description")
+    #     transaction.citizen_charter = payload.get("citizen_charter")
+    #     transaction.service = service
+    #     transaction.has_deficiency = payload.get("has_deficiency")
+    #     transaction.deficiency_details = payload.get(
+    #         "deficiency_details"
+    #     )
+    #     transaction.deficiency_status = payload.get(
+    #         "deficiency_status"
+    #     )
+    #     transaction.tranasction_status = "Served"
+    #     transaction.resolved = resolved
+    #     transaction.survey_form = survey_form
+    #     transaction.process_owner = request.user
+
+    #     transaction.save()
+
+    #     # ---------------------------------------------
+    #     # CLIENT STATUS
+    #     # ---------------------------------------------
+
+    #     client.client_status = (
+    #         "Approved"
+    #         if resolved == "Yes"
+    #         else "Serving"
+    #     )
+
+    #     client.save(
+    #         update_fields=["client_status"]
+    #     )
+
+    #     return JsonResponse(
+    #         {
+    #             "success": True,
+    #             "message": "Existing transaction updated successfully.",
+    #             "mode": "updated",
+    #             "transaction": {
+    #                 "id": transaction.id,
+    #                 "transaction_type": transaction.transaction_type,
+    #                 "service": (
+    #                     transaction.service.service_name
+    #                     if transaction.service
+    #                     else None
+    #                 ),
+    #                 "survey_form": transaction.survey_form,
+    #             },
+    #         }
+    #     )
+
+    # # =====================================================
+    # # SUB-ADMIN / SUPER-ADMIN
+    # # CREATE NEW TRANSACTION
+    # # =====================================================
+
+    # transaction = TransactionLog.objects.create(
+    #     client=client,
+    #     action="Served",
+    #     details=payload.get("description"),
+    #     transaction_type=transaction_type,
+    #     citizen_charter=payload.get("citizen_charter"),
+    #     service=service,
+    #     has_deficiency=payload.get("has_deficiency"),
+    #     deficiency_details=payload.get(
+    #         "deficiency_details"
+    #     ),
+    #     deficiency_status=payload.get(
+    #         "deficiency_status"
+    #     ),
+    #     forward_division="RD_ARD",
+    #     forward_unit="PACD",
+    #     tranasction_status="Served",
+    #     resolved=resolved,
+    #     survey_form=survey_form,
+    #     process_owner=request.user,
+    # )
+
+    # # =====================================================
+    # # CLIENT STATUS
+    # # =====================================================
+
+    # client.client_status = (
+    #     "Approved"
+    #     if resolved == "Yes"
+    #     else "Serving"
+    # )
+
+    # client.save(
+    #     update_fields=["client_status"]
+    # )
 
     return JsonResponse(
         {
             "success": True,
             "message": "Transaction served successfully.",
-            "transaction": {
-                "id": transaction.id,
-                "transaction_type": transaction.transaction_type,
-                "service": (
-                    transaction.service.service_name if transaction.service else None
-                ),
-                "survey_form": transaction.survey_form,
-            },
+            "mode": "created",
+            # "transaction": {
+            #     "id": transaction.id,
+            #     "transaction_type": transaction.transaction_type,
+            #     "service": (
+            #         transaction.service.service_name
+            #         if transaction.service
+            #         else None
+            #     ),
+            #     "survey_form": transaction.survey_form,
+            # },
         }
     )
 
 
-@login_required
-@require_http_methods(["POST"])
-def serve_transaction(request, client_id):
+# @login_required
+# @require_http_methods(["POST"])
+# def serve_transaction(request, client_id):
 
-    profile = request.user.account_profile
+#     profile = request.user.account_profile
 
-    # =====================================================
-    # ONLY STAFF
-    # =====================================================
+#     # =====================================================
+#     # ONLY STAFF
+#     # =====================================================
 
-    if profile.role.lower() != "staff":
-        return JsonResponse(
-            {"success": False, "error": "Only staff can serve forwarded transactions."},
-            status=403,
-        )
+#     if profile.role.lower() != "staff":
+#         return JsonResponse(
+#             {"success": False, "error": "Only staff can serve forwarded transactions."},
+#             status=403,
+#         )
 
-    # =====================================================
-    # GET TRANSACTION
-    # =====================================================
+#     # =====================================================
+#     # GET TRANSACTION
+#     # =====================================================
 
-    try:
+#     try:
 
-        transaction = TransactionLog.objects.select_related(
-            "client",
-            "service",
-            "forwarded_division",
-            "forwarded_unit",
-        ).get(pk=transaction_id)
+#         transaction = TransactionLog.objects.select_related(
+#             "client",
+#             "service",
+#             "forwarded_division",
+#             "forwarded_unit",
+#         ).get(pk=transaction_id)
 
-    except TransactionLog.DoesNotExist:
+#     except TransactionLog.DoesNotExist:
 
-        return JsonResponse(
-            {"success": False, "error": "Transaction not found."}, status=404
-        )
+#         return JsonResponse(
+#             {"success": False, "error": "Transaction not found."}, status=404
+#         )
 
-    # =====================================================
-    # CHECK STAFF ACCESS
-    # =====================================================
+#     # =====================================================
+#     # CHECK STAFF ACCESS
+#     # =====================================================
 
-    if (
-        transaction.forwarded_division_id != profile.division_id
-        or transaction.forwarded_unit_id != profile.unit_id
-    ):
+#     if (
+#         transaction.forwarded_division_id != profile.division_id
+#         or transaction.forwarded_unit_id != profile.unit_id
+#     ):
 
-        return JsonResponse(
-            {
-                "success": False,
-                "error": ("This transaction is not assigned " "to your division/unit."),
-            },
-            status=403,
-        )
+#         return JsonResponse(
+#             {
+#                 "success": False,
+#                 "error": ("This transaction is not assigned " "to your division/unit."),
+#             },
+#             status=403,
+#         )
 
-    # =====================================================
-    # CHECK ALREADY SERVED
-    # =====================================================
+#     # =====================================================
+#     # CHECK ALREADY SERVED
+#     # =====================================================
 
-    if transaction.action == "Served":
+#     if transaction.action == "Served":
 
-        return JsonResponse(
-            {"success": False, "error": ("This transaction has already been served.")},
-            status=400,
-        )
+#         return JsonResponse(
+#             {"success": False, "error": ("This transaction has already been served.")},
+#             status=400,
+#         )
 
-    # =====================================================
-    # PAYLOAD
-    # =====================================================
+#     # =====================================================
+#     # PAYLOAD
+#     # =====================================================
 
-    payload, error = _parse_json(request)
+#     payload, error = _parse_json(request)
 
-    if error:
-        return error
+#     if error:
+#         return error
 
-    # =====================================================
-    # SERVICE
-    # =====================================================
+#     # =====================================================
+#     # SERVICE
+#     # =====================================================
 
-    service_id = payload.get("service")
+#     service_id = payload.get("service")
 
-    service = None
+#     service = None
 
-    if service_id:
+#     if service_id:
 
-        service = ServicesDetails.objects.filter(
-            id=service_id,
-            division=profile.division,
-            unit=profile.unit,
-        ).first()
+#         service = ServicesDetails.objects.filter(
+#             id=service_id,
+#             division=profile.division,
+#             unit=profile.unit,
+#         ).first()
 
-        if not service:
+#         if not service:
 
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": (
-                        "This service is not available " "for your division/unit."
-                    ),
-                },
-                status=403,
-            )
+#             return JsonResponse(
+#                 {
+#                     "success": False,
+#                     "error": (
+#                         "This service is not available " "for your division/unit."
+#                     ),
+#                 },
+#                 status=403,
+#             )
 
-    # =====================================================
-    # RESOLVED
-    # =====================================================
+#     # =====================================================
+#     # RESOLVED
+#     # =====================================================
 
-    resolved = payload.get("resolved")
+#     resolved = payload.get("resolved")
 
-    # =====================================================
-    # CSM / CSS
-    # =====================================================
+#     # =====================================================
+#     # CSM / CSS
+#     # =====================================================
 
-    if resolved == "Yes":
+#     if resolved == "Yes":
 
-        survey_form = "CSM" if service else "CSS"
+#         survey_form = "CSM" if service else "CSS"
 
-    elif resolved == "No":
+#     elif resolved == "No":
 
-        survey_form = "CSS"
+#         survey_form = "CSS"
 
-    else:
+#     else:
 
-        survey_form = None
+#         survey_form = None
 
-    # =====================================================
-    # UPDATE EXISTING TRANSACTION
-    # =====================================================
+#     # =====================================================
+#     # UPDATE EXISTING TRANSACTION
+#     # =====================================================
 
-    transaction.action = "Served"
+#     transaction.action = "Served"
 
-    transaction.details = payload.get("description")
+#     transaction.details = payload.get("description")
 
-    # IMPORTANT:
-    # transaction_type is NOT changed.
-    #
-    # It remains the value assigned by Sub-admin.
+#     # IMPORTANT:
+#     # transaction_type is NOT changed.
+#     #
+#     # It remains the value assigned by Sub-admin.
 
-    transaction.citizen_charter = payload.get("citizen_charter")
+#     transaction.citizen_charter = payload.get("citizen_charter")
 
-    transaction.service = service
+#     transaction.service = service
 
-    transaction.has_deficiency = payload.get("has_deficiency")
+#     transaction.has_deficiency = payload.get("has_deficiency")
 
-    transaction.deficiency_details = payload.get("deficiency_details")
+#     transaction.deficiency_details = payload.get("deficiency_details")
 
-    transaction.deficiency_status = payload.get("deficiency_status")
+#     transaction.deficiency_status = payload.get("deficiency_status")
 
-    transaction.resolved = resolved
+#     transaction.resolved = resolved
 
-    transaction.survey_form = survey_form
+#     transaction.survey_form = survey_form
 
-    transaction.process_owner = request.user
+#     transaction.process_owner = request.user
 
-    transaction.save()
+#     transaction.save()
 
-    # =====================================================
-    # CLIENT STATUS
-    # =====================================================
+#     # =====================================================
+#     # CLIENT STATUS
+#     # =====================================================
 
-    client = transaction.client
+#     client = transaction.client
 
-    client.client_status = "Approved" if resolved == "Yes" else "Serving"
+#     client.client_status = "Approved" if resolved == "Yes" else "Serving"
 
-    client.save(update_fields=["client_status"])
+#     client.save(update_fields=["client_status"])
 
-    # =====================================================
-    # RESPONSE
-    # =====================================================
+#     # =====================================================
+#     # RESPONSE
+#     # =====================================================
 
-    return JsonResponse(
-        {
-            "success": True,
-            "message": "Transaction updated and served.",
-            "transaction": {
-                "id": transaction.id,
-                "transaction_type": transaction.transaction_type,
-                "service": (
-                    transaction.service.service_name if transaction.service else None
-                ),
-                "survey_form": transaction.survey_form,
-            },
-        }
-    )
+#     return JsonResponse(
+#         {
+#             "success": True,
+#             "message": "Transaction updated and served.",
+#             "transaction": {
+#                 "id": transaction.id,
+#                 "transaction_type": transaction.transaction_type,
+#                 "service": (
+#                     transaction.service.service_name if transaction.service else None
+#                 ),
+#                 "survey_form": transaction.survey_form,
+#             },
+#         }
+#     )
 
 
 # ============================================================

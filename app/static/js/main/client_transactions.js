@@ -625,7 +625,7 @@ async function openServeModal(id) {
 
       console.log(_client);
       // resetServeForm();
-      // document.getElementById("serveClientId").value = clientId;
+      document.getElementById("serveClientId").value = clientId;
       document.getElementById("serveClientName").textContent =
         _client.full_name || "---";
       document.getElementById("serveQueueBadge").textContent =
@@ -695,14 +695,16 @@ function resetServeForm() {
     "serveDeficiencyQuestion",
     "serveDeficiencyDetailsSection",
     "serveResolvedQuestion",
-    "serveCSMSection",
+    "serveRemarksSection",
+    "serveButton",
+    "CSMForm",
+    "CSSForm",
   ].forEach((id) => {
     document.getElementById(id).classList.add("hidden");
   });
 }
 
 function updateServeFlow() {
-  //Is this transaction covered by the Citizen's Charter?
   const charter = document.querySelector(
     'input[name="serveCharter"]:checked',
   )?.value;
@@ -715,239 +717,227 @@ function updateServeFlow() {
   const resolved = document.querySelector(
     'input[name="serveResolved"]:checked',
   )?.value;
-
-  console.log(resolved)
-
   const serviceSection = document.getElementById("serveServiceSection");
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
   const deficiencyDetails = document.getElementById(
     "serveDeficiencyDetailsSection",
   );
-
+  const isService = document.getElementById("serveService").value;
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
+  const remarks = document.getElementById("serveRemarksSection");
   const csmSection = document.getElementById("serveCSMSection");
+  const serveBtn = document.getElementById("serveButton");
+  const csm = document.getElementById("CSMForm");
+  const css = document.getElementById("CSSForm");
+  const form = document.querySelector('input[name="serveForm"]:checked')?.value;
 
-  // const cssSection = document.getElementById("serveCSSSection");
-
-  const isCharter = charter === "Yes";
-  serviceSection.classList.toggle("hidden", !isCharter);
-
-  const hasService = charter === "Yes" && !!service;
-
-  deficiencyQuestion.classList.toggle("hidden", !hasService);
-
-  const hasDeficiency = hasService && deficiency === "Yes";
-  deficiencyDetails.classList.toggle("hidden", !hasDeficiency);
-
-  // // =====================================================
-  // // STEP 5: RESOLVED
-  // // =====================================================
-
-  const noService = charter === "No" || (charter === "Yes" && !service);
-
-  const deficiencyCompleted = hasService && !!deficiency;
-
-  const showResolved = noService || deficiencyCompleted;
-
-  resolvedQuestion.classList.toggle("hidden", !showResolved);
-
-  // // =====================================================
-  // // IMPORTANT
-  // // Do NOT clear the Resolved radio here.
-  // // This keeps Yes/No active.
-  // // =====================================================
-
-  if (!showResolved) {
-    csmSection.classList.add("hidden");
-    return;
-  }
-
-  // // =====================================================
-  // // STEP 6: CSM / CSS
-  // // =====================================================
-
-  if (resolved === "Yes") {
-    if(hasService) {
-      csmSection.classList.remove("hidden");
+  if (charter === "Yes") {
+    serveBtn.classList.remove("hidden");
+    serviceSection.classList.remove("hidden");
+    if (isService) {
+      deficiencyQuestion.classList.remove("hidden");
+      if (deficiency === "Yes") {
+        deficiencyDetails.classList.remove("hidden");
+        resolvedQuestion.classList.add("hidden");
+        csm.classList.add("hidden");
+        css.classList.remove("hidden");
+        if (form) {
+          serveBtn.classList.remove("hidden");
+        }
+      } else if (deficiency === "No") {
+        deficiencyDetails.classList.add("hidden");
+        deficiencyDetails.classList.add("hidden");
+        resolvedQuestion.classList.add("hidden");
+        csm.classList.remove("hidden");
+        css.classList.add("hidden");
+        // serveBtn.classList.remove("hidden");
+      }
+    }
+  } else if (charter === "No") {
+    isService == "";
+    serviceSection.classList.add("hidden");
+    deficiencyQuestion.classList.add("hidden");
+    resolvedQuestion.classList.remove("hidden");
+    deficiencyDetails.classList.add("hidden");
+    csm.classList.add("hidden");
+    if (resolved === "Yes" || resolved === "No") {
+      remarks.classList.remove("hidden");
+      css.classList.remove("hidden");
+      if (form) {
+        serveBtn.classList.remove("hidden");
+      }
     }
   }
-
-  // if (resolved === "Yes") {
-  //   if (hasService) {
-  //     // Service exists
-  //     csmSection.classList.remove("hidden");
-  //     cssSection.classList.add("hidden");
-  //   } else {
-  //     // No service
-  //     csmSection.classList.add("hidden");
-  //     cssSection.classList.remove("hidden");
-  //   }
-  // } else if (resolved === "No") {
-  //   // Not resolved
-  //   csmSection.classList.add("hidden");
-  //   cssSection.classList.remove("hidden");
-  // } else {
-  //   // No resolved answer yet
-  //   csmSection.classList.add("hidden");
-  //   cssSection.classList.add("hidden");
-  // }
 }
 
 async function saveServeClient() {
   const clientId = document.getElementById("serveClientId").value;
-  const transactionId = document.getElementById("serveTransactionId").value;
-  const service = document.getElementById("serveService").value;
-  const hasService = !!service;
-
-  const transactionTypeElement = document.getElementById(
-    "serveTransactionType",
-  );
-
-  const transactionType = transactionTypeElement
-    ? transactionTypeElement.value || null
-    : null;
-
-  // =====================================================
-  // PAYLOAD
-  // =====================================================
-
-  const payload = {
-    transaction_type: transactionType,
-    citizen_charter:
-      document.querySelector('input[name="serveCharter"]:checked')?.value ||
-      null,
-    service: service || null,
-
-    has_deficiency:
-      document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
-      null,
-
-    deficiency_details:
-      document.getElementById("serveDeficiencyDetails").value || null,
-
-    resolved:
-      document.querySelector('input[name="serveResolved"]:checked')?.value ||
-      null,
-
-    deficiency_status: hasService
-      ? document.getElementById("serveDeficiencyStatus")?.value || null
-      : null,
-  };
-
-  // =====================================================
-  // VALIDATION
-  // =====================================================
-
-  if (!payload.citizen_charter) {
-    notify(
-      "Please select if the transaction is covered by the Citizen's Charter.",
-    );
-    return;
-  }
-
-  // =====================================================
-  // SUB-ADMIN / SUPER ADMIN
-  // MUST SELECT TRANSACTION TYPE
-  // =====================================================
-
-  if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
-    if (!payload.transaction_type) {
-      notify("Please select a transaction type.");
-      return;
-    }
-  }
-
-  // =====================================================
-  // SERVICE
-  // =====================================================
-
-  if (payload.citizen_charter === "Yes" && !service) {
-    notify("Please select a service.");
-    return;
-  }
-
-  // =====================================================
-  // DEFICIENCY
-  // =====================================================
-
-  if (hasService && !payload.has_deficiency) {
-    notify("Please answer the deficiency question.");
-    return;
-  }
-
-  // =====================================================
-  // RESOLVED
-  // =====================================================
-
-  if (!payload.resolved) {
-    notify("Please answer if the transaction was catered / resolved.");
-    return;
-  }
-
-  // =====================================================
-  // DETERMINE URL
-  // =====================================================
-
-  let url;
-
-  if (IS_STAFF) {
-    // STAFF → UPDATE EXISTING TRANSACTION
-    if (!transactionId) {
-      notify("Transaction ID is missing.");
-      return;
-    }
-
-    url = `api/transaction/${transactionId}/serve/`;
-  } else {
-    // SUB-ADMIN / SUPER ADMIN → CREATE NEW TRANSACTION
-    if (!clientId) {
-      notify("Client ID is missing.");
-      return;
-    }
-
-    url = `api/client/${clientId}/serve/`;
-  }
-
-  // =====================================================
-  // SAVE
-  // =====================================================
+  const details = document.getElementById("serveDetails").value;
+  const type = document.getElementById("serveTransactionType").value;
+  const remarks = document.getElementById("serveRemarks").value;
+  const charter =
+    document.querySelector('input[name="serveCharter"]:checked')?.value || null;
+  const service = document.getElementById("serveService")?.value || null;
+  const deficiency =
+    document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
+    null;
+  const deficiencyDetails = document.getElementById("serveDeficiencyDetails").value;
+  const resolved =
+    document.querySelector('input[name="serveResolved"]:checked')?.value || null;
+  const surveyForm =
+    document.querySelector('input[name="serveForm"]:checked')?.value || null;
+  console.log(clientId);
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`api/client/${clientId}/serve/`, {
       method: "POST",
-
       headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
+        "Content-type": "application/json",
+        "X-Request-With": "XMLHttpRequest",
         "X-CSRFToken": CSRF_TOKEN,
       },
-
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        type: type,
+        details: details,
+        remarks: remarks,
+        charter: charter,
+        service: service,
+        deficiency: deficiency,
+        deficiencyDetails: deficiencyDetails,
+        resolved: resolved,
+        form: surveyForm,
+      }),
     });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || "Serve failed");
-    }
-
-    // ===================================================
-    // SUCCESS
-    // ===================================================
-
     hideModal("serveModal");
-
-    notify(
-      IS_STAFF ? "Transaction updated and served." : "Transaction served.",
-    );
-
     loadClients();
   } catch (error) {
-    console.error("❌ Serve error:", error);
-
-    notify(error.message || "Unable to serve transaction.");
+    notify("Unable to serve client. Please try again.");
   }
 }
+//   try {
+//     const clientId = document.getElementById("serveClientId").value;
+//     const transactionId = document.getElementById("serveTransactionId").value;
+//     const service = document.getElementById("serveService").value;
+//     const hasService = !!service;
+//     const transactionTypeElement = document.getElementById(
+//       "serveTransactionType",
+//     );
+
+//     const transactionType = transactionTypeElement
+//       ? transactionTypeElement.value || null
+//       : null;
+
+//     // =====================================================
+//     // PAYLOAD
+//     // =====================================================
+
+//     const payload = {
+//       transaction_id: transactionId || null,
+
+//       transaction_type: transactionType,
+
+//       citizen_charter:
+//         document.querySelector('input[name="serveCharter"]:checked')?.value ||
+//         null,
+
+//       service: service || null,
+
+//       has_deficiency:
+//         document.querySelector('input[name="serveDeficiency"]:checked')
+//           ?.value || null,
+
+//       deficiency_details:
+//         document.getElementById("serveDeficiencyDetails").value || null,
+
+//       resolved:
+//         document.querySelector('input[name="serveResolved"]:checked')?.value ||
+//         null,
+
+//       deficiency_status: hasService
+//         ? document.getElementById("serveDeficiencyStatus")?.value || null
+//         : null,
+//     };
+
+//     // =====================================================
+//     // VALIDATION
+//     // =====================================================
+
+//     if (!payload.citizen_charter) {
+//       notify(
+//         "Please select if the transaction is covered by the Citizen's Charter.",
+//       );
+//       return;
+//     }
+
+//     if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
+//       if (!payload.transaction_type) {
+//         notify("Please select a transaction type.");
+//         return;
+//       }
+//     }
+
+//     if (payload.citizen_charter === "Yes" && !service) {
+//       notify("Please select a service.");
+//       return;
+//     }
+
+//     if (hasService && !payload.has_deficiency) {
+//       notify("Please answer the deficiency question.");
+//       return;
+//     }
+
+//     // if (!payload.resolved) {
+//     //   notify("Please answer if the transaction was catered / resolved.");
+//     //   return;
+//     // }
+
+//     // =====================================================
+//     // DEBUG
+//     // =====================================================
+
+//     console.log("CLIENT ID:", clientId);
+//     console.log("TRANSACTION ID:", transactionId);
+//     console.log("PAYLOAD:", payload);
+
+//     // =====================================================
+//     // SAVE
+//     // =====================================================
+
+//     const res = await fetch(`api/client/${clientId}/serve`, {
+//       method: "POST",
+
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-Requested-With": "XMLHttpRequest",
+//         "X-CSRFToken": CSRF_TOKEN,
+//       },
+
+//       body: JSON.stringify(payload),
+//     });
+
+//     const data = await res.json();
+
+//     if (!res.ok || !data.success) {
+//       throw new Error(data.error || "Serve failed");
+//     }
+
+//     // =====================================================
+//     // SUCCESS
+//     // =====================================================
+
+//     hideModal("serveModal");
+
+//     notify(
+//       IS_STAFF ? "Transaction updated and served." : "Transaction served.",
+//     );
+
+//     loadClients();
+//   } catch (error) {
+//     console.error("❌ Serve error:", error);
+
+//     notify(error.message || "Unable to serve transaction.");
+//   }
+// }
 
 // ------- SERVICES
 async function loadAvailableServices() {

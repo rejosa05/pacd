@@ -196,16 +196,22 @@
  
 <!-- Serve Transaction Modal -->
 <div id="serveModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
-    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
-        <div class="flex items-start justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Serve transaction</h3>
+    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-xl">
+            <div class="flex items-center gap-3">
+                <span class="w-9 h-9 shrink-0 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </span>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Serve transaction</h3>
+            </div>
             <button type="button" onclick="hideModal('serveModal')"
                 class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
         </div>
         <form id="serveForm" class="px-6 py-5 space-y-5" onsubmit="event.preventDefault(); saveServeClient();">
             <input type="hidden" id="serveClientId">
             <input type="hidden" id="serveTransactionId">
-            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
+ 
+            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
                 <span id="serveQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
                 <div class="min-w-0">
                     <p id="serveClientName" class="text-sm font-medium text-gray-900 dark:text-white truncate">Maria Santos</p>
@@ -213,6 +219,23 @@
                 </div>
             </div>
 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Type <span class="text-gray-400 font-normal"></span></label>
+                <select id="serveTransactionType" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+                    <option>Submit Documents</option>
+                    <option>Request</option>
+                    <option>Claiming of Documents</option>
+                    <option>Inquiry</option>
+                    <option>Other</option>
+                </select>
+            </div>
+ 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Details <span class="text-gray-400 font-normal">(optional)</span></label>
+                <textarea id="serveDetails" rows="2" placeholder="Notes about this transaction..."
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
+            </div>
+            
             <!-- Q1: Citizen's Charter -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Is this transaction covered by the Citizen's Charter?</label>
@@ -227,50 +250,38 @@
                     </label>
                 </div>
             </div>
-
-            <!-- Services -->
+ 
+            <!-- Services (shown if Charter = Yes) — options are loaded dynamically from
+                 api/services/available/, scoped to the logged-in user's division/unit. -->
             <div id="serveServiceSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    Which service was availed?
-                </label>
-
-                <select
-                    id="serveService"
-                    class="w-full border border-gray-300 dark:border-gray-600
-                        dark:bg-gray-900 dark:text-white rounded-lg
-                        px-3 py-2.5 text-sm
-                        focus:ring-2 focus:ring-blue-600
-                        focus:border-blue-600"
-                    onchange="updateServeFlow()"
-                >
-                    <option value="" selected>
-                        Select service
-                    </option>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Which service was availed?</label>
+                <select id="serveService" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" onchange="updateServeFlow()">
+                    <option value="" selected disabled>Select service</option>
                 </select>
             </div>
-
+ 
             <!-- Q2: Deficiencies (shown once a service is selected) -->
             <div id="serveDeficiencyQuestion" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Were there any deficiencies noted?</label>
                 <div class="flex gap-3">
                     <label class="flex-1 cursor-pointer">
                         <input type="radio" name="serveDeficiency" value="Yes" class="peer hidden" onchange="updateServeFlow()">
-                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:border-amber-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Yes</div>
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">Yes</div>
                     </label>
                     <label class="flex-1 cursor-pointer">
                         <input type="radio" name="serveDeficiency" value="No" class="peer hidden" onchange="updateServeFlow()">
-                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
+                        <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">No</div>
                     </label>
                 </div>
             </div>
-
+ 
             <!-- Deficiency details input (shown if Yes) -->
             <div id="serveDeficiencyDetailsSection" class="hidden">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Where / what are the deficiencies?</label>
                 <textarea id="serveDeficiencyDetails" rows="2" placeholder="e.g. Missing barangay ID, incomplete signature on form 2..."
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"></textarea>
             </div>
-
+ 
             <!-- Q3: Catered / Resolved -->
             <div id="serveResolvedQuestion" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Was the transaction catered / resolved?</label>
@@ -285,26 +296,50 @@
                     </label>
                 </div>
             </div>
-            <!-- CSS/CSM -->
-            <div id="serveCSMSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
-                <div class="flex items-center gap-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400 text-xs rounded-lg p-2.5">
-                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
-                    Client Satisfaction Measurement (CSM) — required for Citizen's Charter transactions
+            <!-- Remarks — free-text note, separate from the transaction details above.
+                 Use this for anything staff/sub-admin want to flag for the next person
+                 handling this client (e.g. "client requested callback", "priority case"). -->
+            <div id="serveRemarksSection" class="hidden">
+                <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Remarks <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <textarea id="serveRemarks" rows="2" placeholder="Any additional notes for this transaction..."
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
                 </div>
+            </div>
+            
+            <!-- survey form -->
+            <!-- SURVEY FORM -->
+            <div id="CSMForm" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"> Survey Form </label>
                 <div class="flex gap-3">
                     <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="serveResolved" value="Yes" class="peer hidden">
+                        <input type="radio" name="serveForm" value="CSM" class="peer hidden">
                         <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-teal-600 peer-checked:text-white peer-checked:border-teal-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">CSM</div>
                     </label>
+                </div>
+            </div>
+
+            <div id="CSSForm" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"> Survey Form </label>
+                <div class="flex gap-3">
                     <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="serveResolved" value="No" class="peer hidden">
+                        <input
+                            type="radio"
+                            name="serveForm"
+                            value="CSS"
+                            class="peer hidden"
+                            onchange="updateServeFlow()"
+                        >
                         <div class="text-center px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:border-rose-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">CSS</div>
                     </label>
                 </div>
-            </div>     
-            <div class="flex gap-3 pt-1">
-                <button type="button" onclick="hideModal('serveModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-emerald-700 text-white text-sm font-medium hover:bg-emerald-800">Serve</button>
+            </div>
+ 
+            <div id="serveButton" class="hidden">
+                <div class="flex gap-3 pt-1">
+                    <button type="button" onclick="hideModal('serveModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-lg bg-emerald-700 text-white text-sm font-medium hover:bg-emerald-800">Serve</button>
+                </div>
             </div>
         </form>
     </div>
