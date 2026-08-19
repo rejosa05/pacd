@@ -15,8 +15,7 @@ urlpatterns = [
     # path('', loginViews.loginView, name="index"),
 
     # Pages
-    
-    path('dashboard_', dashboard, name="dashboard_"),
+
     path('logs_', logs, name="logs_"),
     
     path('services_', services, name="services_")

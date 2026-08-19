@@ -59,7 +59,7 @@
                 <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10"></div>
                 <div class="relative z-10">
                     <h2 class="text-xl sm:text-2xl font-bold">
-                        Welcome back, Juan Dela Cruz 👋
+                        Welcome back, {{ request.user.first_name }} {{ request.user.last_name }} 👋
                     </h2>
                     <p class="text-blue-50/90 text-sm mt-1">
                         Here's what's happening with your queue today.

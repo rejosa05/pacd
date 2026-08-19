@@ -255,10 +255,6 @@ def serve_client(request, client_id):
         process_owner=request.user,
     )
 
-    client.client_status = "Approved" if resolved == "Yes" else "Serving"
-
-    client.save(update_fields=["client_status"])
-
     # =====================================================
     # CLIENT STATUS
     # =====================================================

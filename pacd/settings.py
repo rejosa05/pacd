@@ -14,7 +14,13 @@ SECRET_KEY = "django-insecure-zf)1!qqvk65*y_f#dr39v8wnu(4&84(jp33zs5di=e#i!^_gk!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.40.54", "192.168.40.52"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "192.168.40.54",
+    "192.168.40.52",
+    "192.168.1.6",
+]
 
 
 # Application definition
@@ -79,7 +85,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "QueuingDatabase.db",
+        "NAME": BASE_DIR / "test.db",
     }
 }
 

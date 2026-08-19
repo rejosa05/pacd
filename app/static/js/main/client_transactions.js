@@ -307,6 +307,9 @@ function notify(message) {
 
 // ---------- View ----------
 async function openViewModal(clientId) {
+  const transaction = allTransaction.find(
+        (t) => Number(t.client_id) === Number(clientId),
+      );
   const res = await fetch(`api/client/${clientId}`);
   const data = await res.json();
   if (!data.success) return;
@@ -319,7 +322,7 @@ async function openViewModal(clientId) {
     c.contact || "No contact";
   document.getElementById("viewQueueNo").textContent = c.queue_no || "---";
   document.getElementById("viewTransaction").textContent =
-    c.transaction_type || "---";
+    transaction?.type || "---";
   document.getElementById("viewGender").textContent = c.gender || "---";
   document.getElementById("viewOffice").textContent = c.organization || "---";
   document.getElementById("viewAddress").textContent = c.address || "---";

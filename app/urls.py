@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from .views_ import client_transactions, user_management, client_kiosk, que_display
+from .views_ import client_transactions, user_management, client_kiosk, que_display, dashboard
 
 urlpatterns = [
 
@@ -25,4 +25,6 @@ urlpatterns = [
     path('api/divisions/', client_transactions.divisions_api, name='divisions_api'),
     path('api/units/', client_transactions.units_api, name='units_api'),
     path( "api/services/available/", client_transactions.available_services_api, name="available_services_api"),
+
+    path('dashboard', dashboard.dashboard_page, name='dashboard'),
 ]

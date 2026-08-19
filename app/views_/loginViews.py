@@ -50,7 +50,7 @@ def loginView(request):
                 # =====================================
                 login(request, user)
 
-                next_url = request.GET.get("next", "dashboard_")
+                next_url = request.GET.get("next", "dashboard")
 
                 return redirect(next_url)
 
