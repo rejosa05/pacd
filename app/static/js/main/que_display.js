@@ -39,6 +39,8 @@ async function loadWaitingQueue() {
 
     // PRIORITY
     displayWaitingQueue(data.priority || [], "fastCurrent", "fastNext");
+
+    displayNowServing(data.serving || {});
   } catch (error) {
     console.error("❌ REST API error:", error);
   }
@@ -80,6 +82,35 @@ function displayWaitingQueue(queues, currentId, nextId) {
   });
 }
 
+function displayNowServing(serving) {
+  const divisions = ["RLED", "MSD", "LHSD", "RD_ARD"];
+
+  divisions.forEach(function (division) {
+    const container = document.getElementById(division);
+
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = "";
+
+    const transactions = serving[division] || [];
+
+    if (transactions.length === 0) {
+      return;
+    }
+
+    transactions.forEach(function (transaction) {
+      const div = document.createElement("div");
+
+      div.className = "clients-list";
+
+      div.textContent = `${transaction.queue_no} → ${transaction.unit}`;
+
+      container.appendChild(div);
+    });
+  });
+}
 // =====================================================
 // WEBSOCKET
 // =====================================================

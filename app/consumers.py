@@ -64,6 +64,14 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
     async def queue_update(self, event):
 
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "event": event.get("event"),
+                }
+            )
+        )
+
         # ==========================================
         # GET USER PROFILE
         # ==========================================

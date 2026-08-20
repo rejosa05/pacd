@@ -479,8 +479,8 @@ async function saveServingClient() {
     if (!data.success) throw new Error(data.error || "Serving failed");
 
     hideModal("servingModal");
-    notify(data.message || "Client Serving.");
     loadClients();
+    notify(data.message || "Client Serving.");
   } catch (error) {
     console.error("❌ Serving error:", error);
     notify("Unable to serving client. Please try again.");

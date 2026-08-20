@@ -175,7 +175,16 @@
         text-align: center;
         display: flex;
         align-items: center;
-        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .clients-list {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        box-sizing: border-box;
     }
 
     /* Container
@@ -308,7 +317,7 @@
 
         <div class="window-card">
             <div class="window-header">RD/ARD</div>
-            <div class="window-body" id="RD/ARD">
+            <div class="window-body" id="RD_ARD">
                 <div class="clients-list"></div>
             </div>
         </div>

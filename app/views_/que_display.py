@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from ..models import ClientDetails
+from ..models import ClientDetails, TransactionLog
 from django.utils import timezone
 
 
@@ -33,9 +33,68 @@ def display_queue_api(request):
         elif client.client_lane_type == "Regular":
             regular.append(queue_code)
 
+    serving_transactions = (
+        TransactionLog.objects.select_related(
+            "client",
+            "forwarded_division",
+            "forwarded_unit",
+        )
+        .filter(
+            created_at__date=today,
+            transaction_status="Serving",
+        )
+        .order_by("-created_at")
+    )
+
+    serving = {
+        "RLED": [],
+        "MSD": [],
+        "LHSD": [],
+        "RD/ARD": [],
+    }
+
+
+    for transaction in serving_transactions:
+
+        # Walay division → skip
+        if not transaction.forwarded_division:
+            continue
+
+        division_name = transaction.forwarded_division.name
+
+        # Check kung supported ang division
+        if division_name not in serving:
+            continue
+
+        client = transaction.client
+
+        if not client:
+            continue
+
+        # Queue number
+        queue_code = (
+            f"P-{client.client_queue_no:03d}"
+            if client.client_lane_type == "Priority"
+            else f"R-{client.client_queue_no:03d}"
+        )
+
+        # Unit nga belonging sa division
+        unit_name = transaction.forwarded_unit.name if transaction.forwarded_unit else ""
+
+        serving[division_name].append(
+        {
+            "queue_no": queue_code,
+            "client_name": (
+                f"{client.client_firstname} " f"{client.client_lastname}"
+            ).strip(),
+            "unit": unit_name,
+        }
+    )
+
     return JsonResponse(
         {
             "priority": priority,
             "regular": regular,
+            "serving": serving,
         }
     )
