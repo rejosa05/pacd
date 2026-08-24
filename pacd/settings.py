@@ -22,7 +22,6 @@ ALLOWED_HOSTS = [
     "192.168.1.6",
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -85,7 +84,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "test.db",
+        "NAME": BASE_DIR / "QueuingDatabase.db",
     }
 }
 

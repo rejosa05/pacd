@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from .views_ import client_transactions, user_management, client_kiosk, que_display, dashboard
+from .views_ import client_transactions, user_management, client_kiosk, que_display, dashboard, loginViews
 
 urlpatterns = [
 
@@ -27,4 +27,5 @@ urlpatterns = [
     path( "api/services/available/", client_transactions.available_services_api, name="available_services_api"),
 
     path('dashboard', dashboard.dashboard_page, name='dashboard'),
+    path('', loginViews.login_page, name='index')
 ]

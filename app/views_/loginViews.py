@@ -5,6 +5,8 @@ from django.contrib import messages
 from ..models import AccountDetails
 from ..form.loginForm import LoginForm
 
+def login_page(request):
+    return render (request, "index.html")
 
 def loginView(request):
 
