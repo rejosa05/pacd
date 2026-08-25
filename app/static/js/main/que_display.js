@@ -15,6 +15,67 @@ setInterval(updateTime, 1000);
 updateTime();
 
 // =====================================================
+// VOICE ANNOUNCEMENT
+// =====================================================
+
+let lastAnnouncedRegular = null;
+let lastAnnouncedPriority = null;
+
+// For division announcements
+const lastAnnouncedDivision = {};
+
+function speakQueue(queueNumber, destination) {
+  if (!queueNumber || !destination) {
+    return;
+  }
+
+  console.log(destination);
+  // Cancel previous speech
+  window.speechSynthesis.cancel();
+
+  const message = `${queueNumber}, please proceed to ${destination}`;
+
+  const speech = new SpeechSynthesisUtterance(message);
+
+  speech.lang = "en-US";
+  speech.rate = 0.85;
+  speech.pitch = 1;
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+
+  console.log("🔊 ANNOUNCEMENT:", message);
+}
+
+// =====================================================
+// ANNOUNCE MAIN QUEUE
+// =====================================================
+
+function announceMainQueue(queues, type) {
+  if (!Array.isArray(queues) || queues.length === 0) {
+    return;
+  }
+
+  const currentQueue = queues[0];
+
+  if (type === "Priority") {
+    // Only announce when queue changes
+    if (lastAnnouncedPriority !== currentQueue) {
+      lastAnnouncedPriority = currentQueue;
+
+      speakQueue(`Priority ${currentQueue}`, "Priority Lane");
+    }
+  } else if (type === "Regular") {
+    // Only announce when queue changes
+    if (lastAnnouncedRegular !== currentQueue) {
+      lastAnnouncedRegular = currentQueue;
+
+      speakQueue(`Regular ${currentQueue}`, "Regular Lane");
+    }
+  }
+}
+
+// =====================================================
 // LOAD WAITING QUEUE FROM REST API
 // =====================================================
 
@@ -34,11 +95,25 @@ async function loadWaitingQueue() {
 
     console.log("📦 Queue data:", data);
 
+    // =================================================
     // REGULAR
+    // =================================================
+
     displayWaitingQueue(data.regular || [], "regularCurrent", "regularNext");
 
+    announceMainQueue(data.regular || [], "Regular");
+
+    // =================================================
     // PRIORITY
+    // =================================================
+
     displayWaitingQueue(data.priority || [], "fastCurrent", "fastNext");
+
+    announceMainQueue(data.priority || [], "Priority");
+
+    // =================================================
+    // NOW SERVING / DIVISIONS
+    // =================================================
 
     displayNowServing(data.serving || {});
   } catch (error) {
@@ -82,6 +157,10 @@ function displayWaitingQueue(queues, currentId, nextId) {
   });
 }
 
+// =====================================================
+// DISPLAY NOW SERVING
+// =====================================================
+
 function displayNowServing(serving) {
   const divisions = ["RLED", "MSD", "LHSD", "RD_ARD"];
 
@@ -108,9 +187,25 @@ function displayNowServing(serving) {
       div.textContent = `${transaction.queue_no} → ${transaction.unit}`;
 
       container.appendChild(div);
+
+      // =================================================
+      // DIVISION ANNOUNCEMENT
+      // =================================================
+
+      const queueNumber = transaction.queue_no;
+      const unit = transaction.unit
+
+      const announcementKey = `${unit}-${queueNumber}`;
+
+      if (lastAnnouncedDivision[unit] !== announcementKey) {
+        lastAnnouncedDivision[unit] = announcementKey;
+
+        speakQueue(queueNumber, unit);
+      }
     });
   });
 }
+
 // =====================================================
 // WEBSOCKET
 // =====================================================
@@ -118,6 +213,7 @@ function displayNowServing(serving) {
 function connectQueueSocket() {
   if (!("WebSocket" in window)) {
     console.error("❌ WebSocket not supported");
+
     return;
   }
 
@@ -146,17 +242,15 @@ function connectQueueSocket() {
       const payload = JSON.parse(event.data);
 
       console.log("📦 PAYLOAD:", payload);
-      console.log("🔔 EVENT:", payload.event);
 
-      // IMPORTANT:
-      // Check what event your Django Consumer sends
-      console.log("🔔 Event:", payload.event);
+      console.log("🔔 EVENT:", payload.event);
 
       if (
         payload.event === "CLIENT_REGISTERED" ||
         payload.event === "QUEUE_UPDATED"
       ) {
         console.log("🔄 Updating queue display...");
+
         loadWaitingQueue();
       }
     } catch (error) {
