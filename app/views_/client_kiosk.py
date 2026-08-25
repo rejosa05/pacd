@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from ..decorators import format_contact_number
+from django.utils import timezone
 
 from ..models import ClientDetails
 
@@ -90,7 +91,9 @@ def register_client(request):
                     "lane_type": client.client_lane_type,
                     "full_name": f"{client.client_firstname} "
                     f"{client.client_lastname}",
-                    "date_created": client.date_created.strftime("%B %d, %Y %I:%M %p"),
+                    "date_created": timezone.localtime(client.date_created).strftime(
+                        "%B %d, %Y %I:%M %p"
+                    ),
                 },
             }
         )

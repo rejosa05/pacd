@@ -274,34 +274,182 @@
 
             const queueNo = result.data.queue_no;
             submitBtn.innerHTML = 'Queue number issued &#10003;';
-            const printTicket = window.open('', '_blank', 'width=420,height=620');
+
+            // Open the ticket in a full window (not a tiny popup) so it renders
+            // centered and large enough to use comfortably on a tablet screen.
+            const printTicket = window.open('', '_blank');
+
             printTicket.document.write(`
-                <html>
-                    <head>
-                        <title>Queue Slip</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f3f4f6; }
-                            .ticket { width: 320px; border: 2px solid #166534; border-radius: 14px; background: white; padding: 20px; text-align:center; }
-                            .label { font-size:12px; text-transform: uppercase; letter-spacing: 1px; color:#4b5563; }
-                            .number { font-size: 54px; font-weight: 700; color:#166534; margin: 12px 0; }
-                            .name { font-size: 18px; font-weight:600; margin-bottom:10px; }
-                            .meta { font-size: 13px; color:#374151; margin: 4px 0; }
-                            .btn { margin-top: 18px; display:inline-block; padding:10px 16px; background:#166534; color:white; border-radius:8px; text-decoration:none; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="ticket">
-                            <div class="label">PACD Queuing System</div>
-                            <div class="number">${queueNo}</div>
-                            <div class="name">${result.data.full_name}</div>
-                            <div class="meta">Lane: ${result.data.lane_type}</div>
-                            <div class="meta">Queue Number: ${result.data.queue_code}</div>
-                            <div class="meta">${result.data.date_created}</div>
-                            <a class="btn" href="javascript:window.print();">Print</a>
-                        </div>
-                    </body>
-                </html>
-            `);
+    <html>
+        <head>
+            <title>Queue Slip</title>
+            <style>
+                /* ============================================
+                   ON-SCREEN VIEW (tablet / kiosk display)
+                   Centered card, large touch-friendly Print button.
+                   ============================================ */
+                * { box-sizing: border-box; }
+
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    min-height: 100vh;
+                    width: 100%;
+                    background: #f0fdf4;
+                    font-family: Arial, sans-serif;
+                }
+
+                body {
+                    display: flex;
+                    
+                    justify-content: center;
+                    padding: 24px;
+                }
+
+                .ticket-wrap {
+                    width: 100%;
+                    max-width: 380px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .ticket {
+                    width: 100%;
+                    border: 3px solid #166534;
+                    border-radius: 20px;
+                    background: white;
+                    padding: 28px 20px;
+                    text-align: center;
+                    box-shadow: 0 10px 30px rgba(22, 101, 52, 0.15);
+                }
+
+                .label {
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #4b5563;
+                    font-weight: 600;
+                }
+
+                .number {
+                    font-size: 72px;
+                    font-weight: 800;
+                    color: #166534;
+                    margin: 12px 0;
+                    line-height: 1;
+                }
+
+                .name {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #111827;
+                    margin-bottom: 10px;
+                }
+
+                .meta {
+                    font-size: 14px;
+                    color: #374151;
+                    margin: 4px 0;
+                }
+
+                .btn {
+                    margin-top: 24px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    max-width: 380px;
+                    padding: 16px 24px;
+                    background: #166534;
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    font-size: 18px;
+                    font-weight: 700;
+                    text-decoration: none;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.35);
+                }
+
+                .btn:active {
+                    background: #14532d;
+                }
+
+                /* ============================================
+                   PRINT VIEW (thermal receipt printer)
+                   Reverts to the compact 58mm slip layout and
+                   hides the Print button — the number stays
+                   centered on the physical slip too.
+                   ============================================ */
+                @media print {
+                    @page {
+                        size: 58mm auto;
+                        margin: 0;
+                    }
+
+                    html, body {
+                        min-height: 0;
+                        background: white;
+                        display: block;
+                        padding: 0;
+                    }
+
+                    .ticket-wrap {
+                        max-width: none;
+                    }
+
+                    .ticket {
+                        width: 52mm;
+                        margin: 3mm auto 0 auto;
+                        border: 2px solid #166534;
+                        border-radius: 10px;
+                        padding: 3mm;
+                        box-shadow: none;
+                    }
+
+                    .label { font-size: 11px; }
+                    .number { font-size: 42px; margin: 5px 0; }
+                    .name { font-size: 15px; margin-bottom: 5px; }
+                    .meta { font-size: 11px; margin: 2px 0; }
+
+                    .btn { display: none; }
+                }
+            </style>
+        </head>
+
+        <body>
+            <div class="ticket-wrap">
+                <div class="ticket">
+                    <div class="label">PACD Queuing System</div>
+
+                    <div class="number">${queueNo}</div>
+
+                    <div class="name">
+                        ${result.data.full_name}
+                    </div>
+
+                    <div class="meta">
+                        Lane: ${result.data.lane_type}
+                    </div>
+
+                    <div class="meta">
+                        Queue Number: ${result.data.queue_code}
+                    </div>
+
+                    <div class="meta">
+                        ${result.data.date_created}
+                    </div>
+                </div>
+
+                <button class="btn" onclick="window.print();">
+                    Print Queue Slip
+                </button>
+            </div>
+        </body>
+    </html>
+`);
+
             printTicket.document.close();
             form.reset();
             agree.checked = false;

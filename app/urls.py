@@ -27,5 +27,5 @@ urlpatterns = [
     path( "api/services/available/", client_transactions.available_services_api, name="available_services_api"),
 
     path('dashboard', dashboard.dashboard_page, name='dashboard'),
-    path('', loginViews.login_page, name='index')
+    path('', loginViews.loginView, name='index')
 ]

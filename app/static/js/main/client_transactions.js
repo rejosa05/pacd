@@ -1,10 +1,8 @@
 let allClient = [];
+let filteredClients = [];
 let pageSize = 10;
 let currentPage = 1;
-
-/* =====================================================
-   CSRF TOKEN (required by Django for POST/PUT/DELETE)
-===================================================== */
+let searchTerm = "";
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -14,21 +12,6 @@ function getCookie(name) {
 }
 
 const CSRF_TOKEN = getCookie("csrftoken");
-
-/* =====================================================
-   ROLE-BASED ACCESS
-   Matches the strings used in @role_required("SUPER_ADMIN", "SUB_ADMIN", "STAFF")
-
-   SUPER_ADMIN — sees every button, on every status, no restrictions.
-
-   SUB_ADMIN — initial interview:
-     status = Waiting   -> View, Serve, Forward, Skip, Edit
-     any other status   -> View, Repeat, Edit  (once acted on, only these remain)
-
-   STAFF — handles what was forwarded to them:
-     status = Forwarded or Serving -> View, Serve, Skip
-     any other status              -> View only
-===================================================== */
 
 const CURRENT_ROLE = window.CURRENT_USER_ROLE || "";
 const IS_SUPER_ADMIN = CURRENT_ROLE === "SUPER_ADMIN";
@@ -86,7 +69,7 @@ function statusBadge(status) {
                 `;
   }
 
-  if (status === "Serving" || status === "Approved") {
+  if (status === "Serving" || status === "Served") {
     return `
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-300">
                         <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
@@ -115,59 +98,338 @@ function statusBadge(status) {
 /* =====================================================
    RENDER CLIENT TABLE
 ===================================================== */
+function filterClients() {
+  const term = String(searchTerm || "")
+    .trim()
+    .toLowerCase();
 
-function renderClientTable() {
-  const tbody = document.getElementById("clientTablebody");
-  if (!tbody) return;
+  // EMPTY SEARCH = SHOW ALL CLIENTS
+  if (term === "") {
+    filteredClients = [...allClient];
+  } else {
+    filteredClients = allClient.filter((client) => {
+      const transaction = allTransaction.find(
+        (t) => Number(t.client_id) === Number(client.id),
+      );
 
-  const totalPages = Math.max(1, Math.ceil(allClient.length / pageSize));
-  if (currentPage > totalPages) currentPage = totalPages;
+      const searchableText = [
+        client.queue_no,
+        client.queue_code,
+        client.full_name,
+        client.first_name,
+        client.last_name,
+        client.lane,
+        client.status,
+        transaction?.type,
+        transaction?.unit,
+        transaction?.division,
+      ]
+        .filter((value) => value !== null && value !== undefined)
+        .join(" ")
+        .toLowerCase();
 
-  const startIndex = (currentPage - 1) * pageSize;
-  const pageItems = allClient.slice(startIndex, startIndex + pageSize);
+      return searchableText.includes(term);
+    });
+  }
 
-  if (!pageItems.length) {
-    tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No registered client yet. When the kiosk registers a client, it will appear here automatically.</td></tr>`;
-    updateSummaryStats();
+  // Always go back to page 1 after searching
+  currentPage = 1;
+
+  renderClientTable();
+}
+
+function handleClientSearch(value) {
+  searchTerm = value;
+  filterClients();
+}
+
+function changePage(page) {
+  const totalPages = Math.ceil(filteredClients.length / pageSize);
+
+  if (page < 1 || page > totalPages) {
     return;
   }
 
+  currentPage = page;
+
+  renderClientTable();
+}
+
+function renderPagination() {
+  const pagination = document.getElementById("clientPagination");
+
+  if (!pagination) return;
+
+  const totalItems = filteredClients.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  // No pagination if 10 or fewer
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
+  const start = (currentPage - 1) * pageSize + 1;
+  const end = Math.min(currentPage * pageSize, totalItems);
+
+  let pageButtons = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const isActive = i === currentPage;
+
+    pageButtons += `
+      <li>
+        <button
+          type="button"
+          onclick="changePage(${i})"
+          aria-current="${isActive ? "page" : "false"}"
+          class="
+            flex h-8 items-center justify-center border
+            border-gray-300 px-3 leading-tight
+            ${
+              isActive
+                ? "bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            }
+          "
+        >
+          ${i}
+        </button>
+      </li>
+    `;
+  }
+
+  pagination.innerHTML = `
+    <nav
+      class="flex flex-col items-center justify-between gap-4 md:flex-row"
+      aria-label="Table navigation"
+    >
+      <!-- Showing -->
+      <span
+        class="text-sm font-normal text-gray-500 dark:text-gray-400"
+      >
+        Showing
+ 
+        <span
+          class="font-semibold text-gray-900 dark:text-white"
+        >
+          ${start}-${end}
+        </span>
+ 
+        of
+ 
+        <span
+          class="font-semibold text-gray-900 dark:text-white"
+        >
+          ${totalItems}
+        </span>
+      </span>
+ 
+ 
+      <!-- Pagination -->
+      <ul
+        class="inline-flex h-8 -space-x-px text-sm"
+      >
+ 
+        <!-- PREVIOUS -->
+        <li>
+          <button
+            type="button"
+            onclick="changePage(${currentPage - 1})"
+            ${currentPage === 1 ? "disabled" : ""}
+            class="
+              ms-0 flex h-8 items-center justify-center
+              rounded-s-lg border border-gray-300
+              bg-white px-3 leading-tight
+              ${
+                currentPage === 1
+                  ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
+                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              }
+              dark:border-gray-700
+              dark:bg-gray-800
+              dark:hover:bg-gray-700
+              dark:hover:text-white
+            "
+          >
+            Previous
+          </button>
+        </li>
+ 
+ 
+        <!-- PAGE NUMBERS -->
+        ${pageButtons}
+ 
+ 
+        <!-- NEXT -->
+        <li>
+          <button
+            type="button"
+            onclick="changePage(${currentPage + 1})"
+            ${currentPage === totalPages ? "disabled" : ""}
+            class="
+              flex h-8 items-center justify-center
+              rounded-e-lg border border-gray-300
+              bg-white px-3 leading-tight
+              ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
+                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              }
+              dark:border-gray-700
+              dark:bg-gray-800
+              dark:hover:bg-gray-700
+              dark:hover:text-white
+            "
+          >
+            Next
+          </button>
+        </li>
+ 
+      </ul>
+ 
+    </nav>
+  `;
+}
+
+/* =====================================================
+   RENDER CLIENT TABLE
+===================================================== */
+
+function renderClientTable() {
+  const tbody = document.getElementById("clientTablebody");
+
+  if (!tbody) return;
+
+  /*
+   * If filteredClients is empty/not initialized,
+   * use all clients.
+   */
+  if (!Array.isArray(filteredClients)) {
+    filteredClients = [...allClient];
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filteredClients.length / pageSize));
+
+  if (currentPage > totalPages) {
+    currentPage = totalPages;
+  }
+
+  const startIndex = (currentPage - 1) * pageSize;
+
+  const pageItems = filteredClients.slice(startIndex, startIndex + pageSize);
+
+  /*
+   * No results
+   */
+  if (!pageItems.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
+        >
+          ${
+            searchTerm
+              ? `No client found for "${searchTerm}".`
+              : "No registered client yet. When the kiosk registers a client, it will appear here automatically."
+          }
+        </td>
+      </tr>
+    `;
+
+    updateSummaryStats();
+    renderPagination();
+    return;
+  }
+
+  /*
+   * Render table
+   */
   tbody.innerHTML = pageItems
     .map((client) => {
       const transaction = allTransaction.find(
         (t) => Number(t.client_id) === Number(client.id),
       );
+
       return `
-          <tr data-id="${client.id}" class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-              <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${client.queue_no ?? "---"}</td>
-              <td class="px-4 py-3">
-                  <div class="flex items-center gap-3">
-                      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">${initials(client.full_name)}</span>
-                      <div class="min-w-0">
-                          <p class="truncate text-sm font-medium text-gray-900 dark:text-white">${client.full_name || "Unknown Client"}</p>
-                          <p class="truncate text-xs text-gray-500 dark:text-gray-400">${transaction?.type || "New Application"}</p>
-                      </div>
-                  </div>
-              </td>
-              <td class="px-4 py-3">
-                  <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${client.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">
-                      ${client.lane || "Regular"}
-                  </span>
-              </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.type || "---"}</td>
-              <td class="px-4 py-3">${statusBadge(transaction?.status || "Waiting")}</td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${transaction?.unit || "---"}</td>
-              <td class="px-4 py-3">
-                  <div class="flex items-center justify-center gap-1.5">
-                      ${buildActionButtons(client, transaction)}
-                  </div>
-              </td>
-          </tr>
+        <tr
+          data-id="${client.id}"
+          class="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+        >
+
+          <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
+            ${client.queue_no ?? "---"}
+          </td>
+
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+
+              <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+              >
+                ${initials(client.full_name)}
+              </span>
+
+              <div class="min-w-0">
+                <p
+                  class="truncate text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  ${client.full_name || "Unknown Client"}
+                </p>
+
+                <p
+                  class="truncate text-xs text-gray-500 dark:text-gray-400"
+                >
+                  ${transaction?.type || "New Application"}
+                </p>
+              </div>
+
+            </div>
+          </td>
+
+          <td class="px-4 py-3">
+
+            <span
+              class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium
+              ${
+                client.lane === "Priority"
+                  ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
+                  : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+              }"
+            >
+              ${client.lane || "Regular"}
+            </span>
+
+          </td>
+
+          <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+            ${transaction?.type || "---"}
+          </td>
+
+          <td class="px-4 py-3">
+            ${statusBadge(client.status || "Waiting")}
+          </td>
+
+          <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+            ${transaction?.unit || "---"}
+          </td>
+
+          <td class="px-4 py-3">
+
+            <div class="flex items-center justify-center gap-1.5">
+              ${buildActionButtons(client, transaction)}
+            </div>
+
+          </td>
+
+        </tr>
       `;
     })
     .join("");
 
   updateSummaryStats();
+  renderPagination();
 }
 
 /* =====================================================
@@ -281,13 +543,6 @@ function buildActionButtons(client, transaction) {
   return buttons.join("");
 }
 
-// ---------- Modal helpers ----------
-// NOTE: these modals are shown/hidden purely with the "hidden" class.
-// We intentionally do NOT use Flowbite's data-modal-toggle/data-modal-hide
-// system here, because those modals were never registered as Flowbite
-// instances (they weren't opened via data-modal-target). Mixing the two
-// causes: "Flowbite: Instance with ID ... does not exist." in the console.
-// All open/close calls go through these two functions instead.
 function showModal(id) {
   const el = document.getElementById(id);
   if (el) el.classList.remove("hidden");
@@ -608,7 +863,7 @@ async function saveForwardClient() {
     if (!data.success) throw new Error(data.error || "Forward failed");
 
     hideModal("forwardModal");
-    
+
     loadClients();
     notify(data.message || "Client forwarded.");
   } catch (error) {
@@ -737,7 +992,6 @@ function updateServeFlow() {
   const css = document.getElementById("CSSForm");
   const form = document.querySelector('input[name="serveForm"]:checked')?.value;
   const typeSelection = document.getElementById("serveTypeSelection");
-  
 
   if (charter === "Yes") {
     typeSelection.classList.remove("hidden");
@@ -828,130 +1082,6 @@ async function saveServeClient() {
     notify("Unable to serve client. Please try again.");
   }
 }
-//   try {
-//     const clientId = document.getElementById("serveClientId").value;
-//     const transactionId = document.getElementById("serveTransactionId").value;
-//     const service = document.getElementById("serveService").value;
-//     const hasService = !!service;
-//     const transactionTypeElement = document.getElementById(
-//       "serveTransactionType",
-//     );
-
-//     const transactionType = transactionTypeElement
-//       ? transactionTypeElement.value || null
-//       : null;
-
-//     // =====================================================
-//     // PAYLOAD
-//     // =====================================================
-
-//     const payload = {
-//       transaction_id: transactionId || null,
-
-//       transaction_type: transactionType,
-
-//       citizen_charter:
-//         document.querySelector('input[name="serveCharter"]:checked')?.value ||
-//         null,
-
-//       service: service || null,
-
-//       has_deficiency:
-//         document.querySelector('input[name="serveDeficiency"]:checked')
-//           ?.value || null,
-
-//       deficiency_details:
-//         document.getElementById("serveDeficiencyDetails").value || null,
-
-//       resolved:
-//         document.querySelector('input[name="serveResolved"]:checked')?.value ||
-//         null,
-
-//       deficiency_status: hasService
-//         ? document.getElementById("serveDeficiencyStatus")?.value || null
-//         : null,
-//     };
-
-//     // =====================================================
-//     // VALIDATION
-//     // =====================================================
-
-//     if (!payload.citizen_charter) {
-//       notify(
-//         "Please select if the transaction is covered by the Citizen's Charter.",
-//       );
-//       return;
-//     }
-
-//     if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
-//       if (!payload.transaction_type) {
-//         notify("Please select a transaction type.");
-//         return;
-//       }
-//     }
-
-//     if (payload.citizen_charter === "Yes" && !service) {
-//       notify("Please select a service.");
-//       return;
-//     }
-
-//     if (hasService && !payload.has_deficiency) {
-//       notify("Please answer the deficiency question.");
-//       return;
-//     }
-
-//     // if (!payload.resolved) {
-//     //   notify("Please answer if the transaction was catered / resolved.");
-//     //   return;
-//     // }
-
-//     // =====================================================
-//     // DEBUG
-//     // =====================================================
-
-//     console.log("CLIENT ID:", clientId);
-//     console.log("TRANSACTION ID:", transactionId);
-//     console.log("PAYLOAD:", payload);
-
-//     // =====================================================
-//     // SAVE
-//     // =====================================================
-
-//     const res = await fetch(`api/client/${clientId}/serve`, {
-//       method: "POST",
-
-//       headers: {
-//         "Content-Type": "application/json",
-//         "X-Requested-With": "XMLHttpRequest",
-//         "X-CSRFToken": CSRF_TOKEN,
-//       },
-
-//       body: JSON.stringify(payload),
-//     });
-
-//     const data = await res.json();
-
-//     if (!res.ok || !data.success) {
-//       throw new Error(data.error || "Serve failed");
-//     }
-
-//     // =====================================================
-//     // SUCCESS
-//     // =====================================================
-
-//     hideModal("serveModal");
-
-//     notify(
-//       IS_STAFF ? "Transaction updated and served." : "Transaction served.",
-//     );
-
-//     loadClients();
-//   } catch (error) {
-//     console.error("❌ Serve error:", error);
-
-//     notify(error.message || "Unable to serve transaction.");
-//   }
-// }
 
 // ------- SERVICES
 async function loadAvailableServices() {
@@ -1057,9 +1187,24 @@ async function loadClients() {
     }
 
     allClient = Array.isArray(data.clients) ? data.clients : [];
+
     allTransaction = Array.isArray(data.transactions) ? data.transactions : [];
-    console.log("✅ Existing clients loaded:", allTransaction);
+
+    // IMPORTANT
+    filteredClients = [...allClient];
+
+    currentPage = 1;
+    searchTerm = "";
+
+    const searchInput = document.getElementById("clientSearch");
+    if (searchInput) {
+      searchInput.value = "";
+    }
+
     renderClientTable();
+
+    console.log("✅ Clients:", allClient);
+    console.log("✅ Transactions:", allTransaction);
   } catch (error) {
     console.error("❌ REST API error:", error);
 
@@ -1067,13 +1212,15 @@ async function loadClients() {
 
     if (tbody) {
       tbody.innerHTML = `
-                <tr>
-                    <td colspan="7"
-                        class="px-4 py-8 text-center text-sm text-red-500">
-                        ${error.message}
-                    </td>
-                </tr>
-            `;
+        <tr>
+          <td
+            colspan="7"
+            class="px-4 py-8 text-center text-sm text-red-500"
+          >
+            ${error.message}
+          </td>
+        </tr>
+      `;
     }
   }
 }
@@ -1141,53 +1288,40 @@ function connectQueueSocket() {
        RECEIVE MESSAGE
     ========================================= */
 
-  socket.onmessage = function (event) {
-    console.log("📡 WebSocket received:", event.data);
+  socket.onmessage = async function (event) {
+  console.log("📡 WebSocket received:", event.data);
 
-    try {
-      const payload = JSON.parse(event.data);
+  try {
+    const payload = JSON.parse(event.data);
 
-      console.log("📦 Parsed payload:", payload);
+    console.log("📦 Parsed payload:", payload);
 
-      if (payload.event !== "CLIENT_REGISTERED") {
-        console.log("ℹ️ Ignored event:", payload.event);
-
-        return;
-      }
-
-      const client = payload.client;
-
-      if (!client) {
-        console.error("❌ WebSocket client data is null");
-
-        console.error("Received payload:", payload);
-
-        return;
-      }
-
-      console.log("🟢 NEW CLIENT:", client);
-
-      const existingIndex = allClient.findIndex(
-        (item) => String(item.id) === String(client.id),
-      );
-
-      if (existingIndex !== -1) {
-        allClient.splice(existingIndex, 1);
-      }
-
-      allClient.unshift(client);
-
-      currentPage = 1;
-
-      renderClientTable();
-
-      notifyNavbarBell(client.full_name || "New client");
-
-      console.log("✅ Client automatically added to table");
-    } catch (error) {
-      console.error("❌ WebSocket JSON error:", error);
+    if (payload.event !== "CLIENT_REGISTERED") {
+      console.log("ℹ️ Ignored event:", payload.event);
+      return;
     }
-  };
+
+    const client = payload.client;
+
+    if (!client) {
+      console.error("❌ WebSocket client data is null");
+      return;
+    }
+
+    console.log("🟢 NEW CLIENT:", client);
+
+    // Reload complete data from database
+    await loadClients();
+
+    // Show notification
+    notifyNavbarBell(client.full_name || "New client");
+
+    console.log("✅ Client automatically loaded without refresh");
+
+  } catch (error) {
+    console.error("❌ WebSocket JSON error:", error);
+  }
+};
 
   socket.onerror = function (error) {
     console.error("❌ WebSocket error:", error);

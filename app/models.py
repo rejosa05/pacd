@@ -135,16 +135,20 @@ class ServicesDetails(models.Model):
     ]
 
     CLASSIFICATION_CHOICES = [
-            ("Simple", "Simple"),
-            ("Complex", "Complex"),
-            ("Highly Technical", "Highly Technical")
-        ]
+        ("Simple", "Simple"),
+        ("Complex", "Complex"),
+        ("Highly Technical", "Highly Technical"),
+    ]
 
     service_name = models.TextField()
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, null=True, blank=True)
+    category = models.CharField(
+        max_length=100, choices=CATEGORY_CHOICES, null=True, blank=True
+    )
     division = models.CharField(max_length=100, null=True, blank=True)
     unit = models.CharField(max_length=100, null=True, blank=True)
-    classification = models.CharField(max_length=100, choices=CLASSIFICATION_CHOICES, null=True, blank=True)
+    classification = models.CharField(
+        max_length=100, choices=CLASSIFICATION_CHOICES, null=True, blank=True
+    )
     type_transaction = models.CharField(max_length=100, null=True, blank=True)
     processing_time = models.DurationField(
         default=timedelta(days=1), null=True, blank=True
@@ -220,8 +224,12 @@ class TransactionLog(models.Model):
     survey_form = models.CharField(
         max_length=3, choices=CSM_CSS_CHOICES, blank=True, null=True
     )
+    pacd_officer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="transaction_logs_as_pacd_officer"
+    )
+
     process_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="transaction_logs_as_process_owner"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
