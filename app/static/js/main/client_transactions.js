@@ -1170,7 +1170,7 @@ async function confirmSkipClient() {
 
 async function loadClients() {
   try {
-    const response = await fetch("api/clients-list/", {
+    const response = await fetch("api/clients-list", {
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       },
@@ -1289,39 +1289,40 @@ function connectQueueSocket() {
     ========================================= */
 
   socket.onmessage = async function (event) {
-  console.log("📡 WebSocket received:", event.data);
+    console.log("📡 WebSocket received:", event.data);
 
-  try {
-    const payload = JSON.parse(event.data);
+    try {
+      const payload = JSON.parse(event.data);
 
-    console.log("📦 Parsed payload:", payload);
+      console.log("📦 Parsed payload:", payload);
 
-    if (payload.event !== "CLIENT_REGISTERED") {
-      console.log("ℹ️ Ignored event:", payload.event);
-      return;
+      // Accept both new client and queue updates
+      if (
+        payload.event !== "CLIENT_REGISTERED" &&
+        payload.event !== "QUEUE_UPDATED"
+      ) {
+        console.log("ℹ️ Ignored event:", payload.event);
+        return;
+      }
+
+      console.log("🔄 Queue changed. Reloading clients...");
+
+      await loadClients();
+
+      // Notification only for newly registered clients
+      if (payload.event === "CLIENT_REGISTERED") {
+        const client = payload.client;
+
+        if (client) {
+          notifyNavbarBell(client.full_name || "New client");
+        }
+      }
+
+      console.log("✅ Dashboard automatically updated");
+    } catch (error) {
+      console.error("❌ WebSocket JSON error:", error);
     }
-
-    const client = payload.client;
-
-    if (!client) {
-      console.error("❌ WebSocket client data is null");
-      return;
-    }
-
-    console.log("🟢 NEW CLIENT:", client);
-
-    // Reload complete data from database
-    await loadClients();
-
-    // Show notification
-    notifyNavbarBell(client.full_name || "New client");
-
-    console.log("✅ Client automatically loaded without refresh");
-
-  } catch (error) {
-    console.error("❌ WebSocket JSON error:", error);
-  }
-};
+  };
 
   socket.onerror = function (error) {
     console.error("❌ WebSocket error:", error);

@@ -331,7 +331,7 @@ def serve_client(request, client_id):
         survey_form=form,
         remarks=remarks,
         process_owner=request.user,
-        pacd_officer= request.user
+        pacd_officer=request.user,
     )
 
     if profile.role.lower() == "staff":
@@ -436,10 +436,16 @@ def forward_client(request, client_id):
         {
             "type": "queue_update",
             "event": "QUEUE_UPDATED",
-            "queue_number": client.id,
         },
     )
-    return JsonResponse({"success": True, "message": "Client forwarded successfully."})
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Client forwarded successfully.",
+            "mode": "created",
+            "client_id": client.id,
+        }
+    )
 
 
 # ============================================================
