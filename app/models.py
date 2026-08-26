@@ -290,9 +290,9 @@ def log_client_save(sender, instance, created, **kwargs):
     HistoryLog.objects.create(client=instance, action=action, timestamp=timezone.now())
 
 
-@receiver(post_delete, sender=ClientDetails)
-def log_client_delete(sender, instance, **kwargs):
-    HistoryLog.objects.create(client=instance, action="deleted", date=timezone.now())
+# @receiver(post_delete, sender=ClientDetails)
+# def log_client_delete(sender, instance, **kwargs):
+#     HistoryLog.objects.create(client=instance, action="deleted", date=timezone.now())
 
 
 class SessionHistory(models.Model):

@@ -8,6 +8,7 @@
     "tailwindcss": "^4.3.3"
   },
   "dependencies": {
+    "apexcharts": "^3.46.0",
     "flowbite": "^4.0.2"
   }
 }

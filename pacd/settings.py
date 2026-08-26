@@ -48,6 +48,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# STORAGES = {
+#     "staticfiles": {
+#         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+#     },
+# }
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -55,6 +61,7 @@ STORAGES = {
 }
 
 ROOT_URLCONF = "pacd.urls"
+# APPEND_SLASH = True
 
 TEMPLATES = [
     {
@@ -84,7 +91,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "test.db",
+        "NAME": BASE_DIR / "QueuingDatabase.db",
     }
 }
 
@@ -148,3 +155,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+
+LOGIN_URL = "index"

@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="flex h-screen overflow-hidden">
@@ -11,47 +12,6 @@
     <div class="flex-1 flex flex-col min-w-0">
         <!-- templates/includes/navbar.html -->
          {% include 'includes/navbar.html' %}
-
-<script>
-    (function () {
-        const themeToggle = document.getElementById('theme-toggle');
-        const knob = document.getElementById('toggle-knob');
-        const knobSun = document.getElementById('knob-sun');
-        const knobMoon = document.getElementById('knob-moon');
-        const html = document.documentElement;
-
-        function applyTheme(isDark) {
-            if (isDark) {
-                html.classList.add('dark');
-                knob.style.transform = 'translateX(28px)';
-                knobSun.classList.add('hidden');
-                knobMoon.classList.remove('hidden');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.classList.remove('dark');
-                knob.style.transform = 'translateX(0px)';
-                knobSun.classList.remove('hidden');
-                knobMoon.classList.add('hidden');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-        // Respect saved preference, fall back to system preference
-        const saved = localStorage.getItem('theme');
-        let isDark = saved
-            ? saved === 'dark'
-            : window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        applyTheme(isDark);
-
-        themeToggle.addEventListener('click', function () {
-            isDark = !isDark;
-            applyTheme(isDark);
-        });
-    })();
-</script>
-
-
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900">
 
             <!-- Welcome banner -->
@@ -143,52 +103,52 @@
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Recent Queue Activity</h3>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th class="px-6 py-3">Queue No.</th>
-                                <th class="px-6 py-3">Window</th>
-                                <th class="px-6 py-3">Client</th>
-                                <th class="px-6 py-3">Status</th>
-                                <th class="px-6 py-3">Time</th>
+                                <th scope="col" class="px-6 py-3">Queue No.</th>
+                                <th scope="col" class="px-6 py-3">Window</th>
+                                <th scope="col" class="px-6 py-3">Client</th>
+                                <th scope="col" class="px-6 py-3">Status</th>
+                                <th scope="col" class="px-6 py-3">Time</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            <tr>
+                            <tr class="bg-white dark:bg-gray-800">
                                 <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">A-042</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Window 3</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Maria Santos</td>
+                                <td class="px-6 py-3">Window 3</td>
+                                <td class="px-6 py-3">Maria Santos</td>
                                 <td class="px-6 py-3">
-                                    <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Serving</span>
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-yellow-900/30 dark:text-yellow-400">Serving</span>
                                 </td>
-                                <td class="px-6 py-3 text-gray-500 dark:text-gray-400">2 min ago</td>
+                                <td class="px-6 py-3">2 min ago</td>
                             </tr>
-                            <tr>
+                            <tr class="bg-white dark:bg-gray-800">
                                 <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">A-041</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Window 1</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Pedro Reyes</td>
+                                <td class="px-6 py-3">Window 1</td>
+                                <td class="px-6 py-3">Pedro Reyes</td>
                                 <td class="px-6 py-3">
-                                    <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">Completed</span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-green-900/30 dark:text-green-400">Completed</span>
                                 </td>
-                                <td class="px-6 py-3 text-gray-500 dark:text-gray-400">5 min ago</td>
+                                <td class="px-6 py-3">5 min ago</td>
                             </tr>
-                            <tr>
+                            <tr class="bg-white dark:bg-gray-800">
                                 <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">A-040</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Window 5</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Ana Cruz</td>
+                                <td class="px-6 py-3">Window 5</td>
+                                <td class="px-6 py-3">Ana Cruz</td>
                                 <td class="px-6 py-3">
-                                    <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">Completed</span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-green-900/30 dark:text-green-400">Completed</span>
                                 </td>
-                                <td class="px-6 py-3 text-gray-500 dark:text-gray-400">9 min ago</td>
+                                <td class="px-6 py-3">9 min ago</td>
                             </tr>
-                            <tr>
+                            <tr class="bg-white dark:bg-gray-800">
                                 <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">A-039</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Window 2</td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-gray-300">Jose Ramos</td>
+                                <td class="px-6 py-3">Window 2</td>
+                                <td class="px-6 py-3">Jose Ramos</td>
                                 <td class="px-6 py-3">
-                                    <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400">No Show</span>
+                                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-red-900/30 dark:text-red-400">No Show</span>
                                 </td>
-                                <td class="px-6 py-3 text-gray-500 dark:text-gray-400">14 min ago</td>
+                                <td class="px-6 py-3">14 min ago</td>
                             </tr>
                         </tbody>
                     </table>
@@ -199,4 +159,6 @@
     </div>
 </div>
 
+<script src="{% static 'js/main/index.js' %}"></script>
+<script src="{% static 'js/main/chart.js' %}"></script>
 {% endblock %}
