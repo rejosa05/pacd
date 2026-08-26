@@ -37,23 +37,97 @@ function initials(name) {
    SUMMARY STATS
 ===================================================== */
 
+/* =====================================================
+   SUMMARY STATS
+===================================================== */
+
 function updateSummaryStats() {
+  // =====================================================
+  // TOTAL CLIENTS
+  // =====================================================
+
   const total = allClient.length;
-  const waiting = allClient.filter(
-    (client) => (client.status || "Waiting") === "Waiting",
-  ).length;
-  const priority = allClient.filter(
-    (client) => String(client.lane || "").toLowerCase() === "priority",
-  ).length;
+
+  let waiting = 0;
+
+  // =====================================================
+  // SUPER ADMIN + SUB ADMIN
+  // Waiting = ALL WAITING CLIENTS
+  // =====================================================
+
+  if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
+    waiting = allClient.filter((client) => {
+      const status = String(client.status || "Waiting")
+        .trim()
+        .toLowerCase();
+
+      return status === "waiting";
+    }).length;
+  }
+
+  // =====================================================
+  // STAFF
+  // Waiting = FORWARDED TO THEIR UNIT
+  // =====================================================
+  else if (IS_STAFF) {
+    const myUnitName = String(CURRENT_UNIT_ID || "")
+      .trim()
+      .toLowerCase();
+
+    waiting = allTransaction.filter((transaction) => {
+      const status = String(transaction.status || "")
+        .trim()
+        .toLowerCase();
+
+      const transactionUnit = String(transaction.unit || "")
+        .trim()
+        .toLowerCase();
+
+      return status === "forwarded" && transactionUnit === myUnitName;
+    }).length;
+  }
+
+  // =====================================================
+  // PRIORITY
+  // =====================================================
+
+  const priority = allClient.filter((client) => {
+    return (
+      String(client.lane || "")
+        .trim()
+        .toLowerCase() === "priority"
+    );
+  }).length;
+
+  // =====================================================
+  // UPDATE HTML
+  // =====================================================
+
   const totalEl = document.getElementById("statTotalClients");
   const waitingEl = document.getElementById("statWaiting");
   const priorityEl = document.getElementById("statPriority");
   const statusEl = document.getElementById("statStatus");
 
-  if (totalEl) totalEl.textContent = total;
-  if (waitingEl) waitingEl.textContent = waiting;
-  if (priorityEl) priorityEl.textContent = priority;
-  if (statusEl) statusEl.textContent = total ? "Active" : "Idle";
+  if (totalEl) {
+    totalEl.textContent = total;
+  }
+
+  if (waitingEl) {
+    waitingEl.textContent = waiting;
+  }
+
+  if (priorityEl) {
+    priorityEl.textContent = priority;
+  }
+
+  if (statusEl) {
+    statusEl.textContent = total ? "Active" : "Idle";
+  }
+
+  console.log("📊 SUMMARY STATS");
+  console.log("👤 Role:", CURRENT_ROLE);
+  console.log("🏢 Unit:", CURRENT_UNIT_ID);
+  console.log("⏳ Waiting:", waiting);
 }
 
 /* =====================================================
