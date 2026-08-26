@@ -3,6 +3,7 @@ let filteredClients = [];
 let pageSize = 10;
 let currentPage = 1;
 let searchTerm = "";
+let allTransaction = [];
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
