@@ -13,6 +13,7 @@ function getCookie(name) {
 
 const CSRF_TOKEN = getCookie("csrftoken");
 
+const CURRENT_UNIT_ID = window.CURRENT_USER_UNIT_ID || null;
 const CURRENT_ROLE = window.CURRENT_USER_ROLE || "";
 const IS_SUPER_ADMIN = CURRENT_ROLE === "SUPER_ADMIN";
 const IS_SUB_ADMIN = CURRENT_ROLE === "SUB_ADMIN";
@@ -1189,6 +1190,7 @@ async function loadClients() {
     allClient = Array.isArray(data.clients) ? data.clients : [];
 
     allTransaction = Array.isArray(data.transactions) ? data.transactions : [];
+    updateNotificationBell();
 
     // IMPORTANT
     filteredClients = [...allClient];
@@ -1229,34 +1231,97 @@ async function loadClients() {
    NAVBAR NOTIFICATION
 ===================================================== */
 
-function notifyNavbarBell(clientName) {
+/* =====================================================
+   NAVBAR NOTIFICATION
+===================================================== */
+
+/* =====================================================
+   NAVBAR NOTIFICATION
+===================================================== */
+
+function updateNotificationBell() {
   const badge = document.getElementById("notify");
 
-  const toast = document.getElementById("transactionNotification");
+  if (!badge) return;
 
-  const clientLabel = clientName || "New client";
+  let notificationCount = 0;
 
-  if (badge) {
-    const currentCount = Number(badge.textContent || "0");
+  // =====================================================
+  // SUPER ADMIN + SUB ADMIN
+  // COUNT ALL WAITING CLIENTS
+  // =====================================================
 
-    const nextCount = Math.max(1, currentCount + 1);
+  if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
+    notificationCount = allClient.filter((client) => {
+      return (
+        String(client.status || "")
+          .trim()
+          .toLowerCase() === "waiting"
+      );
+    }).length;
+  }
 
-    badge.textContent = String(nextCount);
+  // =====================================================
+  // STAFF
+  // COUNT FORWARDED CLIENTS FOR THEIR UNIT ONLY
+  // =====================================================
+  else if (IS_STAFF) {
+    notificationCount = allTransaction.filter((transaction) => {
+      const status = String(transaction.status || "")
+        .trim()
+        .toLowerCase();
+
+      const transactionUnit = String(transaction.unit || "")
+        .trim()
+        .toLowerCase();
+
+      const myUnit = String(window.CURRENT_USER_UNIT_ID || "")
+        .trim()
+        .toLowerCase();
+
+      console.log("STAFF NOTIFICATION CHECK:", {
+        status,
+        transactionUnit,
+        myUnit,
+      });
+
+      return status === "forwarded" && transactionUnit === myUnit;
+    }).length;
+  }
+
+  // =====================================================
+  // UPDATE BELL
+  // =====================================================
+
+  if (notificationCount > 0) {
+    badge.textContent = String(notificationCount);
 
     badge.style.display = "inline-flex";
+  } else {
+    badge.textContent = "0";
+
+    badge.style.display = "none";
   }
 
-  if (toast) {
-    toast.textContent = `Bag-ong client: ${clientLabel}`;
+  console.log("🔔 Notification count:", notificationCount);
+}
 
-    toast.classList.remove("hidden");
+/* =====================================================
+   NOTIFICATION TOAST
+===================================================== */
 
-    setTimeout(() => toast.classList.add("hidden"), 4000);
-  }
+function showNotificationToast(message) {
+  const toast = document.getElementById("transactionNotification");
 
-  if (window.fetchPACDNotifications) {
-    window.fetchPACDNotifications();
-  }
+  if (!toast) return;
+
+  toast.textContent = message;
+
+  toast.classList.remove("hidden");
+
+  setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 4000);
 }
 
 /* =====================================================
@@ -1296,29 +1361,79 @@ function connectQueueSocket() {
 
       console.log("📦 Parsed payload:", payload);
 
-      // Accept both new client and queue updates
-      if (
-        payload.event !== "CLIENT_REGISTERED" &&
-        payload.event !== "QUEUE_UPDATED"
-      ) {
+      // =====================================================
+      // EVENTS THAT SHOULD REFRESH THE DASHBOARD
+      // =====================================================
+
+      const refreshEvents = [
+        "CLIENT_REGISTERED",
+        "QUEUE_UPDATED",
+        "CLIENT_FORWARDED",
+        "CLIENT_SERVED",
+        "CLIENT_SKIPPED",
+        "CLIENT_UPDATED",
+        "TRANSACTION_UPDATED",
+      ];
+
+      // If this event is not related to queue changes
+      if (!refreshEvents.includes(payload.event)) {
         console.log("ℹ️ Ignored event:", payload.event);
+
         return;
       }
+
+      // =====================================================
+      // RELOAD CLIENTS
+      // =====================================================
 
       console.log("🔄 Queue changed. Reloading clients...");
 
       await loadClients();
 
-      // Notification only for newly registered clients
-      if (payload.event === "CLIENT_REGISTERED") {
+      // =====================================================
+      // SUPER ADMIN / SUB ADMIN
+      // NEW WAITING CLIENT
+      // =====================================================
+
+      if (
+        payload.event === "CLIENT_REGISTERED" &&
+        (IS_SUPER_ADMIN || IS_SUB_ADMIN)
+      ) {
         const client = payload.client;
 
         if (client) {
-          notifyNavbarBell(client.full_name || "New client");
+          showNotificationToast(
+            `Bag-ong waiting client: ${client.full_name || "New client"}`,
+          );
         }
       }
 
-      console.log("✅ Dashboard automatically updated");
+      // =====================================================
+      // STAFF
+      // FORWARDED TO THEIR UNIT
+      // =====================================================
+
+      if (IS_STAFF) {
+        if (payload.event === "CLIENT_FORWARDED") {
+          const forwardedUnitId = Number(payload.transaction?.unit_id);
+
+          const myUnitId = Number(CURRENT_UNIT_ID);
+
+          // COUNT ONLY IF FORWARDED TO MY UNIT
+          if (forwardedUnitId === myUnitId) {
+            notifyNavbarBell(
+              payload.client?.full_name,
+              `Na-forward ang ${payload.client?.queue_no} ngadto sa inyong unit.`,
+            );
+          }
+        }
+      }
+
+      // =====================================================
+      // BELL IS ALREADY UPDATED INSIDE loadClients()
+      // =====================================================
+
+      console.log("🔔 Notification count synchronized.");
     } catch (error) {
       console.error("❌ WebSocket JSON error:", error);
     }

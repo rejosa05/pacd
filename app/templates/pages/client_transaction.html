@@ -480,6 +480,7 @@
 -->
 <script>
   window.CURRENT_USER_ROLE = "{{ request.user.account_profile.role|default:'' }}";
+  window.CURRENT_USER_UNIT_ID = "{{ request.user.account_profile.unit.name|default:'' }}";
 </script>
 <script src="{% static 'js/main/client_transactions.js' %}"></script>
 {% endblock %}
