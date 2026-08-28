@@ -340,7 +340,6 @@ def serve_client(request, client_id):
             .order_by("-id")
             .first()
         )
-
         if not transaction:
             return JsonResponse(
                 {
@@ -363,7 +362,7 @@ def serve_client(request, client_id):
         transaction.process_owner = request.user
 
         transaction.save()
-    client.client_status = "Served" if resolved == "Yes" else "Serving"
+    client.client_status = "Served" if resolved == "Yes" else "Catered"
 
     client.save(update_fields=["client_status"])
 

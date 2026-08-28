@@ -124,11 +124,6 @@ function updateSummaryStats() {
   if (statusEl) {
     statusEl.textContent = total ? "Active" : "Idle";
   }
-
-  console.log("📊 SUMMARY STATS");
-  console.log("👤 Role:", CURRENT_ROLE);
-  console.log("🏢 Unit:", CURRENT_UNIT_ID);
-  console.log("⏳ Waiting:", waiting);
 }
 
 /* =====================================================
@@ -154,10 +149,19 @@ function statusBadge(status) {
                 `;
   }
 
-  if (status === "Skipped" || status === "Forwarded") {
+  if (status === "Skipped") {
     return `
                     <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">
                         <span class="h-1.5 w-1.5 rounded-full bg-red-600"></span>
+                        ${status}
+                    </span>
+                `;
+  }
+
+  if (status === "Forwarded" || status === "Serving") {
+    return `
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                        <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
                         ${status}
                     </span>
                 `;
@@ -610,6 +614,9 @@ function buildActionButtons(client, transaction) {
     } else if (status === "Serving") {
       buttons.push(actionBtn("serve", transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));
+    } else {
+      buttons.push(actionBtn("view", transaction?.transaction_id));
+      buttons.push(actionBtn("edit", transaction?.transaction_id));
     }
     // Any other status (Waiting / Skipped / Approved) -> View only
     return buttons.join("");
