@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.urls import include, re_path as path
-from app.views import dashboard, logs, services
+from django.urls import include, path
+from app.views import logs, services
 from app.views_ import loginViews
 
 urlpatterns = [

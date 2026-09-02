@@ -58,21 +58,12 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
     async def queue_update(self, event):
         await self.send(
-            text_data=json.dumps(
-                {
-                    "event": event.get("event"),
-                }
-            )
+            text_data=json.dumps({
+                "event": event.get("event"),
+                "queue_number": event.get("queue_number"),
+                "lane": event.get("lane"),
+                "status": event.get("status"),
+                "client": event.get("client"),
+            })
         )
-
-        await self.send(
-            text_data=json.dumps(
-                {
-                    "event": event.get("event"),
-                    "queue_number": event.get("queue_number"),
-                    "lane": event.get("lane"),
-                    "status": event.get("status"),
-                    "client": event.get("client"),
-                }
-            )
-        )
+    

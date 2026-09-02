@@ -23,7 +23,8 @@ status_order = Case(
     When(client_status="Forwarded", then=2),
     When(client_status="Serving", then=3),
     When(client_status="Served", then=4),
-    When(client_status="Skipped", then=5),
+    When(client_status="Catered", then=5),
+    When(client_status="Skipped", then=6),
     output_field=IntegerField(),
 )
 
