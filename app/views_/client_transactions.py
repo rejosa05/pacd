@@ -315,25 +315,26 @@ def serve_client(request, client_id):
     if deficiency == "No":
         resolved = "Yes"
 
-    TransactionLog.objects.create(
-        client=client,
-        action="Served",
-        details=details,
-        transaction_type=type,
-        citizen_charter=charter,
-        service_id=service,
-        has_deficiency=deficiency,
-        deficiency_details=deficiencyDetails,
-        deficiency_status=payload.get("deficiency_status"),
-        forwarded_division=profile.division,
-        forwarded_unit=profile.unit,
-        transaction_status="Served",
-        resolved=resolved,
-        survey_form=form,
-        remarks=remarks,
-        process_owner=request.user,
-        pacd_officer=request.user,
-    )
+    if profile.role.lower() != "staff" and not transactionId:
+        TransactionLog.objects.create(
+            client=client,
+            action="Served",
+            details=details,
+            transaction_type=type,
+            citizen_charter=charter,
+            service_id=service,
+            has_deficiency=deficiency,
+            deficiency_details=deficiencyDetails,
+            deficiency_status=payload.get("deficiency_status"),
+            forwarded_division=profile.division,
+            forwarded_unit=profile.unit,
+            transaction_status="Served",
+            resolved=resolved,
+            survey_form=form,
+            remarks=remarks,
+            process_owner=request.user,
+            pacd_officer=request.user,
+        )
 
     if profile.role.lower() == "staff":
         transaction = (

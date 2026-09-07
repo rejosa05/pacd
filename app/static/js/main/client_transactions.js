@@ -1036,6 +1036,7 @@ function resetServeForm() {
     "serveServiceSection",
     "serveDeficiencyQuestion",
     "serveDeficiencyDetailsSection",
+    "serveTransactionDetailsSection",
     "serveResolvedQuestion",
     "serveRemarksSection",
     "serveTypeSelection",
@@ -1048,71 +1049,264 @@ function resetServeForm() {
 }
 
 function updateServeFlow() {
+  // =====================================================
+  // GET VALUES
+  // =====================================================
+
   const charter = document.querySelector(
     'input[name="serveCharter"]:checked',
   )?.value;
-  const service = document.getElementById("serveService").value;
-  //quest sa kung naa deficiency
+
+  const serviceSelect = document.getElementById("serveService");
+
+  const service = serviceSelect?.value || "";
+
   const deficiency = document.querySelector(
     'input[name="serveDeficiency"]:checked',
   )?.value;
-  //Was the transaction catered / resolved?
+
   const resolved = document.querySelector(
     'input[name="serveResolved"]:checked',
   )?.value;
+
+  const form = document.querySelector('input[name="serveForm"]:checked')?.value;
+
+  // =====================================================
+  // ELEMENTS
+  // =====================================================
+
   const serviceSection = document.getElementById("serveServiceSection");
+
+  const typeSelection = document.getElementById("serveTypeSelection");
+
+  const transactionDetailsSection = document.getElementById(
+    "serveTransactionDetailsSection",
+  );
+
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
+
   const deficiencyDetails = document.getElementById(
     "serveDeficiencyDetailsSection",
   );
-  const type = document.getElementById("serveClientTransaction").value;
-  const isService = document.getElementById("serveService").value;
+
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
+
   const remarks = document.getElementById("serveRemarksSection");
-  const csmSection = document.getElementById("serveCSMSection");
-  const serveBtn = document.getElementById("serveButton");
+
   const csm = document.getElementById("CSMForm");
+
   const css = document.getElementById("CSSForm");
-  const form = document.querySelector('input[name="serveForm"]:checked')?.value;
-  const typeSelection = document.getElementById("serveTypeSelection");
+
+  const serveBtn = document.getElementById("serveButton");
+
+  const noServiceWarning = document.getElementById("serveNoServiceWarning");
+
+  // =====================================================
+  // CHECK IF SERVICES ARE AVAILABLE
+  // =====================================================
+
+  let hasServices = false;
+
+  if (serviceSelect) {
+    const options = Array.from(serviceSelect.options);
+
+    hasServices = options.some((option) => {
+      return option.value && option.value.trim() !== "";
+    });
+  }
+
+  // =====================================================
+  // ROLE-BASED TRANSACTION DETAILS
+  // =====================================================
+
+  if (IS_STAFF) {
+    // STAFF cannot see Transaction Details
+    transactionDetailsSection?.classList.add("hidden");
+  } else if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
+    // SUB ADMIN / SUPER ADMIN can see it
+    transactionDetailsSection?.classList.remove("hidden");
+  }
+
+  // =====================================================
+  // CITIZEN'S CHARTER = YES
+  // =====================================================
 
   if (charter === "Yes") {
-    typeSelection.classList.remove("hidden");
-    serveBtn.classList.remove("hidden");
-    serviceSection.classList.remove("hidden");
-    if (isService) {
-      deficiencyQuestion.classList.remove("hidden");
-      if (deficiency === "Yes") {
-        deficiencyDetails.classList.remove("hidden");
-        resolvedQuestion.classList.add("hidden");
-        csm.classList.add("hidden");
-        css.classList.remove("hidden");
-        if (form) {
-          serveBtn.classList.remove("hidden");
-        }
-      } else if (deficiency === "No") {
-        deficiencyDetails.classList.add("hidden");
-        deficiencyDetails.classList.add("hidden");
-        resolvedQuestion.classList.add("hidden");
-        csm.classList.remove("hidden");
-        css.classList.add("hidden");
-        // serveBtn.classList.remove("hidden");
+    // Show service section
+    serviceSection?.classList.remove("hidden");
+
+    // -------------------------------------------------
+    // TRANSACTION TYPE
+    // Only SUB ADMIN / SUPER ADMIN
+    // -------------------------------------------------
+
+    if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
+      typeSelection?.classList.remove("hidden");
+    } else {
+      typeSelection?.classList.add("hidden");
+    }
+
+    // -------------------------------------------------
+    // NO SERVICE AVAILABLE
+    // -------------------------------------------------
+
+    if (!hasServices) {
+      // Hide service dropdown
+      serviceSelect?.classList.add("hidden");
+
+      // Show warning
+      noServiceWarning?.classList.remove("hidden");
+
+      // Hide questions depending on service
+      deficiencyQuestion?.classList.add("hidden");
+      deficiencyDetails?.classList.add("hidden");
+
+      // Hide survey forms
+      csm?.classList.add("hidden");
+      css?.classList.add("hidden");
+
+      // Hide button
+      serveBtn?.classList.add("hidden");
+
+      return;
+    }
+
+    // -------------------------------------------------
+    // SERVICES ARE AVAILABLE
+    // -------------------------------------------------
+
+    serviceSelect?.classList.remove("hidden");
+    noServiceWarning?.classList.add("hidden");
+
+    // -------------------------------------------------
+    // SERVICE NOT YET SELECTED
+    // -------------------------------------------------
+
+    if (!service) {
+      deficiencyQuestion?.classList.add("hidden");
+      deficiencyDetails?.classList.add("hidden");
+
+      csm?.classList.add("hidden");
+      css?.classList.add("hidden");
+
+      serveBtn?.classList.add("hidden");
+
+      return;
+    }
+
+    // =================================================
+    // SERVICE SELECTED
+    // =================================================
+
+    deficiencyQuestion?.classList.remove("hidden");
+
+    // =================================================
+    // DEFICIENCY = YES
+    // =================================================
+
+    if (deficiency === "Yes") {
+      deficiencyDetails?.classList.remove("hidden");
+
+      resolvedQuestion?.classList.add("hidden");
+
+      csm?.classList.add("hidden");
+
+      css?.classList.remove("hidden");
+
+      if (form === "CSS") {
+        serveBtn?.classList.remove("hidden");
+      } else {
+        serveBtn?.classList.add("hidden");
       }
     }
-  } else if (charter === "No") {
-    isService == "";
-    serviceSection.classList.add("hidden");
-    deficiencyQuestion.classList.add("hidden");
-    resolvedQuestion.classList.remove("hidden");
-    deficiencyDetails.classList.add("hidden");
-    csm.classList.add("hidden");
+
+    // =================================================
+    // DEFICIENCY = NO
+    // =================================================
+    else if (deficiency === "No") {
+      deficiencyDetails?.classList.add("hidden");
+
+      resolvedQuestion?.classList.add("hidden");
+
+      csm?.classList.remove("hidden");
+
+      css?.classList.add("hidden");
+
+      if (form === "CSM") {
+        serveBtn?.classList.add("hidden");
+      } else {
+        serveBtn?.classList.remove("hidden");
+      }
+    } else {
+      deficiencyDetails?.classList.add("hidden");
+
+      csm?.classList.add("hidden");
+      css?.classList.add("hidden");
+
+      serveBtn?.classList.add("hidden");
+    }
+  }
+
+  // =====================================================
+  // CITIZEN'S CHARTER = NO
+  // =====================================================
+  else if (charter === "No") {
+    // Hide service-related things
+    serviceSection?.classList.add("hidden");
+    serviceSelect?.classList.add("hidden");
+    noServiceWarning?.classList.add("hidden");
+
+    deficiencyQuestion?.classList.add("hidden");
+    deficiencyDetails?.classList.add("hidden");
+
+    csm?.classList.add("hidden");
+
+    // Transaction Type not needed
+    typeSelection?.classList.add("hidden");
+
+    // Show resolved question
+    resolvedQuestion?.classList.remove("hidden");
+
+    // -------------------------------------------------
+    // RESOLVED SELECTED
+    // -------------------------------------------------
+
     if (resolved === "Yes" || resolved === "No") {
-      remarks.classList.remove("hidden");
-      css.classList.remove("hidden");
-      if (form) {
-        serveBtn.classList.remove("hidden");
+      remarks?.classList.remove("hidden");
+      css?.classList.remove("hidden");
+
+      if (form === "CSS") {
+        serveBtn?.classList.remove("hidden");
+      } else {
+        serveBtn?.classList.add("hidden");
       }
+    } else {
+      remarks?.classList.add("hidden");
+      css?.classList.add("hidden");
+
+      serveBtn?.classList.add("hidden");
     }
+  }
+
+  // =====================================================
+  // NOTHING SELECTED YET
+  // =====================================================
+  else {
+    serviceSection?.classList.add("hidden");
+    serviceSelect?.classList.add("hidden");
+    noServiceWarning?.classList.add("hidden");
+
+    deficiencyQuestion?.classList.add("hidden");
+    deficiencyDetails?.classList.add("hidden");
+    resolvedQuestion?.classList.add("hidden");
+    remarks?.classList.add("hidden");
+
+    csm?.classList.add("hidden");
+    css?.classList.add("hidden");
+
+    typeSelection?.classList.add("hidden");
+
+    serveBtn?.classList.add("hidden");
   }
 }
 
@@ -1170,14 +1364,28 @@ async function saveServeClient() {
 async function loadAvailableServices() {
   const serviceSelect = document.getElementById("serveService");
 
+  const noServiceWarning = document.getElementById("serveNoServiceWarning");
+
   if (!serviceSelect) return;
 
   try {
+    // =================================================
+    // LOADING
+    // =================================================
+
+    serviceSelect.classList.remove("hidden");
+
+    noServiceWarning?.classList.add("hidden");
+
     serviceSelect.innerHTML = `
-      <option value="" selected disabled>
-        Loading services...
-      </option>
-    `;
+            <option value="" selected disabled>
+                Loading services...
+            </option>
+        `;
+
+    // =================================================
+    // API
+    // =================================================
 
     const res = await fetch("api/services/available/");
 
@@ -1187,34 +1395,106 @@ async function loadAvailableServices() {
       throw new Error(data.error || "Unable to load services");
     }
 
-    serviceSelect.innerHTML = `
-      <option value="" selected disabled>
-        Select service
-      </option>
-    `;
+    // =================================================
+    // CLEAR
+    // =================================================
 
-    data.services.forEach((service) => {
+    serviceSelect.innerHTML = `
+            <option value="" selected disabled>
+                Select service
+            </option>
+        `;
+
+    // =================================================
+    // ADD SERVICES
+    // =================================================
+
+    const services = Array.isArray(data.services) ? data.services : [];
+
+    console.log("AVAILABLE SERVICES:", services);
+
+    services.forEach((service) => {
       const option = document.createElement("option");
 
-      // Database ID
       option.value = service.id;
 
-      // Display name
       option.textContent = service.name;
 
       serviceSelect.appendChild(option);
     });
+
+    // =================================================
+    // CHECK AFTER LOADING
+    // =================================================
+
+    if (services.length === 0) {
+      console.log("⚠️ This unit has NO available services.");
+
+      serviceSelect.classList.add("hidden");
+
+      noServiceWarning?.classList.remove("hidden");
+    } else {
+      console.log(`✅ ${services.length} service(s) available.`);
+
+      serviceSelect.classList.remove("hidden");
+
+      noServiceWarning?.classList.add("hidden");
+    }
+
+    // IMPORTANT:
+    // Re-run flow after services are loaded
+    updateServeFlow();
   } catch (error) {
     console.error("❌ Load services error:", error);
 
-    serviceSelect.innerHTML = `
-      <option value="" selected disabled>
-        Unable to load services
-      </option>
-    `;
+    // Hide dropdown
+    serviceSelect.classList.add("hidden");
+
+    // Show warning
+    noServiceWarning?.classList.remove("hidden");
+
+    // Update warning text if needed
+    if (noServiceWarning) {
+      noServiceWarning.innerHTML = `
+                <div class="flex items-start gap-3">
+
+                    <div class="flex-shrink-0 text-amber-600 dark:text-amber-400">
+
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A2 2 0 004.52 20h14.96a2 2 0 001.73-3.14l-7.5-13a2 2 0 00-3.42 0Z"
+                            />
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                            No Services Available
+                        </p>
+
+                        <p class="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                            There are no services available for this unit under the Citizen's Charter.
+                        </p>
+
+                    </div>
+
+                </div>
+            `;
+    }
+
+    updateServeFlow();
   }
 }
-
 // ---------- Skip ----------
 function openSkipModal(clientId) {
   document.getElementById("skipQueueNo").value = clientId;

@@ -85,16 +85,13 @@ WSGI_APPLICATION = "pacd.wsgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
     },
 }
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "QueuingDatabase.db",
+        "NAME": BASE_DIR / "test.db",
     }
 }
 

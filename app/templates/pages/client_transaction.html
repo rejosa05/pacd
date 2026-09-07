@@ -224,9 +224,15 @@
                     <p id="serveClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transaction Details <span class="text-gray-400 font-normal">(optional)</span></label>
-                <textarea id="serveDetails" rows="2" placeholder="Notes about this transaction..."
+            <div id="serveTransactionDetailsSection">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Transaction Details <span class="text-gray-400 font-normal">(optional)</span>
+                </label>
+
+                <textarea
+                    id="serveDetails"
+                    rows="2"
+                    placeholder="Notes about this transaction..."
                     class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
             </div>
             
@@ -259,10 +265,57 @@
             <!-- Services (shown if Charter = Yes) — options are loaded dynamically from
                  api/services/available/, scoped to the logged-in user's division/unit. -->
             <div id="serveServiceSection" class="hidden border-t border-gray-100 dark:border-gray-700 pt-4">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Which service was availed?</label>
-                <select id="serveService" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" onchange="updateServeFlow()">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Which service was availed?
+                </label>
+
+                <!-- Service dropdown -->
+                <select
+                    id="serveService"
+                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                    onchange="updateServeFlow()"
+                >
                     <option value="" selected disabled>Select service</option>
                 </select>
+
+                <!-- No Service Warning -->
+                <div
+                    id="serveNoServiceWarning"
+                    class="hidden mt-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-900/20"
+                >
+                    <div class="flex items-start gap-3">
+
+                        <!-- Warning Icon -->
+                        <div class="flex-shrink-0 text-amber-600 dark:text-amber-400">
+                            <svg
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A2 2 0 004.52 20h14.96a2 2 0 001.73-3.14l-7.5-13a2 2 0 00-3.42 0Z"
+                                />
+                            </svg>
+                        </div>
+
+                        <!-- Warning Text -->
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                                No Services Available
+                            </p>
+
+                            <p class="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                                There are no services available for this unit under the Citizen's Charter.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
  
             <!-- Q2: Deficiencies (shown once a service is selected) -->
