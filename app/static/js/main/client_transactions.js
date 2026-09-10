@@ -34,27 +34,10 @@ function initials(name) {
     .toUpperCase();
 }
 
-/* =====================================================
-   SUMMARY STATS
-===================================================== */
-
-/* =====================================================
-   SUMMARY STATS
-===================================================== */
-
 function updateSummaryStats() {
-  // =====================================================
-  // TOTAL CLIENTS
-  // =====================================================
-
   const total = allClient.length;
 
   let waiting = 0;
-
-  // =====================================================
-  // SUPER ADMIN + SUB ADMIN
-  // Waiting = ALL WAITING CLIENTS
-  // =====================================================
 
   if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
     waiting = allClient.filter((client) => {
@@ -64,13 +47,7 @@ function updateSummaryStats() {
 
       return status === "waiting";
     }).length;
-  }
-
-  // =====================================================
-  // STAFF
-  // Waiting = FORWARDED TO THEIR UNIT
-  // =====================================================
-  else if (IS_STAFF) {
+  } else if (IS_STAFF) {
     const myUnitName = String(CURRENT_UNIT_ID || "")
       .trim()
       .toLowerCase();
@@ -1601,17 +1578,14 @@ async function loadClients() {
    NAVBAR NOTIFICATION
 ===================================================== */
 
+let previousNotificationCount = 0;
+
 function updateNotificationBell() {
   const badge = document.getElementById("notify");
 
   if (!badge) return;
 
   let notificationCount = 0;
-
-  // =====================================================
-  // SUPER ADMIN + SUB ADMIN
-  // COUNT ALL WAITING CLIENTS
-  // =====================================================
 
   if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
     notificationCount = allClient.filter((client) => {
@@ -1621,13 +1595,7 @@ function updateNotificationBell() {
           .toLowerCase() === "waiting"
       );
     }).length;
-  }
-
-  // =====================================================
-  // STAFF
-  // COUNT FORWARDED CLIENTS FOR THEIR UNIT ONLY
-  // =====================================================
-  else if (IS_STAFF) {
+  } else if (IS_STAFF) {
     notificationCount = allTransaction.filter((transaction) => {
       const status = String(transaction.status || "")
         .trim()
@@ -1641,14 +1609,34 @@ function updateNotificationBell() {
         .trim()
         .toLowerCase();
 
-      console.log("STAFF NOTIFICATION CHECK:", {
-        status,
-        transactionUnit,
-        myUnit,
-      });
-
       return status === "forwarded" && transactionUnit === myUnit;
     }).length;
+  }
+
+  // =====================================================
+  // NEW NOTIFICATION DETECTION
+  // =====================================================
+
+  if (notificationCount > previousNotificationCount) {
+    const newNotifications = notificationCount - previousNotificationCount;
+
+    // Message
+    if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
+      showNotificationToast(
+        newNotifications === 1
+          ? "🔔 New client is waiting!"
+          : `🔔 ${newNotifications} new clients are waiting!`,
+      );
+    } else if (IS_STAFF) {
+      showNotificationToast(
+        newNotifications === 1
+          ? "🔔 New transaction has been forwarded to your unit!"
+          : `🔔 ${newNotifications} new transactions have been forwarded to your unit!`,
+      );
+    }
+
+    // Sound
+    playNotificationSound();
   }
 
   // =====================================================
@@ -1657,15 +1645,28 @@ function updateNotificationBell() {
 
   if (notificationCount > 0) {
     badge.textContent = String(notificationCount);
-
     badge.style.display = "inline-flex";
   } else {
     badge.textContent = "0";
-
     badge.style.display = "none";
   }
 
   console.log("🔔 Notification count:", notificationCount);
+
+  // Save current count
+  previousNotificationCount = notificationCount;
+}
+
+function playNotificationSound() {
+  const sound = document.getElementById("notificationSound");
+
+  if (!sound) return;
+
+  sound.currentTime = 0;
+
+  sound.play().catch((error) => {
+    console.log("🔇 Notification sound blocked:", error);
+  });
 }
 
 /* =====================================================

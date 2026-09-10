@@ -270,24 +270,24 @@ class TransactionLog(models.Model):
 #         return str(self.action_type) if self.action_type else "No Action"
 
 
-class HistoryLog(models.Model):
-    action = models.CharField(max_length=100)
-    client = models.ForeignKey(
-        ClientDetails, on_delete=models.CASCADE, related_name="history_logs"
-    )
-    timestamp = models.DateTimeField(auto_now_add=True)
+# class HistoryLog(models.Model):
+#     action = models.CharField(max_length=100)
+#     client = models.ForeignKey(
+#         ClientDetails, on_delete=models.CASCADE, related_name="history_logs"
+#     )
+#     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.client.client_fullname} - {self.action} at {self.timestamp}"
+#     def __str__(self):
+#         return f"{self.client.client_fullname} - {self.action} at {self.timestamp}"
 
 
-@receiver(post_save, sender=ClientDetails)
-def log_client_save(sender, instance, created, **kwargs):
-    if created:
-        action = "created"
-    else:
-        action = "updated"
-    HistoryLog.objects.create(client=instance, action=action, timestamp=timezone.now())
+# @receiver(post_save, sender=ClientDetails)
+# def log_client_save(sender, instance, created, **kwargs):
+#     if created:
+#         action = "created"
+#     else:
+#         action = "updated"
+#     HistoryLog.objects.create(client=instance, action=action, timestamp=timezone.now())
 
 
 # @receiver(post_delete, sender=ClientDetails)
@@ -295,30 +295,30 @@ def log_client_save(sender, instance, created, **kwargs):
 #     HistoryLog.objects.create(client=instance, action="deleted", date=timezone.now())
 
 
-class SessionHistory(models.Model):
-    user = models.CharField(max_length=100)
-    login_time = models.DateTimeField(default=timezone.now)
-    logout_time = models.DateTimeField(null=True, blank=True)
-    session_key = models.CharField(max_length=40, null=True, blank=True)
+# class SessionHistory(models.Model):
+#     user = models.CharField(max_length=100)
+#     login_time = models.DateTimeField(default=timezone.now)
+#     logout_time = models.DateTimeField(null=True, blank=True)
+#     session_key = models.CharField(max_length=40, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.user} - {self.login_time}"
+#     def __str__(self):
+#         return f"{self.user} - {self.login_time}"
 
 
-class UserActivityLog(models.Model):
-    user = models.CharField(max_length=100)
-    action = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    page = models.CharField(max_length=200, null=True, blank=True)
-    session_key = models.CharField(max_length=40, null=True, blank=True)
-    ip_address = models.CharField(max_length=45, null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+# class UserActivityLog(models.Model):
+#     user = models.CharField(max_length=100)
+#     action = models.CharField(max_length=100)
+#     description = models.TextField(null=True, blank=True)
+#     page = models.CharField(max_length=200, null=True, blank=True)
+#     session_key = models.CharField(max_length=40, null=True, blank=True)
+#     ip_address = models.CharField(max_length=45, null=True, blank=True)
+#     date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ["-date"]
+#     class Meta:
+#         ordering = ["-date"]
 
-    def __str__(self):
-        return f"{self.user} - {self.action} at {self.date}"
+#     def __str__(self):
+#         return f"{self.user} - {self.action} at {self.date}"
 
 
 # class TransactionHistory(models.Model):
