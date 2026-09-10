@@ -1,10 +1,13 @@
 from django.urls import path
 
 
-from .views_ import client_transactions, user_management, client_kiosk, que_display, dashboard, loginViews
+from .views_ import all_transactions, client_transactions, user_management, client_kiosk, que_display, dashboard, loginViews
 
 urlpatterns = [
 
+    path('all_transactions', all_transactions.all_transactions_page, name="all_transactions"),  
+
+    
     path('client_transactions', client_transactions.client_transaction_page, name="client_transactions"),
     path('user_management', user_management.user_management_page, name='user_management'),
 
@@ -28,4 +31,7 @@ urlpatterns = [
 
     path('dashboard', dashboard.dashboard_page, name='dashboard'),
     path('', loginViews.loginView, name='index')
+
+
+
 ]
