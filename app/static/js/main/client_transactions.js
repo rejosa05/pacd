@@ -1587,6 +1587,10 @@ function updateNotificationBell() {
 
   let notificationCount = 0;
 
+  // =====================================================
+  // SUPER ADMIN / SUB ADMIN
+  // Count all WAITING clients
+  // =====================================================
   if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
     notificationCount = allClient.filter((client) => {
       return (
@@ -1595,6 +1599,11 @@ function updateNotificationBell() {
           .toLowerCase() === "waiting"
       );
     }).length;
+
+    // =====================================================
+    // STAFF
+    // Count FORWARDED transactions for current unit
+    // =====================================================
   } else if (IS_STAFF) {
     notificationCount = allTransaction.filter((transaction) => {
       const status = String(transaction.status || "")
@@ -1620,22 +1629,42 @@ function updateNotificationBell() {
   if (notificationCount > previousNotificationCount) {
     const newNotifications = notificationCount - previousNotificationCount;
 
-    // Message
+    // ---------------------------------------------------
+    // SUPER ADMIN / SUB ADMIN
+    // ---------------------------------------------------
     if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
       showNotificationToast(
         newNotifications === 1
           ? "🔔 New client is waiting!"
           : `🔔 ${newNotifications} new clients are waiting!`,
       );
+
+      // VOICE
+      speakNotification(
+        newNotifications === 1
+          ? "You have client."
+          : `You have ${newNotifications} clients waiting.`,
+      );
+
+      // ---------------------------------------------------
+      // STAFF
+      // ---------------------------------------------------
     } else if (IS_STAFF) {
       showNotificationToast(
         newNotifications === 1
           ? "🔔 New transaction has been forwarded to your unit!"
           : `🔔 ${newNotifications} new transactions have been forwarded to your unit!`,
       );
+
+      // VOICE
+      speakNotification(
+        newNotifications === 1
+          ? "You have a client forwarded to your unit."
+          : `You have ${newNotifications} clients forwarded to your unit.`,
+      );
     }
 
-    // Sound
+    // SOUND
     playNotificationSound();
   }
 
@@ -1657,6 +1686,33 @@ function updateNotificationBell() {
   previousNotificationCount = notificationCount;
 }
 
+// =====================================================
+// VOICE NOTIFICATION
+// =====================================================
+
+function speakNotification(message) {
+  if (!("speechSynthesis" in window)) {
+    console.log("🔇 Speech synthesis not supported.");
+    return;
+  }
+
+  // Stop previous speech
+  window.speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(message);
+
+  speech.lang = "en-US";
+  speech.rate = 0.9;
+  speech.pitch = 1;
+  speech.volume = 1;
+
+  window.speechSynthesis.speak(speech);
+}
+
+// =====================================================
+// NOTIFICATION SOUND
+// =====================================================
+
 function playNotificationSound() {
   const sound = document.getElementById("notificationSound");
 
@@ -1669,9 +1725,9 @@ function playNotificationSound() {
   });
 }
 
-/* =====================================================
-   NOTIFICATION TOAST
-===================================================== */
+// =====================================================
+// NOTIFICATION TOAST
+// =====================================================
 
 function showNotificationToast(message) {
   const toast = document.getElementById("transactionNotification");
@@ -1686,7 +1742,6 @@ function showNotificationToast(message) {
     toast.classList.add("hidden");
   }, 4000);
 }
-
 /* =====================================================
    WEBSOCKET
 ===================================================== */
