@@ -36,6 +36,7 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
             )
         )
 
+
 class QueueConsumer(AsyncWebsocketConsumer):
 
     GROUP_NAME = "queue_display"
@@ -47,23 +48,46 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        print("✅ WebSocket connected:", self.channel_name)
+        # print("✅ WebSocket connected:", self.channel_name)
 
     async def disconnect(self, close_code):
 
         # Leave the common queue group
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
-        print("❌ WebSocket disconnected:", self.channel_name)
+        # print("❌ WebSocket disconnected:", self.channel_name)
 
     async def queue_update(self, event):
         await self.send(
-            text_data=json.dumps({
-                "event": event.get("event"),
-                "queue_number": event.get("queue_number"),
-                "lane": event.get("lane"),
-                "status": event.get("status"),
-                "client": event.get("client"),
-            })
+            text_data=json.dumps(
+                {
+                    "event": event.get("event"),
+                    "queue_number": event.get("queue_number"),
+                    "lane": event.get("lane"),
+                    "status": event.get("status"),
+                    "client": event.get("client"),
+                }
+            )
         )
-    
+
+
+class TransactionLogConsumer(AsyncWebsocketConsumer):
+    """
+    Simple broadcast consumer. Every connected client joins the same
+    "transaction_log" group. Whenever a TransactionLog row is created
+    or updated (see signals.py), we push a small JSON payload to every
+    connected client so the table updates live without a page refresh.
+    """
+
+    GROUP_NAME = "transaction_log"
+
+    async def connect(self):
+        await self.channel_layer.group_add(self.GROUP_NAME, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
+
+    # Called when someone does group_send with "type": "transaction.update"
+    async def transaction_update(self, event):
+        await self.send(text_data=json.dumps(event["data"]))

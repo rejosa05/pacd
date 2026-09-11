@@ -5,7 +5,8 @@ from .views_ import all_transactions, client_transactions, user_management, clie
 
 urlpatterns = [
 
-    path('all_transactions', all_transactions.all_transactions_page, name="all_transactions"),  
+    path('all_transactions', all_transactions.transaction_log_list, name="all_transactions"),  
+    path('transaction/search/', all_transactions.transaction_log_search, name='search_transactions'),
 
     
     path('client_transactions', client_transactions.client_transaction_page, name="client_transactions"),
