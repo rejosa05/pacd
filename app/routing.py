@@ -1,9 +1,10 @@
 from django.urls import re_path
-from .consumers import UserManagementConsumer, QueueConsumer
+from .consumers import TransactionLogConsumer, UserManagementConsumer, QueueConsumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/user-management/$', UserManagementConsumer.as_asgi()),
-    re_path(r'ws/queue-display/$', QueueConsumer.as_asgi()),
+    re_path(r"ws/user-management/$", UserManagementConsumer.as_asgi()),
+    re_path(r"ws/queue-display/$", QueueConsumer.as_asgi()),
+    re_path(r"ws/transaction-logs/$",TransactionLogConsumer.as_asgi(),),
 ]
 
-#test
+# test

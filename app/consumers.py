@@ -36,6 +36,7 @@ class UserManagementConsumer(AsyncWebsocketConsumer):
             )
         )
 
+
 class QueueConsumer(AsyncWebsocketConsumer):
 
     GROUP_NAME = "queue_display"
@@ -58,12 +59,49 @@ class QueueConsumer(AsyncWebsocketConsumer):
 
     async def queue_update(self, event):
         await self.send(
-            text_data=json.dumps({
-                "event": event.get("event"),
-                "queue_number": event.get("queue_number"),
-                "lane": event.get("lane"),
-                "status": event.get("status"),
-                "client": event.get("client"),
-            })
+            text_data=json.dumps(
+                {
+                    "event": event.get("event"),
+                    "queue_number": event.get("queue_number"),
+                    "lane": event.get("lane"),
+                    "status": event.get("status"),
+                    "client": event.get("client"),
+                }
+            )
         )
-    
+
+
+class TransactionLogConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+
+        self.group_name = "transaction_logs"
+
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name,
+        )
+
+        await self.accept()
+
+        # Tell frontend to load latest data
+        await self.send(text_data=json.dumps({"type": "transaction_refresh"}))
+
+    async def disconnect(self, close_code):
+
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name,
+        )
+
+    async def transaction_update(self, event):
+
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "transaction_refresh",
+                    "action": event.get("action", "updated"),
+                    "uid": event.get("uid"),
+                }
+            )
+        )
