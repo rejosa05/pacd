@@ -6,5 +6,3 @@ websocket_urlpatterns = [
     re_path(r"ws/queue-display/$", QueueConsumer.as_asgi()),
     re_path(r"ws/transaction-logs/$",TransactionLogConsumer.as_asgi(),),
 ]
-
-# test
