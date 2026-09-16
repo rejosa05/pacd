@@ -313,7 +313,23 @@ def serve_client(request, client_id):
     deficiency = payload.get("deficiency")
     resolved = payload.get("resolved")
     form = payload.get("form")
+    org_id = payload.get("org_id")
+    org_name = " ".join((payload.get("org_name") or "").split()).strip()
     profile = request.user.account_profile
+
+    organization = None
+    if org_id:
+        try:
+            organization = Organization.objects.get(id=org_id)
+        except Organization.DoesNotExist:
+            return JsonResponse(
+                {"success": False, "error": "Selected organization does not exist."},
+                status=400,
+            )
+    elif org_name:
+        organization = Organization.objects.filter(name__iexact=org_name).first()
+        if organization is None:
+            organization = Organization.objects.create(name=org_name)
 
     if charter == "No":
         service = ""
@@ -373,8 +389,9 @@ def serve_client(request, client_id):
 
         transaction.save()
     client.client_status = "Served" if resolved == "Yes" else "Catered"
+    client.client_org = organization
 
-    client.save(update_fields=["client_status"])
+    client.save(update_fields=["client_status", "client_org"])
 
     channel_layer = get_channel_layer()
 
@@ -392,6 +409,7 @@ def serve_client(request, client_id):
             "message": "Transaction served successfully.",
             "mode": "created",
             "client_id": client.id,
+            "organization": organization.name if organization else "Personal/Individual",
         }
     )
 

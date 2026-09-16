@@ -674,6 +674,10 @@ const orgInput = document.getElementById("forwardOrgName");
 const orgIdInput = document.getElementById("forwardOrgId");
 const orgSuggestions = document.getElementById("organizationSuggestions");
 const addOrganizationBtn = document.getElementById("addOrganizationBtn");
+const serveOrgInput = document.getElementById("serveOrgName");
+const serveOrgIdInput = document.getElementById("serveOrgId");
+const serveOrgSuggestions = document.getElementById("serveOrganizationSuggestions");
+const addServeOrganizationBtn = document.getElementById("addServeOrganizationBtn");
 
 let organizationSearchTimer = null;
 
@@ -724,13 +728,8 @@ async function searchOrganizations(query) {
       : [];
 
     if (organizations.length === 0) {
-      orgSuggestions.innerHTML = `
-        <div class="px-3 py-2 text-sm text-gray-500">
-          No organization found.
-        </div>
-      `;
-
-      orgSuggestions.classList.remove("hidden");
+      orgSuggestions.innerHTML = "";
+      orgSuggestions.classList.add("hidden");
       addOrganizationBtn?.classList.remove("hidden");
       return;
     }
@@ -767,6 +766,91 @@ async function searchOrganizations(query) {
     `;
 
     orgSuggestions.classList.remove("hidden");
+  }
+}
+
+if (serveOrgInput) {
+  serveOrgInput.addEventListener("input", function () {
+    const query = this.value.trim();
+    if (serveOrgIdInput) serveOrgIdInput.value = "";
+    clearTimeout(organizationSearchTimer);
+
+    if (!query) {
+      serveOrgSuggestions?.classList.add("hidden");
+      addServeOrganizationBtn?.classList.add("hidden");
+      return;
+    }
+
+    organizationSearchTimer = setTimeout(() => searchServeOrganizations(query), 250);
+  });
+}
+
+async function searchServeOrganizations(query) {
+  try {
+    const res = await fetch(`api/organizations/?q=${encodeURIComponent(query)}`, {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Unable to search organizations");
+
+    serveOrgSuggestions.innerHTML = "";
+    const organizations = Array.isArray(data.organizations) ? data.organizations : [];
+
+    if (!organizations.length) {
+      serveOrgSuggestions.innerHTML = "";
+      serveOrgSuggestions.classList.add("hidden");
+      addServeOrganizationBtn?.classList.remove("hidden");
+      return;
+    }
+
+    organizations.forEach((org) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "block w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700";
+      item.textContent = org.name;
+      item.addEventListener("click", () => {
+        serveOrgInput.value = org.name;
+        serveOrgIdInput.value = org.id;
+        serveOrgSuggestions.classList.add("hidden");
+        addServeOrganizationBtn?.classList.add("hidden");
+      });
+      serveOrgSuggestions.appendChild(item);
+    });
+
+    serveOrgSuggestions.classList.remove("hidden");
+    addServeOrganizationBtn?.classList.add("hidden");
+  } catch (error) {
+    console.error("Serve organization search error:", error);
+  }
+}
+
+async function addNewServeOrganization() {
+  const name = serveOrgInput?.value.trim();
+  if (!name) {
+    notify("Please enter an organization name.");
+    return;
+  }
+
+  try {
+    const res = await fetch("api/organizations/create/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+      body: JSON.stringify({ name }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "Unable to add organization.");
+
+    serveOrgInput.value = data.organization.name;
+    serveOrgIdInput.value = data.organization.id;
+    serveOrgSuggestions?.classList.add("hidden");
+    addServeOrganizationBtn?.classList.add("hidden");
+    notify(data.existing ? "Organization already exists." : "Organization added successfully.");
+  } catch (error) {
+    notify(error.message || "Unable to add organization.");
   }
 }
 // ---------- Repeat (route an already-forwarded client onward again) ----------
@@ -1119,6 +1203,8 @@ async function saveForwardClient() {
 
 async function openServeModal(id) {
   try {
+    resetServeForm();
+
     if (IS_SUB_ADMIN || IS_SUPER_ADMIN) {
       const clientId = id;
 
@@ -1135,6 +1221,8 @@ async function openServeModal(id) {
         _client.full_name || "---";
       document.getElementById("serveQueueBadge").textContent =
         _client.queue_no || "---";
+      document.getElementById("serveOrgName").value =
+        _client.organization === "Personal/Individual" ? "" : (_client.organization || "");
     }
 
     if (IS_STAFF) {
@@ -1176,8 +1264,9 @@ async function openServeModal(id) {
         _client.full_name || "---";
       document.getElementById("serveClientTransaction").textContent =
         transaction.type || "---";
+      document.getElementById("serveOrgName").value =
+        _client.organization === "Personal/Individual" ? "" : (_client.organization || "");
     }
-    resetServeForm();
     await loadAvailableServices();
     showModal("serveModal");
     return;
@@ -1194,6 +1283,12 @@ async function openServeModal(id) {
 
 function resetServeForm() {
   document.getElementById("serveForm").reset();
+  document.getElementById("serveClientId").value = "";
+  document.getElementById("serveTransactionId").value = "";
+  document.getElementById("serveOrgId").value = "";
+  document.getElementById("serveOrgName").value = "";
+  serveOrgSuggestions?.classList.add("hidden");
+  addServeOrganizationBtn?.classList.add("hidden");
   [
     "serveServiceSection",
     "serveDeficiencyQuestion",
@@ -1475,6 +1570,8 @@ function updateServeFlow() {
 async function saveServeClient() {
   const clientId = document.getElementById("serveClientId").value;
   const transactionId = document.getElementById("serveTransactionId").value;
+  const orgId = document.getElementById("serveOrgId").value;
+  const orgName = document.getElementById("serveOrgName").value.trim();
   const details = document.getElementById("serveDetails").value;
   const type = document.getElementById("serveTransactionType").value;
   const remarks = document.getElementById("serveRemarks").value;
@@ -1513,6 +1610,8 @@ async function saveServeClient() {
         deficiencyDetails: deficiencyDetails,
         resolved: resolved,
         form: surveyForm,
+        org_id: orgId || null,
+        org_name: orgName,
       }),
     });
     hideModal("serveModal");
