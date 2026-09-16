@@ -16,6 +16,7 @@ from ..models import (
     Division,
     Unit,
     ServicesDetails,
+    Organization,
 )
 
 status_order = Case(
@@ -142,7 +143,11 @@ def clients_list_api(request):
                 "contact_number": client.client_contact or "",
                 "lane": client.client_lane_type or "Regular",
                 "status": client.client_status or "Waiting",
-                "organization": client.client_org or "",
+                "organization": (
+                    client.client_org.name
+                    if client.client_org
+                    else "Personal/Individual"
+                ),
                 "address": client.client_address or "",
                 "gender": client.client_gender or "",
                 "date_created": client.date_created.strftime("%Y-%m-%d %I:%M %p"),
@@ -217,6 +222,9 @@ def _serialize_profile(profile):
         "address": profile.client_address,
         "gender": profile.client_gender,
         "status": profile.client_status,
+        "organization": (
+            profile.client_org.name if profile.client_org else "Personal/Individual"
+        ),
     }
 
 
@@ -394,11 +402,14 @@ def serve_client(request, client_id):
 @login_required
 @require_http_methods(["POST"])
 def forward_client(request, client_id):
+
     try:
         client = ClientDetails.objects.get(pk=client_id)
+
     except ClientDetails.DoesNotExist:
         return JsonResponse(
-            {"success": False, "error": "Wala nakit-i ang client."}, status=404
+            {"success": False, "error": "Wala nakit-i ang client."},
+            status=404,
         )
 
     payload, error = _parse_json(request)
@@ -410,11 +421,39 @@ def forward_client(request, client_id):
     unit_id = payload.get("unit_id")
     details = payload.get("details")
     type = payload.get("type")
+    org_id = payload.get("org_id")
+    org_name = " ".join((payload.get("org_name") or "").split()).strip()
 
     if not division_id or not unit_id:
         return JsonResponse(
-            {"success": False, "error": "Division and unit are required."}, status=400
+            {"success": False, "error": "Division and unit are required."},
+            status=400,
         )
+
+    # ==========================================
+    # ORGANIZATION
+    # ==========================================
+
+    organization = None
+
+    if org_id:
+
+        try:
+            organization = Organization.objects.get(id=org_id)
+
+        except Organization.DoesNotExist:
+            return JsonResponse(
+                {"success": False, "error": "Selected organization does not exist."},
+                status=400,
+            )
+    elif org_name:
+        organization = Organization.objects.filter(name__iexact=org_name).first()
+        if organization is None:
+            organization = Organization.objects.create(name=org_name)
+
+    # ==========================================
+    # CREATE TRANSACTION
+    # ==========================================
 
     TransactionLog.objects.create(
         client=client,
@@ -427,8 +466,23 @@ def forward_client(request, client_id):
         pacd_officer=request.user,
     )
 
+    # ==========================================
+    # UPDATE CLIENT
+    # ==========================================
+
+    client.client_org = organization
     client.client_status = "Forwarded"
-    client.save()
+
+    client.save(
+        update_fields=[
+            "client_org",
+            "client_status",
+        ]
+    )
+
+    # ==========================================
+    # NOTIFY DISPLAY
+    # ==========================================
 
     channel_layer = get_channel_layer()
 
@@ -439,12 +493,16 @@ def forward_client(request, client_id):
             "event": "QUEUE_UPDATED",
         },
     )
+
     return JsonResponse(
         {
             "success": True,
             "message": "Client forwarded successfully.",
             "mode": "created",
             "client_id": client.id,
+            "organization": (
+                organization.name if organization else "Personal/Individual"
+            ),
         }
     )
 
@@ -578,6 +636,52 @@ def skip_client(request, client_id):
 
 
 @login_required
+@require_http_methods(["POST"])
+def create_organization(request):
+    payload, error = _parse_json(request)
+
+    if error:
+        return error
+
+    name = (payload.get("name") or "").strip()
+
+    if not name:
+        return JsonResponse(
+            {"success": False, "error": "Organization name is required."},
+            status=400,
+        )
+
+    organization = Organization.objects.filter(name__iexact=name).first()
+
+    if organization:
+        return JsonResponse(
+            {
+                "success": True,
+                "existing": True,
+                "organization": {
+                    "id": organization.id,
+                    "name": organization.name,
+                },
+                "message": "Organization already exists.",
+            }
+        )
+
+    organization = Organization.objects.create(name=name)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "existing": False,
+            "organization": {
+                "id": organization.id,
+                "name": organization.name,
+            },
+            "message": "Organization added successfully.",
+        }
+    )
+
+
+@login_required
 def divisions_api(request):
     """
     Divisions that have at least one active registered account.
@@ -622,6 +726,33 @@ def units_api(request):
 
     data = [{"id": u.id, "name": u.name} for u in units]
     return JsonResponse({"success": True, "units": data})
+
+
+@login_required
+def organizations_api(request):
+    query = request.GET.get("q", "").strip()
+
+    organizations = Organization.objects.all()
+
+    if query:
+        organizations = organizations.filter(name__icontains=query)
+
+    organizations = organizations.order_by("name")[:20]
+
+    data = [
+        {
+            "id": org.id,
+            "name": org.name,
+        }
+        for org in organizations
+    ]
+
+    return JsonResponse(
+        {
+            "success": True,
+            "organizations": data,
+        }
+    )
 
 
 @login_required

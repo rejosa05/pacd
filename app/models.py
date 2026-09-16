@@ -34,6 +34,17 @@ class Position(models.Model):
         return self.name
 
 
+class Organization(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.name = (self.name or "").title()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
 class AccountDetails(models.Model):
 
     ROLE_CHOICES = [
@@ -86,7 +97,13 @@ class ClientDetails(models.Model):
     client_firstname = models.CharField(max_length=100, blank=True)
     client_lastname = models.CharField(max_length=100, blank=True)
     client_address = models.CharField(max_length=100, blank=True)
-    client_org = models.CharField(max_length=100, blank=True, null=True)
+    client_org = models.ForeignKey(
+        Organization,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="clients",
+    )
     client_queue_no = models.PositiveIntegerField(default=1)
     client_lane_type = models.CharField(max_length=100, blank=True, null=True)
     client_contact = models.CharField(max_length=20, null=True)
@@ -102,8 +119,7 @@ class ClientDetails(models.Model):
     def save(self, *args, **kwargs):
         self.client_firstname = (self.client_firstname or "").title()
         self.client_lastname = (self.client_lastname or "").title()
-        self.client_org = (self.client_org or "").title()
-
+        
         super(ClientDetails, self).save(*args, **kwargs)
 
     @staticmethod
@@ -226,11 +242,19 @@ class TransactionLog(models.Model):
         max_length=3, choices=CSM_CSS_CHOICES, blank=True, null=True
     )
     pacd_officer = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="transaction_logs_as_pacd_officer"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="transaction_logs_as_pacd_officer",
     )
 
     process_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="transaction_logs_as_process_owner"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="transaction_logs_as_process_owner",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

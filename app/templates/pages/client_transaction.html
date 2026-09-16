@@ -142,63 +142,7 @@
     </div>
 </div>
 
-<!-- Forward to Office Modal -->
-<div id="forwardModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">
-    <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl">
-        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-xl">
-            <div class="flex items-center gap-3">
-                <span class="w-9 h-9 shrink-0 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.248 19C3.22 15.77 5.275 8.232 12.466 8.232V6.079a1.025 1.025 0 0 1 1.644-.862l5.479 4.307a1.108 1.108 0 0 1 0 1.723l-5.48 4.307a1.026 1.026 0 0 1-1.643-.861v-2.154C5.275 13.616 4.248 19 4.248 19Z"/></svg>
-                </span>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Forward Transaction</h3>
-            </div>
-            <button type="button" onclick="hideModal('forwardModal')"
-                class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300 rounded-lg w-8 h-8 flex items-center justify-center text-xl leading-none">&times;</button>
-        </div>
-        <form id="forwardForm" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); saveForwardClient();">
-            <input type="hidden" id="forwardQueueNo">
-            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg p-3">
-                <span id="forwardQueueBadge" class="w-10 h-10 shrink-0 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">P-014</span>
-                <div class="min-w-0">
-                    <p id="forwardClientFullName" class="text-sm font-medium text-gray-900 dark:text-white truncate"></p>
-                    <p id="forwardClientTransaction" class="text-xs text-gray-500 dark:text-gray-400">New application</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Division</label>
-                    <select id="forwardDivision" required onchange="onForwardDivisionChange()"
-                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                        <option value="" disabled selected>Select division</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit</label>
-                    <select id="forwardUnit" required disabled
-                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 disabled:opacity-60 disabled:cursor-not-allowed">
-                        <option value="" disabled selected>Select division first</option>
-                    </select>
-                </div>
-            </div>
-            <select id="forwardClientTransactionType" class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-                <option>Submit Documents</option>
-                <option>Request</option>
-                <option>Claiming of Documents</option>
-                <option>Inquiry</option>
-                <option>Other</option>
-            </select>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Transactions Details <span class="text-gray-400 font-normal">(optional)</span></label>
-                <textarea id="forwardTransactionDetails" required rows="3" placeholder="Reason for forwarding, missing requirements, etc."
-                    class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
-            </div>
-            <div class="flex gap-3 pt-1">
-                <button type="button" onclick="hideModal('forwardModal')" class="flex-1 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
-                <button type="submit" class="flex-1 py-2.5 rounded-lg bg-cyan-700 text-white text-sm font-medium hover:bg-cyan-800">Forward</button>
-            </div>
-        </form>
-    </div>
-</div>
+    {% include 'modals/_client_transactions.html' %}
  
 <!-- Serve Transaction Modal -->
 <div id="serveModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/50">

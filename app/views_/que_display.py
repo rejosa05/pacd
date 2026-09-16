@@ -53,7 +53,6 @@ def display_queue_api(request):
         "RD/ARD": [],
     }
 
-
     for transaction in serving_transactions:
 
         # Walay division → skip
@@ -79,17 +78,19 @@ def display_queue_api(request):
         )
 
         # Unit nga belonging sa division
-        unit_name = transaction.forwarded_unit.name if transaction.forwarded_unit else ""
+        unit_name = (
+            transaction.forwarded_unit.name if transaction.forwarded_unit else ""
+        )
 
         serving[division_name].append(
-        {
-            "queue_no": queue_code,
-            "client_name": (
-                f"{client.client_firstname} " f"{client.client_lastname}"
-            ).strip(),
-            "unit": unit_name,
-        }
-    )
+            {
+                "queue_no": queue_code,
+                "client_name": (
+                    f"{client.client_firstname} " f"{client.client_lastname}"
+                ).strip(),
+                "unit": unit_name,
+            }
+        )
 
     return JsonResponse(
         {

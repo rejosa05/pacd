@@ -670,6 +670,105 @@ async function openViewModal(clientId) {
   showModal("viewModal");
 }
 
+const orgInput = document.getElementById("forwardOrgName");
+const orgIdInput = document.getElementById("forwardOrgId");
+const orgSuggestions = document.getElementById("organizationSuggestions");
+const addOrganizationBtn = document.getElementById("addOrganizationBtn");
+
+let organizationSearchTimer = null;
+
+if (orgInput) {
+  orgInput.addEventListener("input", function () {
+    const query = this.value.trim();
+
+    // Clear selected organization ID
+    if (orgIdInput) {
+      orgIdInput.value = "";
+    }
+
+    clearTimeout(organizationSearchTimer);
+
+    if (!query) {
+      orgSuggestions?.classList.add("hidden");
+      addOrganizationBtn?.classList.add("hidden");
+      return;
+    }
+
+    organizationSearchTimer = setTimeout(() => {
+      searchOrganizations(query);
+    }, 250);
+  });
+}
+
+async function searchOrganizations(query) {
+  try {
+    const res = await fetch(
+      `api/organizations/?q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      },
+    );
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Unable to search organizations");
+    }
+
+    orgSuggestions.innerHTML = "";
+
+    const organizations = Array.isArray(data.organizations)
+      ? data.organizations
+      : [];
+
+    if (organizations.length === 0) {
+      orgSuggestions.innerHTML = `
+        <div class="px-3 py-2 text-sm text-gray-500">
+          No organization found.
+        </div>
+      `;
+
+      orgSuggestions.classList.remove("hidden");
+      addOrganizationBtn?.classList.remove("hidden");
+      return;
+    }
+
+    organizations.forEach((org) => {
+      const item = document.createElement("button");
+
+      item.type = "button";
+      item.className =
+        "block w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700";
+
+      item.textContent = org.name;
+
+      item.addEventListener("click", () => {
+        orgInput.value = org.name;
+        orgIdInput.value = org.id;
+
+        orgSuggestions.classList.add("hidden");
+        addOrganizationBtn?.classList.add("hidden");
+      });
+
+      orgSuggestions.appendChild(item);
+    });
+
+    orgSuggestions.classList.remove("hidden");
+    addOrganizationBtn?.classList.add("hidden");
+  } catch (error) {
+    console.error("❌ Organization search error:", error);
+
+    orgSuggestions.innerHTML = `
+      <div class="px-3 py-2 text-sm text-red-500">
+        Unable to search organizations.
+      </div>
+    `;
+
+    orgSuggestions.classList.remove("hidden");
+  }
+}
 // ---------- Repeat (route an already-forwarded client onward again) ----------
 async function openRepeatModal(clientId) {
   await openForwardModal(clientId);
@@ -762,7 +861,7 @@ async function openServingModal(transactionId) {
   document.getElementById("servingGender").textContent =
     _client.gender || "---";
   document.getElementById("servingOrg").textContent =
-    _client.organization || "Personal";
+    _client.organization || "Personal/Individual";
   document.getElementById("servingAddress").textContent =
     _client.address || "---";
   document.getElementById("servingDetails").textContent =
@@ -801,25 +900,45 @@ async function saveServingClient() {
     notify("Unable to serving client. Please try again.");
   }
 }
-
 async function openForwardModal(clientId) {
   const res = await fetch(`api/client/${clientId}`);
   const data = await res.json();
+
   if (!data.success) return;
 
   const _client = data.data;
+
   document.getElementById("forwardModalTitle").textContent =
     "Forward transaction";
+
   document.getElementById("forwardQueueNo").value = clientId;
+
   document.getElementById("forwardQueueBadge").textContent =
     _client.queue_no || "---";
+
   document.getElementById("forwardClientFullName").textContent =
     _client.full_name;
+
   document.getElementById("forwardClientTransaction").textContent =
     _client.transaction_type || "New Application";
+
   document.getElementById("forwardTransactionDetails").value = "";
 
+  // Reset division/unit
   resetForwardDropdowns();
+
+  // Reset organization
+  if (orgInput) {
+    orgInput.value = "";
+  }
+
+  if (orgIdInput) {
+    orgIdInput.value = "";
+  }
+
+  orgSuggestions?.classList.add("hidden");
+  addOrganizationBtn?.classList.add("hidden");
+
   await loadForwardDivisions();
 
   showModal("forwardModal");
@@ -894,11 +1013,62 @@ async function onForwardDivisionChange() {
   }
 }
 
+async function addNewOrganization() {
+  const name = orgInput.value.trim();
+
+  if (!name) {
+    notify("Please enter an organization name.");
+    return;
+  }
+
+  try {
+    const res = await fetch("api/organizations/create/", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": CSRF_TOKEN,
+      },
+
+      body: JSON.stringify({
+        name: name,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Unable to add organization.");
+    }
+
+    // Set newly created/existing organization
+    orgInput.value = data.organization.name;
+    orgIdInput.value = data.organization.id;
+
+    addOrganizationBtn.classList.add("hidden");
+    orgSuggestions.classList.add("hidden");
+
+    notify(
+      data.existing
+        ? "Organization already exists."
+        : "Organization added successfully.",
+    );
+  } catch (error) {
+    console.error("Organization error:", error);
+
+    notify(error.message || "Unable to add organization.");
+  }
+}
 // fixed nani
 async function saveForwardClient() {
   const clientId = document.getElementById("forwardQueueNo").value;
   const divisionId = document.getElementById("forwardDivision").value;
   const unitId = document.getElementById("forwardUnit").value;
+
+  const orgId = document.getElementById("forwardOrgId").value;
+  const orgName = document.getElementById("forwardOrgName").value.trim();
+
   if (!divisionId || !unitId) {
     notify("Please select both a division and a unit.");
     return;
@@ -907,28 +1077,43 @@ async function saveForwardClient() {
   try {
     const res = await fetch(`api/client/${clientId}/forward/`, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json",
         "X-Requested-With": "XMLHttpRequest",
         "X-CSRFToken": CSRF_TOKEN,
       },
+
       body: JSON.stringify({
         division_id: divisionId,
+
         unit_id: unitId,
+
         details: document.getElementById("forwardTransactionDetails").value,
+
         type: document.getElementById("forwardClientTransactionType").value,
+
+        org_id: orgId || null,
+
+        org_name: orgName,
       }),
     });
+
     const data = await res.json();
-    if (!data.success) throw new Error(data.error || "Forward failed");
+
+    if (!data.success) {
+      throw new Error(data.error || "Forward failed");
+    }
 
     hideModal("forwardModal");
 
     loadClients();
+
     notify(data.message || "Client forwarded.");
   } catch (error) {
     console.error("❌ Forward error:", error);
-    notify("Unable to forward client. Please try again.");
+
+    notify(error.message || "Unable to forward client. Please try again.");
   }
 }
 

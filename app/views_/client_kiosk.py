@@ -21,7 +21,7 @@ def register_client(request):
     address = request.POST.get("address", "").strip()
     sex = request.POST.get("sex", "").strip()
     lane = request.POST.get("lane", "").strip()
-    org = request.POST.get("client_org", "").strip()
+    org = None
 
     normalized_sex = {
         "male": "Male",

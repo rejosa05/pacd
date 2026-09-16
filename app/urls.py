@@ -12,9 +12,13 @@ from .views_ import (
 )
 
 urlpatterns = [
-    path("transaction/", all_transactions.transaction_logs_page, name="transaction_logs"),
     path(
-        "api/transaction-logs/", all_transactions.transaction_logs_api, name="transaction_logs_api"
+        "transaction/", all_transactions.transaction_logs_page, name="transaction_logs"
+    ),
+    path(
+        "api/transaction-logs/",
+        all_transactions.transaction_logs_api,
+        name="transaction_logs_api",
     ),
     path(
         "api/transaction-logs/<uuid:uid>/",
@@ -91,4 +95,14 @@ urlpatterns = [
     ),
     path("dashboard", dashboard.dashboard_page, name="dashboard"),
     path("", loginViews.loginView, name="index"),
+    path(
+        "api/organizations/",
+        client_transactions.organizations_api,
+        name="organizations_api",
+    ),
+    path(
+        "api/organizations/create/",
+        client_transactions.create_organization,
+        name="create_organization",
+    ),
 ]
