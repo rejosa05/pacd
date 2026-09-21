@@ -4,41 +4,84 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def migrate_client_organizations(apps, schema_editor):
+    Organization = apps.get_model("app", "Organization")
+    ClientDetails = apps.get_model("app", "ClientDetails")
+    db_alias = schema_editor.connection.alias
+
+    for client in ClientDetails.objects.using(db_alias).all():
+        organization_name = (client.client_org or "").strip()
+        if not organization_name:
+            client.client_org = None
+        else:
+            organization, _ = Organization.objects.using(db_alias).get_or_create(
+                name=organization_name.title()
+            )
+            client.client_org = str(organization.pk)
+        client.save(using=db_alias, update_fields=["client_org"])
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0022_transactionlog_pacd_officer_and_more'),
+        ("app", "0022_transactionlog_pacd_officer_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Organization',
+            name="Organization",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
             ],
         ),
         migrations.RemoveField(
-            model_name='historylog',
-            name='client',
+            model_name="historylog",
+            name="client",
         ),
         migrations.DeleteModel(
-            name='SessionHistory',
+            name="SessionHistory",
         ),
         migrations.DeleteModel(
-            name='UserActivityLog',
+            name="UserActivityLog",
         ),
         migrations.AlterField(
-            model_name='transactionlog',
-            name='transaction_status',
-            field=models.CharField(choices=[('Served', 'Served'), ('Serving', 'Serving'), ('Forwarded', 'Forwarded'), ('Skipped', 'Skipped'), ('Catered', 'Catered'), ('Waiting', 'Waiting')], default='Waiting', max_length=100),
+            model_name="transactionlog",
+            name="transaction_status",
+            field=models.CharField(
+                choices=[
+                    ("Served", "Served"),
+                    ("Serving", "Serving"),
+                    ("Forwarded", "Forwarded"),
+                    ("Skipped", "Skipped"),
+                    ("Catered", "Catered"),
+                    ("Waiting", "Waiting"),
+                ],
+                default="Waiting",
+                max_length=100,
+            ),
         ),
+        migrations.RunPython(migrate_client_organizations, migrations.RunPython.noop),
         migrations.AlterField(
-            model_name='clientdetails',
-            name='client_org',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='clients', to='app.organization'),
+            model_name="clientdetails",
+            name="client_org",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="clients",
+                to="app.organization",
+            ),
         ),
         migrations.DeleteModel(
-            name='HistoryLog',
+            name="HistoryLog",
         ),
     ]

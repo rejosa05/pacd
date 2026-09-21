@@ -376,7 +376,6 @@ def serve_client(request, client_id):
             )
 
         transaction.action = "Served"
-        transaction.details = details
         transaction.citizen_charter = charter
         transaction.service_id = service
         transaction.has_deficiency = deficiency
@@ -409,7 +408,9 @@ def serve_client(request, client_id):
             "message": "Transaction served successfully.",
             "mode": "created",
             "client_id": client.id,
-            "organization": organization.name if organization else "Personal/Individual",
+            "organization": (
+                organization.name if organization else "Personal/Individual"
+            ),
         }
     )
 

@@ -119,7 +119,7 @@ class ClientDetails(models.Model):
     def save(self, *args, **kwargs):
         self.client_firstname = (self.client_firstname or "").title()
         self.client_lastname = (self.client_lastname or "").title()
-        
+
         super(ClientDetails, self).save(*args, **kwargs)
 
     @staticmethod

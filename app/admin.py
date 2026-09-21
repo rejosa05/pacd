@@ -1,13 +1,32 @@
 from django.contrib import admin
-from .models import AccountDetails,Unit, Division, TransactionLog, ClientDetails
+from .models import (
+    AccountDetails,
+    Unit,
+    Division,
+    TransactionLog,
+    ClientDetails,
+    Organization,
+    ServicesDetails,
+)
+
 
 @admin.register(AccountDetails)
 class AccountDetailsAdmin(admin.ModelAdmin):
-    list_display = ('uid','user', 'status', 'division', 'unit', 'position', 'contact_number', 'created_at')
-    search_fields = ('user', 'status')
-    list_filter = ('division', 'unit')
-    ordering = ('-created_at',)
+    list_display = (
+        "uid",
+        "user",
+        "status",
+        "division",
+        "unit",
+        "position",
+        "contact_number",
+        "created_at",
+    )
+    search_fields = ("user", "status")
+    list_filter = ("division", "unit")
+    ordering = ("-created_at",)
     list_per_page = 10
+
 
 # @admin.register(SessionHistory)
 # class SessionHistoryAdmin(admin.ModelAdmin):
@@ -27,40 +46,88 @@ class AccountDetailsAdmin(admin.ModelAdmin):
 
 # @admin.register(DivisionLog)
 # class TransactionLogAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'cc_cover','form', 'service_id') 
+#     list_display = ('id', 'process_owner_id', 'client_id' ,'transaction_no', 'division', 'action_type', 'transaction_type', 'unit', 'status', 'date', 'cc_cover','form', 'service_id')
 #     search_fields = ('action_type', 'transaction_type', 'form')
 #     list_filter = ('action_type', 'transaction_type', 'unit', 'status')
 #     ordering = ('-id',)
 #     list_per_page = 10
 
-# @admin.register(ServicesDetails)
-# class ServiceDetails(admin.ModelAdmin):
-#     list_display = ('id', 'service_name', 'division', 'unit', 'classification', 'type_transaction', 'processing_time', 'link')
-#     search_fields = ('service_name', 'division', 'unit', 'classification', 'type_transaction')
-#     list_filter = ('service_name', 'classification', 'type_transaction')
-#     order = ('-id')
-#     list_per_page = 10
+
+@admin.register(ServicesDetails)
+class ServiceDetails(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "service_name",
+        "division",
+        "unit",
+        "classification",
+        "type_transaction",
+        "processing_time",
+        "link",
+    )
+    search_fields = (
+        "service_name",
+        "division",
+        "unit",
+        "classification",
+        "type_transaction",
+    )
+    list_filter = ("service_name", "classification", "type_transaction")
+    order = "-id"
+    list_per_page = 10
+
 
 @admin.register(ClientDetails)
 class ClientDetailsAdmin(admin.ModelAdmin):
-    list_display = ('uid','client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status', 'date_created')
-    search_fields = ('client_queue_no', 'client_firstname', 'client_lastname', 'client_org', 'client_lane_type', 'client_contact', 'client_status')
-    list_filter = ('client_lane_type', 'client_status', 'date_created')
-    ordering = ('-date_created',)
+    list_display = (
+        "uid",
+        "client_queue_no",
+        "client_firstname",
+        "client_lastname",
+        "client_org",
+        "client_lane_type",
+        "client_contact",
+        "client_status",
+        "date_created",
+    )
+    search_fields = (
+        "client_queue_no",
+        "client_firstname",
+        "client_lastname",
+        "client_org",
+        "client_lane_type",
+        "client_contact",
+        "client_status",
+    )
+    list_filter = ("client_lane_type", "client_status", "date_created")
+    ordering = ("-date_created",)
     list_per_page = 10
+
 
 @admin.register(TransactionLog)
 class TransactionHistorys(admin.ModelAdmin):
-    list_display = ('uid', 'client', 'transaction_status', 'forwarded_division', 'forwarded_unit','service', 'resolved', 'details', 'created_at')
-    search_fields = ('client', 'action', 'created_at')
-    list_filter = ('forwarded_division', 'forwarded_unit')
-    ordering = ('-created_at',)
+    list_display = (
+        "uid",
+        "client",
+        "transaction_status",
+        "forwarded_division",
+        "forwarded_unit",
+        "service",
+        "resolved",
+        "details",
+        "created_at",
+    )
+    search_fields = ("client", "action", "created_at")
+    list_filter = ("forwarded_division", "forwarded_unit")
+    ordering = ("-created_at",)
     list_per_page = 10
 
     def get_transaction_no(self, obj):
         return obj.division_log.transaction_no if obj.division_log else None
 
-    get_transaction_no.short_description = 'Transaction No'
+    get_transaction_no.short_description = "Transaction No"
+
 
 admin.site.register(Division)
 admin.site.register(Unit)
+admin.site.register(Organization)

@@ -165,9 +165,7 @@ function filterClients() {
     filteredClients = [...allClient];
   } else {
     filteredClients = allClient.filter((client) => {
-      const transaction = allTransaction.find(
-        (t) => Number(t.client_id) === Number(client.id),
-      );
+      const transaction = allTransaction.find((t) => Number(t.client_id) === Number(client.id));
 
       const searchableText = [
         client.queue_no,
@@ -298,11 +296,7 @@ function renderPagination() {
               ms-0 flex h-8 items-center justify-center
               rounded-s-lg border border-gray-300
               bg-white px-3 leading-tight
-              ${
-                currentPage === 1
-                  ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              }
+              ${currentPage === 1 ? "cursor-not-allowed text-gray-300 dark:text-gray-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}
               dark:border-gray-700
               dark:bg-gray-800
               dark:hover:bg-gray-700
@@ -328,11 +322,7 @@ function renderPagination() {
               flex h-8 items-center justify-center
               rounded-e-lg border border-gray-300
               bg-white px-3 leading-tight
-              ${
-                currentPage === totalPages
-                  ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              }
+              ${currentPage === totalPages ? "cursor-not-allowed text-gray-300 dark:text-gray-600" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"}
               dark:border-gray-700
               dark:bg-gray-800
               dark:hover:bg-gray-700
@@ -386,11 +376,7 @@ function renderClientTable() {
           colspan="7"
           class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
         >
-          ${
-            searchTerm
-              ? `No client found for "${searchTerm}".`
-              : "No registered client yet. When the kiosk registers a client, it will appear here automatically."
-          }
+          ${searchTerm ? `No client found for "${searchTerm}".` : "No registered client yet. When the kiosk registers a client, it will appear here automatically."}
         </td>
       </tr>
     `;
@@ -405,9 +391,7 @@ function renderClientTable() {
    */
   tbody.innerHTML = pageItems
     .map((client) => {
-      const transaction = allTransaction.find(
-        (t) => Number(t.client_id) === Number(client.id),
-      );
+      const transaction = allTransaction.find((t) => Number(t.client_id) === Number(client.id));
 
       return `
         <tr
@@ -449,11 +433,7 @@ function renderClientTable() {
 
             <span
               class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium
-              ${
-                client.lane === "Priority"
-                  ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
-                  : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-              }"
+              ${client.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}"
             >
               ${client.lane || "Regular"}
             </span>
@@ -510,14 +490,10 @@ const ACTION_ICONS = {
 const ACTION_STYLES = {
   view: "hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-300",
   edit: "hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-900/30 dark:hover:text-amber-300",
-  serve:
-    "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
-  serving:
-    "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
-  forward:
-    "hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300",
-  repeat:
-    "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-300",
+  serve: "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
+  serving: "hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/30 dark:hover:text-green-300",
+  forward: "hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-900/30 dark:hover:text-cyan-300",
+  repeat: "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-300",
   skip: "hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-300",
 };
 
@@ -593,7 +569,7 @@ function buildActionButtons(client, transaction) {
       buttons.push(actionBtn("skip", client.id));
     } else {
       buttons.push(actionBtn("view", transaction?.transaction_id));
-      buttons.push(actionBtn("edit", transaction?.transaction_id));
+      // buttons.push(actionBtn("edit", transaction?.transaction_id));
     }
     // Any other status (Waiting / Skipped / Approved) -> View only
     return buttons.join("");
@@ -622,51 +598,26 @@ function notify(message) {
 
 // ---------- View ----------
 async function openViewModal(clientId) {
-  const transaction = allTransaction.find(
-    (t) => Number(t.client_id) === Number(clientId),
-  );
+  const transaction = allTransaction.find((t) => Number(t.client_id) === Number(clientId));
   const res = await fetch(`api/client/${clientId}`);
   const data = await res.json();
   if (!data.success) return;
 
   const c = data.data;
   document.getElementById("viewAvatar").textContent = initials(c.full_name);
-  document.getElementById("viewFullName").textContent =
-    c.full_name || "Unknown Client";
-  document.getElementById("viewContact").textContent =
-    c.contact || "No contact";
+  document.getElementById("viewFullName").textContent = c.full_name || "Unknown Client";
+  document.getElementById("viewContact").textContent = c.contact || "No contact";
   document.getElementById("viewQueueNo").textContent = c.queue_no || "---";
-  document.getElementById("viewTransaction").textContent =
-    transaction?.type || "---";
+  document.getElementById("viewTransaction").textContent = transaction?.type || "---";
   document.getElementById("viewGender").textContent = c.gender || "---";
   document.getElementById("viewOffice").textContent = c.organization || "---";
   document.getElementById("viewAddress").textContent = c.address || "---";
 
   document.getElementById("viewLane").innerHTML =
     `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${c.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">${c.lane || "Regular"}</span>`;
-  document.getElementById("viewStatus").innerHTML = statusBadge(
-    c.status || "Waiting",
-  );
+  document.getElementById("viewStatus").innerHTML = statusBadge(c.status || "Waiting");
 
-  // Optional: transaction history, if your get_client API includes it as c.history
-  const historySection = document.getElementById("viewHistorySection");
-  const historyList = document.getElementById("viewHistoryList");
-  if (Array.isArray(c.history) && c.history.length) {
-    historyList.innerHTML = c.history
-      .map(
-        (h) => `
-        <li class="ms-4">
-          <div class="absolute w-2 h-2 bg-blue-500 rounded-full -start-[4.5px] mt-1.5"></div>
-          <p class="text-xs text-gray-400">${h.date || ""}</p>
-          <p class="text-sm text-gray-700 dark:text-gray-300">${h.action || ""}${h.detail ? " — " + h.detail : ""}</p>
-        </li>`,
-      )
-      .join("");
-    historySection.classList.remove("hidden");
-  } else {
-    historySection.classList.add("hidden");
-  }
-
+  console.log(1);
   showModal("viewModal");
 }
 
@@ -706,14 +657,11 @@ if (orgInput) {
 
 async function searchOrganizations(query) {
   try {
-    const res = await fetch(
-      `api/organizations/?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          "X-Requested-With": "XMLHttpRequest",
-        },
+    const res = await fetch(`api/organizations/?q=${encodeURIComponent(query)}`, {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
       },
-    );
+    });
 
     const data = await res.json();
 
@@ -723,9 +671,7 @@ async function searchOrganizations(query) {
 
     orgSuggestions.innerHTML = "";
 
-    const organizations = Array.isArray(data.organizations)
-      ? data.organizations
-      : [];
+    const organizations = Array.isArray(data.organizations) ? data.organizations : [];
 
     if (organizations.length === 0) {
       orgSuggestions.innerHTML = "";
@@ -738,8 +684,7 @@ async function searchOrganizations(query) {
       const item = document.createElement("button");
 
       item.type = "button";
-      item.className =
-        "block w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700";
+      item.className = "block w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700";
 
       item.textContent = org.name;
 
@@ -856,8 +801,7 @@ async function addNewServeOrganization() {
 // ---------- Repeat (route an already-forwarded client onward again) ----------
 async function openRepeatModal(clientId) {
   await openForwardModal(clientId);
-  document.getElementById("forwardModalTitle").textContent =
-    "Route to next office";
+  document.getElementById("forwardModalTitle").textContent = "Route to next office";
 }
 
 // ---------- Edit ----------
@@ -872,11 +816,9 @@ async function openEditModal(clientId) {
   document.getElementById("editLastName").value = _client.last_name;
   document.getElementById("editContact").value = _client.contact;
   document.getElementById("editAddress").value = _client.address;
-  if (_client.gender)
-    document.getElementById("editGender").value = _client.gender;
+  if (_client.gender) document.getElementById("editGender").value = _client.gender;
   if (_client.lane) document.getElementById("editLane").value = _client.lane;
-  if (_client.transaction_type)
-    document.getElementById("editTransaction").value = _client.transaction_type;
+  if (_client.transaction_type) document.getElementById("editTransaction").value = _client.transaction_type;
   showModal("editModal");
 }
 
@@ -915,9 +857,7 @@ async function saveEditClient() {
 }
 
 async function openServingModal(transactionId) {
-  const transaction = allTransaction.find(
-    (t) => Number(t.transaction_id) === Number(transactionId),
-  );
+  const transaction = allTransaction.find((t) => Number(t.transaction_id) === Number(transactionId));
 
   const clientId = transaction.client_id;
 
@@ -927,29 +867,18 @@ async function openServingModal(transactionId) {
   const _client = data.data;
   ((document.getElementById("servingClientId").value = clientId),
     (document.getElementById("servingTransactionId").value = transactionId),
-    (document.getElementById("servingClientFullName").textContent = initials(
-      _client.full_name,
-    )));
-  document.getElementById("servingClientFullName").textContent =
-    _client.full_name || "Unknown Client";
+    (document.getElementById("servingClientFullName").textContent = initials(_client.full_name)));
+  document.getElementById("servingClientFullName").textContent = _client.full_name || "Unknown Client";
 
-  document.getElementById("servingQueueBadge").textContent =
-    _client.queue_no || "---";
+  document.getElementById("servingQueueBadge").textContent = _client.queue_no || "---";
   document.getElementById("servingLane").innerHTML =
     `<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${_client.lane === "Priority" ? "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}">${_client.lane || "Regular"}</span>`;
-  document.getElementById("servingStatus").innerHTML = statusBadge(
-    _client.status || "Waiting",
-  );
-  document.getElementById("servingClientTransaction").textContent =
-    transaction?.type || "---";
-  document.getElementById("servingGender").textContent =
-    _client.gender || "---";
-  document.getElementById("servingOrg").textContent =
-    _client.organization || "Personal/Individual";
-  document.getElementById("servingAddress").textContent =
-    _client.address || "---";
-  document.getElementById("servingDetails").textContent =
-    transaction?.details || "---";
+  document.getElementById("servingStatus").innerHTML = statusBadge(_client.status || "Waiting");
+  document.getElementById("servingClientTransaction").textContent = transaction?.type || "---";
+  document.getElementById("servingGender").textContent = _client.gender || "---";
+  document.getElementById("servingOrg").textContent = _client.organization || "Personal/Individual";
+  document.getElementById("servingAddress").textContent = _client.address || "---";
+  document.getElementById("servingDetails").textContent = transaction?.details || "---";
 
   console.log(_client.status);
   showModal("servingModal");
@@ -992,19 +921,15 @@ async function openForwardModal(clientId) {
 
   const _client = data.data;
 
-  document.getElementById("forwardModalTitle").textContent =
-    "Forward transaction";
+  document.getElementById("forwardModalTitle").textContent = "Forward transaction";
 
   document.getElementById("forwardQueueNo").value = clientId;
 
-  document.getElementById("forwardQueueBadge").textContent =
-    _client.queue_no || "---";
+  document.getElementById("forwardQueueBadge").textContent = _client.queue_no || "---";
 
-  document.getElementById("forwardClientFullName").textContent =
-    _client.full_name;
+  document.getElementById("forwardClientFullName").textContent = _client.full_name;
 
-  document.getElementById("forwardClientTransaction").textContent =
-    _client.transaction_type || "New Application";
+  document.getElementById("forwardClientTransaction").textContent = _client.transaction_type || "New Application";
 
   document.getElementById("forwardTransactionDetails").value = "";
 
@@ -1031,10 +956,8 @@ async function openForwardModal(clientId) {
 function resetForwardDropdowns() {
   const divisionSelect = document.getElementById("forwardDivision");
   const unitSelect = document.getElementById("forwardUnit");
-  divisionSelect.innerHTML =
-    '<option value="" disabled selected>Loading divisions...</option>';
-  unitSelect.innerHTML =
-    '<option value="" disabled selected>Select division first</option>';
+  divisionSelect.innerHTML = '<option value="" disabled selected>Loading divisions...</option>';
+  unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
   unitSelect.disabled = true;
 }
 
@@ -1044,19 +967,13 @@ async function loadForwardDivisions() {
     const res = await fetch("api/divisions/");
     const data = await res.json();
     if (!data.success || !data.divisions.length) {
-      divisionSelect.innerHTML =
-        '<option value="" disabled selected>No divisions available</option>';
+      divisionSelect.innerHTML = '<option value="" disabled selected>No divisions available</option>';
       return;
     }
-    divisionSelect.innerHTML =
-      '<option value="" disabled selected>Select division</option>' +
-      data.divisions
-        .map((d) => `<option value="${d.id}">${d.name}</option>`)
-        .join("");
+    divisionSelect.innerHTML = '<option value="" disabled selected>Select division</option>' + data.divisions.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
   } catch (error) {
     console.error("❌ Load divisions error:", error);
-    divisionSelect.innerHTML =
-      '<option value="" disabled selected>Unable to load divisions</option>';
+    divisionSelect.innerHTML = '<option value="" disabled selected>Unable to load divisions</option>';
   }
 }
 
@@ -1065,12 +982,10 @@ async function onForwardDivisionChange() {
   const unitSelect = document.getElementById("forwardUnit");
 
   unitSelect.disabled = true;
-  unitSelect.innerHTML =
-    '<option value="" disabled selected>Loading units...</option>';
+  unitSelect.innerHTML = '<option value="" disabled selected>Loading units...</option>';
 
   if (!divisionId) {
-    unitSelect.innerHTML =
-      '<option value="" disabled selected>Select division first</option>';
+    unitSelect.innerHTML = '<option value="" disabled selected>Select division first</option>';
     return;
   }
 
@@ -1079,21 +994,15 @@ async function onForwardDivisionChange() {
     const data = await res.json();
 
     if (!data.success || !data.units.length) {
-      unitSelect.innerHTML =
-        '<option value="" disabled selected>No units under this division</option>';
+      unitSelect.innerHTML = '<option value="" disabled selected>No units under this division</option>';
       return;
     }
 
-    unitSelect.innerHTML =
-      '<option value="" disabled selected>Select unit</option>' +
-      data.units
-        .map((u) => `<option value="${u.id}">${u.name}</option>`)
-        .join("");
+    unitSelect.innerHTML = '<option value="" disabled selected>Select unit</option>' + data.units.map((u) => `<option value="${u.id}">${u.name}</option>`).join("");
     unitSelect.disabled = false;
   } catch (error) {
     console.error("❌ Load units error:", error);
-    unitSelect.innerHTML =
-      '<option value="" disabled selected>Unable to load units</option>';
+    unitSelect.innerHTML = '<option value="" disabled selected>Unable to load units</option>';
   }
 }
 
@@ -1133,11 +1042,7 @@ async function addNewOrganization() {
     addOrganizationBtn.classList.add("hidden");
     orgSuggestions.classList.add("hidden");
 
-    notify(
-      data.existing
-        ? "Organization already exists."
-        : "Organization added successfully.",
-    );
+    notify(data.existing ? "Organization already exists." : "Organization added successfully.");
   } catch (error) {
     console.error("Organization error:", error);
 
@@ -1217,19 +1122,14 @@ async function openServeModal(id) {
       // resetServeForm();
 
       document.getElementById("serveClientId").value = clientId;
-      document.getElementById("serveClientName").textContent =
-        _client.full_name || "---";
-      document.getElementById("serveQueueBadge").textContent =
-        _client.queue_no || "---";
-      document.getElementById("serveOrgName").value =
-        _client.organization === "Personal/Individual" ? "" : (_client.organization || "");
+      document.getElementById("serveClientName").textContent = _client.full_name || "---";
+      document.getElementById("serveQueueBadge").textContent = _client.queue_no || "---";
+      document.getElementById("serveOrgName").value = _client.organization === "Personal/Individual" ? "" : _client.organization || "";
     }
 
     if (IS_STAFF) {
       // Find existing transaction
-      const transaction = allTransaction.find(
-        (t) => Number(t.transaction_id) === Number(id),
-      );
+      const transaction = allTransaction.find((t) => Number(t.transaction_id) === Number(id));
 
       console.log("Found transaction:", transaction);
 
@@ -1255,17 +1155,12 @@ async function openServeModal(id) {
       }
 
       const _client = data.data;
-      document.getElementById("serveTransactionId").value =
-        transaction?.transaction_id;
+      document.getElementById("serveTransactionId").value = transaction?.transaction_id;
       document.getElementById("serveClientId").value = clientId;
-      document.getElementById("serveQueueBadge").textContent =
-        _client.queue_no || "---";
-      document.getElementById("serveClientName").textContent =
-        _client.full_name || "---";
-      document.getElementById("serveClientTransaction").textContent =
-        transaction.type || "---";
-      document.getElementById("serveOrgName").value =
-        _client.organization === "Personal/Individual" ? "" : (_client.organization || "");
+      document.getElementById("serveQueueBadge").textContent = _client.queue_no || "---";
+      document.getElementById("serveClientName").textContent = _client.full_name || "---";
+      document.getElementById("serveClientTransaction").textContent = transaction.type || "---";
+      document.getElementById("serveOrgName").value = _client.organization === "Personal/Individual" ? "" : _client.organization || "";
     }
     await loadAvailableServices();
     showModal("serveModal");
@@ -1310,21 +1205,15 @@ function updateServeFlow() {
   // GET VALUES
   // =====================================================
 
-  const charter = document.querySelector(
-    'input[name="serveCharter"]:checked',
-  )?.value;
+  const charter = document.querySelector('input[name="serveCharter"]:checked')?.value;
 
   const serviceSelect = document.getElementById("serveService");
 
   const service = serviceSelect?.value || "";
 
-  const deficiency = document.querySelector(
-    'input[name="serveDeficiency"]:checked',
-  )?.value;
+  const deficiency = document.querySelector('input[name="serveDeficiency"]:checked')?.value;
 
-  const resolved = document.querySelector(
-    'input[name="serveResolved"]:checked',
-  )?.value;
+  const resolved = document.querySelector('input[name="serveResolved"]:checked')?.value;
 
   const form = document.querySelector('input[name="serveForm"]:checked')?.value;
 
@@ -1336,15 +1225,11 @@ function updateServeFlow() {
 
   const typeSelection = document.getElementById("serveTypeSelection");
 
-  const transactionDetailsSection = document.getElementById(
-    "serveTransactionDetailsSection",
-  );
+  const transactionDetailsSection = document.getElementById("serveTransactionDetailsSection");
 
   const deficiencyQuestion = document.getElementById("serveDeficiencyQuestion");
 
-  const deficiencyDetails = document.getElementById(
-    "serveDeficiencyDetailsSection",
-  );
+  const deficiencyDetails = document.getElementById("serveDeficiencyDetailsSection");
 
   const resolvedQuestion = document.getElementById("serveResolvedQuestion");
 
@@ -1575,20 +1460,12 @@ async function saveServeClient() {
   const details = document.getElementById("serveDetails").value;
   const type = document.getElementById("serveTransactionType").value;
   const remarks = document.getElementById("serveRemarks").value;
-  const charter =
-    document.querySelector('input[name="serveCharter"]:checked')?.value || null;
+  const charter = document.querySelector('input[name="serveCharter"]:checked')?.value || null;
   const service = document.getElementById("serveService")?.value || null;
-  const deficiency =
-    document.querySelector('input[name="serveDeficiency"]:checked')?.value ||
-    null;
-  const deficiencyDetails = document.getElementById(
-    "serveDeficiencyDetails",
-  ).value;
-  const resolved =
-    document.querySelector('input[name="serveResolved"]:checked')?.value ||
-    null;
-  const surveyForm =
-    document.querySelector('input[name="serveForm"]:checked')?.value || null;
+  const deficiency = document.querySelector('input[name="serveDeficiency"]:checked')?.value || null;
+  const deficiencyDetails = document.getElementById("serveDeficiencyDetails").value;
+  const resolved = document.querySelector('input[name="serveResolved"]:checked')?.value || null;
+  const surveyForm = document.querySelector('input[name="serveForm"]:checked')?.value || null;
   console.log(clientId);
 
   try {
@@ -1917,35 +1794,19 @@ function updateNotificationBell() {
     // SUPER ADMIN / SUB ADMIN
     // ---------------------------------------------------
     if (IS_SUPER_ADMIN || IS_SUB_ADMIN) {
-      showNotificationToast(
-        newNotifications === 1
-          ? "🔔 New client is waiting!"
-          : `🔔 ${newNotifications} new clients are waiting!`,
-      );
+      showNotificationToast(newNotifications === 1 ? "🔔 New client is waiting!" : `🔔 ${newNotifications} new clients are waiting!`);
 
       // VOICE
-      speakNotification(
-        newNotifications === 1
-          ? "You have client."
-          : `You have ${newNotifications} clients waiting.`,
-      );
+      speakNotification(newNotifications === 1 ? "You have client." : `You have ${newNotifications} clients waiting.`);
 
       // ---------------------------------------------------
       // STAFF
       // ---------------------------------------------------
     } else if (IS_STAFF) {
-      showNotificationToast(
-        newNotifications === 1
-          ? "🔔 New transaction has been forwarded to your unit!"
-          : `🔔 ${newNotifications} new transactions have been forwarded to your unit!`,
-      );
+      showNotificationToast(newNotifications === 1 ? "🔔 New transaction has been forwarded to your unit!" : `🔔 ${newNotifications} new transactions have been forwarded to your unit!`);
 
       // VOICE
-      speakNotification(
-        newNotifications === 1
-          ? "You have a client forwarded to your unit."
-          : `You have ${newNotifications} clients forwarded to your unit.`,
-      );
+      speakNotification(newNotifications === 1 ? "You have a client forwarded to your unit." : `You have ${newNotifications} clients forwarded to your unit.`);
     }
 
     // SOUND
@@ -2039,9 +1900,7 @@ function connectQueueSocket() {
 
   const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 
-  const socket = new WebSocket(
-    protocol + window.location.host + "/ws/queue-display/",
-  );
+  const socket = new WebSocket(protocol + window.location.host + "/ws/queue-display/");
 
   /* =========================================
        CONNECTED
@@ -2067,15 +1926,7 @@ function connectQueueSocket() {
       // EVENTS THAT SHOULD REFRESH THE DASHBOARD
       // =====================================================
 
-      const refreshEvents = [
-        "CLIENT_REGISTERED",
-        "QUEUE_UPDATED",
-        "CLIENT_FORWARDED",
-        "CLIENT_SERVED",
-        "CLIENT_SKIPPED",
-        "CLIENT_UPDATED",
-        "TRANSACTION_UPDATED",
-      ];
+      const refreshEvents = ["CLIENT_REGISTERED", "QUEUE_UPDATED", "CLIENT_FORWARDED", "CLIENT_SERVED", "CLIENT_SKIPPED", "CLIENT_UPDATED", "TRANSACTION_UPDATED"];
 
       // If this event is not related to queue changes
       if (!refreshEvents.includes(payload.event)) {
@@ -2097,16 +1948,11 @@ function connectQueueSocket() {
       // NEW WAITING CLIENT
       // =====================================================
 
-      if (
-        payload.event === "CLIENT_REGISTERED" &&
-        (IS_SUPER_ADMIN || IS_SUB_ADMIN)
-      ) {
+      if (payload.event === "CLIENT_REGISTERED" && (IS_SUPER_ADMIN || IS_SUB_ADMIN)) {
         const client = payload.client;
 
         if (client) {
-          showNotificationToast(
-            `Bag-ong waiting client: ${client.full_name || "New client"}`,
-          );
+          showNotificationToast(`Bag-ong waiting client: ${client.full_name || "New client"}`);
         }
       }
 
@@ -2123,10 +1969,7 @@ function connectQueueSocket() {
 
           // COUNT ONLY IF FORWARDED TO MY UNIT
           if (forwardedUnitId === myUnitId) {
-            notifyNavbarBell(
-              payload.client?.full_name,
-              `Na-forward ang ${payload.client?.queue_no} ngadto sa inyong unit.`,
-            );
+            notifyNavbarBell(payload.client?.full_name, `Na-forward ang ${payload.client?.queue_no} ngadto sa inyong unit.`);
           }
         }
       }

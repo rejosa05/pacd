@@ -1,0 +1,113 @@
+VIEW TRANSACTION MODAL
+<div
+  id="viewTransactionModal"
+  tabindex="-1"
+  aria-hidden="true"
+  class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/60 p-4 md:inset-0"
+>
+  <div class="relative max-h-full w-full max-w-2xl">
+    <!-- Modal content -->
+    <div class="relative rounded-lg border border-gray-700 bg-[#151b2b] shadow dark:bg-[#151b2b]">
+      <!-- HEADER -->
+      <div class="flex items-start justify-between rounded-t p-4 md:p-5 border-b border-gray-700">
+        <div class="flex min-w-0 items-center gap-4">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-[#1d2638] text-blue-400">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 3v5h5" />
+            </svg>
+          </div>
+
+          <div class="min-w-0">
+            <h3 class="truncate text-lg font-semibold text-white" id="viewClient">Client Name</h3>
+            <div class="mt-1 flex items-center gap-2">
+              <span id="viewQueue" class="text-sm text-gray-400">Queue No.</span>
+              <span class="text-gray-600">•</span>
+              <span id="viewStatus" class="text-sm"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flowbite-standard close button -->
+        <button
+          type="button"
+          onclick="closeModal('viewTransactionModal')"
+          class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-700 hover:text-white"
+          aria-label="Close"
+        >
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7l-6 6" />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+
+      <!-- TABS -->
+      <div class="border-b border-gray-700 px-4 md:px-5">
+        <div class="-mb-px flex gap-6">
+          <button type="button" data-tx-tab="details" class="tx-tab border-b-2 border-blue-500 px-0 py-3 text-sm font-medium text-white">Details</button>
+          <button type="button" data-tx-tab="history" class="tx-tab border-b-2 border-transparent px-0 py-3 text-sm font-medium text-gray-400 hover:border-gray-500 hover:text-gray-300">
+            History
+            <span id="historyCount" class="ms-1.5 rounded-full bg-gray-700 px-2 py-0.5 text-xs font-semibold text-gray-300">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DETAILS PANEL -->
+      <div data-tx-panel="details" class="tx-panel max-h-[60vh] space-y-4 overflow-y-auto p-4 md:p-5">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+          <div>
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Contact</div>
+            <div id="viewContact" class="text-sm font-semibold text-gray-200">—</div>
+          </div>
+          <div>
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Address</div>
+            <div id="viewAddress" class="text-sm font-semibold text-gray-200">—</div>
+          </div>
+          <div>
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Service Avail</div>
+            <div id="viewServiceAvail" class="text-sm font-semibold text-gray-200">—</div>
+          </div>
+          <div>
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Forwarded to</div>
+            <div id="viewForwardedTo" class="text-sm font-semibold text-gray-200">—</div>
+          </div>
+          <div>
+            <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Survey</div>
+            <div id="viewSurvey" class="text-sm font-semibold text-gray-200">—</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Details</div>
+          <div id="viewDetails" class="whitespace-pre-line rounded-lg border border-gray-700 bg-[#1d2638] p-3 text-sm text-gray-300">—</div>
+        </div>
+
+        <div>
+          <div class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Remarks</div>
+          <div id="viewRemarks" class="whitespace-pre-line rounded-lg border border-gray-700 bg-[#1d2638] p-3 text-sm text-gray-300">—</div>
+        </div>
+      </div>
+
+      <!-- HISTORY PANEL -->
+      <div data-tx-panel="history" class="tx-panel hidden max-h-[60vh] overflow-y-auto p-4 md:p-5">
+        <ol id="viewHistory" class="relative ms-3 border-s border-gray-700"></ol>
+        <p id="historyEmpty" class="hidden py-10 text-center text-sm text-gray-500">No process history recorded for this transaction yet.</p>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="flex items-center justify-end gap-2 rounded-b border-t border-gray-700 p-4 md:p-5">
+        <button
+          type="button"
+          onclick="closeModal('viewTransactionModal')"
+          class="rounded-lg border border-gray-600 bg-transparent px-5 py-2.5 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-700"
+        >
+          Close
+        </button>
+        <button type="button" id="viewToUpdate" class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800">
+          Update transaction
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

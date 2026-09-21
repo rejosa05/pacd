@@ -464,6 +464,105 @@ async function fetchLog(uid) {
 // VIEW
 // =====================================================
 
+// =====================================================
+// VIEW — TABS + HISTORY TIMELINE
+// =====================================================
+
+const TAB_ACTIVE = ["border-blue-600", "text-blue-600", "dark:border-blue-500", "dark:text-blue-500"];
+const TAB_IDLE = ["border-transparent", "text-gray-500", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:text-gray-300"];
+
+function setTransactionTab(name) {
+  document.querySelectorAll(".tx-tab").forEach(function (tab) {
+    const active = tab.getAttribute("data-tx-tab") === name;
+    tab.classList.remove(...TAB_ACTIVE, ...TAB_IDLE);
+    tab.classList.add(...(active ? TAB_ACTIVE : TAB_IDLE));
+  });
+
+  document.querySelectorAll(".tx-panel").forEach(function (panel) {
+    panel.classList.toggle("hidden", panel.getAttribute("data-tx-panel") !== name);
+  });
+}
+
+document.addEventListener("click", function (event) {
+  const tab = event.target.closest(".tx-tab");
+  if (tab) setTransactionTab(tab.getAttribute("data-tx-tab"));
+});
+
+const ROLE_BADGE = {
+  Admin: "bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  Staff: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  Moderator: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  Client: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+};
+
+function rolePill(role) {
+  const cls = ROLE_BADGE[role] || ROLE_BADGE.Client;
+  return `<span class="rounded-full px-2.5 py-0.5 text-xs font-semibold ${cls}">${escapeHtml(role)}</span>`;
+}
+
+function renderHistory(items) {
+  const list = document.getElementById("viewHistory");
+  const empty = document.getElementById("historyEmpty");
+  const count = document.getElementById("historyCount");
+
+  const entries = Array.isArray(items) ? items : [];
+  if (count) count.textContent = entries.length;
+
+  if (!entries.length) {
+    if (list) list.innerHTML = "";
+    empty?.classList.remove("hidden");
+    return;
+  }
+
+  empty?.classList.add("hidden");
+
+  list.innerHTML = entries
+    .map(function (item) {
+      const hasFlow = item.from_role || item.to_role;
+
+      const flow = hasFlow
+        ? `<div class="mb-2 flex flex-wrap items-center gap-2">
+             ${item.from_role ? rolePill(item.from_role) : ""}
+             ${
+               item.from_role && item.to_role
+                 ? `<svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>`
+                 : ""
+             }
+             ${item.to_role ? rolePill(item.to_role) : ""}
+           </div>`
+        : "";
+
+      const meta = [
+        item.actor ? `By <span class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.actor)}</span>` : "",
+        item.status ? `Status: <span class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.status)}</span>` : "",
+        item.forwarded_to ? `To: <span class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.forwarded_to)}</span>` : "",
+      ]
+        .filter(Boolean)
+        .join(" &middot; ");
+
+      return `
+      <li class="mb-5 ms-6 last:mb-0">
+        <span class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 ring-4 ring-white dark:bg-blue-900 dark:ring-gray-800">
+          <svg class="h-3 w-3 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </span>
+        <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900">
+          <div class="mb-1 flex flex-wrap items-center justify-between gap-2">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">${escapeHtml(item.title || "Activity")}</h4>
+            <time class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(item.created_at || "")}</time>
+          </div>
+          ${flow}
+          ${meta ? `<p class="text-xs text-gray-600 dark:text-gray-400">${meta}</p>` : ""}
+          ${item.remarks ? `<p class="mt-2 whitespace-pre-line text-sm text-gray-700 dark:text-gray-300">${escapeHtml(item.remarks)}</p>` : ""}
+        </div>
+      </li>`;
+    })
+    .join("");
+}
+
 async function openViewModal(uid) {
   closeRowMenus();
 
@@ -472,14 +571,20 @@ async function openViewModal(uid) {
 
     setText("viewQueue", log.queue_no ? `Queue no. ${log.queue_no}` : "");
     setText("viewClient", log.client || "—");
-    setText("viewTransactionType", log.transaction_type || "—");
+    setText("viewAddress", log.address || "—");
+    setText("viewContact", log.contact || "—");
     setText("viewAction", log.action || "—");
-    setText("viewStatus", log.transaction_status || "—");
+    setText("viewServiceAvail", log.service || "—");
+    const viewStatus = document.getElementById("viewStatus");
+
+    if (viewStatus) {
+      viewStatus.innerHTML = statusBadge(log.transaction_status);
+    }
     setText("viewForwardedTo", log.forwarded_unit ? `${log.forwarded_division || ""} / ${log.forwarded_unit}` : "—");
-    setText("viewSurvey", log.survey_form || "Not submitted");
+    setText("viewSurvey", log.survey_form || "—");
     setText("viewDetails", log.details || "No details recorded.");
     // setText("viewRemarks", log.remarks || "No remarks recorded.");
-    setText("viewRemarks", log.process_owner || "No remarks recorded.");
+    setText("viewRemarks", log.remarks || "Done/Careted");
 
     const jump = document.getElementById("viewToUpdate");
     if (jump) {
@@ -488,6 +593,9 @@ async function openViewModal(uid) {
         openUpdateModal(uid);
       };
     }
+
+    renderHistory(log.history || []);
+    setTransactionTab("details");
 
     openModal("viewTransactionModal");
   } catch (error) {

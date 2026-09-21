@@ -245,6 +245,10 @@ def transaction_log_detail(request, uid):
             "success": True,
             "log": {
                 "uid": str(log.uid),
+                "address": log.client.client_address,
+                "contact": log.client.client_contact,
+                "gender": log.client.client_gender,
+                "lane": log.client.client_lane_type,
                 "client": client_name,
                 "queue_no": getattr(log.client, "client_queue_no", ""),
                 "action": log.action,
