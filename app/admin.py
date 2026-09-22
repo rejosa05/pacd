@@ -7,6 +7,7 @@ from .models import (
     ClientDetails,
     Organization,
     ServicesDetails,
+    ActivityLog,
 )
 
 
@@ -131,3 +132,4 @@ class TransactionHistorys(admin.ModelAdmin):
 admin.site.register(Division)
 admin.site.register(Unit)
 admin.site.register(Organization)
+admin.site.register(ActivityLog)

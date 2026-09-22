@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from app.utilities._activity_log import log_activity
 from ..decorators import role_required
 from django.db.models import Case, When, IntegerField
 
@@ -449,10 +450,6 @@ def forward_client(request, client_id):
             status=400,
         )
 
-    # ==========================================
-    # ORGANIZATION
-    # ==========================================
-
     organization = None
 
     if org_id:
@@ -483,6 +480,13 @@ def forward_client(request, client_id):
         forwarded_division_id=division_id,
         forwarded_unit_id=unit_id,
         pacd_officer=request.user,
+    )
+
+    log_activity(
+        user=request.user,
+        action="Forwarded",
+        module="ClientTransactions",
+        client=client
     )
 
     # ==========================================

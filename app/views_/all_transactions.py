@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from app.utilities._activity_log import log_activity
 from django.views.decorators.http import require_GET, require_POST
 
 from app.models import (
@@ -296,9 +297,19 @@ def transaction_log_update(request, uid):
             status=400,
         )
 
-    # -------------------------------------------------
-    # UPDATE BASIC FIELDS
-    # -------------------------------------------------
+    old_values = {
+        "action": log.action,
+        "transaction_status": log.transaction_status,
+        "transaction_type": log.transaction_type,
+        "details": log.details,
+        "remarks": log.remarks,
+        "citizen_charter": log.citizen_charter,
+        "has_deficiency": log.has_deficiency,
+        "deficiency_details": log.deficiency_details,
+        "resolved": log.resolved,
+        "deficiency_status": log.deficiency_status,
+        "survey_form": log.survey_form,
+    }
 
     action = body.get("action")
 
@@ -357,11 +368,52 @@ def transaction_log_update(request, uid):
     if survey_form in ["CSM", "CSS", ""]:
         log.survey_form = survey_form or None
 
-    # -------------------------------------------------
-    # SAVE
-    # -------------------------------------------------
+    field_labels = {
+        "action": "Action",
+        "transaction_status": "Status",
+        "transaction_type": "Transaction Type",
+        "details": "Details",
+        "remarks": "Remarks",
+        "citizen_charter": "Citizen Charter",
+        "has_deficiency": "Has Deficiency",
+        "deficiency_details": "Deficiency Details",
+        "resolved": "Resolved",
+        "deficiency_status": "Deficiency Status",
+        "survey_form": "Survey Form",
+    }
+
+    changes = []
+
+    for field, old_value in old_values.items():
+        new_value = getattr(log, field)
+
+        if old_value != new_value:
+            old_display = old_value or "None"
+            new_display = new_value or "None"
+
+            changes.append(f"{field_labels[field]}: {old_display} → {new_display}")
 
     log.save()
+
+    client_name = (
+        f"{(log.client.client_firstname or '')[:1].upper()}. "
+        f"{log.client.client_lastname}"
+    )
+
+    if changes:
+        description = f"Updated transaction: {client_name} — " + "; ".join(changes)
+    else:
+        description = f"Updated transaction: {client_name}"
+
+    log_activity(
+        user=request.user,
+        action="UPDATED",
+        module="AllTransactions",
+        description=description,
+        client=log.client,
+        transaction=log,
+        ip_address=request.META.get("REMOTE_ADDR"),
+    )
 
     return JsonResponse(
         {
@@ -374,13 +426,22 @@ def transaction_log_update(request, uid):
 @login_required
 @require_POST
 def transaction_log_delete(request, uid):
-
     log = get_object_or_404(
         TransactionLog,
         uid=uid,
     )
-
+    transaction_no = f"TXN{datetime.now():%Y%m}{log.id:04d}"
     log.delete()
+
+    log_activity(
+        user=request.user,
+        action="DELETED",
+        module="AllTransactions",
+        description=f"Deleted transaction No. {transaction_no} for client: {log.client.client_firstname[:1].upper()}. {log.client.client_lastname}",
+        client=log.client,
+        transaction=log.id,
+        ip_address=request.META.get("REMOTE_ADDR"),
+    )
 
     return JsonResponse(
         {

@@ -263,3 +263,55 @@ class TransactionLog(models.Model):
 
     def __str__(self):
         return f"{self.action} — {self.client} ({self.created_at:%Y-%m-%d %I:%M %p})"
+
+
+class ActivityLog(models.Model):
+
+    ACTION_CHOICES = [
+        ("LOGIN", "Login"),
+        ("LOGOUT", "Logout"),
+        ("CREATE", "Create"),
+        ("UPDATE", "Update"),
+        ("DELETED", "Deleted"),
+        ("VIEW", "View"),
+        ("FORWARD", "Forward"),
+        ("SERVE", "Serve"),
+        ("SKIP", "Skip"),
+        ("CATERED", "Catered"),
+        ("PRINT", "Print"),
+        ("STATUS_CHANGE", "Status Change"),
+    ]
+
+    uid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="activity_logs",
+    )
+
+    action = models.CharField(max_length=30, choices=ACTION_CHOICES)
+
+    module = models.CharField(max_length=100, blank=True, null=True)
+
+    description = models.TextField(blank=True, null=True)
+
+    client = models.ForeignKey(
+        ClientDetails, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    transaction = models.ForeignKey(
+        TransactionLog, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.action} - {self.created_at}"
