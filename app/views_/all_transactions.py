@@ -430,7 +430,7 @@ def transaction_log_delete(request, uid):
         TransactionLog,
         uid=uid,
     )
-    transaction_no = f"TXN{datetime.now():%Y%m}{log.id:04d}"
+    transaction_no = f"TXN{datetime.now():%Y}{log.id:04d}"
     log.delete()
 
     log_activity(

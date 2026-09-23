@@ -9,6 +9,7 @@ from channels.layers import get_channel_layer
 from app.utilities._activity_log import log_activity
 from ..decorators import role_required
 from django.db.models import Case, When, IntegerField
+from datetime import datetime
 
 from ..models import (
     ClientDetails,
@@ -573,27 +574,25 @@ def serving_client(request, client_id):
             status=404,
         )
 
-    # ==========================================
-    # UPDATE TRANSACTION
-    # ==========================================
-
     transaction.action = "Serving"
     transaction.transaction_status = "Serving"
     transaction.process_owner = request.user
-
     transaction.save()
 
-    # ==========================================
-    # UPDATE CLIENT
-    # ==========================================
-
     client.client_status = "Serving"
-
     client.save(update_fields=["client_status"])
 
-    # ==========================================
-    # NOTIFY DISPLAY
-    # ==========================================
+    transaction_no = f"TXN{datetime.now():%Y}-{transaction .id:04d}"
+
+    log_activity(
+        user=request.user,
+        action="SERVING",
+        module="TransactionLog",
+        description=f"Serving #{transaction_no}",
+        client=client,
+        transaction=transaction,
+        ip_address=request.META.get("REMOTE_ADDR"),
+    )
 
     channel_layer = get_channel_layer()
 

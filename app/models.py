@@ -275,6 +275,7 @@ class ActivityLog(models.Model):
         ("DELETED", "Deleted"),
         ("VIEW", "View"),
         ("FORWARDED", "Forwarded"),
+        ("SERVING", "Serving"),
         ("SERVE", "Serve"),
         ("SKIP", "Skip"),
         ("CATERED", "Catered"),
