@@ -467,10 +467,6 @@ def forward_client(request, client_id):
         if organization is None:
             organization = Organization.objects.create(name=org_name)
 
-    # ==========================================
-    # CREATE TRANSACTION
-    # ==========================================
-
     TransactionLog.objects.create(
         client=client,
         action="Forwarded",
@@ -482,16 +478,17 @@ def forward_client(request, client_id):
         pacd_officer=request.user,
     )
 
+    division = Division.objects.get(id=division_id)
+    unit = Unit.objects.get(id=unit_id)
     log_activity(
         user=request.user,
-        action="Forwarded",
+        action="FORWARDED",
         module="ClientTransactions",
-        client=client
+        description=f"Forward Client {client.client_firstname[:1].upper()}. {client.client_lastname} to {division.name} / {unit.name}.",
+        client=client,
+        transaction=None,
+        ip_address=request.META.get("REMOTE_ADDR"),
     )
-
-    # ==========================================
-    # UPDATE CLIENT
-    # ==========================================
 
     client.client_org = organization
     client.client_status = "Forwarded"
@@ -502,10 +499,6 @@ def forward_client(request, client_id):
             "client_status",
         ]
     )
-
-    # ==========================================
-    # NOTIFY DISPLAY
-    # ==========================================
 
     channel_layer = get_channel_layer()
 
