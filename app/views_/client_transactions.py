@@ -607,7 +607,7 @@ def serving_client(request, client_id):
     return JsonResponse(
         {
             "success": True,
-            "message": "Transaction updated successfully.",
+            "message": f"Serving #{transaction_no}.",
             "client_id": client.id,
             "transaction_id": transaction.id,
         }

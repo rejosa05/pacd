@@ -179,6 +179,8 @@ function displayNowServing(serving) {
       return;
     }
 
+    const announcedUnits = new Set();
+
     transactions.forEach(function (transaction) {
       const div = document.createElement("div");
 
@@ -193,12 +195,21 @@ function displayNowServing(serving) {
       // =================================================
 
       const queueNumber = transaction.queue_no;
-      const unit = transaction.unit
+      const unit = transaction.unit;
+      const unitKey = `${division}-${unit}`;
 
-      const announcementKey = `${unit}-${queueNumber}`;
+      // The API orders serving transactions newest first. Only announce the
+      // newest active ticket for each unit, while still displaying them all.
+      if (announcedUnits.has(unitKey)) {
+        return;
+      }
 
-      if (lastAnnouncedDivision[unit] !== announcementKey) {
-        lastAnnouncedDivision[unit] = announcementKey;
+      announcedUnits.add(unitKey);
+
+      const announcementKey = `${unitKey}-${queueNumber}`;
+
+      if (lastAnnouncedDivision[unitKey] !== announcementKey) {
+        lastAnnouncedDivision[unitKey] = announcementKey;
 
         speakQueue(queueNumber, unit);
       }
