@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from app.utilities._activity_log import log_activity
 from django.views.decorators.http import require_GET, require_POST
+from ..decorators import role_required
+from django.utils import timezone
 
 from app.models import (
     TransactionLog,
@@ -16,6 +18,7 @@ from app.models import (
 
 
 @login_required
+@role_required("SUPER_ADMIN", "SUB_ADMIN", "STAFF")
 def transaction_logs_page(request):
     """
     Main Transaction Logs page.
@@ -47,6 +50,46 @@ def transaction_logs_api(request):
         "process_owner",
         "service",
     ).order_by("-created_at")
+
+    # =================================================
+    # ROLE-BASED TRANSACTION ACCESS
+    # =================================================
+
+    profile = request.user.account_profile
+    role = profile.role.upper()
+
+    if role == "STAFF":
+
+        # Staff without assigned division/unit
+        # should not see any transactions.
+        if not profile.division_id or not profile.unit_id:
+            queryset = queryset.none()
+
+        else:
+            # Staff can only see transactions
+            # forwarded to their assigned division + unit.
+            queryset = (
+                queryset.filter(
+                    forwarded_division_id=profile.division_id,
+                    forwarded_unit_id=profile.unit_id,
+                )
+                .exclude(
+                    forwarded_division__isnull=True,
+                )
+                .exclude(
+                    forwarded_unit__isnull=True,
+                )
+            )
+
+    elif role in ["SUPER_ADMIN", "SUB_ADMIN"]:
+
+        # Super Admin and Sub Admin can see all transactions.
+        pass
+
+    else:
+
+        # Unknown/invalid role = no access
+        queryset = queryset.none()
 
     # -------------------------------------------------
     # SEARCH
@@ -177,26 +220,24 @@ def transaction_logs_api(request):
                 "process_owner": (
                     log.process_owner.username if log.process_owner else ""
                 ),
-                "created_at": log.created_at.strftime("%b %d, %Y %I:%M %p"),
+                "created_at": timezone.localtime(log.created_at).strftime(
+                    "%b %d, %Y %I:%M %p"
+                ),
             }
         )
 
     # -------------------------------------------------
     # GLOBAL STATISTICS
     # -------------------------------------------------
-
-    stats_queryset = TransactionLog.objects.all()
-
     stats = {
-        "total": stats_queryset.count(),
-        "waiting": stats_queryset.filter(transaction_status="Waiting").count(),
-        "serving": stats_queryset.filter(transaction_status="Serving").count(),
-        "served": stats_queryset.filter(transaction_status="Served").count(),
-        "forwarded": stats_queryset.filter(transaction_status="Forwarded").count(),
-        "skipped": stats_queryset.filter(transaction_status="Skipped").count(),
-        "catered": stats_queryset.filter(transaction_status="Catered").count(),
+        "total": queryset.count(),
+        "waiting": queryset.filter(transaction_status="Waiting").count(),
+        "forwarded": queryset.filter(transaction_status="Forwarded").count(),
+        "serving": queryset.filter(transaction_status="Serving").count(),
+        "served": queryset.filter(transaction_status="Served").count(),
+        "skipped": queryset.filter(transaction_status="Skipped").count(),
+        "catered": queryset.filter(transaction_status="Catered").count(),
     }
-
     return JsonResponse(
         {
             "success": True,

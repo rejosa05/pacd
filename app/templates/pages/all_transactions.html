@@ -384,6 +384,9 @@
     csrfToken: "{{ csrf_token }}",
     websocketUrl: (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host + "/ws/transaction-logs/",
   };
+
+  window.CURRENT_USER_ROLE = "{{ request.user.account_profile.role|default:'' }}";
+  window.CURRENT_USER_UNIT_ID = "{{ request.user.account_profile.unit.name|default:'' }}";
 </script>
 
 <script src="{% static 'js/main/all_transactions.js' %}"></script>

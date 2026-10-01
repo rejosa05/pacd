@@ -13,7 +13,7 @@ from .views_ import (
 
 urlpatterns = [
     path(
-        "transaction/", all_transactions.transaction_logs_page, name="transaction_logs"
+        "transaction", all_transactions.transaction_logs_page, name="transaction_logs"
     ),
     path(
         "api/transaction-logs/",

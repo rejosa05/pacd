@@ -627,14 +627,22 @@ def skip_client(request, client_id):
             {"success": False, "error": "Wala nakit-i ang client."}, status=404
         )
 
-    TransactionLog.objects.create(
-        client=client,
-        action="Skipped",
-        process_owner=request.user,
-    )
+    profile = request.user.account_profile
+    role = profile.rolse.lower()
 
-    client.client_status = "Skipped"
-    client.save()
+    if role == "staff":
+        pass
+
+    else:
+
+        TransactionLog.objects.create(
+            client=client,
+            action="Skipped",
+            process_owner=request.user,
+        )
+
+        client.client_status = "Skipped"
+        client.save()
 
     channel_layer = get_channel_layer()
 
