@@ -825,9 +825,11 @@ async function exportCurrentPage() {
     // CSV ROWS
     // =====================================================
     const rows = logsToExport.map(function (log) {
-      return [log.queue_no, log.client, log.transaction_type, log.action, log.transaction_status, log.process_owner, log.forwarded_to, log.survey_form, log.created_at].map(function (value) {
-        return `"${String(value ?? "").replace(/"/g, '""')}"`;
-      });
+      return [log.queue_no, log.client, log.transaction_type, log.action, log.transaction_status, log.pacd_officer, log.process_owner, log.forwarded_to, log.survey_form, log.created_at].map(
+        function (value) {
+          return `"${String(value ?? "").replace(/"/g, '""')}"`;
+        },
+      );
     });
 
     // =====================================================
