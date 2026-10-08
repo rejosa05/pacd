@@ -51,14 +51,14 @@
 
     <div class="relative">
       <button id="user-menu-toggle" type="button" class="flex items-center gap-1 focus:outline-none" aria-haspopup="true" aria-expanded="false">
-        <img src="https://api.dicebear.com/9.x/adventurer-neutral/svg?seed={{ request.user.first_name }}%20{{ request.user.last_name }}" alt="Profile" class="h-10 w-10 rounded-full" />
+        <img src="https://api.dicebear.com/9.x/adventurer-neutral/svg?seed={{ request.user.first_name }}%20{{ request.user.last_name }}" alt="Profile" class="h-7 w-7 rounded-full" />
         <!-- <div class="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center text-sm font-semibold">
           {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
         </div> -->
       </button>
       <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1.5 z-50">
         <div class="px-4 py-2.5 border-b border-gray-100 dark:border-gray-700">
-          <img src="https://api.dicebear.com/9.x/adventurer-neutral/svg?seed={{ request.user.first_name }}%20{{ request.user.last_name }}" alt="Profile" class="h-10 w-10 rounded-full" />
+          <img src="https://api.dicebear.com/9.x/adventurer-neutral/svg?seed={{ request.user.first_name }}%20{{ request.user.last_name }}" alt="Profile" class="h-7 w-7 rounded-full" />
           <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ request.user.first_name }} {{ request.user.last_name }}</p>
           <p class="text-xs text-gray-500 dark:text-gray-400">{{ request.user.email }}</p>
         </div>
