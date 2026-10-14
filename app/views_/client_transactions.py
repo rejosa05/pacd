@@ -610,16 +610,17 @@ def serving_client(request, client_id):
 def skip_client(request, client_id):
     try:
         client = ClientDetails.objects.get(pk=client_id)
-        transaction = TransactionLog.get(id=client_id, client_id=client.id)
+
     except ClientDetails.DoesNotExist:
         return JsonResponse(
             {"success": False, "error": "Wala nakit-i ang client."}, status=404
         )
-
+    print(client_id)
     profile = request.user.account_profile
-    role = profile.rolse.lower()
+    role = profile.role.lower()
 
     if role == "staff":
+        transaction = TransactionLog.objects.get(id=client_id, client_id=client.id)
         transaction.action = "Skipped"
         transaction.transaction_status = "Skipped"
         transaction.process_owner = request.user
@@ -628,6 +629,7 @@ def skip_client(request, client_id):
         TransactionLog.objects.create(
             client=client,
             action="Skipped",
+            transaction_status="Skipped",
             process_owner=request.user,
         )
 
