@@ -67,22 +67,10 @@ def clients_list_api(request):
 
     if role == "staff":
 
-        # A staff account with no division/unit assigned yet must not see
-        # anything — otherwise Django's ORM turns
-        # filter(forwarded_division=profile.division) into
-        # "forwarded_division_id IS NULL" when profile.division is None,
-        # which then matches every client that hasn't been forwarded to
-        # anyone yet (their forwarded_division/forwarded_unit are also
-        # still NULL right after registration). That mismatch is what was
-        # letting freshly added clients show up for STAFF.
         if not profile.division_id or not profile.unit_id:
             transactions = transactions.none()
             clients = ClientDetails.objects.none()
         else:
-            # STAFF ONLY sees transactions actually forwarded
-            # to their own division + unit — explicitly excluding
-            # not-yet-forwarded (NULL) transactions guards against the
-            # NULL == NULL case above even if profile.division/unit is set.
             transactions = (
                 transactions.filter(
                     forwarded_division=profile.division,
@@ -622,6 +610,7 @@ def serving_client(request, client_id):
 def skip_client(request, client_id):
     try:
         client = ClientDetails.objects.get(pk=client_id)
+        transaction = TransactionLog.get(id=client_id, client_id=client.id)
     except ClientDetails.DoesNotExist:
         return JsonResponse(
             {"success": False, "error": "Wala nakit-i ang client."}, status=404
@@ -631,21 +620,21 @@ def skip_client(request, client_id):
     role = profile.rolse.lower()
 
     if role == "staff":
-        pass
-
+        transaction.action = "Skipped"
+        transaction.transaction_status = "Skipped"
+        transaction.process_owner = request.user
+        transaction.save()
     else:
-
         TransactionLog.objects.create(
             client=client,
             action="Skipped",
             process_owner=request.user,
         )
 
-        client.client_status = "Skipped"
-        client.save()
+    client.client_status = "Skipped"
+    client.save()
 
     channel_layer = get_channel_layer()
-
     async_to_sync(channel_layer.group_send)(
         "queue_display",
         {

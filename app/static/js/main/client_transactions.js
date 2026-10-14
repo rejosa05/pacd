@@ -563,7 +563,7 @@ function buildActionButtons(client, transaction) {
   if (IS_STAFF) {
     if (status === "Forwarded") {
       buttons.push(actionBtn("serving", transaction?.transaction_id));
-      buttons.push(actionBtn("skip", client.id));
+      buttons.push(actionBtn("skip", transaction?.transaction_id));
     } else if (status === "Serving") {
       buttons.push(actionBtn("serve", transaction?.transaction_id));
       buttons.push(actionBtn("skip", client.id));

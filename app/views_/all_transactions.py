@@ -51,23 +51,14 @@ def transaction_logs_api(request):
         "service",
     ).order_by("-created_at")
 
-    # =================================================
-    # ROLE-BASED TRANSACTION ACCESS
-    # =================================================
-
     profile = request.user.account_profile
     role = profile.role.upper()
 
     if role == "STAFF":
-
-        # Staff without assigned division/unit
-        # should not see any transactions.
         if not profile.division_id or not profile.unit_id:
             queryset = queryset.none()
 
         else:
-            # Staff can only see transactions
-            # forwarded to their assigned division + unit.
             queryset = (
                 queryset.filter(
                     forwarded_division_id=profile.division_id,
@@ -82,18 +73,9 @@ def transaction_logs_api(request):
             )
 
     elif role in ["SUPER_ADMIN", "SUB_ADMIN"]:
-
-        # Super Admin and Sub Admin can see all transactions.
         pass
-
     else:
-
-        # Unknown/invalid role = no access
         queryset = queryset.none()
-
-    # -------------------------------------------------
-    # SEARCH
-    # -------------------------------------------------
 
     if search:
         queryset = queryset.filter(
@@ -167,8 +149,20 @@ def transaction_logs_api(request):
     data = []
 
     for log in logs:
+        process_owner = ""
 
         client_name = ""
+        year = timezone.localdate().strftime("%Y")
+
+        process_owner = ""
+        if log.process_owner:
+            first_name = log.process_owner.first_name or ""
+            last_name = log.process_owner.last_name or ""
+
+            if first_name and last_name:
+                process_owner = f"{first_name[0].upper()}. {last_name}"
+            else:
+                process_owner = first_name or last_name or log.process_owner.username
 
         if log.client:
             first_name = getattr(log.client, "client_firstname", "") or ""
@@ -195,6 +189,7 @@ def transaction_logs_api(request):
         data.append(
             {
                 "uid": str(log.uid),
+                "transaction_no": f"TRX-{year}-{log.id}",
                 "client": client_name,
                 "queue_no": getattr(log.client, "client_queue_no", ""),
                 "action": log.action,
@@ -217,9 +212,7 @@ def transaction_logs_api(request):
                 "remarks": (log.remarks or ""),
                 "survey_form": (log.survey_form or ""),
                 "pacd_officer": (log.pacd_officer.username if log.pacd_officer else ""),
-                "process_owner": (
-                    log.process_owner.username if log.process_owner else ""
-                ),
+                "process_owner": (process_owner if log.process_owner else ""),
                 "created_at": timezone.localtime(log.created_at).strftime(
                     "%b %d, %Y %I:%M %p"
                 ),

@@ -261,6 +261,7 @@ function renderTransactionTable(logs) {
       .map(function (log) {
         return `
         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+          <td class="px-4 py-3">${log.transaction_no}</td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-3">
               <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
@@ -268,7 +269,7 @@ function renderTransactionTable(logs) {
               </span>
               <div class="min-w-0">
                 <div class="truncate font-semibold text-gray-900 dark:text-white">${escapeHtml(log.client || "Unknown client")}</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">Queue ${escapeHtml(log.queue_no || "—")}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(log.transaction_type || "—")}</div>
               </div>
             </div>
           </td>
@@ -276,8 +277,10 @@ function renderTransactionTable(logs) {
             <div class="text-gray-900 dark:text-white">${escapeHtml(log.transaction_type || "—")}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(log.action || "No action yet")}</div>
           </td>
+          <td class="px-4 py-3">${log.citizen_charter}</td>
           <td class="px-4 py-3">${statusBadge(log.transaction_status)}</td>
           <td class="px-4 py-3">${log.forwarded_to ? escapeHtml(log.forwarded_to) : '<span class="text-gray-400">—</span>'}</td>
+          <td class="px-4 py-3">${log.process_owner}</td>
           <td class="whitespace-nowrap px-4 py-3 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(log.created_at)}</td>
           <td class="px-4 py-3 text-right">${rowMenu(log)}</td>
         </tr>`;
@@ -819,7 +822,7 @@ async function exportCurrentPage() {
     // =====================================================
     // CSV HEADERS
     // =====================================================
-    const headers = ["Queue", "Client", "Transaction", "Action", "Status", "Forwarded to", "Process Owner", "Logged"];
+    const headers = ["Transctions No.", "Queue", "Client", "Transaction", "Action", "Status", "Forwarded to", "Process Owner", "Logged"];
 
     // =====================================================
     // CSV ROWS
